@@ -122,8 +122,23 @@ export function createApp() {
   return app;
 }
 
+// Railway-да дерекқор сервиспен бір мезгілде іске қосылуы мүмкін — дайын болғанша күтеміз.
+async function waitForDatabase(attempts = 15, delayMs = 2000) {
+  for (let i = 1; ; i++) {
+    try {
+      await pool.query('SELECT 1');
+      return;
+    } catch (err) {
+      if (i >= attempts) throw err;
+      console.warn(`Дерекқорға қосылу мүмкін болмады (${i}/${attempts}): ${err.code || err.message}. Қайталаймыз…`);
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+  }
+}
+
 export async function start() {
   fs.mkdirSync(config.uploadDir, { recursive: true });
+  await waitForDatabase();
   await migrate();
   await bootstrap();
   const app = createApp();
