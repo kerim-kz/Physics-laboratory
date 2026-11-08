@@ -47,6 +47,11 @@ class Client {
     const r = await fetch(base + url, { method: 'POST', headers: { cookie: this.cookieHeader(), 'content-type': 'application/json', 'x-csrf-token': token }, body: JSON.stringify(json) });
     return { status: r.status, body: await r.json() };
   }
+  async json(method, url, body) {
+    const token = await this.csrf('/games/quiz');
+    const r = await fetch(base + url, { method, headers: { cookie: this.cookieHeader(), 'content-type': 'application/json', 'x-csrf-token': token }, body: body === undefined ? undefined : JSON.stringify(body) });
+    return { status: r.status, body: r.status === 204 ? null : await r.json().catch(() => null) };
+  }
   async login(login, password) {
     const r = await this.post('/login', { login, password });
     assert.equal(r.status, 302, `кіру сәтсіз: ${login}`);
@@ -301,6 +306,50 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal((await helper.get('/admin')).status, 200);
     const add = await helper.post('/admin/admins', { full_name: 'Тағы Біреу', login: 'helper9', password: 'helper-pass-123' }, '/admin/admins');
     assert.equal(add.status, 403);
+  });
+  test('зертхана платформада: қонақ — офлайн, оқушы — онлайн, нәтиже журналға өзі түседі', async () => {
+    const guest = await new Client().req('GET', '/labs/om/app');
+    assert.equal(guest.status, 200);
+    assert.match(guest.res.headers.get('content-security-policy'), /script-src 'self' 'sha256-[A-Za-z0-9+/=]+'/);
+    assert.match(guest.text, /"uid":null/);
+    assert.match(guest.text, /<script src="\/js\/lab-runtime\.js"><\/script><script>/);
+    assert.equal((await new Client().get('/labs/nope')).status, 404);
+
+    const app = await student.get('/labs/om/app');
+    const cfg = JSON.parse(app.text.match(/id="labRuntimeConfig">([^<]+)</)[1]);
+    assert.match(cfg.uid, /^u\d+$/);
+    assert.equal(cfg.name, 'Сейітов Нұрлан');
+    assert.equal(cfg.cls, '8 «А»');
+    assert.equal(cfg.owner, false);
+
+    const anon = await new Client().json('POST', `/api/labs/om/subs/${cfg.uid}`, { score: 10 });
+    assert.equal(anon.status, 401);
+    const foreign = await student.json('POST', '/api/labs/om/subs/u999999', { score: 10 });
+    assert.equal(foreign.status, 403);
+
+    const sub = { name: 'басқа есім', cls: '8 «А»', variant: 'B3', score: 8, crit: [1, 1, 1, 0, 1, 1, 1, 1, 1, 0], at: '08.11.2026 12:00', app: 'lab8-4' };
+    const put = await student.json('POST', `/api/labs/om/subs/${cfg.uid}`, sub);
+    assert.equal(put.status, 200);
+    const own = await student.json('GET', `/api/labs/om/subs/${cfg.uid}`);
+    assert.equal(own.body.exists, true);
+    assert.equal(own.body.data.name, 'Сейітов Нұрлан', 'аты аккаунттан алынуы керек');
+    assert.equal(own.body.data.grade, 4);
+
+    const col = await teacher.json('GET', '/api/labs/om/subs');
+    assert.equal(col.status, 200);
+    assert.ok(col.body.docs.some((d) => d.id === cfg.uid && d.data.score === 8));
+    assert.equal((await student.json('GET', '/api/labs/om/subs')).status, 403);
+
+    const journal = await teacher.get('/teacher/labs');
+    assert.match(journal.text, /Сейітов Нұрлан<\/td><td>8 «А»<\/td>/);
+    assert.match(journal.text, /pill ok">платформа/);
+    const cab = await student.get('/cabinet');
+    assert.match(cab.text, /8 \/ 10/);
+
+    assert.equal((await student.json('DELETE', `/api/labs/om/subs/${cfg.uid}`)).status, 403, 'оқушы өз нәтижесін өшіре алмайды');
+    assert.equal((await teacher.json('DELETE', `/api/labs/om/subs/${cfg.uid}`)).status, 204);
+    assert.equal((await student.json('GET', `/api/labs/om/subs/${cfg.uid}`)).body.exists, false);
+    assert.doesNotMatch((await teacher.get('/teacher/labs')).text, /pill ok">платформа/);
   });
 });
 

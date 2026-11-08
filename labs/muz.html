@@ -1,0 +1,1374 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Мұздың балқу жылуы зертханасы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jura:wght@500;600;700&family=Noto+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: an "ice tray" step rail on the left (horizontal on narrow screens) beside one working page; glacier blue and warm-water amber are the two temperatures of the experiment */
+:root{
+  --bg:#edf3f6; --surface:#ffffff; --surface-2:#f2f7fa; --ink:#0e2233; --muted:#536575; --line:#d2dde6;
+  --primary:#0a6a8c; --on-primary:#ffffff; --primary-soft:#dbeff6;
+  --warm:#b5620c; --warm-soft:#fbecd9; --ice:#a6dcf0; --ice-edge:#4e9fc2; --ice-soft:#e6f5fb;
+  --ok:#1d8150; --ok-soft:#dbf1e4; --bad:#c0362a; --bad-soft:#fbe1dd; --warn:#92600b; --warn-soft:#fbefd5;
+  --wall:#e6eef3; --wood:#ccb08d; --wood-edge:#9a7c56; --metal:#a6b1bc; --metal-dark:#4e5b68; --insul:#eae4d5; --insul-dot:#c6b896;
+  --glass:#d1e7f1; --glass-edge:#6e9fb7; --scale-ink:#132130; --sheet:#ffffff; --column:#cf2f29; --lcd:#dce8d4; --lcd-ink:#15230e; --thermos:#2e4a5d;
+  --f-display:"Jura","Noto Sans",system-ui,sans-serif;
+  --f-body:"Noto Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c141a; --surface:#131e26; --surface-2:#182630; --ink:#e4edf3; --muted:#9aacbb; --line:#283845;
+    --primary:#5ec2e6; --on-primary:#062431; --primary-soft:#123543;
+    --warm:#f0a24e; --warm-soft:#3a2914; --ice:#3d7d97; --ice-edge:#8fd0ea; --ice-soft:#16303b;
+    --ok:#55c98a; --ok-soft:#153526; --bad:#ff7c6c; --bad-soft:#3d1c19; --warn:#e5b04c; --warn-soft:#392b12;
+    --wall:#121d25; --wood:#68503a; --wood-edge:#8b6d4a; --metal:#8a97a7; --metal-dark:#c4ced9; --insul:#38342a; --insul-dot:#605640;
+    --glass:#1c3a48; --glass-edge:#7aabc0; --scale-ink:#e0e8ee; --sheet:#dde3e6; --column:#ff5848; --lcd:#1b2817; --lcd-ink:#cde6be; --thermos:#5d7b90;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c141a; --surface:#131e26; --surface-2:#182630; --ink:#e4edf3; --muted:#9aacbb; --line:#283845;
+  --primary:#5ec2e6; --on-primary:#062431; --primary-soft:#123543;
+  --warm:#f0a24e; --warm-soft:#3a2914; --ice:#3d7d97; --ice-edge:#8fd0ea; --ice-soft:#16303b;
+  --ok:#55c98a; --ok-soft:#153526; --bad:#ff7c6c; --bad-soft:#3d1c19; --warn:#e5b04c; --warn-soft:#392b12;
+  --wall:#121d25; --wood:#68503a; --wood-edge:#8b6d4a; --metal:#8a97a7; --metal-dark:#c4ced9; --insul:#38342a; --insul-dot:#605640;
+  --glass:#1c3a48; --glass-edge:#7aabc0; --scale-ink:#e0e8ee; --sheet:#dde3e6; --column:#ff5848; --lcd:#1b2817; --lcd-ink:#cde6be; --thermos:#5d7b90;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:16px 48px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h2{font-weight:700;font-size:1.5rem;letter-spacing:.01em}
+h3{font-weight:700;font-size:1.08rem}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:13.5px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-family:var(--f-display);font-weight:700;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.warmc{color:var(--warm)} .icec{color:var(--primary)}
+
+.shell{max-width:1400px;margin:0 auto;display:grid;gap:14px}
+.app{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:1100px){.app{grid-template-columns:minmax(0,1fr)}}
+header.top{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}
+.cube{width:38px;height:38px;border-radius:9px;background:linear-gradient(145deg,var(--ice-soft),var(--ice));border:1.5px solid var(--ice-edge);box-shadow:inset 3px 3px 0 rgba(255,255,255,.55);flex:none}
+.brand .t1{font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.brand .t2{font-family:var(--f-display);font-weight:700;font-size:1.12rem;line-height:1.25}
+.status{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.on::before{background:var(--ok)} .pill.off::before{background:var(--warn)}
+.chip{font-size:13px;padding:5px 11px;border-radius:8px;background:var(--primary-soft);color:var(--primary);font-weight:600}
+
+/* ice-tray step rail */
+.rail{position:sticky;top:calc(env(safe-area-inset-top, 0px) + 12px);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:6px}
+.rail .label{padding:2px 4px 6px}
+.step{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:center;text-align:left;border:1px solid transparent;background:transparent;padding:6px 8px;border-radius:9px;font-weight:500;min-height:42px}
+.step .n{width:30px;height:30px;border-radius:7px;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:13px;border:1.5px dashed var(--ice-edge);color:var(--muted);background:var(--surface-2)}
+.step.done .n{border-style:solid;background:linear-gradient(145deg,var(--ice-soft),var(--ice));color:var(--ink);box-shadow:inset 2px 2px 0 rgba(255,255,255,.5)}
+.step[aria-current="step"]{background:var(--primary-soft);border-color:var(--primary);color:var(--primary);font-weight:600}
+.step[aria-current="step"] .n{border:2px solid var(--primary);color:var(--primary)}
+.step.lock{opacity:.5}
+@media (max-width:1100px){
+  .rail{position:static;display:flex;flex-wrap:wrap;gap:4px;padding:8px}
+  .rail .label{display:none}
+  .step{grid-template-columns:28px auto;min-height:38px;padding:4px 8px}
+  .step .n{width:28px;height:28px}
+}
+@media (max-width:760px){.step .lbl{display:none}.step[aria-current="step"] .lbl{display:inline}}
+
+button{font:inherit;font-size:14px;font-weight:500;line-height:1.2;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;padding:9px 13px;cursor:pointer;min-height:40px}
+button:hover:not(:disabled){border-color:var(--primary)}
+button:focus-visible,input:focus-visible,select:focus-visible,canvas:focus-visible,summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+button.primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary);font-weight:600}
+button.warmb{border-color:var(--warm);color:var(--warm);background:var(--warm-soft);font-weight:600}
+button.iceb{border-color:var(--ice-edge);color:var(--primary);background:var(--ice-soft);font-weight:600}
+button[aria-pressed="true"]{background:var(--primary-soft);border-color:var(--primary);color:var(--primary);font-weight:600}
+button.danger[data-armed]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+button:disabled{opacity:.42;cursor:not-allowed}
+button.ghost{background:transparent}
+input[type=text],select{font:inherit;font-size:16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;padding:10px 12px;min-height:46px;width:100%}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{border:0;border-radius:0;min-height:38px}
+.seg button + button{border-left:1px solid var(--line)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+.page{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 24px 24px;display:grid;gap:18px;min-width:0;border-top:4px solid var(--ice-edge)}
+.page > *{min-width:0}
+.phead{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:flex-end;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.phead .tag{font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.phead .goal{font-size:14px;color:var(--muted);max-width:72ch}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;padding-top:14px;border-top:1px solid var(--line)}
+.pnav .sp{flex:1}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.lab{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:980px){.two,.lab{grid-template-columns:minmax(0,1fr)}}
+.col{display:grid;gap:12px;min-width:0;align-content:start}
+.card{border:1px solid var(--line);border-radius:11px;padding:12px 14px;display:grid;gap:9px;background:var(--surface-2)}
+.card.warm{border-color:var(--warm);background:var(--warm-soft)}
+.card.ice{border-color:var(--ice-edge);background:var(--ice-soft)}
+.card.pri{border-color:var(--primary);background:var(--primary-soft)}
+.prose{display:grid;gap:12px}
+.prose p,.prose li{max-width:70ch}
+ol,ul{margin:0;padding-left:1.3em;display:grid;gap:5px}
+.formula{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:5px 0;overflow-x:auto}
+.formula math{font-size:1.18em}
+.formula .eq{font-family:var(--f-mono);font-size:13px;color:var(--muted);flex:none}
+.obj{display:grid;grid-template-columns:auto 1fr;gap:10px;font-size:14.5px}
+.obj code{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--primary);background:var(--primary-soft);border-radius:6px;padding:2px 7px;height:fit-content}
+.consts{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;font-size:14px}
+.consts b{font-family:var(--f-mono);font-weight:600;text-align:right}
+
+/* registration */
+.regwrap{min-height:calc(100vh - 80px);display:grid;place-items:center}
+.regcard{width:min(430px,100%);background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:grid}
+.regcard .frost{height:70px;background:linear-gradient(160deg,var(--ice-soft),var(--ice));position:relative;border-bottom:1.5px solid var(--ice-edge)}
+.regcard .frost::after{content:"";position:absolute;left:24px;bottom:-19px;width:38px;height:38px;border-radius:9px;background:linear-gradient(145deg,var(--surface),var(--ice-soft));border:1.5px solid var(--ice-edge);box-shadow:inset 3px 3px 0 rgba(255,255,255,.6)}
+.regcard form,.regcard #regDone{padding:30px 24px 24px;display:grid;gap:16px}
+.regcard h1{font-weight:700;font-size:2.1rem;line-height:1.1}
+.regcard label{display:grid;gap:6px;font-weight:600;font-size:14px}
+.regcard .go{width:100%;min-height:50px;font-size:16px}
+.err{color:var(--bad);font-size:13.5px;font-weight:500}
+
+/* lab */
+.hint{font-size:14.5px;background:var(--primary-soft);border:1px solid var(--primary);border-left-width:4px;border-radius:9px;padding:9px 13px;min-height:3.2em}
+.hint.warn{background:var(--bad-soft);border-color:var(--bad)}
+figure.view{margin:0;display:grid;gap:5px;min-width:0}
+figure.view figcaption{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;font-size:12px;font-family:var(--f-mono);color:var(--muted)}
+.cv{position:relative;width:100%;border-radius:11px;overflow:hidden;border:1px solid var(--line);background:var(--wall)}
+.cv canvas{display:block;width:100%;height:100%;touch-action:none}
+.cv.scene{aspect-ratio:2.35/1}
+.zoom3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr);gap:12px;align-items:start}
+@media (max-width:640px){.zoom3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.zoom3 .scalebox{grid-column:1/-1}}
+.cv.therm,.cv.cyl{aspect-ratio:3/4;max-height:44vh;margin-inline:auto}
+.scalebox{display:grid;gap:8px;border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--surface-2)}
+.lcd{font-family:var(--f-mono);font-weight:600;font-size:clamp(1.9rem,3.6vw,2.5rem);background:var(--lcd);color:var(--lcd-ink);border:1px solid var(--line);border-radius:8px;padding:6px 12px;text-align:right;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.lcd small{font-size:.5em;margin-left:6px}
+.pourrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;font-size:14px}
+.journal{margin:0;padding-left:1.3em;font-size:13.5px;display:grid;gap:3px}
+.vlog{margin:0;padding-left:1.3em;font-size:13.5px;color:var(--bad);display:grid;gap:3px}
+
+/* tables */
+.tw{overflow-x:auto;min-width:0}
+table.t{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums;background:var(--surface)}
+table.t th,table.t td{border:1px solid var(--line);padding:6px 8px;text-align:center;vertical-align:middle}
+table.t th{background:var(--surface-2);font-weight:600;font-size:12.5px;line-height:1.3}
+table.t th.w{background:var(--warm-soft)} table.t th.i{background:var(--ice-soft)}
+table.t td.n{font-family:var(--f-display);font-weight:700;color:var(--muted);width:40px}
+table.t td.ro{font-family:var(--f-mono);color:var(--muted)}
+td input,.fld input{width:100%;min-width:70px;font-family:var(--f-mono);font-size:14.5px;text-align:center;border:0;border-bottom:1.5px dashed var(--muted);background:transparent;color:var(--ink);padding:5px 2px;border-radius:0}
+td input:focus,.fld input:focus{border-bottom:1.5px solid var(--primary);outline:none;background:var(--primary-soft)}
+input:disabled{color:var(--ink);opacity:.85}
+.fields{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:end}
+.fld{display:flex;align-items:center;gap:8px;font-size:15px}
+.fld input{width:130px}
+.warnmsg{font-size:13.5px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:8px 12px}
+.okmsg{font-size:13.5px;color:var(--ok);background:var(--ok-soft);border-radius:8px;padding:8px 12px;font-weight:500}
+.chart-wrap{border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--surface);aspect-ratio:16/10;max-width:100%}
+.chart-wrap canvas{display:block;width:100%;height:100%}
+
+fieldset.q{border:1px solid var(--line);border-radius:11px;padding:10px 14px 12px;margin:0;display:grid;gap:4px;background:var(--surface)}
+fieldset.q legend{font-weight:600;padding:0 6px;font-size:14.5px}
+fieldset.q label{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:14.5px}
+fieldset.q label:hover{background:var(--surface-2)}
+fieldset.q input{width:18px;height:18px;accent-color:var(--primary);flex:none}
+.rules{display:grid;gap:8px;list-style:none;padding:0;counter-reset:r}
+.rules li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start;counter-increment:r;font-size:14.5px}
+.rules li::before{content:counter(r);font-family:var(--f-display);font-weight:700;width:28px;height:28px;border-radius:7px;display:grid;place-items:center;background:var(--ice-soft);color:var(--primary);border:1.5px solid var(--ice-edge)}
+.summary{font-size:15px;line-height:1.65;padding:14px 16px;border-radius:11px;border:1px solid var(--primary);background:var(--primary-soft)}
+.summary b{font-family:var(--f-mono)}
+
+table.rubric{border-collapse:collapse;width:100%;font-size:14px}
+table.rubric td,table.rubric th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+table.rubric th{font-size:12px;font-family:var(--f-display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+table.rubric td.k{font-family:var(--f-display);font-weight:700;color:var(--muted);white-space:nowrap}
+table.rubric td.o{font-family:var(--f-mono);font-size:12px;color:var(--primary);white-space:nowrap}
+table.rubric td.p{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.st{display:inline-grid;place-items:center;width:23px;height:23px;border-radius:50%;font-size:13px;font-weight:800;flex:none}
+.st.y{background:var(--ok-soft);color:var(--ok)} .st.x{background:var(--bad-soft);color:var(--bad)}
+.confirm{display:grid;gap:10px;border:1.5px solid var(--warn);background:var(--warn-soft);border-radius:11px;padding:12px 14px}
+.score{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;padding:16px 18px;border-radius:13px;background:var(--ice-soft);border:1.5px solid var(--ice-edge)}
+.score .big{font-family:var(--f-display);font-weight:700;font-size:2.8rem;line-height:1;color:var(--primary)}
+.score .big small{font-size:1rem;font-weight:600;color:var(--muted)}
+.score .meta{display:grid;gap:2px;font-size:14px}
+.codebox{font-family:var(--f-mono);font-size:12.5px;word-break:break-all;background:var(--surface);border:1px dashed var(--primary);border-radius:8px;padding:10px;user-select:all}
+
+.teacher{display:grid;gap:16px}
+.t-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.t-tools select{width:auto;min-width:130px;min-height:42px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:11px;padding:10px 12px;display:grid;gap:2px;background:var(--surface-2)}
+.stat .v{font-family:var(--f-display);font-size:1.6rem;font-weight:700}
+.stat .l{font-size:12.5px;color:var(--muted)}
+.bars{display:grid;gap:6px}
+.bar{display:grid;grid-template-columns:44px minmax(0,1fr) 46px;gap:10px;align-items:center;font-size:13px}
+.bar .k{font-family:var(--f-display);font-weight:700;color:var(--muted)}
+.bar .track{height:12px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar .fill{height:100%;background:var(--primary)}
+.bar .fill.low{background:var(--warm)}
+.bar .pct{font-family:var(--f-mono);text-align:right}
+table.roster{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums;min-width:880px}
+table.roster th,table.roster td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;white-space:nowrap}
+table.roster th{font-size:12px;color:var(--muted);font-weight:600}
+.dots{display:flex;gap:3px}
+.dot{width:12px;height:12px;border-radius:3px;background:var(--bad-soft);border:1px solid var(--bad)}
+.dot.y{background:var(--ok);border-color:var(--ok)}
+tr.detail td{white-space:normal;background:var(--surface-2);font-size:13px}
+.det{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:6px 18px}
+.grade{display:inline-grid;place-items:center;min-width:28px;height:26px;border-radius:7px;font-weight:800;font-family:var(--f-display)}
+.g5{background:var(--ok-soft);color:var(--ok)}.g4{background:var(--primary-soft);color:var(--primary)}.g3{background:var(--warn-soft);color:var(--warn)}.g2{background:var(--bad-soft);color:var(--bad)}
+.verify{display:grid;gap:8px}
+.verify .row{display:flex;gap:8px;flex-wrap:wrap}
+.verify .row input{flex:1 1 260px;width:auto}
+.vout{font-size:14px;border-radius:8px;padding:10px 12px}
+.vout.good{background:var(--ok-soft);border:1px solid var(--ok)}
+.vout.badc{background:var(--bad-soft);border:1px solid var(--bad)}
+details.note{border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:var(--surface-2)}
+details.note summary{cursor:pointer;font-weight:600}
+details.note p{margin-top:8px;max-width:75ch;font-size:14px}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:11px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="shell">
+  <header class="top" id="topHeader" hidden>
+    <div class="brand"><span class="cube" aria-hidden="true"></span><div><p class="t1">Физика · 8-сынып · №2 зертханалық жұмыс</p><p class="t2">Мұздың меншікті балқу жылуын анықтау</p></div></div>
+    <div class="status">
+      <span id="modeBadge" class="pill">Қосылуда…</span>
+      <span id="studentChip" class="chip" hidden></span>
+      <button id="teacherBtn" type="button" hidden>Мұғалім панелі</button>
+    </div>
+  </header>
+
+  <div id="appView">
+    <div class="app" id="appGrid">
+      <nav class="rail" id="stepper" aria-label="Жұмыс кезеңдері" hidden>
+        <p class="label">Кезеңдер</p>
+        <button class="step" type="button" data-p="0"><span class="n">1</span><span class="lbl">Тіркелу</span></button>
+        <button class="step" type="button" data-p="1"><span class="n">2</span><span class="lbl">Теория</span></button>
+        <button class="step" type="button" data-p="2"><span class="n">3</span><span class="lbl">Қауіпсіздік</span></button>
+        <button class="step" type="button" data-p="3"><span class="n">4</span><span class="lbl">Зертхана</span></button>
+        <button class="step" type="button" data-p="4"><span class="n">5</span><span class="lbl">Есептеу</span></button>
+        <button class="step" type="button" data-p="5"><span class="n">6</span><span class="lbl">Салыстыру</span></button>
+        <button class="step" type="button" data-p="6"><span class="n">7</span><span class="lbl">Қорытынды</span></button>
+        <button class="step" type="button" data-p="7"><span class="n">8</span><span class="lbl">Тапсыру</span></button>
+      </nav>
+
+      <main id="pages" style="display:grid;gap:12px;min-width:0">
+        <p id="navMsg" class="warnmsg" hidden></p>
+
+        <!-- 0 REGISTRATION -->
+        <section data-page="0" class="regwrap" aria-labelledby="regTitle">
+          <div class="regcard">
+            <div class="frost" aria-hidden="true"></div>
+            <form id="startForm" novalidate>
+              <p class="label">№2 зертханалық жұмыс · 8-сынып</p>
+              <h1 id="regTitle">Тіркелу</h1>
+              <label for="stName">Аты-жөні<input id="stName" class="reg-in" type="text" autocomplete="name" placeholder="Мысалы, Аружан Серікова" maxlength="60"></label>
+              <label for="stCls">Сынып
+                <select id="stCls" class="reg-in">
+                  <option value="">Сыныпты таңдаңыз</option>
+                  <option>8 «А»</option><option>8 «Ә»</option><option>8 «Б»</option><option>8 «В»</option><option>8 «Г»</option><option>8 «Ғ»</option><option>8 «Д»</option><option>8 «Е»</option>
+                  <option value="__other">Басқа сынып…</option>
+                </select>
+              </label>
+              <label for="stClsOther" id="otherWrap" hidden>Сынып атауы<input id="stClsOther" class="reg-in" type="text" placeholder="Мысалы, 8 «Ж»" maxlength="12"></label>
+              <button id="startBtn" class="primary go" type="submit" disabled>Қосылуда…</button>
+              <p id="startErr" class="err" aria-live="polite"></p>
+            </form>
+            <div id="regDone" hidden>
+              <p class="label">№2 зертханалық жұмыс · 8-сынып</p>
+              <h1>Сіз тіркелдіңіз</h1>
+              <p id="whoLine" style="font-size:16px"></p>
+              <button id="continueBtn" class="primary go" type="button">Жұмысты жалғастыру</button>
+            </div>
+            <div style="padding:0 24px 18px"><button id="teacherBtnReg" type="button" class="ghost" hidden>Мұғалім панелі</button></div>
+          </div>
+        </section>
+
+        <!-- 1 THEORY -->
+        <section class="page" data-page="1" hidden>
+          <div class="phead"><div><p class="tag">2-кезең</p><h2>Теория</h2></div></div>
+          <div class="two">
+            <div class="prose">
+              <div style="display:grid;gap:8px">
+                <p class="label">Оқу мақсаттары</p>
+                <div class="obj"><code>8.3.2.12</code><span>эксперимент көмегімен мұздың меншікті балқу жылуын анықтау</span></div>
+                <div class="obj"><code>8.1.3.3</code><span>физика кабинетінде қауіпсіздік ережелерін білу және сақтау</span></div>
+              </div>
+              <p><b>Жұмыстың мақсаты:</b> жылу балансының теңдеуін пайдаланып, мұздың меншікті балқу жылуын анықтау.</p>
+              <p><b>Құрал-жабдықтар:</b> калориметр, мензурка, термометр, электронды таразы, мұз кесегі мен су араласқан қоспасы бар термос, жылы суы бар ыдыс, қысқыш, сүлгі.</p>
+              <p>Тұйық жүйедегі денелер жылу алмасқан кезде қыздырылған денелердің берген жылу мөлшері суық дененің алған жылу мөлшеріне тең болады. Бұл жұмыста тұйық жүйе ретінде калориметрдің ішкі стақаны, су және мұз кесегі алынады. Стақан мен су салқындайды, мұз энергияны ала отырып ериді және қызады.</p>
+              <div>
+                <p class="label" style="margin-bottom:6px">Жұмыс барысы</p>
+                <ol>
+                  <li>Қоршаған ауаның <i>t</i>₁ және жылы судың <i>t</i>₂ температураларын анықтаңыз.</li>
+                  <li>Электронды таразыда калориметрдің ішкі стақанының <i>m</i>₁ массасын анықтаңыз.</li>
+                  <li>Калориметрге <i>V</i>₁ = 100 см³ жылы су құйыңыз. Суға мұз кесегін салып, мұз толығымен еріген кездегі қоспа температурасын <i>t</i> анықтаңыз.</li>
+                  <li>Судың массасын <i>m</i>₂ = ρ<i>V</i>₁ бойынша есептеңіз.</li>
+                  <li>Калориметрдегі суды мензуркаға құйып, жалпы көлемін <i>V</i>₂ анықтаңыз. Көлемнің өзгерісі Δ<i>V</i> = <i>V</i>₂ − <i>V</i>₁.</li>
+                  <li>Мұз массасын <i>m</i>₃ = ρΔ<i>V</i> бойынша табыңыз.</li>
+                  <li>(1) формула бойынша λ-ны есептеңіз. Тәжірибені әртүрлі мұз кесектерімен 3 рет қайталаңыз.</li>
+                  <li>λ-ның орташа мәнін кестедегі мәнмен салыстырып, абсолют қателікті табыңыз. Қорытынды жасаңыз.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card">
+                <p>Калориметрдің стақаны салқындай отырып береді:</p>
+                <div class="formula"><math display="block"><msub><mi>Q</mi><mn>1</mn></msub><mo>=</mo><msub><mi>c</mi><mn>1</mn></msub><msub><mi>m</mi><mn>1</mn></msub><mo>(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>−</mo><mi>t</mi><mo>)</mo></math></div>
+                <p class="small muted"><i>t</i>₁ – тәжірибеге дейінгі қоршаған ауаның (стақанның) температурасы, <i>t</i> – жылу алмасудан кейінгі жүйе температурасы.</p>
+              </div>
+              <div class="card warm">
+                <p class="warmc"><b>Жылы су салқындай отырып береді:</b></p>
+                <div class="formula"><math display="block"><msub><mi>Q</mi><mn>2</mn></msub><mo>=</mo><msub><mi>c</mi><mn>2</mn></msub><msub><mi>m</mi><mn>2</mn></msub><mo>(</mo><msub><mi>t</mi><mn>2</mn></msub><mo>−</mo><mi>t</mi><mo>)</mo></math></div>
+              </div>
+              <div class="card ice">
+                <p class="icec"><b>Мұз ериді және t-ға дейін су түрінде қызады:</b></p>
+                <div class="formula"><math display="block"><msub><mi>Q</mi><mn>3</mn></msub><mo>=</mo><mi>λ</mi><msub><mi>m</mi><mn>3</mn></msub><mo>+</mo><msub><mi>c</mi><mn>2</mn></msub><msub><mi>m</mi><mn>3</mn></msub><mo>(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mn>3</mn></msub><mo>)</mo></math></div>
+                <p class="small muted"><i>t</i>₃ = 0 °C – мұздың бастапқы температурасы.</p>
+              </div>
+              <div class="card pri">
+                <p>Жылу балансы: <i>Q</i>₁ + <i>Q</i>₂ = <i>Q</i>₃. Одан:</p>
+                <div class="formula"><math display="block"><mi>λ</mi><mo>=</mo><mfrac><mrow><msub><mi>c</mi><mn>1</mn></msub><msub><mi>m</mi><mn>1</mn></msub><mo>(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>−</mo><mi>t</mi><mo>)</mo><mo>+</mo><msub><mi>c</mi><mn>2</mn></msub><msub><mi>m</mi><mn>2</mn></msub><mo>(</mo><msub><mi>t</mi><mn>2</mn></msub><mo>−</mo><mi>t</mi><mo>)</mo><mo>−</mo><msub><mi>c</mi><mn>2</mn></msub><msub><mi>m</mi><mn>3</mn></msub><mo>(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mn>3</mn></msub><mo>)</mo></mrow><msub><mi>m</mi><mn>3</mn></msub></mfrac></math><span class="eq">(1)</span></div>
+              </div>
+              <div class="card">
+                <p class="label">Кестелік мәндер</p>
+                <div class="consts">
+                  <span>Алюминийдің меншікті жылусыйымдылығы <i>c</i>₁</span><b>920 Дж/(кг·°C)</b>
+                  <span>Судың меншікті жылусыйымдылығы <i>c</i>₂</span><b>4200 Дж/(кг·°C)</b>
+                  <span>Мұздың меншікті балқу жылуы λ</span><b>3,4·10⁵ Дж/кг</b>
+                  <span>Судың тығыздығы ρ</span><b>1 г/см³ = 1000 кг/м³</b>
+                </div>
+                <p class="small muted">Калориметрдің ішкі стақаны алюминийден жасалған.</p>
+              </div>
+            </div>
+          </div>
+          <div class="pnav"><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Қауіпсіздік →</button></div>
+        </section>
+
+        <!-- 2 SAFETY -->
+        <section class="page" data-page="2" hidden>
+          <div class="phead"><div><p class="tag">3-кезең</p><h2>Қауіпсіздік ережелері</h2></div><p class="goal">Зертханаға кіру үшін ережелерді оқып, тесттің 5 сұрағының кемінде 4-еуіне дұрыс жауап беріңіз.</p></div>
+          <div class="two">
+            <ol class="rules">
+              <li><span>Мұз кесегін <b>қысқышпен</b> аламыз: жалаң қолмен ұстасақ, қол үсиді және мұз ери бастайды.</span></li>
+              <li><span>Электронды таразыға тек <b>құрғақ</b> ыдысты қоямыз, оның жанында су құймаймыз.</span></li>
+              <li><span>Мензурканы шкаланың <b>жоғарғы белгісінен асырмай</b>, үстел үстінде толтырамыз.</span></li>
+              <li><span>Қоспаны араластырғышпен <b>абайлап</b> араластырамыз, термометрді ыдыстың қабырғасына ұрмаймыз.</span></li>
+              <li><span>Үстелге су төгілсе, оны <b>дереу сүртеміз</b>: су электр құралдарына тимеуі керек.</span></li>
+              <li><span>Термометр немесе шыны ыдыс сынса, сынықтарды қолмен жинамаймыз, <b>мұғалімге</b> хабарлаймыз.</span></li>
+              <li><span>Жұмыс соңында суды төгіп, ыдыстарды сүртіп, орнына жинаймыз.</span></li>
+            </ol>
+            <div class="col">
+              <div id="safeQ" style="display:grid;gap:10px"></div>
+              <div class="controls"><button id="safeCheck" type="button" class="primary">Тестті тексеру</button><button id="safeRetry" type="button" hidden>Тестті қайта тапсыру</button></div>
+              <p id="safeOut" aria-live="polite" hidden></p>
+            </div>
+          </div>
+          <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Зертхана →</button></div>
+        </section>
+
+        <!-- 3 LAB -->
+        <section class="page" data-page="3" hidden>
+          <div class="phead"><div><p class="tag">4-кезең</p><h2>Зертхана: 3 тәжірибе</h2></div><p class="goal">Әр тәжірибеде 100 см³ жылы суға мұз кесегін салып, оның толық еруін бақылаңыз. Мұз кесектерінің массасы әртүрлі.</p></div>
+          <div class="lab">
+            <div class="col">
+              <p class="hint" id="hintL" aria-live="polite"></p>
+              <figure class="view"><figcaption><span>Зертхана үстелі</span><span id="clockTxt"></span></figcaption><div class="cv scene"><canvas id="sceneL" aria-label="Зертхана үстелі: электронды таразы, жылы су, мұзы бар термос, мензурка, калориметр, сүлгі және термометр"></canvas></div></figure>
+              <div class="zoom3">
+                <figure class="view"><figcaption><span>Термометр · <span id="thLoc"></span></span></figcaption><div class="cv therm"><canvas id="thermL" aria-label="Термометр шкаласы жақыннан, бөлік құны 1 °C"></canvas></div></figure>
+                <figure class="view"><figcaption><span>Мензурка · 150 мл</span><span>лупа</span></figcaption><div class="cv cyl"><canvas id="cylL" tabindex="0" aria-label="Мензурка жақыннан. Шкаланы оқу үшін курсорды апарыңыз."></canvas></div></figure>
+                <div class="scalebox">
+                  <p class="label">Электронды таразы</p>
+                  <div class="lcd" id="lcd" aria-live="polite">0.0<small>г</small></div>
+                  <div class="controls"><button type="button" data-act="tare">Нөлдеу (TARE)</button></div>
+                  <p class="small muted">Дәлдігі 0,1 г. Таразы бос кезде нөлді көрсетуі керек.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card"><p class="label">Тәжірибе</p><div class="seg" role="group" aria-label="Тәжірибені таңдау"><button type="button" data-act="trial" data-v="1">1-тәжірибе</button><button type="button" data-act="trial" data-v="2">2-тәжірибе</button><button type="button" data-act="trial" data-v="3">3-тәжірибе</button></div></div>
+              <div class="card"><p class="label">Термометр қайда?</p><div class="seg" role="group" aria-label="Термометрдің орны"><button type="button" data-act="th" data-v="air">Ауада</button><button type="button" data-act="th" data-v="water">Жылы суда</button><button type="button" data-act="th" data-v="thermos">Термоста</button><button type="button" data-act="th" data-v="cal">Калориметрде</button></div></div>
+              <div class="card"><p class="label">Калориметрдің ішкі стақаны</p><div class="seg" role="group" aria-label="Стақанның орны"><button type="button" data-act="cup" data-v="table">Үстелде</button><button type="button" data-act="cup" data-v="scale">Таразыда</button><button type="button" data-act="cup" data-v="cal">Калориметрде</button></div></div>
+              <div class="card"><p class="label">Жылы су</p>
+                <div class="pourrow"><span class="warmc">Ыдыстан мензуркаға</span><button type="button" data-act="pw" data-v="10" class="warmb">+10 мл</button><button type="button" data-act="pw" data-v="1">+1 мл</button></div>
+                <div class="controls"><button type="button" data-act="cyl2cal" class="primary">Мензуркадан калориметрге құю</button><button type="button" data-act="dump">Мензурканы босату</button></div>
+              </div>
+              <div class="card ice"><p class="label">Мұз</p>
+                <div class="controls"><button type="button" data-act="tongs" aria-pressed="false">Қысқыш</button><button type="button" data-act="takeice" class="iceb">Термостан мұз алу</button><button type="button" data-act="dryice">Сүлгімен сүрту</button><button type="button" data-act="ice2cal" class="primary">Мұзды калориметрге салу</button></div>
+                <p class="small muted" id="heldNote">Қолыңызда мұз жоқ.</p>
+              </div>
+              <div class="card"><p class="label">Калориметр</p>
+                <div class="controls"><button type="button" data-act="lid">Қақпақты ашу</button><button type="button" data-act="stir" aria-pressed="false">Араластыру</button><button type="button" data-act="cal2cyl">Суды мензуркаға құю</button><button type="button" data-act="emptycal" class="danger">Босатып, сүрту</button></div>
+              </div>
+              <div class="card" id="vlogCard" hidden><p class="label">Қауіпсіздік журналы</p><ol class="vlog" id="vlog"></ol></div>
+              <div class="card"><p class="label">Аяқталған тәжірибелер</p><ol class="journal" id="journal"></ol><p class="small muted" id="journalEmpty">Калориметрді босатқан сайын аяқталған тәжірибе осында жазылады.</p></div>
+            </div>
+          </div>
+          <div class="card">
+            <p class="label">Өлшеу нәтижелері</p>
+            <div class="tw"><table class="t"><thead><tr><th>№</th><th>Калориметрдің бастапқы температурасы <i>t</i>₁, °C</th><th class="w">Су температурасы <i>t</i>₂, °C</th><th class="i">Қоспа температурасы <i>t</i>, °C</th><th>Калориметр стақанының массасы <i>m</i>₁, кг</th><th class="w">Су көлемі <i>V</i>₁, см³</th><th class="i">Мұзы ерігеннен кейінгі көлем <i>V</i>₂, см³</th></tr></thead><tbody id="measBody"></tbody></table></div>
+            <p class="small muted">Температураны 0,5 °C дәлдікпен, көлемді менискустың төменгі шетімен оқыңыз. Массаны килограммен жазыңыз (мысалы, 41,3 г = 0,0413 кг).</p>
+            <p id="measDone" class="okmsg" hidden>Үш тәжірибенің өлшеу нәтижелері жазылды. Келесі кезең: есептеу.</p>
+          </div>
+          <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Есептеу →</button></div>
+        </section>
+
+        <!-- 4 CALC -->
+        <section class="page" data-page="4" hidden>
+          <div class="phead"><div><p class="tag">5-кезең</p><h2>Есептеу</h2></div><p class="goal">Су мен мұздың массасын тауып, (1) формула бойынша мұздың меншікті балқу жылуын есептеңіз.</p></div>
+          <div class="lab">
+            <div class="col">
+              <div class="tw"><table class="t"><thead><tr><th>№</th><th><i>t</i>₁, °C</th><th class="w"><i>t</i>₂, °C</th><th class="i"><i>t</i>, °C</th><th><i>m</i>₁, кг</th><th class="w">Су массасы <i>m</i>₂, кг</th><th class="i">Δ<i>V</i> = <i>V</i>₂ − <i>V</i>₁, см³</th><th class="i">Мұз массасы <i>m</i>₃, кг</th><th>λ, Дж/кг</th></tr></thead><tbody id="calcBody"></tbody></table></div>
+              <p id="calcMissing" class="warnmsg" hidden>Кейбір өлшеу нәтижелері әлі жазылмаған. Оларды «Зертхана» бетіндегі кестеге жазыңыз.</p>
+              <p class="small muted">λ-ны бүтін санмен немесе стандарт түрде емес, жай санмен жазыңыз (мысалы, 352000).</p>
+            </div>
+            <div class="card" style="align-self:start">
+              <p class="label">Есептеу ретімен</p>
+              <div class="formula"><math display="block"><msub><mi>m</mi><mn>2</mn></msub><mo>=</mo><mi>ρ</mi><msub><mi>V</mi><mn>1</mn></msub><mo>,</mo><mspace width="0.8em"></mspace><msub><mi>m</mi><mn>3</mn></msub><mo>=</mo><mi>ρ</mi><mi mathvariant="normal">Δ</mi><mi>V</mi></math></div>
+              <div class="formula"><math display="block"><mi>λ</mi><mo>=</mo><mfrac><mrow><msub><mi>c</mi><mn>1</mn></msub><msub><mi>m</mi><mn>1</mn></msub><mo>(</mo><msub><mi>t</mi><mn>1</mn></msub><mo>−</mo><mi>t</mi><mo>)</mo><mo>+</mo><msub><mi>c</mi><mn>2</mn></msub><msub><mi>m</mi><mn>2</mn></msub><mo>(</mo><msub><mi>t</mi><mn>2</mn></msub><mo>−</mo><mi>t</mi><mo>)</mo><mo>−</mo><msub><mi>c</mi><mn>2</mn></msub><msub><mi>m</mi><mn>3</mn></msub><mi>t</mi></mrow><msub><mi>m</mi><mn>3</mn></msub></mfrac></math><span class="eq">(1)</span></div>
+              <p class="small muted"><i>c</i>₁ = 920 Дж/(кг·°C), <i>c</i>₂ = 4200 Дж/(кг·°C), <i>t</i>₃ = 0 °C.</p>
+              <p class="small muted">Мысалы: <i>m</i>₁ = 0,040 кг, <i>t</i>₁ = 22 °C, <i>m</i>₂ = 0,100 кг, <i>t</i>₂ = 40 °C, <i>t</i> = 20 °C, <i>m</i>₃ = 0,020 кг. Онда алымы 920·0,040·2 + 4200·0,100·20 − 4200·0,020·20 = 73,6 + 8400 − 1680 = 6793,6 Дж, ал λ = 6793,6 / 0,020 ≈ 339 680 Дж/кг.</p>
+            </div>
+          </div>
+          <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Салыстыру →</button></div>
+        </section>
+
+        <!-- 5 COMPARE -->
+        <section class="page" data-page="5" hidden>
+          <div class="phead"><div><p class="tag">6-кезең</p><h2>Кестедегі мәнмен салыстыру</h2></div><p class="goal">λ-ның орташа мәнін тауып, кестедегі мәнмен (3,4·10⁵ Дж/кг) салыстырыңыз және абсолют қателікті анықтаңыз.</p></div>
+          <div class="two">
+            <div class="col">
+              <div class="card">
+                <div class="formula"><math display="block"><msub><mi>λ</mi><mtext>орт</mtext></msub><mo>=</mo><mfrac><mrow><msub><mi>λ</mi><mn>1</mn></msub><mo>+</mo><msub><mi>λ</mi><mn>2</mn></msub><mo>+</mo><msub><mi>λ</mi><mn>3</mn></msub></mrow><mn>3</mn></mfrac></math><span class="eq">(2)</span></div>
+                <div class="formula"><math display="block"><mi mathvariant="normal">Δ</mi><mi>λ</mi><mo>=</mo><mo>|</mo><msub><mi>λ</mi><mtext>кесте</mtext></msub><mo>−</mo><msub><mi>λ</mi><mtext>орт</mtext></msub><mo>|</mo></math><span class="eq">(3)</span></div>
+                <div class="formula"><math display="block"><mi>ε</mi><mo>=</mo><mfrac><mrow><mi mathvariant="normal">Δ</mi><mi>λ</mi></mrow><msub><mi>λ</mi><mtext>кесте</mtext></msub></mfrac><mo>·</mo><mn>100</mn><mo>%</mo></math><span class="eq">(4)</span></div>
+              </div>
+              <p>Сіздің нәтижелеріңіз: λ₁ = <b class="mono" id="ro-l1">—</b>, λ₂ = <b class="mono" id="ro-l2">—</b>, λ₃ = <b class="mono" id="ro-l3">—</b> Дж/кг.</p>
+              <div class="fields">
+                <label class="fld" for="in-lavg">λ<sub>орт</sub> = <input id="in-lavg" inputmode="decimal" autocomplete="off"> Дж/кг</label>
+                <label class="fld" for="in-dl">Δλ = <input id="in-dl" inputmode="decimal" autocomplete="off"> Дж/кг</label>
+                <label class="fld" for="in-eps">ε = <input id="in-eps" inputmode="decimal" autocomplete="off"> %</label>
+              </div>
+              <p class="summary" id="resLine"></p>
+            </div>
+            <figure class="view"><figcaption><span>λ мәндері, кДж/кг</span><span>пунктир: кестедегі мән 340 кДж/кг</span></figcaption><div class="chart-wrap"><canvas id="chartCv" aria-label="Тәжірибеде алынған λ мәндерінің бағаналы диаграммасы"></canvas></div></figure>
+          </div>
+          <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Қорытынды →</button></div>
+        </section>
+
+        <!-- 6 CONCLUSION -->
+        <section class="page" data-page="6" hidden>
+          <div class="phead"><div><p class="tag">7-кезең</p><h2>Қорытынды</h2></div><p class="goal">Нәтижені кестедегі мәнмен салыстырып, оған әсер еткен факторларды анықтаңыз.</p></div>
+          <div id="conclBox" style="display:grid;gap:10px;max-width:880px"></div>
+          <div style="max-width:880px;display:grid;gap:6px"><p class="label">Сіздің қорытындыңыз</p><p class="summary" id="summary"></p></div>
+          <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Тапсыру →</button></div>
+        </section>
+
+        <!-- 7 SUBMIT -->
+        <section class="page" data-page="7" hidden>
+          <div class="phead"><div><p class="tag">8-кезең</p><h2>Тапсыру</h2></div></div>
+          <div id="resultBox" hidden style="display:grid;gap:14px;max-width:940px"></div>
+          <div id="preSubmit" class="two">
+            <div class="col">
+              <div id="completeness" class="card"></div>
+              <p class="small muted">Есептеулер сіздің өз өлшеулеріңіз бойынша тексеріледі: өлшеуде қате кетсе де, кейінгі есептеулер дұрыс орындалса, олардың балы сақталады.</p>
+              <p id="modeNote" class="small muted"></p>
+              <div><button id="submitBtn" class="primary" type="button" disabled>Жұмысты тапсыру</button></div>
+              <div id="confirmBox" class="confirm" hidden>
+                <p><b>Жұмысты тапсырасыз ба?</b> Тапсырғаннан кейін кестедегі мәндерді өзгерту мүмкін болмайды.</p>
+                <div class="controls"><button id="confirmYes" class="primary" type="button">Иә, тапсыру</button><button id="confirmNo" type="button">Болдырмау</button></div>
+              </div>
+              <p id="submitErr" class="err" aria-live="polite"></p>
+            </div>
+            <div>
+              <p class="label" style="margin-bottom:8px">Бағалау критерийлері · 10 балл</p>
+              <div class="tw"><table class="rubric"><thead><tr><th>№</th><th>Дескриптор</th><th>Мақсат</th><th style="text-align:right">Балл</th></tr></thead><tbody id="rubricBody"></tbody></table></div>
+            </div>
+          </div>
+          <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <section id="teacherView" class="page teacher" hidden aria-label="Мұғалім панелі">
+    <div class="phead">
+      <div><p class="tag">№2 · 8-сынып · нәтижелер нақты уақытта жаңарады</p><h2>Мұғалім панелі</h2></div>
+      <div class="t-tools">
+        <label for="clsFilter" class="small muted">Сынып</label>
+        <select id="clsFilter"><option value="">Барлығы</option></select>
+        <button id="csvBtn" type="button">CSV жүктеу</button>
+        <button id="copyTblBtn" type="button">Кестені көшіру</button>
+        <button id="backBtn" type="button">Зертханаға оралу</button>
+      </div>
+    </div>
+    <p id="tMsg" class="small muted"></p>
+    <div id="tOnline" style="display:grid;gap:16px">
+      <div class="stats" id="tStats"></div>
+      <div style="display:grid;gap:8px"><p class="label">Критерийлер бойынша орындалу</p><div class="bars" id="tBars"></div></div>
+      <div class="tw"><table class="roster"><thead><tr><th>Оқушы</th><th>Сынып</th><th>Нұсқа</th><th>Балл</th><th>Баға</th><th>К1 … К10</th><th>λ орт, Дж/кг</th><th>Тапсырылды</th><th></th></tr></thead><tbody id="tBody"></tbody></table></div>
+      <div id="tEmpty" class="empty" hidden>Әзірге ешкім тапсырған жоқ. Оқушылар жұмысты тапсырған сәтте нәтижелер осы кестеде пайда болады.</div>
+    </div>
+    <div class="verify">
+      <p class="label">Нәтиже кодын тексеру</p>
+      <p style="font-size:14px">Оқушы офлайн режимде тапсырса, сізге нәтиже кодын жібереді. Кодты осында қойып тексеріңіз.</p>
+      <div class="row"><input id="codeIn" type="text" placeholder="M8.…" autocomplete="off" aria-label="Нәтиже коды"><button id="codeBtn" type="button">Тексеру</button></div>
+      <div id="codeOut" class="vout" hidden></div>
+    </div>
+    <details class="note">
+      <summary>Оқушылар нәтижені онлайн қалай жібереді</summary>
+      <p>Онлайн жіберу үшін оқушы claude.ai аккаунтымен кіріп, бетті сіздің шақыруыңыз арқылы ашуы керек. Жеке аккаунтта оқушыны email арқылы «Editor» деңгейінде шақырыңыз, ал бетке жалпы сілтеме (public link) ашпаңыз. Team немесе Enterprise ұйымында ұйым мүшесіне «Contributor» деңгейі жеткілікті.</p>
+      <p>Басқа жағдайда бет офлайн режимде жұмыс істейді: оқушы жұмысты толық орындайды, балын көреді және сізге нәтиже кодын жібереді.</p>
+      <p>Баға шкаласы: 0–39 % → «2», 40–64 % → «3», 65–84 % → «4», 85–100 % → «5».</p>
+    </details>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= constants ================= */
+const LT = 334;              // true specific heat of fusion, J/g (physics of the simulation)
+const LAMBDA_TAB = 340000;   // textbook table value, J/kg
+const C1 = 920, C2 = 4200, CWG = 4.2, CALG = 0.92;
+const CYLMAX = 150, CALCAP = 260, MIX_WIN = 90;
+const MONO = '"JetBrains Mono", ui-monospace, monospace';
+const DEMO_SEED = 820417;
+const SALT = 'M8|fizika8|balqu';
+const PAGE_NAMES = ['Тіркелу', 'Теория', 'Қауіпсіздік', 'Зертхана', 'Есептеу', 'Салыстыру', 'Қорытынды', 'Тапсыру'];
+const VIOL_NAMES = { hands: 'мұзды жалаң қолмен алу', spill: 'мензурканы асыра толтырып, суды таразы жанына төгу' };
+const TH_LOC = { air: 'ауада', water: 'жылы суда', thermos: 'термоста', cal: 'калориметрде' };
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function num(s){ if (s === null || s === undefined) return NaN; const t = String(s).trim().replace(/\s+/g, '').replace('−', '-').replace(',', '.'); if (!t || !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(t)) return NaN; return parseFloat(t); }
+const fmt = (x, d) => Number.isFinite(x) ? x.toFixed(d).replace('.', ',').replace('-', '−') : '—';
+const fmtInt = x => Number.isFinite(x) ? Math.round(x).toLocaleString('ru-RU').replace(/ /g, ' ') : '—';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hashStr(s){ let h = 2166136261 >>> 0; for (const ch of String(s)){ h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
+const arr = (n, v) => Array.from({ length: n }, () => v);
+
+/* ================= variant & physics ================= */
+function makeVariant(seed){
+  const r = mulberry32(seed >>> 0); r();
+  const Troom = Math.round((20 + 4 * r()) * 10) / 10;
+  const Tv = Math.round((35 + 10 * r()) * 10) / 10;
+  const m1 = Math.round((38 + 10 * r()) * 10) / 10;              // aluminium inner cup, g
+  const ice = [0, 1, 2].map(() => Math.round((18 + 10 * r()) * 100) / 100);
+  const wet = Math.round((0.8 + 0.5 * r()) * 100) / 100;          // water film on undried ice, g
+  const r1 = Math.round((0.5 + 0.2 * r()) * 100) / 100;           // drops left in the cylinder
+  const r2 = Math.round((0.6 + 0.3 * r()) * 100) / 100;           // drops left on the calorimeter cup
+  const scaleOff = (r() < 0.5 ? -1 : 1) * Math.round((0.2 + 0.4 * r()) * 10) / 10;   // the empty scale is not zeroed
+  return { seed: seed >>> 0, Troom, Tv, m1, ice, wet, r1, r2, scaleOff };
+}
+function rhoSat(T){ const p = 611.2 * Math.exp(17.62 * T / (243.12 + T)); return p * 0.018 / (8.314 * (T + 273.15)); }
+function evapW(T){ return Math.max(0, 0.0026 * 0.0105 * (rhoSat(T) - 0.009) * 2.3e6); }
+function newBench(Vv){ const R = Vv.Troom; return { t: 0, lid: true, cup: 'table', cal: { ml: 0, Tw: R, Tcup: R, ice: 0 }, cyl: { ml: 0, kind: null, T: R }, th: { loc: 'air', T: R }, tare: -(Vv.scaleOff || 0), tongs: false, held: null, stirring: false, seenAir: false, seenWater: false, weighed: false, iceCount: 0, cur: null }; }
+function envT(B, Vv){
+  switch (B.th.loc){
+    case 'water': return [Vv.Tv, 3];
+    case 'thermos': return [0, 3];
+    case 'cal': return B.cup === 'cal' && B.cal.ml > 0 ? [B.cal.Tw, B.stirring ? 1.5 : 3.5] : [B.cup === 'cal' ? B.cal.Tcup : Vv.Troom, 25];
+    default: return [Vv.Troom, 25];
+  }
+}
+function engStep(B, Vv, dt){
+  const c = B.cal, R = Vv.Troom, Ccup = CALG * Vv.m1;
+  if (B.cup === 'cal' && c.ml > 0){
+    const Cw = CWG * c.ml, open = !B.lid;
+    const Pwc = 5 * (c.Tw - c.Tcup);
+    const Ps = (open ? 0.25 : 0.10) * (c.Tw - R) + evapW(c.Tw) * (open ? 1 : 0.12) * (c.Tw > R ? 1 : 0.3);
+    c.Tw += (-Pwc - Ps) / Cw * dt; c.Tcup += Pwc / Ccup * dt;
+    if (B.cur) B.cur.loss += Ps * dt;
+    if (c.ice > 0){
+      const K = (B.stirring ? 1.7 : 0.45) * Math.pow(c.ice, 2 / 3);
+      const P = K * Math.max(0, c.Tw);
+      let dm = P * dt / LT; if (dm > c.ice) dm = c.ice;
+      c.Tw -= dm * LT / (CWG * c.ml);
+      c.Tw = (c.Tw * c.ml) / (c.ml + dm); c.ml += dm; c.ice -= dm;
+      if (c.ice < 1e-4){ c.ice = 0; if (B.cur && B.cur.phase === 'ice'){ B.cur.phase = 'melted'; B.cur.meltAt = B.t; } }
+    }
+  } else {
+    c.Tcup += (R - c.Tcup) * (1 - Math.exp(-dt / 300));
+  }
+  if (B.held){ const melt = Math.min(B.held.m, 0.012 * dt); B.held.m -= melt; B.held.w += melt; }
+  const [Te, tau] = envT(B, Vv); B.th.T += (Te - B.th.T) * (1 - Math.exp(-dt / tau));
+  B.t += dt;
+  track(B, Vv);
+}
+function engAdvance(B, Vv, total){ let left = total; while (left > 1e-9){ const h = Math.min(0.05, left); engStep(B, Vv, h); left -= h; } }
+function track(B, Vv){
+  const th = B.th, cur = B.cur;
+  if (th.loc === 'air' && Math.abs(th.T - Vv.Troom) < 0.2) B.seenAir = true;
+  if (th.loc === 'water' && Math.abs(th.T - Vv.Tv) < 0.2) B.seenWater = true;
+  if (!cur || cur.phase !== 'melted' || th.loc !== 'cal' || B.cup !== 'cal' || B.cal.ml <= 0) return;
+  if (B.t - cur.meltAt > MIX_WIN || Math.abs(th.T - B.cal.Tw) > 0.2) return;
+  const T = Math.round(th.T * 100) / 100;
+  cur.mixMin = cur.mixMin == null ? T : Math.min(cur.mixMin, T); cur.mixMax = cur.mixMax == null ? T : Math.max(cur.mixMax, T);
+}
+function scaleReading(B, Vv){ const load = B.cup === 'scale' ? Vv.m1 : 0; return Math.round((load - B.tare) * 10) / 10; }
+function actPourWarm(B, Vv, ml, rnd){
+  if (B.cyl.ml > 1.5 && B.cyl.kind === 'mix') return { msg: 'Мензуркада алдыңғы тәжірибенің суы бар. Алдымен мензурканы босатыңыз.' };
+  const add = ml * (1 + 0.06 * (rnd - 0.5)), nm = B.cyl.ml + add;
+  if (nm > CYLMAX + 0.3){ B.cyl.ml = CYLMAX; B.cyl.kind = 'warm'; B.cyl.T = Vv.Tv; return { viol: 'spill', msg: 'Мензурка толып, су үстелге, электронды таразының жанына төгілді! Мензурканы жоғарғы белгісінен асырып толтыруға болмайды.' }; }
+  B.cyl.ml = nm; B.cyl.kind = 'warm'; B.cyl.T = Vv.Tv; return { ok: true };
+}
+function actCylToCal(B, Vv, sel){
+  if (B.cyl.ml < 2 || B.cyl.kind !== 'warm') return { msg: 'Мензуркада жылы су жоқ.' };
+  if (B.cup !== 'cal') return { msg: 'Алдымен калориметрдің ішкі стақанын калориметрге салыңыз.' };
+  if (B.lid) return { msg: 'Алдымен калориметрдің қақпағын ашыңыз.' };
+  if (B.cal.ml > 0 || B.cur) return { msg: 'Калориметрде су бар. Алдымен оны босатып, стақанды сүртіңіз.' };
+  const read = Math.round(B.cyl.ml * 10) / 10, moved = B.cyl.ml - Vv.r1;
+  B.cal.ml = moved; B.cal.Tw = Vv.Tv; B.cal.ice = 0;
+  B.cyl.ml = Vv.r1; B.cyl.kind = 'warm';
+  B.cur = { i: sel, vPour: read, m2true: Math.round(moved * 100) / 100, iceTrue: null, wet: null, iceAt: null, meltAt: null, mixMin: null, mixMax: null, V2: null, phase: 'water', waterAt: B.t, loss: 0, lidOpenIce: null };
+  return { ok: true };
+}
+function actTakeIce(B, Vv){
+  if (B.held) return { msg: 'Қысқышта мұз кесегі бар.' };
+  if (!B.tongs) return { viol: 'hands', msg: 'Мұзды жалаң қолмен алуға болмайды! Алдымен «Қысқыш» құралын таңдаңыз.' };
+  const k = B.cur ? B.cur.i - 1 : Math.min(2, B.iceCount % 3);
+  B.held = { m: Vv.ice[clamp(k, 0, 2)], w: Vv.wet, dried: false }; B.iceCount++;
+  return { ok: true };
+}
+function actDryIce(B){ if (!B.held) return { msg: 'Қысқышта мұз жоқ.' }; B.held.w = 0.08; B.held.dried = true; return { ok: true }; }
+function actIceToCal(B, Vv){
+  if (!B.held) return { msg: 'Алдымен термостан мұз кесегін алыңыз.' };
+  if (!B.cur || B.cur.phase !== 'water') return { msg: 'Алдымен калориметрге 100 см³ жылы су құйыңыз.' };
+  if (B.lid) return { msg: 'Алдымен калориметрдің қақпағын ашыңыз.' };
+  const c = B.cal, h = B.held;
+  c.Tw = (c.ml * c.Tw) / (c.ml + h.w); c.ml += h.w; c.ice = h.m;
+  B.cur.iceTrue = Math.round(h.m * 1000) / 1000; B.cur.wet = Math.round(h.w * 1000) / 1000; B.cur.iceAt = B.t; B.cur.phase = 'ice';
+  B.held = null; return { ok: true };
+}
+function actCalToCyl(B, Vv){
+  const cur = B.cur;
+  if (!cur || cur.phase === 'water') return { msg: 'Калориметрде мұз ерітілген су жоқ.' };
+  if (cur.phase === 'ice') return { msg: 'Мұз әлі толық ерімеді. Араластырып, күтіңіз.' };
+  if (cur.phase === 'poured') return { msg: 'Су мензуркаға құйылып қойған.' };
+  if (B.lid) return { msg: 'Алдымен калориметрдің қақпағын ашыңыз.' };
+  if (B.cyl.ml > 1.5) return { msg: 'Мензуркада су бар. Алдымен мензурканы босатыңыз.' };
+  const moved = B.cal.ml - Vv.r2, nm = B.cyl.ml + moved;
+  if (nm > CYLMAX + 0.3){ B.cyl.ml = CYLMAX; B.cyl.kind = 'mix'; B.cal.ml = 0; cur.phase = 'poured'; cur.V2 = null; return { viol: 'spill', msg: 'Мензурка толып, су төгілді!' }; }
+  B.cyl.ml = nm; B.cyl.kind = 'mix'; B.cyl.T = B.cal.Tw; B.cal.ml = 0; cur.phase = 'poured'; cur.V2 = Math.round(nm * 10) / 10;
+  return { ok: true };
+}
+function finalizeCur(B){ const x = B.cur; return { i: x.i, vPour: x.vPour, m2true: x.m2true, iceTrue: x.iceTrue, wet: x.wet, mixMin: x.mixMin, mixMax: x.mixMax, V2: x.V2, loss: Math.round(x.loss), dur: Math.round(B.t - x.waterAt) }; }
+function actEmptyCal(B, Vv){
+  let fin = null;
+  if (B.cur && B.cur.phase === 'poured') fin = finalizeCur(B);
+  B.cal.ml = 0; B.cal.ice = 0; B.cal.Tw = Vv.Troom; B.cal.Tcup = Vv.Troom; B.cur = null;
+  return { ok: true, fin };
+}
+
+/* ================= content ================= */
+const SAFE_Q = [
+  { q: 'Термостан мұз кесегін қалай алу керек?', a: ['Қысқышпен', 'Жалаң қолмен', 'Термосты аударып', 'Саусақпен итеріп'], c: 0 },
+  { q: 'Электронды таразыны қалай пайдалану керек?', a: ['Тек құрғақ ыдысты қойып, жанында су құймау', 'Ылғал ыдысты қоюға болады', 'Суды тікелей таразының үстінде құю', 'Таразының үстіне мұз қою'], c: 0 },
+  { q: 'Мензурканы қалай толтыру керек?', a: ['Үстел үстінде, жоғарғы белгісінен асырмай', 'Толып төгілгенше', 'Мензурканы қолда ұстап, тез', 'Таразының үстінде'], c: 0 },
+  { q: 'Үстелге су төгілсе, не істеу керек?', a: ['Дереу сүртіп, судың электр құралдарына тимеуін қадағалау', 'Ештеңе істемеу', 'Үстіне қағаз қойып жалғастыру', 'Таразыны суға қою'], c: 0 },
+  { q: 'Термометр сынып қалса, не істеу керек?', a: ['Сынықтарды қолмен жинамай, мұғалімге хабарлау', 'Сынықтарды қолмен жинау', 'Жұмысты жалғастыра беру', 'Сынықтарды калориметрге салу'], c: 0 },
+];
+const FACTORS = { q: 'Нәтижеге қандай факторлар әсер етті? (бірнеше жауап дұрыс)', a: [
+  'Мұз бетіндегі су: мұзды сүртпесе, m₃ артып кетеді',
+  'Калориметр стақанында және мензуркада қалған су тамшылары: ΔV дәл өлшенбейді',
+  'Калориметрдің қоршаған ортамен жылу алмасуы',
+  'Көлем мен температураны өлшеу дәлдігі',
+  'Мұз кесегінің түсі',
+  'Калориметрдің сыртқы пішіні',
+  'Тәжірибенің сабақтың басында өткізілуі'], ok: [0, 1, 2, 3] };
+const WIPE = { q: 'Мұзды калориметрге салар алдында неліктен сүлгімен сүрту керек?', a: [
+  'Мұз бетіндегі су ΔV-ға қосылып, m₃ үлкейеді де, λ кіші болып шығады',
+  'Мұз тезірек еруі үшін',
+  'Калориметр кір болмауы үшін',
+  'Мұздың температурасын көтеру үшін'], c: 0 };
+const ZERO = { q: 'Неліктен мұз кесегі мұз бен су араласқан термостан алынады?', a: [
+  'Мұздың температурасы дәл 0 °C болуы үшін (t₃ = 0 °C)',
+  'Мұз ерімей сақталуы үшін ғана',
+  'Мұздың массасы артуы үшін',
+  'Мұз таза болуы үшін'], c: 0 };
+const Q3 = { q: 'Q₃ = λm₃ + c₂m₃(t − t₃) жылу мөлшері неге жұмсалады?', a: [
+  'Мұзды 0 °C-та балқытуға және пайда болған суды t температураға дейін жылытуға',
+  'Тек калориметр стақанын жылытуға',
+  'Жылы суды t₂ температураға дейін қыздыруға',
+  'Мұзды −10 °C-қа дейін салқындатуға'], c: 0 };
+const RUBRIC = [
+  { d: 'Қауіпсіздік ережелері бойынша тестті бірінші әрекетте өтеді (кемінде 4/5)', o: '8.1.3.3' },
+  { d: 'Тәжірибе кезінде қауіпсіздік ережелерін сақтайды: мұзды қысқышпен алады, мензурканы асыра толтырып суды төкпейді', o: '8.1.3.3' },
+  { d: 'Ауаның <i>t</i>₁ және жылы судың <i>t</i>₂ температураларын дұрыс өлшейді (±0,6 °C, 6 мәннің кемінде 5-еуі)', o: '8.3.2.12' },
+  { d: 'Калориметр стақанының массасын <i>m</i>₁ электронды таразымен өлшеп, килограммен жазады (кемінде 2/3)', o: '8.3.2.12' },
+  { d: 'Тәжірибені 3 рет 100 см³ сумен орындап, <i>V</i>₁ және <i>V</i>₂ көлемдерін мензуркадан дәл оқиды (±1 см³, 6 мәннің кемінде 5-еуі)', o: '8.3.2.12' },
+  { d: 'Мұз толық ерігендегі қоспа температурасын <i>t</i> дұрыс өлшейді (кемінде 2/3)', o: '8.3.2.12' },
+  { d: 'Су массасын <i>m</i>₂ = ρ<i>V</i>₁, көлем өзгерісін Δ<i>V</i> және мұз массасын <i>m</i>₃ = ρΔ<i>V</i> дұрыс табады (кемінде 2/3)', o: '8.3.2.12' },
+  { d: 'Мұздың меншікті балқу жылуын (1) формула бойынша есептейді (кемінде 2/3)', o: '8.3.2.12' },
+  { d: 'λ-ның орташа мәнін тауып, кестедегі мәнмен салыстырады: Δλ мен ε-ны есептейді', o: '8.3.2.12' },
+  { d: 'Қорытынды жасайды: нәтижені салыстырады, әсер еткен факторларды және тәжірибенің шарттарын түсіндіреді (5 тапсырманың кемінде 4-еуі)', o: '8.3.2.12' },
+];
+
+/* ================= state ================= */
+const blankE = () => ({ t1: arr(3, ''), t2: arr(3, ''), t: arr(3, ''), m1: arr(3, ''), v1: arr(3, ''), v2: arr(3, ''), m2: arr(3, ''), dv: arr(3, ''), m3: arr(3, ''), lam: arr(3, ''), lavg: '', dl: '', eps: '', cmp: null, factors: [], wipe: null, zero: null, q3: null });
+function defaults(Vv){ return { ver: 1, started: false, name: '', cls: '', seed: 0, page: 0, seen: arr(8, false), sel: 1, B: newBench(Vv || V), trials: [], viol: [], vlog: [], safe: { attempts: 0, first: null, passed: false, ans: arr(5, null), last: null }, E: blankE(), result: null }; }
+let V = makeVariant(DEMO_SEED);
+let S = defaults(V);
+let uid = null, db = null, userCap = null, dlCap = null, isOwner = false, online = false, initDone = false;
+let lensZoom = 6, needDraw = true, subs = [], ALERT = null;
+
+function vcode(seed){ return ((seed || S.seed) >>> 0).toString(36).toUpperCase(); }
+function draftKey(){ return 'lab8-2-draft:' + (uid || 'local'); }
+function saveDraft(){ try { localStorage.setItem(draftKey(), JSON.stringify(S)); } catch (e) {} }
+let saveTimer = null; function saveSoon(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 350); }
+function loadDraft(){ try { const s = localStorage.getItem(draftKey()); if (s) { const d = JSON.parse(s); if (d && typeof d === 'object' && d.ver === 1) return d; } } catch (e) {} return null; }
+function applyDraft(d){
+  const base = defaults(V); S = Object.assign(base, d);
+  const bE = blankE(); S.E = Object.assign(bE, d.E || {}); Object.keys(bE).forEach(k => { if (Array.isArray(bE[k]) && k !== 'factors' && (!Array.isArray(S.E[k]) || S.E[k].length !== bE[k].length)) S.E[k] = bE[k]; });
+  if (!Array.isArray(S.E.factors)) S.E.factors = [];
+  const nb = newBench(V); S.B = Object.assign(nb, d.B || {}); ['cal', 'cyl', 'th'].forEach(k => { S.B[k] = Object.assign(nb[k], (d.B || {})[k] || {}); });
+  S.safe = Object.assign(base.safe, d.safe || {}); if (!Array.isArray(S.safe.ans) || S.safe.ans.length !== 5) S.safe.ans = arr(5, null);
+  ['viol', 'vlog', 'trials'].forEach(k => { if (!Array.isArray(S[k])) S[k] = []; });
+  if (!Array.isArray(S.seen) || S.seen.length !== 8) S.seen = base.seen;
+  if (!(S.page >= 0 && S.page <= 7)) S.page = 0; if (!(S.sel >= 1 && S.sel <= 3)) S.sel = 1;
+}
+function trialOf(list, i){ for (let k = list.length - 1; k >= 0; k--) if (list[k].i === i) return list[k]; return null; }
+function allTrials(st){ const list = (st.trials || []).slice(); const B = st.B; if (B && B.cur && B.cur.phase === 'poured'){ const f = finalizeCur(B); const k = list.findIndex(x => x.i === f.i); if (k >= 0) list[k] = f; else list.push(f); } return list; }
+
+/* ================= grading (pure) ================= */
+const inR = (x, lo, hi, tol) => Number.isFinite(x) && lo != null && hi != null && x >= lo - tol && x <= hi + tol;
+function lamOf(m1, t1, m2, t2, t, m3){ const fin = Number.isFinite; if (![m1, t1, m2, t2, t, m3].every(fin) || m3 === 0) return NaN; return (C1 * m1 * (t1 - t) + C2 * m2 * (t2 - t) - C2 * m3 * t) / m3; }
+function cmpCorrect(rel){ if (!Number.isFinite(rel)) return []; const out = []; if (Math.abs(rel) < 4) out.push('eq'); if (Math.abs(rel) >= 2) out.push(rel > 0 ? 'gt' : 'lt'); return out; }
+function grade(st, Vv){
+  const E = st.E, fin = Number.isFinite, crit = arr(10, 0), info = arr(10, ''), list = allTrials(st), B = st.B || {};
+  const f = st.safe.first; crit[0] = f !== null && f >= 4 ? 1 : 0; info[0] = f === null ? 'тест тапсырылмаған' : 'бірінші әрекет: ' + f + '/5';
+  crit[1] = st.viol.length === 0 ? 1 : 0; info[1] = st.viol.length ? 'бұзушылық: ' + st.viol.map(v => VIOL_NAMES[v] || v).join(', ') : 'бұзушылық жоқ';
+  let c3 = 0, c4 = 0, c5r = 0, c5v = 0, c6 = 0, c7 = 0, c8 = 0; const lams = [];
+  for (let i = 0; i < 3; i++){
+    const tr = trialOf(list, i + 1), g = k => num(E[k][i]);
+    const t1 = g('t1'), t2 = g('t2'), t = g('t'), m1 = g('m1'), v1 = g('v1'), v2 = g('v2'), m2 = g('m2'), dv = g('dv'), m3 = g('m3'), lam = g('lam');
+    if (B.seenAir && fin(t1) && Math.abs(t1 - Vv.Troom) <= 0.6) c3++;
+    if (B.seenWater && fin(t2) && Math.abs(t2 - Vv.Tv) <= 0.6) c3++;
+    if (B.weighed && fin(m1) && Math.abs(m1 - Vv.m1 / 1000) <= 0.00015) c4++;
+    if (tr && Math.abs(tr.vPour - 100) <= 2) c5v++;
+    if (tr && fin(v1) && Math.abs(v1 - tr.vPour) <= 1) c5r++;
+    if (tr && tr.V2 != null && fin(v2) && Math.abs(v2 - tr.V2) <= 1) c5r++;
+    if (tr && inR(t, tr.mixMin, tr.mixMax, 0.6)) c6++;
+    if (fin(m2) && fin(v1) && Math.abs(m2 - v1 / 1000) <= 0.0006 && fin(dv) && fin(v2) && Math.abs(dv - (v2 - v1)) <= 0.15 && fin(m3) && Math.abs(m3 - dv / 1000) <= 0.00006) c7++;
+    const ex = lamOf(m1, t1, m2, t2, t, m3);
+    if (fin(lam) && fin(ex) && Math.abs(lam - ex) <= Math.max(500, 0.02 * Math.abs(ex))) c8++;
+    lams.push(lam);
+  }
+  crit[2] = c3 >= 5 ? 1 : 0; info[2] = c3 + '/6 мән дұрыс';
+  crit[3] = c4 >= 2 ? 1 : 0; info[3] = c4 + '/3 мән дұрыс';
+  crit[4] = c5v === 3 && c5r >= 5 ? 1 : 0; info[4] = 'тәжірибе: ' + c5v + '/3, дәл оқылған көлем: ' + c5r + '/6';
+  crit[5] = c6 >= 2 ? 1 : 0; info[5] = c6 + '/3 мән дұрыс';
+  crit[6] = c7 >= 2 ? 1 : 0; info[6] = c7 + '/3 жол дұрыс';
+  crit[7] = c8 >= 2 ? 1 : 0; info[7] = c8 + '/3 мән дұрыс';
+  const la = num(E.lavg), dl = num(E.dl), eps = num(E.eps);
+  let a1 = false, a2 = false, a3 = false;
+  if (lams.every(fin) && fin(la)){ const m = (lams[0] + lams[1] + lams[2]) / 3; a1 = Math.abs(la - m) <= Math.max(300, 0.005 * Math.abs(m)); }
+  if (fin(la) && fin(dl)) a2 = Math.abs(dl - Math.abs(LAMBDA_TAB - la)) <= Math.max(1000, 0.01 * LAMBDA_TAB);
+  if (fin(dl) && fin(eps)) a3 = Math.abs(eps - dl / LAMBDA_TAB * 100) <= 0.3;
+  crit[8] = a1 && a2 && a3 ? 1 : 0; info[8] = 'λорт: ' + (a1 ? 'дұрыс' : 'қате') + ', Δλ: ' + (a2 ? 'дұрыс' : 'қате') + ', ε: ' + (a3 ? 'дұрыс' : 'қате');
+  let cc = 0;
+  const rel = fin(la) ? (la - LAMBDA_TAB) / LAMBDA_TAB * 100 : NaN;
+  if (E.cmp && cmpCorrect(rel).includes(E.cmp)) cc++;
+  const good = (E.factors || []).filter(i => FACTORS.ok.includes(i)).length, bad = (E.factors || []).filter(i => !FACTORS.ok.includes(i)).length;
+  if (good >= 2 && bad === 0) cc++;
+  if (E.wipe === WIPE.c) cc++; if (E.zero === ZERO.c) cc++; if (E.q3 === Q3.c) cc++;
+  crit[9] = cc >= 4 ? 1 : 0; info[9] = cc + '/5 тапсырма дұрыс';
+  const score = crit.reduce((x, y) => x + y, 0);
+  return { crit, info, score, grade5: grade5(score) };
+}
+function grade5(score){ const p = score * 10; return p < 40 ? 2 : p < 65 ? 3 : p < 85 ? 4 : 5; }
+
+/* ================= result code ================= */
+function b64e(str){ const b = new TextEncoder().encode(str); let bin = ''; b.forEach(x => { bin += String.fromCharCode(x); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function b64d(s){ s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
+function makeCode(res, at){ const p = { n: S.name, c: S.cls, v: vcode(), s: res.score, k: res.crit.join(''), t: at, l: S.E.lavg }; const b = b64e(JSON.stringify(p)); return 'M8.' + b + '.' + hashStr(SALT + b).toString(36); }
+function readCode(code){ try { const m = String(code).trim().match(/^M8\.([A-Za-z0-9_-]+)\.([a-z0-9]+)$/); if (!m) return null; if (hashStr(SALT + m[1]).toString(36) !== m[2]) return { bad: true }; return JSON.parse(b64d(m[1])); } catch (e) { return null; } }
+
+/* ================= UI actions ================= */
+const locked = () => !S.started || !!S.result;
+function flash(msg, warn){ ALERT = { msg, warn: !!warn, until: performance.now() + 6500 }; lastH = ''; }
+function addViol(type, msg){ if (!S.viol.includes(type)) S.viol.push(type); S.vlog.push({ type, msg, at: Date.now() }); if (S.vlog.length > 30) S.vlog.shift(); flash(msg, true); saveSoon(); }
+function handle(res){
+  if (!res) return;
+  if (res.viol) addViol(res.viol, res.msg); else if (res.msg) flash(res.msg, false);
+  if (res.fin){ const k = S.trials.findIndex(x => x.i === res.fin.i); if (k >= 0) S.trials[k] = res.fin; else S.trials.push(res.fin); const nx = [1, 2, 3].find(n => !trialOf(S.trials, n)); if (nx) S.sel = nx; }
+  needDraw = true; saveSoon(); renderBench(); refreshDerived();
+}
+function onAct(e){
+  const b = e.target.closest('[data-act]'); if (!b || b.disabled) return; const act = b.dataset.act, v = b.dataset.v, B = S.B;
+  if (act === 'lens'){ lensZoom = lensZoom === 6 ? 10 : lensZoom === 10 ? 0 : 6; needDraw = true; return; }
+  if (locked()) return;
+  if (!S.safe.passed){ flash('Алдымен «Қауіпсіздік» бетіндегі тесттен өтіңіз.'); return; }
+  switch (act){
+    case 'th': B.th.loc = v; handle({ ok: true }); break;
+    case 'cup':
+      if (v === B.cup) break;
+      if (B.cup === 'cal' && (B.cal.ml > 0 || B.cur)) { flash('Стақанда су бар. Алдымен суды мензуркаға құйып, калориметрді босатыңыз.'); break; }
+      if (v === 'scale' && Math.abs(B.tare) > 0.05 && !B.weighed) flash('Ескерту: таразы бос кезде нөлді көрсетпеді. Алдымен стақанды алып, таразыны нөлдеңіз.');
+      B.cup = v; if (v === 'scale' && Math.abs(B.tare) < 0.05) B.weighed = true; handle({ ok: true }); break;
+    case 'tare': B.tare = B.cup === 'scale' ? V.m1 : 0; if (B.cup === 'scale') flash('Таразы стақанмен бірге нөлденді: енді ол стақанның массасын көрсетпейді. Стақанды алып, бос таразыны нөлдеңіз.'); handle({ ok: true }); break;
+    case 'pw': handle(actPourWarm(B, V, +v, Math.random())); break;
+    case 'cyl2cal': handle(actCylToCal(B, V, S.sel)); break;
+    case 'dump': B.cyl.ml = 0; B.cyl.kind = null; handle({ ok: true }); break;
+    case 'tongs': B.tongs = !B.tongs; handle({ ok: true }); break;
+    case 'takeice': handle(actTakeIce(B, V)); break;
+    case 'dryice': handle(actDryIce(B)); break;
+    case 'ice2cal': handle(actIceToCal(B, V)); break;
+    case 'lid': B.lid = !B.lid; handle({ ok: true }); break;
+    case 'stir': if (!(B.cup === 'cal' && B.cal.ml > 0)) { flash('Калориметрде су жоқ.'); break; } B.stirring = !B.stirring; handle({ ok: true }); break;
+    case 'cal2cyl': handle(actCalToCyl(B, V)); break;
+    case 'emptycal':
+      if (B.cur && B.cur.phase !== 'poured' && !b.dataset.armed){ b.dataset.armed = '1'; b.textContent = 'Тәжірибе аяқталмаған. Растау'; b._t = setTimeout(() => { delete b.dataset.armed; renderBench(); }, 3500); break; }
+      clearTimeout(b._t); delete b.dataset.armed; B.stirring = false; handle(actEmptyCal(B, V)); break;
+    case 'trial': if (B.cur){ flash('Тәжірибені ауыстыру үшін алдымен калориметрді босатыңыз.'); break; } S.sel = +v; saveSoon(); renderBench(); break;
+  }
+}
+
+/* ================= canvas ================= */
+const C = {};
+const TOK = ['bg','surface','surface-2','ink','muted','line','primary','primary-soft','warm','warm-soft','ice','ice-edge','ice-soft','ok','bad','wall','wood','wood-edge','metal','metal-dark','insul','insul-dot','glass','glass-edge','scale-ink','sheet','column','lcd','lcd-ink','thermos'];
+function readColors(){ const cs = getComputedStyle(document.documentElement); TOK.forEach(k => { C[k] = cs.getPropertyValue('--' + k).trim() || '#888'; }); needDraw = true; drawChart(); }
+const views = [];
+function makeView(id, kind){
+  const cv = document.getElementById(id); if (!cv) return null;
+  const v = { cv, ctx: cv.getContext('2d'), w: 0, h: 0, kind, T: { s: 1, ox: 0, oy: 0 }, lens: null };
+  new ResizeObserver(() => sizeView(v)).observe(cv);
+  if (kind === 'cyl') attachLens(v);
+  views.push(v); return v;
+}
+function sizeView(v){ const r = v.cv.getBoundingClientRect(); if (!r.width) { v.w = 0; return; } const dpr = Math.min(2.5, window.devicePixelRatio || 1); v.w = r.width; v.h = r.height; v.cv.width = Math.round(r.width * dpr); v.cv.height = Math.round(r.height * dpr); v.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); needDraw = true; }
+function fitT(v, wr){ const s = Math.min(v.w / (wr.x1 - wr.x0), v.h / (wr.y1 - wr.y0)); const px = (v.w - (wr.x1 - wr.x0) * s) / 2, py = (v.h - (wr.y1 - wr.y0) * s) / 2; return { s, ox: px - wr.x0 * s, oy: v.h - py + wr.y0 * s }; }
+function attachLens(v){
+  const cv = v.cv, pt = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  cv.addEventListener('pointerdown', e => { const p = pt(e); v.lens = { px: p.x, py: p.y, touch: e.pointerType !== 'mouse' }; v.down = true; if (e.pointerType !== 'mouse') cv.setPointerCapture(e.pointerId); needDraw = true; });
+  cv.addEventListener('pointermove', e => { const touch = e.pointerType !== 'mouse'; if (!touch || v.down){ const p = pt(e); v.lens = { px: p.x, py: p.y, touch }; needDraw = true; } });
+  const end = e => { v.down = false; if (e.pointerType !== 'mouse') { v.lens = null; needDraw = true; } };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse'){ v.lens = null; needDraw = true; } });
+}
+function line(ctx, x1, y1, x2, y2){ ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+function rrect(ctx, x, y, w, h, r){ const rr = Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2); ctx.beginPath(); ctx.moveTo(x + rr, y); ctx.lineTo(x + w - rr, y); ctx.quadraticCurveTo(x + w, y, x + w, y + rr); ctx.lineTo(x + w, y + h - rr); ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h); ctx.lineTo(x + rr, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - rr); ctx.lineTo(x, y + rr); ctx.quadraticCurveTo(x, y, x + rr, y); ctx.closePath(); }
+function waterCol(T, a){ const f = clamp((T - 0) / 50, 0, 1); const r = Math.round(110 + f * 120), g = Math.round(180 - f * 40), b = Math.round(235 - f * 130); return `rgba(${r},${g},${b},${a})`; }
+function iceCube(ctx, X, Y, s, cx, cy, size){ const h = size; ctx.fillStyle = C.ice; ctx.globalAlpha = 0.92; rrect(ctx, X(cx - h / 2), Y(cy + h / 2), h * s, h * s, 0.25 * h * s); ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = C['ice-edge']; ctx.lineWidth = 1; ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,0.55)'; rrect(ctx, X(cx - h * 0.32), Y(cy + h * 0.34), h * 0.28 * s, h * 0.2 * s, 0.08 * h * s); ctx.fill(); }
+function drawThermo(ctx, X, Y, s, x, yb, T){
+  const L = 30, w = 0.9;
+  ctx.fillStyle = C.glass; ctx.globalAlpha = 0.85; rrect(ctx, X(x - w / 2), Y(yb + L), w * s, L * s, 0.45 * s); ctx.fill(); ctx.globalAlpha = 1;
+  ctx.strokeStyle = C['glass-edge']; ctx.lineWidth = 1; rrect(ctx, X(x - w / 2), Y(yb + L), w * s, L * s, 0.45 * s); ctx.stroke();
+  const hh = 4 + clamp(T + 10, 0, 115) / 115 * 24;
+  ctx.fillStyle = C.column; ctx.fillRect(X(x - 0.18), Y(yb + hh), 0.36 * s, hh * s);
+  ctx.beginPath(); ctx.arc(X(x), Y(yb), 0.75 * s, 0, Math.PI * 2); ctx.fill();
+}
+const SCENE = { x0: 0, x1: 128, y0: 2, y1: 51 };
+const POS = { air: [120, 13], water: [29, 10], thermos: [43, 13], cal: [83, 12.5] };
+function drawScene(v){
+  const ctx = v.ctx, T = fitT(v, SCENE), s = T.s, X = x => T.ox + x * s, Y = y => T.oy - y * s, B = S.B, tm = performance.now() / 1000;
+  ctx.fillStyle = C.wall; ctx.fillRect(0, 0, v.w, v.h);
+  ctx.fillStyle = C.wood; ctx.fillRect(0, Y(8), v.w, v.h); ctx.strokeStyle = C['wood-edge']; ctx.lineWidth = 1.5; line(ctx, 0, Y(8), v.w, Y(8));
+  // electronic scale
+  ctx.fillStyle = C['metal-dark']; rrect(ctx, X(2), Y(13), 18 * s, 5 * s, 0.8 * s); ctx.fill();
+  ctx.fillStyle = C.lcd; ctx.fillRect(X(4), Y(12), 9 * s, 3 * s);
+  ctx.fillStyle = C['lcd-ink']; ctx.font = `600 ${clamp(1.9 * s, 8, 14)}px ${MONO}`; ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText(scaleReading(B, V).toFixed(1), X(12.6), Y(10.5));
+  ctx.fillStyle = C.metal; ctx.fillRect(X(3), Y(14.2), 16 * s, 1.2 * s);
+  // cup helper
+  const drawCup = (cx, base, withWater) => { const w = 8, h = 10; ctx.fillStyle = C.metal; ctx.globalAlpha = 0.9; ctx.beginPath(); ctx.moveTo(X(cx - w / 2), Y(base + h)); ctx.lineTo(X(cx - w / 2 + 0.4), Y(base)); ctx.lineTo(X(cx + w / 2 - 0.4), Y(base)); ctx.lineTo(X(cx + w / 2), Y(base + h)); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = C['metal-dark']; ctx.lineWidth = 1; ctx.stroke(); };
+  if (B.cup === 'scale') drawCup(11, 14.2);
+  // warm water vessel
+  ctx.fillStyle = waterCol(V.Tv, 0.55); ctx.fillRect(X(23.3), Y(20), 11.4 * s, 11.6 * s);
+  ctx.strokeStyle = C['glass-edge']; ctx.lineWidth = Math.max(1.2, 0.3 * s); ctx.beginPath(); ctx.moveTo(X(23), Y(25)); ctx.lineTo(X(23), Y(8.3)); ctx.lineTo(X(35), Y(8.3)); ctx.lineTo(X(35), Y(25)); ctx.stroke();
+  // thermos
+  ctx.fillStyle = C.thermos; rrect(ctx, X(38), Y(29), 10 * s, 21 * s, 1.5 * s); ctx.fill();
+  ctx.fillStyle = waterCol(0, 0.7); ctx.fillRect(X(39.2), Y(27.5), 7.6 * s, 3 * s);
+  iceCube(ctx, X, Y, s, 41, 27.6, 2.4); iceCube(ctx, X, Y, s, 44.6, 27.9, 2.1);
+  // measuring cylinder
+  const cx0 = 52, cx1 = 56, cyb = 9.5, cyh = 30;
+  ctx.fillStyle = C['glass-edge']; ctx.fillRect(X(50), Y(9.5), 8 * s, 1.5 * s);
+  if (B.cyl.ml > 0.05){ const lh = B.cyl.ml / CYLMAX * cyh; ctx.fillStyle = waterCol(B.cyl.kind === 'mix' ? 12 : V.Tv, 0.6); ctx.fillRect(X(cx0 + 0.15), Y(cyb + lh), (cx1 - cx0 - 0.3) * s, lh * s); }
+  ctx.strokeStyle = C['glass-edge']; ctx.lineWidth = Math.max(1, 0.25 * s); line(ctx, X(cx0), Y(cyb), X(cx0), Y(cyb + cyh + 2)); line(ctx, X(cx1), Y(cyb), X(cx1), Y(cyb + cyh + 2));
+  for (let k = 1; k <= 15; k++){ const yy = cyb + k / 15 * cyh; line(ctx, X(cx0), Y(yy), X(cx0 + (k % 5 ? 0.8 : 1.5)), Y(yy)); }
+  // calorimeter
+  const c = B.cal;
+  ctx.fillStyle = C.metal; rrect(ctx, X(62), Y(33.5), 30 * s, 25 * s, 1.2 * s); ctx.fill(); ctx.strokeStyle = C['metal-dark']; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = C.insul; ctx.fillRect(X(64), Y(32.5), 26 * s, 23 * s);
+  const rr = mulberry32(9); ctx.fillStyle = C['insul-dot']; for (let k = 0; k < 110; k++){ const xx = 64.5 + rr() * 25, yy = 10 + rr() * 22; if (xx > 67.2 && xx < 86.8 && yy > 11.2) continue; ctx.beginPath(); ctx.arc(X(xx), Y(yy), Math.max(0.8, 0.35 * s), 0, Math.PI * 2); ctx.fill(); }
+  const ix0 = 68, ix1 = 86, iyb = 12, iyh = 19.5;
+  ctx.fillStyle = C.wall; ctx.fillRect(X(ix0 - 0.6), Y(iyb + iyh), (ix1 - ix0 + 1.2) * s, iyh * s);
+  if (B.cup === 'cal'){
+    if (c.ml > 0){ const lh = Math.min(iyh - 1, c.ml / CALCAP * (iyh - 1.2) * 1.55); ctx.fillStyle = waterCol(c.Tw, 0.6); ctx.fillRect(X(ix0 + 0.2), Y(iyb + lh), (ix1 - ix0 - 0.4) * s, lh * s);
+      if (c.ice > 0){ const sz = 1.25 * Math.cbrt(c.ice); const bob = B.stirring ? Math.sin(tm * 5) * 0.8 : 0; iceCube(ctx, X, Y, s, 77 + bob, iyb + lh - sz * 0.25, sz); } }
+    ctx.strokeStyle = C['metal-dark']; ctx.lineWidth = Math.max(1.2, 0.3 * s); ctx.beginPath(); ctx.moveTo(X(ix0), Y(iyb + iyh + 0.8)); ctx.lineTo(X(ix0), Y(iyb)); ctx.lineTo(X(ix1), Y(iyb)); ctx.lineTo(X(ix1), Y(iyb + iyh + 0.8)); ctx.stroke();
+  }
+  const so = B.stirring ? Math.sin(tm * 8) * 2 : 0;
+  ctx.strokeStyle = C['metal-dark']; ctx.lineWidth = Math.max(1.2, 0.3 * s); line(ctx, X(72 + so * 0.3), Y(B.lid ? 40 : 38), X(72 + so * 0.3), Y(14 + so));
+  ctx.beginPath(); ctx.ellipse(X(72 + so * 0.3), Y(14 + so), 3.2 * s, 0.6 * s, 0, 0, Math.PI * 2); ctx.stroke();
+  if (B.lid){ ctx.fillStyle = C['metal-dark']; rrect(ctx, X(61), Y(36), 32 * s, 2.4 * s, 0.6 * s); ctx.fill(); }
+  else { ctx.save(); ctx.translate(X(93.5), Y(8.4)); ctx.rotate(-1.3); ctx.fillStyle = C['metal-dark']; rrect(ctx, 0, -2.4 * s, 17 * s, 2.4 * s, 0.6 * s); ctx.fill(); ctx.restore(); }
+  // table spot for the cup and the towel
+  if (B.cup === 'table') drawCup(101, 8.4);
+  ctx.fillStyle = C['ice-soft']; ctx.strokeStyle = C['ice-edge']; ctx.lineWidth = 1; rrect(ctx, X(107), Y(10.4), 7 * s, 2 * s, 0.4 * s); ctx.fill(); ctx.stroke();
+  // held ice in the tongs
+  if (B.held){ const hx = 47, hy = 40; ctx.strokeStyle = C['metal-dark']; ctx.lineWidth = Math.max(1.5, 0.35 * s); line(ctx, X(hx - 1.4), Y(hy + 1), X(hx - 4), Y(hy + 9)); line(ctx, X(hx + 1.4), Y(hy + 1), X(hx + 4), Y(hy + 9)); iceCube(ctx, X, Y, s, hx, hy, 1.25 * Math.cbrt(B.held.m)); if (B.held.w > 0.3){ ctx.fillStyle = waterCol(0, 0.8); ctx.beginPath(); ctx.arc(X(hx), Y(hy - 2.2 - (tm * 2 % 2)), 0.35 * s, 0, Math.PI * 2); ctx.fill(); } }
+  // thermometer stand
+  ctx.fillStyle = C['metal-dark']; ctx.fillRect(X(115), Y(9.2), 11 * s, 1.2 * s); ctx.fillRect(X(124), Y(45), 0.9 * s, 36 * s); ctx.fillRect(X(120), Y(40), 4.5 * s, 0.8 * s);
+  const p = POS[B.th.loc] || POS.air; drawThermo(ctx, X, Y, s, p[0], p[1], B.th.T);
+  ctx.fillStyle = C.muted; ctx.font = `600 ${clamp(1.65 * s, 9, 12.5)}px ${MONO}`; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  [['таразы', 11], ['жылы су', 29], ['термос', 43], ['мензурка', 54], ['калориметр', 77], ['сүлгі', 110.5], ['термометр', 120.5]].forEach(([t, x]) => ctx.fillText(t, X(x), Y(6.4)));
+}
+function drawTherm(v){
+  const ctx = v.ctx, W = v.w, H = v.h, Tt = S.B.th.T;
+  ctx.fillStyle = C.wall; ctx.fillRect(0, 0, W, H);
+  const Tc = clamp(Tt, 2, 88), ppd = H / 22, y = T => H / 2 - (T - Tc) * ppd, cx = W * 0.36, tw = Math.max(15, W * 0.15);
+  ctx.fillStyle = C.sheet; rrect(ctx, cx - tw * 1.6, -10, tw * 4.7, H + 20, 8); ctx.fill(); ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = C.glass; ctx.fillRect(cx - tw / 2, -10, tw, H + 20); ctx.strokeStyle = C['glass-edge']; ctx.strokeRect(cx - tw / 2, -10, tw, H + 20);
+  ctx.fillStyle = C.column; ctx.fillRect(cx - tw * 0.17, y(Tt), tw * 0.34, H + 10 - y(Tt));
+  ctx.strokeStyle = C['scale-ink']; ctx.fillStyle = C['scale-ink'];
+  const lo = Math.max(-10, Math.floor(Tc - 12)), hi = Math.min(100, Math.ceil(Tc + 12)), fs = clamp(ppd * 0.62, 11, 17);
+  ctx.font = `600 ${fs}px ${MONO}`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  for (let T = lo; T <= hi; T++){ const yy = y(T), len = T % 10 === 0 ? tw * 1.15 : T % 5 === 0 ? tw * 0.85 : tw * 0.5; ctx.lineWidth = T % 5 === 0 ? 1.4 : 1; line(ctx, cx + tw / 2, yy, cx + tw / 2 + len, yy); if (T % 5 === 0) ctx.fillText(String(T).replace('-', '−'), cx + tw / 2 + tw * 1.3, yy); }
+  ctx.font = `600 ${fs * 0.85}px ${MONO}`; ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillStyle = C.muted; ctx.fillText('°C', cx - tw * 0.75, 8);
+}
+const CYLW = { x0: 12, x1: 48, y0: -8, y1: 160 };
+function drawCylScene(ctx, T){
+  const s = T.s, X = x => T.ox + x * s, Y = y => T.oy - y * s, cyl = S.B.cyl;
+  ctx.fillStyle = C.wall; ctx.fillRect(-5000, -5000, 20000, 20000);
+  ctx.fillStyle = C.wood; ctx.fillRect(-5000, Y(-4), 20000, 20000);
+  const x0 = 22, x1 = 38, top = 156;
+  ctx.fillStyle = C.glass; ctx.globalAlpha = 0.3; ctx.fillRect(X(x0), Y(top), (x1 - x0) * s, top * s); ctx.globalAlpha = 1;
+  if (cyl.ml > 0.05){ const lv = cyl.ml, men = 1.0; ctx.fillStyle = waterCol(cyl.kind === 'mix' ? 12 : V.Tv, 0.55); ctx.beginPath(); ctx.moveTo(X(x0 + 0.3), Y(0)); ctx.lineTo(X(x0 + 0.3), Y(lv + men)); ctx.quadraticCurveTo(X((x0 + x1) / 2), Y(lv - men), X(x1 - 0.3), Y(lv + men)); ctx.lineTo(X(x1 - 0.3), Y(0)); ctx.closePath(); ctx.fill(); ctx.strokeStyle = C['glass-edge']; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(x0 + 0.3), Y(lv + men)); ctx.quadraticCurveTo(X((x0 + x1) / 2), Y(lv - men), X(x1 - 0.3), Y(lv + men)); ctx.stroke(); }
+  ctx.strokeStyle = C['glass-edge']; ctx.lineWidth = Math.max(1.5, 0.35 * s); line(ctx, X(x0), Y(-0.6), X(x0), Y(top)); line(ctx, X(x1), Y(-0.6), X(x1), Y(top));
+  ctx.fillStyle = C['glass-edge']; ctx.fillRect(X(x0 - 4), Y(0), (x1 - x0 + 8) * s, 4 * s);
+  ctx.strokeStyle = C['scale-ink']; ctx.lineWidth = s > 15 ? 1.3 : 1; ctx.beginPath();
+  for (let ml = 0; ml <= CYLMAX; ml++){ const len = ml % 10 === 0 ? 4.2 : ml % 5 === 0 ? 2.8 : 1.6; if (ml % 5 && s < 2.2) continue; ctx.moveTo(X(x0 + 0.4), Y(ml)); ctx.lineTo(X(x0 + 0.4 + len), Y(ml)); }
+  ctx.stroke();
+  const fs = clamp(3 * s, 9, 22); ctx.fillStyle = C['scale-ink']; ctx.font = `600 ${fs}px ${MONO}`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  for (let ml = 10; ml <= CYLMAX; ml += 10) ctx.fillText(String(ml), X(x0 + 5), Y(ml));
+  ctx.font = `${fs * 0.8}px ${MONO}`; ctx.fillText('мл', X(x0 + 5), Y(154));
+}
+function drawCyl(v){ const T = fitT(v, CYLW); v.T = T; v.ctx.clearRect(0, 0, v.w, v.h); drawCylScene(v.ctx, T); drawLens(v); }
+function drawLens(v){
+  const L = v.lens; if (!L || !lensZoom || !v.w) return;
+  const ctx = v.ctx, T = v.T, rad = Math.min(90, Math.max(50, v.w * 0.36));
+  let lx = L.px, ly = L.py; if (L.touch) { ly = L.py - rad - 26; if (ly < rad * 0.6) ly = L.py + rad + 26; }
+  const wx = (L.px - T.ox) / T.s, wy = (T.oy - L.py) / T.s, s2 = T.s * lensZoom, T2 = { s: s2, ox: lx - wx * s2, oy: ly + wy * s2 };
+  ctx.save(); ctx.beginPath(); ctx.arc(lx, ly, rad, 0, Math.PI * 2); ctx.clip(); drawCylScene(ctx, T2);
+  ctx.strokeStyle = C.primary; ctx.globalAlpha = 0.7; ctx.lineWidth = 1; line(ctx, lx - rad, ly, lx - 6, ly); line(ctx, lx + 6, ly, lx + rad, ly); ctx.restore();
+  ctx.save(); ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(lx, ly, rad, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = C.ink; ctx.font = `700 11px ${MONO}`; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText('×' + lensZoom, lx, ly + rad + 4); ctx.restore();
+}
+function drawAll(){ views.forEach(v => { if (!v.w) return; if (v.kind === 'scene'){ v.ctx.clearRect(0, 0, v.w, v.h); drawScene(v); } else if (v.kind === 'therm') drawTherm(v); else drawCyl(v); }); }
+function drawChart(){
+  const cv = $('#chartCv'); if (!cv) return; const r = cv.getBoundingClientRect(); if (!r.width) return;
+  const dpr = Math.min(2.5, window.devicePixelRatio || 1); cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = r.width, H = r.height, m = { l: 52, r: 16, t: 18, b: 40 };
+  ctx.fillStyle = C.surface; ctx.fillRect(0, 0, W, H);
+  const vals = [num(S.E.lam[0]), num(S.E.lam[1]), num(S.E.lam[2]), num(S.E.lavg)].map(x => Number.isFinite(x) ? x / 1000 : NaN);
+  const top = Math.max(400, Math.ceil((Math.max(0, ...vals.filter(Number.isFinite)) + 20) / 50) * 50);
+  const Y = v => H - m.b - v / top * (H - m.t - m.b), bw = (W - m.l - m.r) / 4;
+  ctx.strokeStyle = C.line; ctx.fillStyle = C.muted; ctx.lineWidth = 1; ctx.font = `12px ${MONO}`; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  for (let g = 0; g <= top; g += 100){ line(ctx, m.l, Y(g), W - m.r, Y(g)); ctx.fillText(String(g), m.l - 8, Y(g)); }
+  const names = ['λ₁', 'λ₂', 'λ₃', 'λорт'];
+  vals.forEach((v, i) => {
+    const x = m.l + i * bw + bw * 0.2, w = bw * 0.6;
+    ctx.fillStyle = C.muted; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.font = `600 13px ${MONO}`; ctx.fillText(names[i], x + w / 2, H - m.b + 10);
+    if (!Number.isFinite(v)) return;
+    ctx.fillStyle = i === 3 ? C.warm : C.primary; rrect(ctx, x, Y(Math.max(0, v)), w, Y(0) - Y(Math.max(0, v)), 4); ctx.fill();
+    ctx.fillStyle = C.ink; ctx.textBaseline = 'bottom'; ctx.font = `600 12px ${MONO}`; ctx.fillText(fmt(v, 0), x + w / 2, Y(Math.max(0, v)) - 4);
+  });
+  ctx.save(); ctx.strokeStyle = C.ink; ctx.setLineDash([6, 5]); ctx.lineWidth = 1.5; line(ctx, m.l, Y(340), W - m.r, Y(340)); ctx.restore();
+  if (vals.every(v => !Number.isFinite(v))){ ctx.fillStyle = C.muted; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = `13px ${MONO}`; ctx.fillText('λ мәндерін есептегенде бағаналар пайда болады', W / 2, (H - m.b) / 2); }
+}
+
+let lastNow = 0, lastSaveT = 0, lastUI = 0;
+function frame(){
+  const now = performance.now(), real = lastNow ? Math.min(0.1, (now - lastNow) / 1000) : 0; lastNow = now;
+  const B = S.B;
+  if (S.started && !S.result && real > 0) engAdvance(B, V, real);
+  const animate = (B.cup === 'cal' && B.cal.ml > 0) || B.held || B.stirring || Math.abs(B.th.T - envT(B, V)[0]) > 0.01;
+  if (S.page === 3 && (animate || needDraw || now - lastUI > 150)) { needDraw = false; drawAll(); }
+  if (now - lastUI > 250){ lastUI = now; updateHints(); renderLive(); }
+  if (S.started && !S.result && B.t - lastSaveT > 3){ lastSaveT = B.t; saveDraft(); }
+  requestAnimationFrame(frame);
+}
+
+/* ================= hints ================= */
+function hintText(){
+  if (!S.safe.passed) return 'Алдымен «Қауіпсіздік» бетіндегі тесттен өтіңіз.';
+  const B = S.B, cur = B.cur;
+  if (!cur){
+    if (!B.seenAir) return '1-қадам. Термометрді ауада қалдырып, көрсеткіші тұрақтанғанда бөлме ауасының t₁ температурасын жазыңыз.';
+    if (!B.seenWater) return 'Термометрді жылы су ыдысына салып, судың t₂ температурасын өлшеңіз.';
+    if (!B.weighed) return B.cup === 'scale' ? 'Таразы бос кезде нөлді көрсетпеді. Стақанды алып, бос таразыны нөлдеңіз де, стақанды қайта қойыңыз.' : '2-қадам. Таразы бос кезде нөлді көрсетіп тұрғанын тексеріп, калориметрдің ішкі стақанын таразыға қойыңыз.';
+    if (B.cup === 'scale') return 'Стақанның m₁ массасын жазыңыз (килограммен). Сосын стақанды калориметрге салыңыз.';
+    if (B.cup !== 'cal') return 'Стақанды калориметрге салыңыз.';
+    if (B.cyl.ml > 1.5 && B.cyl.kind === 'mix') return 'Мензуркада алдыңғы тәжірибенің суы бар. Оны босатыңыз.';
+    if (B.cyl.ml < 2) return '3-қадам. Ыдыстан мензуркаға 100 см³ жылы су құйыңыз.';
+    return 'Судың V₁ көлемін менискустың төменгі шетімен оқып жазыңыз. Қақпақты ашып, суды калориметрге құйыңыз.';
+  }
+  if (cur.phase === 'water'){
+    if (B.th.loc !== 'cal') return 'Термометрді калориметрге салыңыз: мұз еріген сәтті бақылау керек.';
+    if (!B.held) return '4-қадам. ' + (B.tongs ? '' : '«Қысқыш» құралын таңдап, ') + 'термостан мұз кесегін алыңыз.';
+    if (B.held.w > 0.3) return 'Мұз бетінде су бар. Оны сүлгімен сүртіңіз, сосын қақпақты ашып, мұзды калориметрге салыңыз.';
+    return (B.lid ? 'Қақпақты ашып, мұзды калориметрге салыңыз.' : 'Мұзды калориметрге салыңыз.') + ' Тез әрекет етіңіз: мұз қысқышта ери бастайды.';
+  }
+  if (cur.phase === 'ice'){
+    if (!B.lid) return 'Мұз салынды. Жылу шығыны аз болуы үшін қақпақты жабыңыз.';
+    if (!B.stirring) return 'Мұз тезірек еруі үшін «Араластыру» батырмасын қосыңыз.';
+    if (B.th.loc !== 'cal') return 'Термометрді калориметрге салыңыз.';
+    return 'Мұз еріп жатыр. Термометр көрсеткішін бақылаңыз: мұз толық ерігенде қоспаның t температурасын жазасыз.';
+  }
+  if (cur.phase === 'melted'){
+    if (B.t - cur.meltAt <= MIX_WIN) return B.th.loc === 'cal' ? '5-қадам. Мұз толық еріді! Термометрдің көрсеткіші тұрақтанғанда қоспаның t температурасын қазір жазыңыз.' : 'Мұз толық еріді! Термометрді калориметрге салып, қоспаның t температурасын тез жазыңыз.';
+    if (B.cyl.ml > 1.5) return 'Мензурканы босатыңыз, сосын қақпақты ашып, калориметрдегі суды мензуркаға құйыңыз.';
+    return '6-қадам. Қақпақты ашып, калориметрдегі суды мензуркаға құйыңыз.';
+  }
+  return 'Судың V₂ көлемін оқып жазыңыз. Сосын калориметрді босатып, стақанды сүртіңіз де, келесі тәжірибеге өтіңіз.';
+}
+let lastH = '';
+function updateHints(){
+  const a = ALERT && performance.now() < ALERT.until ? ALERT : null, txt = a ? a.msg : hintText(), key = txt + '|' + (a && a.warn);
+  if (key === lastH) return; lastH = key; const el = $('#hintL'); el.textContent = txt; el.classList.toggle('warn', !!(a && a.warn));
+}
+const mmss = sec => { sec = Math.max(0, Math.floor(sec)); return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0'); };
+function renderLive(){
+  const B = S.B, cur = B.cur;
+  $('#clockTxt').textContent = cur ? (cur.iceAt != null ? 'мұз салынғаннан бері ' + mmss(B.t - cur.iceAt) : 'су құйылғаннан бері ' + mmss(B.t - cur.waterAt)) : 'калориметр бос';
+  $('#thLoc').textContent = TH_LOC[B.th.loc];
+  $('#lcd').innerHTML = esc(scaleReading(B, V).toFixed(1)) + '<small>г</small>';
+  $('#heldNote').textContent = B.held ? (B.held.w > 0.3 ? 'Қысқышта мұз кесегі бар, бетінде су бар.' : 'Қысқышта құрғатылған мұз кесегі бар.') : 'Қысқышта мұз жоқ.';
+}
+
+/* ================= workbook ================= */
+function qOrder(key, n){ const r = mulberry32(((S.seed || DEMO_SEED) + hashStr(key)) >>> 0); const idx = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--){ const j = Math.floor(r() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; } return idx; }
+const inp = (id, lab) => `<input id="${id}" inputmode="decimal" autocomplete="off" aria-label="${lab}">`;
+function buildBook(){
+  $('#measBody').innerHTML = [0, 1, 2].map(i => `<tr><td class="n">${i + 1}</td>${['t1', 't2', 't', 'm1', 'v1', 'v2'].map(k => `<td>${inp('in-' + k + i, (i + 1) + '-тәжірибе: ' + k)}</td>`).join('')}</tr>`).join('');
+  $('#calcBody').innerHTML = [0, 1, 2].map(i => `<tr><td class="n">${i + 1}</td>${['t1', 't2', 't', 'm1'].map(k => `<td class="ro" id="ro-${k}${i}">—</td>`).join('')}${['m2', 'dv', 'm3', 'lam'].map(k => `<td>${inp('in-' + k + i, (i + 1) + '-тәжірибе: ' + k)}</td>`).join('')}</tr>`).join('');
+  $('#rubricBody').innerHTML = RUBRIC.map((r, i) => `<tr><td class="k">К${i + 1}</td><td>${r.d}</td><td class="o">${r.o}</td><td class="p">1</td></tr>`).join('') + `<tr><td></td><td><b>Барлығы</b></td><td></td><td class="p"><b>10</b></td></tr>`;
+  buildSafety(); buildConcl();
+  makeView('sceneL', 'scene'); makeView('thermL', 'therm'); makeView('cylL', 'cyl');
+  new ResizeObserver(() => drawChart()).observe($('#chartCv'));
+}
+function buildSafety(){
+  const at = S.safe.attempts;
+  $('#safeQ').innerHTML = SAFE_Q.map((q, qi) => `<fieldset class="q"><legend>${qi + 1}. ${esc(q.q)}</legend>` + qOrder('safe' + qi + '|' + at, 4).map(ai => `<label><input type="radio" name="sq${qi}" id="sq${qi}-${ai}" value="${ai}"><span>${esc(q.a[ai])}</span></label>`).join('') + `</fieldset>`).join('');
+  S.safe.ans.forEach((a, qi) => { if (a !== null) { const el = document.getElementById(`sq${qi}-${a}`); if (el) el.checked = true; } });
+}
+function radios(name, item, order){ return order.map(ai => `<label><input type="radio" name="${name}" id="${name}-${ai}" value="${ai}"><span>${esc(item.a[ai])}</span></label>`).join(''); }
+function buildConcl(){
+  let h = `<fieldset class="q"><legend>1. Сіз алған λ<sub>орт</sub> = <span class="mono" id="cLavg">—</span> Дж/кг кестедегі мәнмен (3,4·10⁵ Дж/кг) салыстырғанда:</legend>
+    <label><input type="radio" name="c-cmp" id="c-cmp-gt" value="gt"><span>үлкен</span></label>
+    <label><input type="radio" name="c-cmp" id="c-cmp-lt" value="lt"><span>кіші</span></label>
+    <label><input type="radio" name="c-cmp" id="c-cmp-eq" value="eq"><span>жуық тең (айырмасы 3 %-дан аз)</span></label></fieldset>`;
+  h += `<fieldset class="q"><legend>2. ${esc(FACTORS.q)}</legend>` + qOrder('factors', 7).map(ai => `<label><input type="checkbox" id="c-fac-${ai}" value="${ai}"><span>${esc(FACTORS.a[ai])}</span></label>`).join('') + `</fieldset>`;
+  h += `<fieldset class="q"><legend>3. ${esc(WIPE.q)}</legend>${radios('c-wipe', WIPE, qOrder('wipe', 4))}</fieldset>`;
+  h += `<fieldset class="q"><legend>4. ${esc(ZERO.q)}</legend>${radios('c-zero', ZERO, qOrder('zero', 4))}</fieldset>`;
+  h += `<fieldset class="q"><legend>5. ${esc(Q3.q)}</legend>${radios('c-q3', Q3, qOrder('q3', 4))}</fieldset>`;
+  $('#conclBox').innerHTML = h;
+  const E = S.E, chk = id => { const el = document.getElementById(id); if (el) el.checked = true; };
+  if (E.cmp) chk('c-cmp-' + E.cmp); if (E.wipe !== null) chk('c-wipe-' + E.wipe); if (E.zero !== null) chk('c-zero-' + E.zero); if (E.q3 !== null) chk('c-q3-' + E.q3);
+  (E.factors || []).forEach(i => chk('c-fac-' + i));
+}
+function fillInputs(){
+  const E = S.E, set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+  ['t1', 't2', 't', 'm1', 'v1', 'v2', 'm2', 'dv', 'm3', 'lam'].forEach(k => { for (let i = 0; i < 3; i++) set('in-' + k + i, E[k][i]); });
+  ['lavg', 'dl', 'eps'].forEach(k => set('in-' + k, E[k]));
+  buildSafety(); buildConcl();
+}
+function onInput(e){
+  const t = e.target; if (!t || !t.id || t.classList.contains('reg-in')) return; const id = t.id, E = S.E; let m;
+  if ((m = id.match(/^sq(\d)-(\d)$/))) { if (S.safe.passed) return; S.safe.ans[+m[1]] = +m[2]; saveSoon(); return; }
+  if ((m = id.match(/^c-cmp-(\w+)$/))) E.cmp = m[1];
+  else if ((m = id.match(/^c-(wipe|zero|q3)-(\d)$/))) E[m[1]] = +m[2];
+  else if ((m = id.match(/^c-fac-(\d)$/))) { const i = +m[1]; E.factors = E.factors.filter(x => x !== i); if (t.checked) E.factors.push(i); }
+  else if ((m = id.match(/^in-(lavg|dl|eps)$/))) E[m[1]] = t.value;
+  else if ((m = id.match(/^in-(t1|t2|t|m1|v1|v2|m2|dv|m3|lam)(\d)$/))) E[m[1]][+m[2]] = t.value;
+  else return;
+  saveSoon(); refreshDerived();
+}
+const filled = s => String(s || '').trim() !== '';
+
+/* ================= safety ================= */
+function safetyCheck(){
+  if (locked() || S.safe.passed) return;
+  const o = $('#safeOut');
+  if (S.safe.ans.some(a => a === null)) { o.hidden = false; o.className = 'warnmsg'; o.textContent = 'Барлық 5 сұраққа жауап беріңіз.'; return; }
+  const sc = S.safe.ans.reduce((a, x, i) => a + (x === SAFE_Q[i].c ? 1 : 0), 0);
+  S.safe.attempts++; if (S.safe.first === null) S.safe.first = sc; if (sc >= 4) S.safe.passed = true; S.safe.last = sc;
+  saveDraft(); renderSafety(); updateUI();
+}
+function safetyRetry(){ if (S.safe.passed) return; S.safe.ans = arr(5, null); S.safe.last = null; buildSafety(); renderSafety(); saveSoon(); }
+function renderSafety(){
+  const o = $('#safeOut'), sf = S.safe;
+  $$('#safeQ input').forEach(el => { el.disabled = locked() || sf.passed || (sf.last != null && !sf.passed); });
+  $('#safeCheck').hidden = sf.passed || (sf.last != null && !sf.passed); $('#safeRetry').hidden = sf.passed || sf.last == null;
+  if (sf.passed) { o.hidden = false; o.className = 'okmsg'; o.textContent = `Тест өтілді${sf.last != null ? ' (' + sf.last + '/5)' : ''}. Зертханаға кіруге рұқсат етілді.` + (sf.attempts > 1 ? ' Бағалауда бірінші әрекеттің нәтижесі (' + sf.first + '/5) ескеріледі.' : ''); }
+  else if (sf.last != null) { o.hidden = false; o.className = 'warnmsg'; o.textContent = `5 сұрақтың ${sf.last}-іне дұрыс жауап бердіңіз. Ережелерді қайта оқып, тестті қайталаңыз: зертханаға кіру үшін кемінде 4 дұрыс жауап керек.`; }
+  else o.hidden = true;
+}
+
+/* ================= derived ================= */
+function stepDone(){
+  const E = S.E, f = filled, list = allTrials(S);
+  return [S.started, S.started && !!S.seen[1], S.safe.passed,
+    [1, 2, 3].every(i => trialOf(list, i)) && ['t1', 't2', 't', 'm1', 'v1', 'v2'].every(k => E[k].every(f)),
+    ['m2', 'dv', 'm3', 'lam'].every(k => E[k].every(f)),
+    f(E.lavg) && f(E.dl) && f(E.eps),
+    !!E.cmp && E.factors.length > 0 && E.wipe !== null && E.zero !== null && E.q3 !== null, !!S.result];
+}
+function refreshDerived(){
+  const E = S.E, show = v => filled(v) ? v : '—';
+  for (let i = 0; i < 3; i++){ ['t1', 't2', 't', 'm1'].forEach(k => { $('#ro-' + k + i).textContent = show(E[k][i]); }); $('#ro-l' + (i + 1)).textContent = filled(E.lam[i]) ? fmtInt(num(E.lam[i])) : '—'; }
+  $('#calcMissing').hidden = ['t1', 't2', 't', 'm1', 'v1', 'v2'].every(k => E[k].every(filled));
+  const la = num(E.lavg), cl = $('#cLavg'); if (cl) cl.textContent = Number.isFinite(la) ? fmtInt(la) : '—';
+  const sb = v => filled(v) ? esc(v) : '…';
+  $('#resLine').innerHTML = `λ<sub>орт</sub> = <b>${sb(E.lavg)}</b> Дж/кг, кестеде λ = 340 000 Дж/кг. Абсолют қателік Δλ = <b>${sb(E.dl)}</b> Дж/кг, салыстырмалы қателік ε = <b>${sb(E.eps)}</b> %.`;
+  const st = stepDone();
+  $$('.step').forEach((b, i) => { b.classList.toggle('done', !!st[i]); b.classList.toggle('lock', i === 3 && !S.safe.passed); });
+  $('#measDone').hidden = !st[3] || !!S.result;
+  renderSummary(); renderCompleteness(); drawChart();
+}
+function renderSummary(){
+  const E = S.E, la = num(E.lavg);
+  const cmpT = { gt: 'кестедегі мәннен үлкен', lt: 'кестедегі мәннен кіші', eq: 'кестедегі мәнге жуық тең' }[E.cmp] || '…';
+  const facs = (E.factors || []).filter(i => FACTORS.ok.includes(i)).map(i => esc(FACTORS.a[i].split(':')[0]).toLowerCase());
+  $('#summary').innerHTML = `Жылу балансының теңдеуін пайдаланып, мұздың меншікті балқу жылуы анықталды: λ<sub>орт</sub> = <b>${Number.isFinite(la) ? fmtInt(la) : '…'}</b> Дж/кг. Бұл мән ${cmpT}; абсолют қателік Δλ = <b>${filled(E.dl) ? esc(E.dl) : '…'}</b> Дж/кг (ε = <b>${filled(E.eps) ? esc(E.eps) : '…'}</b> %). ` + (facs.length ? `Нәтижеге әсер еткен факторлар: ${facs.join('; ')}.` : '');
+}
+function missingList(){
+  const E = S.E, out = [], c = a => a.filter(x => !filled(x)).length, list = allTrials(S);
+  if (!S.safe.passed) out.push([2, 'тест']);
+  const nt = [1, 2, 3].filter(i => !trialOf(list, i)).length, m3 = ['t1', 't2', 't', 'm1', 'v1', 'v2'].reduce((a, k) => a + c(E[k]), 0);
+  if (nt || m3) out.push([3, (nt ? nt + ' тәжірибе, ' : '') + m3 + ' өріс']);
+  const m4 = ['m2', 'dv', 'm3', 'lam'].reduce((a, k) => a + c(E[k]), 0); if (m4) out.push([4, m4 + ' өріс']);
+  const m5 = ['lavg', 'dl', 'eps'].filter(k => !filled(E[k])).length; if (m5) out.push([5, m5 + ' өріс']);
+  const m6 = (E.cmp ? 0 : 1) + (E.factors.length ? 0 : 1) + (E.wipe !== null ? 0 : 1) + (E.zero !== null ? 0 : 1) + (E.q3 !== null ? 0 : 1); if (m6) out.push([6, m6 + ' сұрақ']);
+  return out;
+}
+function renderCompleteness(){
+  const ml = missingList(); let html = `<p class="label">Жұмыстың толықтығы</p>`;
+  html += `<p style="display:flex;gap:8px;align-items:center">${S.viol.length ? '<span class="st x">!</span><span>Қауіпсіздік ережесі бұзылды: ' + esc(S.viol.map(v => VIOL_NAMES[v]).join(', ')) + '</span>' : '<span class="st y">✓</span><span>Қауіпсіздік ережелері бұзылған жоқ</span>'}</p>`;
+  if (ml.length) html += `<p style="display:flex;gap:8px;align-items:center"><span class="st x">!</span><span>Аяқталмаған бөлімдер:</span></p><ul>` + ml.map(([p, k]) => `<li><button type="button" class="ghost" data-goto="${p}" style="min-height:0;padding:3px 8px">${PAGE_NAMES[p]}</button> — ${esc(k)}</li>`).join('') + `</ul>`;
+  else html += `<p style="display:flex;gap:8px;align-items:center"><span class="st y">✓</span><span>Барлық бөлім толтырылды</span></p>`;
+  $('#completeness').innerHTML = html;
+}
+function renderBench(){
+  const B = S.B, lk = locked() || !S.safe.passed;
+  $$('[data-act="th"]').forEach(b => { b.setAttribute('aria-pressed', String(B.th.loc === b.dataset.v)); b.disabled = lk; });
+  $$('[data-act="cup"]').forEach(b => { b.setAttribute('aria-pressed', String(B.cup === b.dataset.v)); b.disabled = lk; });
+  $$('[data-act="trial"]').forEach(b => { b.setAttribute('aria-pressed', String(S.sel === +b.dataset.v)); b.disabled = lk; b.textContent = b.dataset.v + '-тәжірибе' + (trialOf(allTrials(S), +b.dataset.v) ? ' ✓' : ''); });
+  $$('[data-act="tongs"]').forEach(b => { b.setAttribute('aria-pressed', String(!!B.tongs)); b.textContent = B.tongs ? 'Қысқыш алынды' : 'Қысқыш'; b.disabled = lk; });
+  $$('[data-act="lid"]').forEach(b => { b.textContent = B.lid ? 'Қақпақты ашу' : 'Қақпақты жабу'; b.disabled = lk; });
+  $$('[data-act="stir"]').forEach(b => { b.setAttribute('aria-pressed', String(!!B.stirring)); b.textContent = B.stirring ? 'Араластыруды тоқтату' : 'Араластыру'; b.disabled = lk; });
+  $$('[data-act="emptycal"]').forEach(b => { if (!b.dataset.armed) b.textContent = 'Босатып, сүрту'; b.disabled = lk; });
+  $$('[data-act="pw"],[data-act="cyl2cal"],[data-act="dump"],[data-act="takeice"],[data-act="dryice"],[data-act="ice2cal"],[data-act="cal2cyl"],[data-act="tare"]').forEach(b => { b.disabled = lk; });
+  const list = S.trials.slice().sort((a, b) => a.i - b.i);
+  $('#journal').innerHTML = list.map(x => `<li value="${x.i}">${x.i}-тәжірибе: V₁ ≈ ${Math.round(x.vPour)} мл, V₂ ≈ ${x.V2 != null ? Math.round(x.V2) : '—'} мл</li>`).join('');
+  $('#journalEmpty').hidden = list.length > 0;
+  $('#vlogCard').hidden = !S.vlog.length; $('#vlog').innerHTML = S.vlog.slice(-5).map(x => `<li>${esc(x.msg)}</li>`).join('');
+  renderLive();
+}
+
+/* ================= pages ================= */
+function setPage(i, opts){
+  i = clamp(i | 0, 0, 7); const msg = $('#navMsg');
+  if (i > 0 && !S.started) { i = 0; msg.hidden = true; }
+  else if (i === 3 && !S.safe.passed) { i = 2; msg.textContent = 'Зертханаға кіру үшін алдымен қауіпсіздік тестінен өтіңіз.'; msg.hidden = false; }
+  else msg.hidden = true;
+  S.page = i; S.seen[i] = true;
+  $$('#pages > [data-page]').forEach(p => { p.hidden = +p.dataset.page !== i; });
+  $$('.step').forEach((b, k) => { if (k === i) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+  const chrome = S.started && i > 0; $('#topHeader').hidden = !chrome; $('#stepper').hidden = !chrome;
+  $('#appGrid').style.gridTemplateColumns = chrome ? '' : 'minmax(0,1fr)';
+  ALERT = null; lastH = ''; needDraw = true;
+  if (!(opts && opts.noScroll)) { try { window.scrollTo({ top: 0 }); } catch (e) {} }
+  saveSoon(); renderBench(); refreshDerived(); if (i === 5) requestAnimationFrame(drawChart);
+}
+function updateMode(){
+  const b = $('#modeBadge');
+  if (!initDone) { b.className = 'pill'; b.textContent = 'Қосылуда…'; return; }
+  if (online) { b.className = 'pill on'; b.textContent = 'Онлайн · нәтиже мұғалімге жіберіледі'; } else { b.className = 'pill off'; b.textContent = 'Офлайн · нәтиже коды беріледі'; }
+  $('#modeNote').textContent = online ? 'Тапсырған сәтте нәтижеңіз мұғалімнің кестесіне түседі.' : 'Бет офлайн режимде ашылған. Тапсырғаннан кейін нәтиже коды шығады, оны мұғаліміңізге жіберіңіз.';
+  $('#teacherBtn').hidden = $('#teacherBtnReg').hidden = !(isOwner && db);
+}
+function updateUI(){
+  $('#startForm').hidden = S.started; $('#regDone').hidden = !S.started;
+  const chip = $('#studentChip'); chip.hidden = !S.started;
+  if (S.started) { chip.textContent = `${S.name} · ${S.cls}`; $('#whoLine').innerHTML = `<b>${esc(S.name)}</b>, ${esc(S.cls)} · нұсқа <span class="mono">${vcode()}</span>`; }
+  const sb = $('#startBtn'); sb.disabled = !initDone; sb.textContent = initDone ? 'Кіру' : 'Қосылуда…';
+  const lk = locked();
+  $$('#pages input').forEach(el => { if (el.classList.contains('reg-in') || /^sq\d/.test(el.id)) return; el.disabled = lk; });
+  $('#submitBtn').disabled = lk; $('#preSubmit').hidden = !!S.result;
+  renderSafety(); renderBench(); renderResult(); refreshDerived(); needDraw = true;
+}
+
+/* ================= registration / submit ================= */
+function startWork(e){
+  e.preventDefault();
+  const name = $('#stName').value.trim().replace(/\s+/g, ' ');
+  let cls = $('#stCls').value; if (cls === '__other') cls = $('#stClsOther').value.trim();
+  if (name.length < 3 || !/\s/.test(name)) { $('#startErr').textContent = 'Аты-жөніңізді толық жазыңыз (аты мен тегі).'; $('#stName').focus(); return; }
+  if (!cls) { $('#startErr').textContent = 'Сыныбыңызды таңдаңыз.'; $('#stCls').focus(); return; }
+  $('#startErr').textContent = '';
+  const seed = uid ? hashStr('lab8-2|' + uid) : (Math.floor(Math.random() * 4294967295) >>> 0);
+  V = makeVariant(seed);
+  const keep = S.result; S = defaults(V); S.result = keep;
+  S.started = true; S.name = name; S.cls = cls; S.seed = seed;
+  fillInputs(); saveDraft(); updateUI(); setPage(1);
+}
+function buildSubmission(res, at){
+  return { name: S.name, cls: S.cls, variant: vcode(), seed: S.seed, score: res.score, grade: res.grade5, crit: res.crit, info: res.info, at,
+    E: JSON.parse(JSON.stringify(S.E)), viol: S.viol.slice(), safe: { first: S.safe.first, attempts: S.safe.attempts }, trials: allTrials(S),
+    flags: { seenAir: !!S.B.seenAir, seenWater: !!S.B.seenWater, weighed: !!S.B.weighed }, truth: { Troom: V.Troom, Tv: V.Tv, m1: V.m1, ice: V.ice }, app: 'lab8-2' };
+}
+async function doSubmit(){
+  $('#confirmBox').hidden = true; $('#submitErr').textContent = '';
+  const res = grade(S, V), at = new Date().toISOString(), btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'Жіберілуде…';
+  let sent = false;
+  if (online && db && uid) {
+    try { await db.doc('subs/' + uid).set(buildSubmission(res, at)); sent = true; }
+    catch (err) {
+      if (err && err.code === 'unavailable') { try { await new Promise(r => setTimeout(r, 600 + Math.random() * 600)); await db.doc('subs/' + uid).set(buildSubmission(res, at)); sent = true; } catch (e2) {} }
+      if (!sent) { online = false; updateMode(); $('#submitErr').textContent = err && err.code === 'quota_exceeded' ? 'Мұғалімнің кестесі толып қалды. Нәтиже коды берілді, оны мұғаліміңізге жіберіңіз.' : 'Нәтижені мұғалімге жіберу мүмкін болмады (жазу рұқсаты жоқ). Нәтиже коды берілді, оны мұғаліміңізге жіберіңіз.'; }
+    }
+  }
+  S.result = { crit: res.crit, info: res.info, score: res.score, grade5: res.grade5, at, online: sent, code: makeCode(res, at) };
+  btn.textContent = 'Жұмысты тапсыру'; saveDraft(); updateUI(); setPage(7);
+}
+function fmtTime(iso){ try { const d = new Date(iso); if (isNaN(d)) return iso || ''; return d.toLocaleDateString('kk-KZ') + ', ' + d.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return iso || ''; } }
+function rangeTxt(a, b){ return a == null ? '—' : (Math.abs(b - a) < 0.15 ? fmt(a, 1) : fmt(a, 1) + '…' + fmt(b, 1)); }
+function renderResult(){
+  const box = $('#resultBox'), r = S.result; box.hidden = !r; if (!r) { box.innerHTML = ''; return; }
+  const rows = RUBRIC.map((rb, i) => `<tr><td class="k">К${i + 1}</td><td>${rb.d}<br><span class="muted" style="font-size:12.5px">${esc(r.info[i] || '')}</span></td><td class="p"><span class="st ${r.crit[i] ? 'y' : 'x'}">${r.crit[i] ? '✓' : '✗'}</span></td></tr>`).join('');
+  const list = allTrials(S).sort((a, b) => a.i - b.i);
+  const tr = list.map(x => `<tr><td class="n">${x.i}</td><td class="mono">${fmt(x.vPour, 1)}</td><td class="mono">${x.V2 != null ? fmt(x.V2, 1) : '—'}</td><td class="mono">${rangeTxt(x.mixMin, x.mixMax)}</td><td class="mono">${fmt(x.iceTrue, 1)}</td><td class="mono">${x.wet != null ? fmt(x.wet, 2) : '—'}</td></tr>`).join('');
+  let html = `<div class="score"><div class="big">${r.score}<small> / 10</small></div><div class="meta"><span>Баға: <span class="grade g${r.grade5}">${r.grade5}</span></span><span class="muted">${esc(S.name)} · ${esc(S.cls)} · нұсқа <span class="mono">${vcode()}</span></span><span class="muted">Тапсырылды: ${esc(fmtTime(r.at))}</span></div></div>`;
+  html += r.online ? `<p class="okmsg">✓ Нәтиже мұғалімге жіберілді.</p>` : `<div class="card"><p class="label">Нәтиже коды</p><p style="font-size:14px">Бұл кодты мұғаліміңізге жіберіңіз (мысалы, мессенджер арқылы). Мұғалім оны өз панелінде тексереді.</p><div class="codebox" id="codeText">${esc(r.code)}</div><div class="controls"><button type="button" id="copyCodeBtn">Кодты көшіру</button>${dlCap ? '<button type="button" id="reportBtn">Есепті жүктеу (HTML)</button>' : ''}<span id="copyMsg" class="small muted"></span></div></div>`;
+  html += `<div class="tw"><table class="rubric"><thead><tr><th>№</th><th>Дескриптор</th><th style="text-align:right">Балл</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  html += `<div class="card"><p class="label">Өлшеулеріңізді аспаптардың нақты көрсеткіштерімен салыстырыңыз</p><p class="small">Ауа <span class="mono">${fmt(V.Troom, 1)}</span> °C · жылы су <span class="mono">${fmt(V.Tv, 1)}</span> °C · стақан массасы <span class="mono">${fmt(V.m1, 1)}</span> г</p><div class="tw"><table class="t"><thead><tr><th>№</th><th>V₁, мл</th><th>V₂, мл</th><th>t, °C (мұз ерігенде)</th><th>Нақты мұз массасы, г</th><th>Мұз бетіндегі су, г</th></tr></thead><tbody>${tr}</tbody></table></div><p class="small muted">Мұзды сүртсеңіз, оның бетіндегі су ≈ 0,1 г болады. Мензурка мен стақан қабырғасында бірнеше тамшы су қалады, сондықтан ΔV нақты мұз массасынан сәл өзгеше шығады.</p></div>`;
+  box.innerHTML = html;
+  const cb = $('#copyCodeBtn'); if (cb) cb.addEventListener('click', () => copyText(r.code, $('#copyMsg'), $('#codeText')));
+  const rb = $('#reportBtn'); if (rb) rb.addEventListener('click', downloadReport);
+}
+async function copyText(text, msgEl, selEl){ try { await navigator.clipboard.writeText(text); if (msgEl) msgEl.textContent = 'Көшірілді'; } catch (e) { if (selEl) { const rg = document.createRange(); rg.selectNodeContents(selEl); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); } if (msgEl) msgEl.textContent = 'Мәтін белгіленді, Ctrl+C арқылы көшіріңіз'; } }
+async function downloadReport(){
+  const r = S.result, E = S.E; if (!r || !dlCap) return;
+  const tr = (a, b) => `<tr><th>${a}</th><td>${b}</td></tr>`;
+  const html = `<!doctype html><html lang="kk"><meta charset="utf-8"><title>№2 зертханалық жұмыс — ${esc(S.name)}</title><style>body{font-family:system-ui,sans-serif;max-width:860px;margin:24px auto;padding:0 16px;color:#0e2233}table{border-collapse:collapse;width:100%;margin:10px 0}td,th{border:1px solid #ccd;padding:5px 8px;text-align:left}code{word-break:break-all}</style>
+<h1>№2 зертханалық жұмыс: мұздың меншікті балқу жылуын анықтау</h1>
+<table>${tr('Оқушы', esc(S.name))}${tr('Сынып', esc(S.cls))}${tr('Нұсқа', vcode())}${tr('Тапсырылды', esc(fmtTime(r.at)))}${tr('Балл', r.score + ' / 10')}${tr('Баға', r.grade5)}</table>
+<table><tr><th>№</th><th>t₁, °C</th><th>t₂, °C</th><th>t, °C</th><th>m₁, кг</th><th>V₁, см³</th><th>V₂, см³</th><th>m₂, кг</th><th>ΔV, см³</th><th>m₃, кг</th><th>λ, Дж/кг</th></tr>${[0, 1, 2].map(i => `<tr><td>${i + 1}</td>${['t1', 't2', 't', 'm1', 'v1', 'v2', 'm2', 'dv', 'm3', 'lam'].map(k => `<td>${esc(E[k][i])}</td>`).join('')}</tr>`).join('')}</table>
+<p>λорт = ${esc(E.lavg)} Дж/кг; Δλ = ${esc(E.dl)} Дж/кг; ε = ${esc(E.eps)} %</p>
+<h2>Критерийлер</h2><table>${RUBRIC.map((rb, i) => `<tr><td>К${i + 1}</td><td>${rb.d}</td><td>${r.crit[i] ? '1' : '0'}</td></tr>`).join('')}</table>
+<p>Нәтиже коды: <code>${esc(r.code)}</code></p></html>`;
+  try { await dlCap.save({ filename: 'zerthana-8-2-' + (S.name.replace(/[^\p{L}\p{N}]+/gu, '_') || 'oqushy') + '.html', data: html }); $('#copyMsg').textContent = 'Есеп сақталды'; }
+  catch (e) { if (e && e.code !== 'declined') $('#copyMsg').textContent = 'Есепті жүктеу мүмкін болмады, кодты көшіріңіз.'; }
+}
+
+/* ================= teacher ================= */
+function showTeacher(on){ $('#teacherView').hidden = !on; $('#appView').hidden = on; $('#topHeader').hidden = !on && !(S.started && S.page > 0); $('#teacherBtn').textContent = on ? 'Зертханаға оралу' : 'Мұғалім панелі'; if (on) renderTeacher(); else setPage(S.page, { noScroll: true }); }
+function renderTeacher(){
+  const hasDb = !!(isOwner && db);
+  $('#tOnline').hidden = !hasDb; $('#csvBtn').hidden = !hasDb || !dlCap; $('#copyTblBtn').hidden = !hasDb; $('#clsFilter').hidden = !hasDb; $('label[for="clsFilter"]').hidden = !hasDb;
+  $('#tMsg').textContent = hasDb ? '' : 'Нәтижелер кестесі тек беттің иесіне онлайн режимде көрінеді. Мұнда нәтиже кодын тексеруге болады.';
+  if (!hasDb) return;
+  const sel = $('#clsFilter'), cur = sel.value, classes = Array.from(new Set(subs.map(s => s.cls || '').filter(Boolean))).sort((a, b) => a.localeCompare(b, 'kk'));
+  sel.innerHTML = '<option value="">Барлығы</option>' + classes.map(c => `<option value="${esc(c)}"${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  const list = subs.filter(s => !sel.value || s.cls === sel.value).sort((a, b) => (a.cls || '').localeCompare(b.cls || '', 'kk') || (a.name || '').localeCompare(b.name || '', 'kk'));
+  const n = list.length, avg = n ? list.reduce((a, s) => a + (s.score || 0), 0) / n : 0, gd = [5, 4, 3, 2].map(g => list.filter(s => s.grade === g).length);
+  const las = list.map(s => num((s.E || {}).lavg)).filter(Number.isFinite), lam = las.length ? las.reduce((a, b) => a + b, 0) / las.length : NaN;
+  $('#tStats').innerHTML = `<div class="stat"><span class="v mono">${n}</span><span class="l">Тапсырған оқушы</span></div><div class="stat"><span class="v mono">${n ? fmt(avg, 1) : '—'}</span><span class="l">Орташа балл (10-нан)</span></div><div class="stat"><span class="v mono">${gd.join(' · ')}</span><span class="l">«5» · «4» · «3» · «2» бағалар саны</span></div><div class="stat"><span class="v mono">${Number.isFinite(lam) ? fmtInt(lam / 1000) : '—'}</span><span class="l">Сыныптың орташа λ мәні, кДж/кг</span></div>`;
+  $('#tBars').innerHTML = RUBRIC.map((rb, k) => { const p = n ? Math.round(100 * list.filter(s => s.crit && s.crit[k]).length / n) : 0; return `<div class="bar" title="${esc(rb.d.replace(/<[^>]+>/g, ''))}"><span class="k">К${k + 1}</span><span class="track"><span class="fill${p < 50 ? ' low' : ''}" style="width:${p}%;display:block"></span></span><span class="pct">${n ? p + '%' : '—'}</span></div>`; }).join('');
+  $('#tEmpty').hidden = n > 0;
+  $('#tBody').innerHTML = list.map(s => {
+    const dots = (s.crit || []).map((c, k) => `<span class="dot${c ? ' y' : ''}" title="К${k + 1}: ${c ? 'орындалды' : 'орындалмады'}"></span>`).join('');
+    const E = s.E || {}, t = s.truth || {}, tr = s.trials || [];
+    const rowsT = [0, 1, 2].map(i => { const x = tr.find(z => z.i === i + 1) || {}; return `<span>${i + 1}-тәжірибе: λ = <span class="mono">${esc((E.lam || [])[i] || '—')}</span>; ΔV оқушыда = <span class="mono">${esc((E.dv || [])[i] || '—')}</span>, нақты мұз = <span class="mono">${fmt(x.iceTrue, 1)}</span> г, бетіндегі су = <span class="mono">${fmt(x.wet, 2)}</span> г</span>`; }).join('');
+    const det = `<div class="det">${rowsT}<span>Нақты: ауа <span class="mono">${fmt(t.Troom, 1)}</span> °C, су <span class="mono">${fmt(t.Tv, 1)}</span> °C, стақан <span class="mono">${fmt(t.m1, 1)}</span> г</span><span>Тест: бірінші әрекет <span class="mono">${(s.safe || {}).first ?? '—'}</span>/5</span><span>Бұзушылықтар: ${esc((s.viol || []).map(v => VIOL_NAMES[v]).join(', ') || 'жоқ')}</span>${(s.info || []).map((x, k) => `<span>К${k + 1}: ${esc(x)}</span>`).join('')}</div>`;
+    return `<tr data-id="${esc(s.id)}"><td><b>${esc(s.name)}</b></td><td>${esc(s.cls)}</td><td class="mono">${esc(s.variant)}</td><td class="mono"><b>${s.score}</b>/10</td><td><span class="grade g${s.grade}">${s.grade}</span></td><td><div class="dots">${dots}</div></td><td class="mono">${Number.isFinite(num(E.lavg)) ? fmtInt(num(E.lavg)) : '—'}</td><td class="mono">${esc(fmtTime(s.at))}</td><td><button type="button" class="ghost" data-tact="det">Толығырақ</button> <button type="button" class="danger" data-tact="del">Қайта тапсыру</button></td></tr><tr class="detail" hidden><td colspan="9">${det}</td></tr>`;
+  }).join('');
+}
+function teacherClick(e){
+  const b = e.target.closest('button[data-tact]'); if (!b) return; const tr = b.closest('tr'), id = tr.dataset.id;
+  if (b.dataset.tact === 'det') { const d = tr.nextElementSibling; d.hidden = !d.hidden; b.textContent = d.hidden ? 'Толығырақ' : 'Жасыру'; }
+  else { if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Нәтижені өшіру керек пе? Растау'; b._t = setTimeout(() => { delete b.dataset.armed; b.textContent = 'Қайта тапсыру'; }, 4000); return; } clearTimeout(b._t); b.disabled = true; db.doc('subs/' + id).delete().catch(() => { b.disabled = false; $('#tMsg').textContent = 'Нәтижені өшіру мүмкін болмады. Бетті жаңартып, қайта көріңіз.'; }); }
+}
+function tableRows(sep){
+  const head = ['Аты-жөні', 'Сынып', 'Нұсқа', 'Балл', 'Баға', ...RUBRIC.map((_, k) => 'К' + (k + 1)), 'λ1', 'λ2', 'λ3', 'λ орт', 'Δλ', 'ε %', 'Бұзушылық', 'Тапсырылды'];
+  const q = v => { const t = String(v == null ? '' : v); return sep === ';' && /[;"\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t.replace(/\t/g, ' '); };
+  const list = subs.slice().sort((a, b) => (a.cls || '').localeCompare(b.cls || '', 'kk') || (a.name || '').localeCompare(b.name || '', 'kk'));
+  return [head, ...list.map(s => { const E = s.E || {}; return [s.name, s.cls, s.variant, s.score, s.grade, ...(s.crit || []), ...(E.lam || ['', '', '']), E.lavg, E.dl, E.eps, (s.viol || []).map(v => VIOL_NAMES[v]).join(', '), fmtTime(s.at)]; })].map(r => r.map(q).join(sep)).join('\n');
+}
+async function exportCsv(){ if (!dlCap) return; try { await dlCap.save({ filename: 'zerthana-8-2-natizheler.csv', data: '﻿' + tableRows(';') }); } catch (e) { if (e && e.code !== 'declined') $('#tMsg').textContent = 'Файлды жүктеу мүмкін болмады. «Кестені көшіру» батырмасын қолданыңыз.'; } }
+function verifyCode(){
+  const out = $('#codeOut'), r = readCode($('#codeIn').value); out.hidden = false;
+  if (!r) { out.className = 'vout badc'; out.textContent = 'Код танылмады. Оны толық, бос орынсыз қойыңыз.'; return; }
+  if (r.bad) { out.className = 'vout badc'; out.textContent = 'Код өзгертілген немесе толық емес: тексеру сомасы сәйкес келмейді.'; return; }
+  out.className = 'vout good'; out.innerHTML = `<b>Код дұрыс.</b> ${esc(r.n)} · ${esc(r.c)} · нұсқа <span class="mono">${esc(r.v)}</span><br>Балл: <b class="mono">${esc(r.s)}/10</b> · баға «${grade5(+r.s || 0)}» · λорт = <span class="mono">${esc(r.l || '—')}</span> Дж/кг<br>Критерийлер: <span class="mono">${esc(String(r.k).split('').map((c, i) => 'К' + (i + 1) + (c === '1' ? '✓' : '✗')).join(' '))}</span><br>Тапсырылды: ${esc(fmtTime(r.t))}`;
+}
+
+/* ================= capabilities ================= */
+async function initCaps(){
+  const cl = window.claude;
+  if (cl && typeof cl.use === 'function') { try { [userCap, db, dlCap] = await Promise.all([cl.use('user'), cl.use('db'), cl.use('downloads')]); } catch (e) {} }
+  if (userCap) { try { uid = await userCap.id(); isOwner = await userCap.isOwner(); } catch (e) {} }
+  online = !!(db && uid);
+  const d = loadDraft();
+  if (d && d.started) { V = makeVariant(d.seed); applyDraft(d); } else if (d) { applyDraft(d); }
+  initDone = true; fillInputs(); updateMode(); updateUI(); setPage(S.started ? S.page : 0, { noScroll: true });
+  if (online) {
+    try {
+      db.doc('subs/' + uid).onSnapshot(snap => {
+        if (snap.exists) {
+          const x = snap.data() || {};
+          if (!S.result || !S.result.online) {
+            if (!S.started && x.E) { V = makeVariant(x.seed >>> 0); S = defaults(V); S.started = true; S.name = x.name || ''; S.cls = x.cls || ''; S.seed = x.seed >>> 0; S.E = Object.assign(blankE(), x.E); S.viol = x.viol || []; S.trials = x.trials || []; Object.assign(S.B, x.flags || {}); S.safe = Object.assign(S.safe, x.safe || {}, { passed: true }); fillInputs(); }
+            S.result = { crit: x.crit || [], info: x.info || [], score: x.score || 0, grade5: x.grade || grade5(x.score || 0), at: x.at, online: true, code: '' };
+            saveDraft(); updateUI(); setPage(S.page, { noScroll: true });
+          }
+        } else if (S.result && S.result.online) { S.result = null; saveDraft(); updateUI(); }
+      }, () => {});
+    } catch (e) {}
+  }
+  if (isOwner && db) { try { db.collection('subs').onSnapshot(snap => { subs = snap.docs.filter(x => x.exists).map(x => Object.assign({ id: x.id }, x.data())); if (!$('#teacherView').hidden) renderTeacher(); }, () => { $('#tMsg').textContent = 'Нәтижелерді жүктеу мүмкін болмады. Бетті жаңартып көріңіз.'; }); } catch (e) {} }
+  if (location.hash === '#teacher') showTeacher(true);
+}
+
+/* ================= wiring ================= */
+function boot(){
+  readColors(); buildBook();
+  const mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', readColors);
+  new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+  $('#stepper').addEventListener('click', e => { const b = e.target.closest('.step'); if (b) setPage(+b.dataset.p); });
+  document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { setPage(S.page + (+g.dataset.go)); return; } const gt = e.target.closest('[data-goto]'); if (gt) { setPage(+gt.dataset.goto); return; } onAct(e); });
+  $('#pages').addEventListener('input', onInput); $('#pages').addEventListener('change', onInput);
+  $('#stCls').addEventListener('change', () => { $('#otherWrap').hidden = $('#stCls').value !== '__other'; });
+  $('#startForm').addEventListener('submit', startWork);
+  $('#continueBtn').addEventListener('click', () => { const st = stepDone(); const p = st.findIndex((x, i) => i > 0 && !x); setPage(p < 0 ? 7 : p); });
+  $('#safeCheck').addEventListener('click', safetyCheck); $('#safeRetry').addEventListener('click', safetyRetry);
+  $('#submitBtn').addEventListener('click', () => { $('#confirmBox').hidden = false; $('#confirmYes').focus(); });
+  $('#confirmNo').addEventListener('click', () => { $('#confirmBox').hidden = true; });
+  $('#confirmYes').addEventListener('click', doSubmit);
+  $('#teacherBtn').addEventListener('click', () => showTeacher($('#teacherView').hidden));
+  $('#teacherBtnReg').addEventListener('click', () => showTeacher(true));
+  $('#backBtn').addEventListener('click', () => showTeacher(false));
+  $('#clsFilter').addEventListener('change', renderTeacher);
+  $('#tBody').addEventListener('click', teacherClick);
+  $('#csvBtn').addEventListener('click', exportCsv);
+  $('#copyTblBtn').addEventListener('click', () => copyText(tableRows('\t'), $('#tMsg'), null));
+  $('#codeBtn').addEventListener('click', verifyCode);
+  $('#codeIn').addEventListener('keydown', e => { if (e.key === 'Enter') verifyCode(); });
+  fillInputs(); updateUI(); setPage(0, { noScroll: true });
+  requestAnimationFrame(frame);
+  initCaps();
+}
+if (typeof document !== 'undefined' && document.querySelector) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot(); }
+window.__lab82 = { grade, makeVariant, readCode, makeCode, newBench, engAdvance, actPourWarm, actCylToCal, actTakeIce, actDryIce, actIceToCal, actCalToCyl, actEmptyCal, lamOf };
+})();
+</script>
+
+</body></html>

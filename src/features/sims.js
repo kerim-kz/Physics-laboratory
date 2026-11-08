@@ -86,7 +86,7 @@ router.get('/sims/:k', asyncH(async (req, res) => {
               <h2>Мұғалімге</h2>
               <p class="muted">${s.tip}</p>
             </div>
-            ${labs.length ? html`<div class="panel"><h2>Осы бөлімнің зертханалары</h2><div class="list">${labs.map((L) => html`<a class="row" href="${L.u}" target="_blank" rel="noopener"><span class="no">${L.g}·№${L.no}</span><span class="grow"><b>${L.t}</b></span>${icon('ext', 14)}</a>`)}</div></div>` : ''}
+            ${labs.length ? html`<div class="panel"><h2>Осы бөлімнің зертханалары</h2><div class="list">${labs.map((L) => html`<a class="row" href="/labs/${L.k}"><span class="no">${L.g}·№${L.no}</span><span class="grow"><b>${L.t}</b></span>${icon('arrow', 14)}</a>`)}</div></div>` : ''}
             ${others.length ? html`<div class="panel"><h2>Ұқсас симуляциялар</h2><div class="list">${others.map((o) => html`<a class="row" href="/sims/${o.k}"><span class="grow"><b>${o.t}</b></span>${icon('arrow', 14)}</a>`)}</div></div>` : ''}
           </aside>
         </div>

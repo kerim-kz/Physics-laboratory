@@ -17,10 +17,10 @@ function labCard(L) {
   return html`
     <article class="card ${FAMILIES[sec.fam].css}">
       <div class="card-top"><span class="glyph">${icon('lab')}</span><span class="no">№${L.no}</span><span class="cls">${L.g}-сынып</span></div>
-      <h3><a href="${L.u}" target="_blank" rel="noopener">${L.t}</a></h3>
+      <h3><a href="/labs/${L.k}">${L.t}</a></h3>
       <p>${L.d}</p>
       <div class="tags">${L.o.map((o) => html`<span class="tag obj">${o}</span>`)}</div>
-      <div class="card-foot"><span class="meta">${sec.name}</span><span class="open">Зертхананы ашу ${icon('ext', 13)}</span></div>
+      <div class="card-foot"><span class="meta">${sec.name}</span><span class="open">Жұмысты бастау ${icon('arrow', 13)}</span></div>
     </article>`;
 }
 
@@ -39,7 +39,7 @@ router.get('/labs', asyncH(async (req, res) => {
         <div class="seg" role="tablist" aria-label="Сынып">
           ${[0, 7, 8, 9].map((x) => html`<a href="/labs${x ? `?grade=${x}` : ''}" class="${g === x ? 'on' : ''}">${x ? `${x}-сынып` : 'Барлығы'}</a>`)}
         </div>
-        <div class="notice"><div>Зертхана жаңа бетте ашылады. Жұмыстың соңында шыққан <b>нәтиже кодын</b> толық көшіріп, мұғаліміңе жібер — мұғалім оны платформада тексеріп, журналға жазады. Кодты қолмен өзгертуге болмайды: бір таңба ауысса, код қабылданбайды.</div></div>
+        <div class="notice"><div><b>Платформаға кіріп орындасаң</b>, нәтижең мұғаліміңнің журналына өзі түседі. Кірмей орындасаң, жұмыстың соңында шыққан <b>нәтиже кодын</b> толық көшіріп, мұғаліміңе жібер — мұғалім оны «Нәтиже кодын тексеру» бетінде журналға жазады. Кодты қолмен өзгертуге болмайды: бір таңба ауысса, код қабылданбайды.</div></div>
         ${[7, 8, 9].filter((x) => !g || x === g).map((x) => {
           const list = labs.filter((L) => L.g === x);
           return html`<section class="shelf"><div class="shelf-h"><h2>${x}-сынып</h2><span class="cnt">${list.length} жұмыс</span></div><div class="rule"></div><div class="grid">${list.map(labCard)}</div></section>`;
@@ -96,10 +96,11 @@ async function teacherLabsPage(req, res, { checked = null, text = '' } = {}) {
         return html`<tr><td>${s.student_name}</td><td>${s.class_label}</td>${cells.map((r) => html`<td class="num">${r ? g5(r.score) : '—'}</td>`)}<td class="num">${avg}</td></tr>`;
       })}</tbody></table></div>`;
   } else {
-    table = html`<div class="tblwrap"><table><thead><tr><th>Аты-жөні</th><th>Сынып</th><th>Жұмыс</th><th>Нұсқа</th><th class="num">Балл</th><th class="num">Баға</th><th>Критерийлер</th><th>Орындалды</th><th></th></tr></thead>
+    table = html`<div class="tblwrap"><table><thead><tr><th>Аты-жөні</th><th>Сынып</th><th>Жұмыс</th><th>Нұсқа</th><th class="num">Балл</th><th class="num">Баға</th><th>Критерийлер</th><th>Орындалды</th><th>Дереккөз</th><th></th></tr></thead>
       <tbody>${rows.map((r) => { const L = labByKey(r.lab_key); return html`<tr>
-        <td>${r.student_name}</td><td>${r.class_label}</td><td class="wrap">${L ? `${L.g}-сынып №${L.no}. ${L.t}` : r.lab_key}</td><td>${r.variant}</td>
+        <td>${r.student_name}</td><td>${r.class_label}</td><td class="wrap">${L ? html`<a href="/labs/${L.k}?panel=1" title="Зертхана ішіндегі мұғалім панелі">${L.g}-сынып №${L.no}. ${L.t}</a>` : r.lab_key}</td><td>${r.variant}</td>
         <td class="num">${String(r.score).replace('.', ',')} / 10</td><td class="num">${g5(r.score)}</td><td>${critHtml(r.crit)}</td><td>${r.done_at}</td>
+        <td>${r.source === 'online' ? html`<span class="pill ok">платформа</span>` : html`<span class="pill">код</span>`}</td>
         <td><form method="post" action="/teacher/labs/${r.id}/delete" data-confirm="Жазба өшірілсін бе?">${csrfField(req)}<button class="btn warn sm" type="submit">Өшіру</button></form></td></tr>`; })}</tbody></table></div>`;
   }
 
@@ -108,7 +109,7 @@ async function teacherLabsPage(req, res, { checked = null, text = '' } = {}) {
     body: html`
       <div class="view">
         <div class="crumbs"><a href="/cabinet">Кабинет</a><span>/</span><span>Зертхана нәтижелері</span></div>
-        ${vhead('Зертхана нәтижелері', 'Оқушы әкелген нәтиже кодтарын тексеріп, журналға жазыңыз. Журнал тек сізге көрінеді. Бір оқушы бір жұмысты қайта тапсырса, жазба соңғы нәтижемен жаңартылады.')}
+        ${vhead('Зертхана нәтижелері', 'Платформада орындалған жұмыстар журналға өздігінен түседі («платформа»). Платформадан тыс орындалған жұмыстың нәтиже кодын төменде тексеріп, журналға жазыңыз («код»). Журнал тек сізге көрінеді; оқушы жұмысты қайта тапсырса, жазба соңғы нәтижемен жаңартылады.')}
         <section class="panel">
           <form class="form" method="post" action="/teacher/labs/check">
             ${csrfField(req)}

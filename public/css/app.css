@@ -476,3 +476,5 @@ input[type=file]{font-size:13px;max-width:100%}
 }
 .g-stage > .btn{justify-self:center;min-width:220px}
 @media (max-width:440px){ .brand-t{display:none} }
+.labframe{width:100%;height:calc(100vh - 150px);min-height:640px;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);display:block}
+.labview{gap:16px}
