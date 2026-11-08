@@ -43,7 +43,7 @@ router.get('/exams', asyncH(async (req, res) => {
             <p>${e.desc}</p>
             <span class="exc">${counts[e.k] || 0} тапсырма · бастау →</span>
           </a>`)}</div>
-        <div class="notice"><div>Барлық тапсырма PISA, ББЖМ және ҰБТ форматында құрастырылған авторлық тапсырмалар — ресми нұсқалар емес. Ресми форматтың соңғы өзгерістерін Ұлттық тестілеу орталығының сайтынан тексеріңіз.</div></div>
+        <div class="notice"><div>Барлық тапсырма PISA 2025, ББЖМ және ҰБТ-2026 форматында құрастырылған авторлық тапсырмалар — ресми нұсқалар емес. Ресми спецификация мен демонұсқаларды <a href="https://testcenter.kz" target="_blank" rel="noopener">Ұлттық тестілеу орталығының</a> сайтынан, PISA туралы мәліметті <a href="https://www.oecd.org/pisa/" target="_blank" rel="noopener">OECD PISA</a> сайтынан қараңыз.</div></div>
         ${attempts.length ? html`<section class="block"><div class="block-h"><h2>Соңғы нәтижелерім</h2></div>
           <div class="tblwrap"><table><thead><tr><th>Емтихан</th><th>Режим</th><th>Бөлім</th><th class="num">Балл</th><th class="num">%</th><th>Күні</th></tr></thead>
           <tbody>${attempts.map((a) => html`<tr><td>${EXAM[a.exam].name}</td><td>${a.mode === 'exam' ? 'Сынақ' : 'Жаттығу'}</td><td>${SECTION[a.section] ? SECTION[a.section].name : 'Аралас'}</td>
@@ -74,7 +74,7 @@ router.get('/exams/:exam', asyncH(async (req, res) => {
           <form class="filters" method="get" action="/exams/${e.k}/test">
             <label class="fl">Режим<select name="mode"><option value="practice">Жаттығу (бірден түсіндірме)</option><option value="exam">Сынақ (уақытпен)</option></select></label>
             <label class="fl">Бөлім<select name="section"><option value="">Аралас</option>${SECTIONS.filter((s) => secs.some((x) => x.section === s.k)).map((s) => html`<option value="${s.k}">${s.name} (${secs.find((x) => x.section === s.k).n})</option>`)}</select></label>
-            <label class="fl">Тапсырма саны<select name="n">${[10, 20, 30].map((n) => html`<option value="${n}"${sel(n === 10)}>${n}</option>`)}</select></label>
+            <label class="fl">Тапсырма саны<select name="n">${[10, 20, 30, ...(e.k === 'ubt' ? [40] : [])].map((n) => html`<option value="${n}"${sel(n === 10)}>${n === 40 ? '40 (толық нұсқа)' : n}</option>`)}</select></label>
             <button class="btn lg" type="submit">${icon('play', 16)} Бастау</button>
           </form>
           ${!req.user ? html`<p class="muted small">Нәтижеңді сақтау үшін <a href="/login?next=/exams/${e.k}">кір</a> немесе <a href="/register">тіркел</a>.</p>` : ''}`
@@ -111,7 +111,7 @@ router.get('/exams/:exam/test', asyncH(async (req, res) => {
   if (!e) throw new HttpError(404, 'Емтихан табылмады.');
   const mode = req.query.mode === 'exam' ? 'exam' : 'practice';
   const section = SECTION[req.query.section] ? req.query.section : '';
-  const n = [10, 20, 30].includes(toInt(req.query.n)) ? toInt(req.query.n) : 10;
+  const n = [10, 20, 30, 40].includes(toInt(req.query.n)) ? toInt(req.query.n) : 10;
   const units = await pickQuestions(e.k, section, n);
   const total = units.reduce((a, u) => a + u.questions.length, 0);
   await page(req, res, {

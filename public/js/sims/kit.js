@@ -105,12 +105,12 @@
       for (var gx = Math.ceil(o.xmin / sx) * sx; gx <= o.xmax + 1e-9; gx += sx) {
         var px = X(gx);
         ctx.strokeStyle = C.soft; ctx.beginPath(); ctx.moveTo(px, r.y); ctx.lineTo(px, r.y + r.h); ctx.stroke();
-        ctx.textAlign = 'center'; ctx.fillText(fmt(gx, sx < 1 ? 1 : 0), px, r.y + r.h + 12);
+        ctx.textAlign = 'center'; ctx.fillText(fmt(Math.abs(gx) < sx * 1e-6 ? 0 : gx, sx < 1 ? 1 : 0), px, r.y + r.h + 12);
       }
       for (var gy = Math.ceil(o.ymin / sy) * sy; gy <= o.ymax + 1e-9; gy += sy) {
         var py = Y(gy);
         ctx.strokeStyle = C.soft; ctx.beginPath(); ctx.moveTo(r.x, py); ctx.lineTo(r.x + r.w, py); ctx.stroke();
-        ctx.textAlign = 'right'; ctx.fillText(fmt(gy, sy < 1 ? 1 : 0), r.x - 4, py + 3);
+        ctx.textAlign = 'right'; ctx.fillText(fmt(Math.abs(gy) < sy * 1e-6 ? 0 : gy, sy < 1 ? 1 : 0), r.x - 4, py + 3);
       }
       if (o.ymin < 0 && o.ymax > 0) { ctx.strokeStyle = C.muted; ctx.beginPath(); ctx.moveTo(r.x, Y(0)); ctx.lineTo(r.x + r.w, Y(0)); ctx.stroke(); }
       ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();

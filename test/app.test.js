@@ -98,6 +98,62 @@ describe('ашық беттер', () => {
     assert.equal((await c.get('/nope')).status, 404);
   });
 
+  test('2-нұсқа: бүйір мәзір, басты беттегі симуляция, ғалымдар, олимпиада, формула терезесі', async () => {
+    const c = new Client();
+    const home = await c.get('/');
+    assert.match(home.text, /id="drawer"/);
+    assert.match(home.text, /id="heroSim"/);
+    assert.match(home.text, /data-game="scientist"/);
+    assert.match(home.text, /\/js\/hero\.js/);
+    const { SIMS } = await import('../src/data/sims.js');
+    assert.ok(SIMS.length >= 38);
+    for (const s of SIMS) assert.equal((await c.get(`/sims/${s.k}`)).status, 200, s.k);
+    const sci = await c.get('/scientists');
+    assert.equal(sci.status, 200);
+    assert.match(sci.text, /Әл-Фараби|әл-Фараби/);
+    assert.equal((await c.get('/games/scientist')).status, 200);
+    const ol = await c.get('/olympiad?grade=9&level=hard');
+    assert.equal(ol.status, 200);
+    assert.match(ol.text, /Баллистикалық маятник/);
+    assert.doesNotMatch(ol.text, /Мұзды суға|Соңғы секундтағы жол/); // 9-сынып, тек күрделі
+    assert.match(ol.text, /class="katex/);
+    const f = await c.get('/formulas');
+    assert.match(f.text, /data-formula="kin-1"/);
+    assert.match(f.text, /7-сынып/);
+    const part = await c.get('/formulas/kin-4?part=1');
+    assert.equal(part.status, 200);
+    assert.match(part.text, /Анықтамасы/);
+    assert.match(part.text, /жылдамдықтың өзгеру шапшаңдығын/);
+    assert.doesNotMatch(part.text, /<html/);
+    assert.equal((await c.get('/formulas/kin-4')).status, 200);
+    assert.equal((await c.get('/formulas/nope-1')).status, 404);
+    assert.equal((await c.get('/formulas?grade=8&upto=1&view=section')).status, 200);
+    const ubt = await c.get('/exams/ubt');
+    assert.match(ubt.text, /толық нұсқа/);
+    assert.equal((await c.get('/exams/ubt/test?mode=exam&n=40')).status, 200);
+  });
+
+  test('әр формулада анықтама бар, симуляциялардың формулалары мен файлдары бар', async () => {
+    const fs = await import('node:fs');
+    const { FORMULAS } = await import('../src/data/formulas.js');
+    const { SIMS } = await import('../src/data/sims.js');
+    const { OLYMPIAD } = await import('../src/data/olympiad.js');
+    const { SCIENTISTS } = await import('../src/data/scientists.js');
+    const names = new Set(FORMULAS.map((x) => x.name));
+    for (const x of FORMULAS) assert.ok(x.def && x.def.length > 30, x.name);
+    for (const s of SIMS) {
+      assert.ok(fs.existsSync(new URL(`../public/js/sims/${s.k}.js`, import.meta.url)), s.k);
+      for (const n of s.f) assert.ok(names.has(n), `${s.k}: ${n}`);
+    }
+    const simKeys = new Set(SIMS.map((s) => s.k));
+    for (const o of OLYMPIAD) {
+      assert.ok(o.steps.length && o.ans && o.tip && o.idea, o.k);
+      if (o.sim) assert.ok(simKeys.has(o.sim), o.k);
+    }
+    for (const g of [7, 8, 9, 10, 11]) for (const lvl of ['easy', 'hard']) assert.ok(OLYMPIAD.some((o) => o.g === g && o.lvl === lvl), `${g} ${lvl}`);
+    for (const s of SCIENTISTS) { assert.ok(s.q.length, s.k); if (s.sim) assert.ok(simKeys.has(s.sim), s.k); }
+  });
+
   test('CSRF белгісіз POST қабылданбайды', async () => {
     const c = new Client();
     await c.get('/login');
@@ -205,6 +261,8 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal(r.status, 200);
     assert.equal(r.body.saved, true);
     assert.equal(r.body.best, 5000);
+    const sc = await student.api('/api/games/score', { game: 'scientist', score: 99999 });
+    assert.equal(sc.body.best, 1000);
     const anon = await new Client().api('/api/games/score', { game: 'quiz', score: 10 });
     assert.equal(anon.body.saved, false);
     const games = await new Client().get('/games');

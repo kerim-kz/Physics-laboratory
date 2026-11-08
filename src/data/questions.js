@@ -208,4 +208,6 @@ unit('pisa', 'pisa-5', 'stat', 10, 'Әуе шары',
     { stem: 'Қабық, себет және жолаушыларды қоса есептегенде шар көтере алатын ең үлкен масса қандай?', options: ['250 кг', '500 кг', '1900 кг', '2400 кг'], correct: [1], explain: 'Ішкі ауаның салмағы 0,95 · 10 · 2000 = 19 000 Н. Көтеру күші 24 000 − 19 000 = 5000 Н, бұл 500 кг-ға сәйкес.' },
   ]);
 
-export const SEED_UNITS = U;
+import { SEED_UNITS_V2 } from './questions-v2.js';
+
+export const SEED_UNITS = [...U, ...SEED_UNITS_V2];

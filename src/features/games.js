@@ -2,6 +2,7 @@ import express from 'express';
 import { FAMILIES, SECTION, SECTIONS } from '../data/catalog.js';
 import { formulasForGames } from '../data/formulas.js';
 import { GAME, GAMES } from '../data/games.js';
+import { scientistsForGames } from '../data/scientists.js';
 import { many } from '../lib/db.js';
 import { html, jsonScript } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
@@ -10,7 +11,7 @@ import { asyncH, HttpError, toInt } from '../lib/util.js';
 
 export const router = express.Router();
 
-const MAX_SCORE = { pairs: 1000, quiz: 5000, symbol: 1000, units: 1000, convert: 1000 };
+const MAX_SCORE = { pairs: 1000, quiz: 5000, symbol: 1000, units: 1000, convert: 1000, scientist: 1000 };
 
 async function leaderboard(game, schoolId = null) {
   const params = [game];
@@ -88,7 +89,7 @@ router.get('/games/:k', asyncH(async (req, res) => {
               <div class="panel"><h2>Қалай жаттаған тиімді?</h2><p class="muted small">Формуланы алдымен өзің есіңе түсіріп көр, содан кейін ғана карточканы аудар. «Қайталау» деп белгіленген карточкалар топтаманың соңына қайта қосылады — осылай әлсіз тұстарың бекиді.</p></div>`}
           </aside>
         </div>
-        ${jsonScript('gameData', { formulas: formulasForGames(), sections: Object.fromEntries(SECTIONS.map((s) => [s.k, s.name])) })}
+        ${jsonScript('gameData', game.k === 'scientist' ? { formulas: [], scientists: scientistsForGames() } : { formulas: formulasForGames(), sections: Object.fromEntries(SECTIONS.map((s) => [s.k, s.name])) })}
       </div>`,
   });
 }));
