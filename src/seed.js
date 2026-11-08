@@ -1,29 +1,37 @@
 import { config } from './config.js';
 import { hashPassword } from './lib/auth.js';
 import { many, one, q, tx } from './lib/db.js';
-import { LOGIN_RE } from './lib/util.js';
 import { SEED_UNITS } from './data/questions.js';
 
 // Платформа иесін (бас әкімшіні) ортаның айнымалыларынан жасау.
-// Иесі бар болса, ештеңе өзгертілмейді — құпиясөзді әкімші панелінен ауыстырыңыз.
+// Иесі бар болса, ештеңе өзгертілмейді — құпиясөзді сайттағы «Құпиясөз» бетінен ауыстырыңыз.
+// Жасалмай қалса, себебі ownerSetupProblem-де сақталып, кіру бетінде көрсетіледі.
+const OWNER_LOGIN_RE = /^[\p{L}\p{N}._-]{3,32}$/u;
+export let ownerSetupProblem = null;
+
 export async function ensureOwner() {
+  ownerSetupProblem = null;
   const owner = await one('SELECT id FROM users WHERE is_owner');
   if (owner) return;
-  const { login, password, name } = config.owner;
-  if (!login || !password) {
-    console.warn('ЕСКЕРТУ: ADMIN_LOGIN және ADMIN_PASSWORD орнатылмаған — платформа иесі әлі жасалмады.');
+  const login = String(config.owner.login || '').trim();
+  const password = String(config.owner.password || '').trim();
+  const name = String(config.owner.name || '').trim() || 'Платформа иесі';
+  if (!login || !password) ownerSetupProblem = 'ADMIN_LOGIN немесе ADMIN_PASSWORD мәні бос.';
+  else if (!OWNER_LOGIN_RE.test(login)) ownerSetupProblem = 'ADMIN_LOGIN 3–32 таңбадан тұрсын: әріптер, сандар, нүкте, сызықша; бос орынсыз.';
+  else if (password.length < 8) ownerSetupProblem = 'ADMIN_PASSWORD кемінде 8 таңба болсын.';
+  if (ownerSetupProblem) {
+    console.warn(`ЕСКЕРТУ: платформа иесі жасалмады — ${ownerSetupProblem}`);
     return;
   }
-  if (!LOGIN_RE.test(login) || password.length < 10) {
-    console.warn('ЕСКЕРТУ: ADMIN_LOGIN латынша 3–32 таңба, ADMIN_PASSWORD кемінде 10 таңба болуы керек.');
-    return;
-  }
-  const taken = await one('SELECT id, role FROM users WHERE lower(login) = lower($1)', [login]);
+  const hash = await hashPassword(password);
+  const taken = await one('SELECT id FROM users WHERE lower(login) = lower($1)', [login]);
   if (taken) {
-    await q(`UPDATE users SET role = 'admin', is_owner = true, status = 'active' WHERE id = $1`, [taken.id]);
+    // Осы логинмен бұрын тіркелген аккаунт иесінің аккаунтына айналады; құпиясөз — ADMIN_PASSWORD.
+    await q(`UPDATE users SET role = 'admin', is_owner = true, status = 'active', password_hash = $2,
+                              class_id = NULL, must_change_password = false WHERE id = $1`, [taken.id, hash]);
   } else {
     await q(`INSERT INTO users(role, login, password_hash, full_name, status, is_owner)
-             VALUES ('admin', $1, $2, $3, 'active', true)`, [login, await hashPassword(password), name]);
+             VALUES ('admin', $1, $2, $3, 'active', true)`, [login, hash, name]);
   }
   console.log(`Платформа иесі жасалды: ${login}`);
 }

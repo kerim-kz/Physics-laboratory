@@ -6,6 +6,7 @@ import { REGIONS } from '../data/catalog.js';
 import { many, one, q, tx } from '../lib/db.js';
 import { html, sel } from '../lib/html.js';
 import { csrfField, page } from '../lib/layout.js';
+import { ownerSetupProblem } from '../seed.js';
 import { asyncH, cleanText, LOGIN_RE, setFlash, toInt, validFullName } from '../lib/util.js';
 
 export const router = express.Router();
@@ -28,6 +29,8 @@ function loginView(req, res, { errors = [], login = '' } = {}) {
       <div class="panel narrow">
         <h2>Платформаға кіру</h2>
         <p class="muted">Логин мен құпиясөзіңізді енгізіңіз. Құпиясөзді ұмытсаңыз, оқушы өз мұғаліміне, мұғалім әкімшіге хабарласады.</p>
+        ${ownerSetupProblem ? html`<div class="notice warn"><div><b>Әкімші (платформа иесі) аккаунты әлі жасалмаған.</b> Себебі: ${ownerSetupProblem}
+          Render → <b>gylym-ordasy</b> → <b>Environment</b> бөлімінде мәндерді түзетіп, <b>Save Changes</b> басыңыз — сайт қайта іске қосылғанда аккаунт жасалады.</div></div>` : ''}
         ${errBox(errors)}
         <form class="form" method="post" action="/login">
           ${csrfField(req)}
