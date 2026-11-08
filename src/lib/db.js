@@ -35,30 +35,20 @@ export async function tx(fn) {
 
 const migrationsDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'migrations');
 
+// Барлық жаңа миграция бір транзакцияда орындалады. pg_advisory_xact_lock транзакцияға
+// байланған, сондықтан Neon/PgBouncer сияқты транзакциялық пулмен де қауіпсіз.
 export async function migrate() {
-  const client = await pool.connect();
-  try {
-    await client.query('SELECT pg_advisory_lock(727001)');
+  const files = (await fs.readdir(migrationsDir)).filter((f) => f.endsWith('.sql')).sort();
+  await tx(async (client) => {
+    await client.query('SELECT pg_advisory_xact_lock(727001)');
     await client.query(`CREATE TABLE IF NOT EXISTS schema_migrations (
       name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())`);
     const done = new Set((await client.query('SELECT name FROM schema_migrations')).rows.map((r) => r.name));
-    const files = (await fs.readdir(migrationsDir)).filter((f) => f.endsWith('.sql')).sort();
     for (const file of files) {
       if (done.has(file)) continue;
-      const sql = await fs.readFile(path.join(migrationsDir, file), 'utf8');
-      await client.query('BEGIN');
-      try {
-        await client.query(sql);
-        await client.query('INSERT INTO schema_migrations(name) VALUES ($1)', [file]);
-        await client.query('COMMIT');
-        console.log(`Миграция орындалды: ${file}`);
-      } catch (err) {
-        await client.query('ROLLBACK');
-        throw err;
-      }
+      await client.query(await fs.readFile(path.join(migrationsDir, file), 'utf8'));
+      await client.query('INSERT INTO schema_migrations(name) VALUES ($1)', [file]);
+      console.log(`Миграция орындалды: ${file}`);
     }
-  } finally {
-    await client.query('SELECT pg_advisory_unlock(727001)').catch(() => {});
-    client.release();
-  }
+  });
 }

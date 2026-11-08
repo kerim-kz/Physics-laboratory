@@ -1,0 +1,30 @@
+# Render Blueprint: тегін веб-сервис. Дерекқор — Neon (тегін, мерзімсіз): оның қосылу жолын
+# алғашқы іске қосуда DATABASE_URL өрісіне қоясыз. Файлдар дерекқорда сақталады (FILE_STORAGE=db),
+# себебі тегін Render-дің дискі әр қайта іске қосылғанда тазаланады.
+services:
+  - type: web
+    name: gylym-ordasy
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: FILE_STORAGE
+        value: db
+      - key: MAX_UPLOAD_MB
+        value: "20"
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_LOGIN
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_NAME
+        sync: false
