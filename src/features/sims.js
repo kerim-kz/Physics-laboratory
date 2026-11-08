@@ -50,7 +50,7 @@ router.get('/sims/:k', asyncH(async (req, res) => {
   const others = SIMS.filter((x) => x.s === s.s && x.k !== s.k);
   await page(req, res, {
     title: s.t, active: 'sims', katex: true,
-    scripts: ['/js/sims/kit.js', `/js/sims/${s.k}.js`],
+    scripts: ['/js/sims/kit.js', `/js/sims/${s.k}.js`, '/js/formulas.js'],
     body: html`
       <div class="view">
         <div class="crumbs"><a href="/sims">Симуляциялар</a><span>/</span><span>${sec.name}</span></div>

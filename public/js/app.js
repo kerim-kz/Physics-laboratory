@@ -38,6 +38,44 @@
   });
 })();
 
+// Бүйір мәзір: ашу/жабу, Esc, фонды басқанда жабылу, фокусты мәзір ішінде ұстау.
+(function () {
+  var btn = document.getElementById('menuBtn');
+  var drawer = document.getElementById('drawer');
+  var scrim = document.getElementById('drawerScrim');
+  var close = document.getElementById('drawerClose');
+  if (!btn || !drawer) return;
+  function isOpen() { return drawer.getAttribute('data-open') === '1'; }
+  function open() {
+    drawer.setAttribute('data-open', '1');
+    btn.setAttribute('aria-expanded', 'true');
+    if (scrim) scrim.hidden = false;
+    document.body.classList.add('noscroll');
+    var cur = drawer.querySelector('a.on') || drawer.querySelector('a');
+    setTimeout(function () { if (cur) cur.focus(); }, 30);
+  }
+  function shut(focusBtn) {
+    drawer.setAttribute('data-open', '0');
+    btn.setAttribute('aria-expanded', 'false');
+    if (scrim) scrim.hidden = true;
+    document.body.classList.remove('noscroll');
+    if (focusBtn) btn.focus();
+  }
+  btn.addEventListener('click', function () { if (isOpen()) shut(true); else open(); });
+  if (close) close.addEventListener('click', function () { shut(true); });
+  if (scrim) scrim.addEventListener('click', function () { shut(false); });
+  document.addEventListener('keydown', function (e) {
+    if (!isOpen()) return;
+    if (e.key === 'Escape') { shut(true); return; }
+    if (e.key === 'Tab') {
+      var f = drawer.querySelectorAll('a, button');
+      var first = f[0], lastEl = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastEl.focus(); }
+      else if (!e.shiftKey && document.activeElement === lastEl) { e.preventDefault(); first.focus(); }
+    }
+  });
+})();
+
 // Мұғалімді тіркеу: «жаңа мектеп» өрістері тек қажет кезде көрінеді.
 (function () {
   var sel = document.getElementById('schoolSel');
@@ -50,3 +88,13 @@
 
 // Басып шығару батырмасы
 document.querySelectorAll('[data-print]').forEach(function (b) { b.addEventListener('click', function () { window.print(); }); });
+
+// «Барлық шешімдерді ашу» батырмасы (олимпиада беті).
+document.querySelectorAll('[data-expand-all]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var all = document.querySelectorAll('details.op-d');
+    var openAll = Array.prototype.some.call(all, function (d) { return !d.open; });
+    all.forEach(function (d) { d.open = openAll; });
+    b.textContent = openAll ? 'Шешімдерді жабу' : 'Барлық шешімдерді ашу';
+  });
+});

@@ -22,6 +22,8 @@ import { router as labsRouter } from './features/labs.js';
 import { router as labRunRouter } from './features/labrun.js';
 import { router as materialsRouter } from './features/materials.js';
 import { router as schoolsRouter } from './features/schools.js';
+import { router as olympiadRouter } from './features/olympiad.js';
+import { router as scientistsRouter } from './features/scientists.js';
 import { router as simsRouter } from './features/sims.js';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -93,6 +95,8 @@ export function createApp() {
   app.use(labsRouter);
   app.use(labRunRouter);
   app.use(examsRouter);
+  app.use(olympiadRouter);
+  app.use(scientistsRouter);
   app.use('/admin', adminRouter);
 
   app.use(async (req, res) => {

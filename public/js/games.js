@@ -383,7 +383,24 @@
     choiceSeries({ title: 'Бірлік түрлендіру: нәтиже', questions: questions });
   }
 
-  var GAMES = { cards: gameCards, pairs: gamePairs, quiz: gameQuiz, symbol: gameSymbol, units: gameUnits, convert: gameConvert };
+  // ---------- 7. Ғалымды тап ----------
+  function gameScientist() {
+    var list = DATA.scientists || [];
+    var questions = shuffle(list).slice(0, 10).map(function (s) {
+      var clue = pickOne(s.q);
+      var opts = shuffle([s].concat(shuffle(list.filter(function (x) { return x.k !== s.k; })).slice(0, 3)));
+      return {
+        prompt: esc(clue),
+        options: opts.map(function (o) { return { html: '<b>' + esc(o.n) + '</b><br><span class="muted small">' + esc(o.y) + '</span>' }; }),
+        correct: opts.indexOf(s),
+        explain: esc(s.n) + ' (' + esc(s.y) + '). <a href="/scientists#' + esc(s.k) + '">Толығырақ</a>',
+        reviewQ: clue, reviewA: esc(s.n),
+      };
+    });
+    choiceSeries({ title: 'Ғалымды тап: нәтиже', questions: questions });
+  }
+
+  var GAMES = { scientist: gameScientist, cards: gameCards, pairs: gamePairs, quiz: gameQuiz, symbol: gameSymbol, units: gameUnits, convert: gameConvert };
 
   function start() {
     POOL = SECTION ? ALL.filter(function (f) { return f.s === SECTION; }) : ALL;

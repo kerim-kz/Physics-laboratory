@@ -26,8 +26,9 @@
 
   function showResult(qEl, r) {
     qEl.classList.add(r.ok ? 'q-ok' : r.points > 0 ? 'q-part' : 'q-bad');
-    qEl.querySelectorAll('label.qopt').forEach(function (lab, i) {
-      if (r.correct.indexOf(i) >= 0) lab.classList.add('right');
+    qEl.querySelectorAll('label.qopt').forEach(function (lab) {
+      var v = +lab.querySelector('input').value;
+      if (r.correct.indexOf(v) >= 0) lab.classList.add('right');
       else if (lab.querySelector('input').checked) lab.classList.add('wrong');
     });
     qEl.querySelectorAll('input').forEach(function (i) { i.disabled = true; });
@@ -52,8 +53,11 @@
       qEl.dataset.id = qq.id;
       var multi = qq.kind === 'multi';
       var h = '<p class="q-stem"><span class="q-no">' + qNo + '</span>' + esc(qq.stem) + (multi ? ' <span class="pill pending">бірнеше дұрыс жауап</span>' : '') + '</p><div class="q-opts">';
-      qq.options.forEach(function (o, i) {
-        h += '<label class="qopt"><input type="' + (multi ? 'checkbox' : 'radio') + '" name="q' + qq.id + '" value="' + i + '"><span class="q-l">' + LETTERS[i] + '</span><span>' + esc(o) + '</span></label>';
+      // Нұсқалар әр жолы араласып көрсетіледі; value — бастапқы индекс, сондықтан бағалау өзгермейді.
+      var order = qq.options.map(function (o, i) { return i; });
+      for (var k = order.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = order[k]; order[k] = order[j]; order[j] = t; }
+      order.forEach(function (i, pos) {
+        h += '<label class="qopt"><input type="' + (multi ? 'checkbox' : 'radio') + '" name="q' + qq.id + '" value="' + i + '"><span class="q-l">' + LETTERS[pos] + '</span><span>' + esc(qq.options[i]) + '</span></label>';
       });
       h += '</div>';
       if (MODE === 'practice') h += '<button type="button" class="btn sm q-check" disabled>Тексеру</button>';

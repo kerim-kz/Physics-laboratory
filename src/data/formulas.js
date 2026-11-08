@@ -3,6 +3,8 @@
 // v — шамалар: "белгі|мағынасы|ХБЖ бірлігі" жазбалары ";" арқылы бөлінеді (белгі — TeX).
 // Белгілердің мағынасы бір формуланың ішінде ғана анықталады: бір әріп әр бөлімде әртүрлі шаманы білдіруі мүмкін.
 
+import { DEF } from './formula-defs.js';
+
 const R = String.raw;
 const LIST = [];
 const F = (s, g, name, tex, v = '', note = '') => LIST.push({ s, g, name, tex, v, note });
@@ -275,7 +277,7 @@ export const FORMULAS = LIST.map((f) => {
         return { sym: sym.trim(), meaning: (meaning || '').trim(), unit: (unit || '').trim() };
       })
     : [];
-  return { id: `${f.s}-${perSection[f.s]}`, s: f.s, g: f.g, name: f.name, tex: f.tex, vars, note: f.note };
+  return { id: `${f.s}-${perSection[f.s]}`, s: f.s, g: f.g, name: f.name, tex: f.tex, vars, note: f.note, def: DEF[f.name] || '' };
 });
 export const FORMULA = Object.fromEntries(FORMULAS.map((f) => [f.id, f]));
 
