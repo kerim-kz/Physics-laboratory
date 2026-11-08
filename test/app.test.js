@@ -376,3 +376,31 @@ describe('бағалау және код ережелері', () => {
     assert.equal(labs.grade5(7.5), 4);
   });
 });
+
+describe('платформа иесін жасау', () => {
+  test('баптау қате болса, себебі кіру бетінде көрінеді; түзетілгенде иесі жасалады', async () => {
+    const { config } = await import('../src/config.js');
+    const seed = await import('../src/seed.js');
+    const db = await import('../src/lib/db.js');
+    const saved = { ...config.owner };
+    await db.q('UPDATE users SET is_owner = false WHERE is_owner');
+    try {
+      Object.assign(config.owner, { login: 'Керим', password: 'qysqa' });
+      await seed.ensureOwner();
+      assert.match(seed.ownerSetupProblem, /8 таңба/);
+      assert.match((await new Client().get('/login')).text, /аккаунты әлі жасалмаған/);
+
+      Object.assign(config.owner, { login: ' Керим ', password: 'kerim-pass-1 ' });
+      await seed.ensureOwner();
+      assert.equal(seed.ownerSetupProblem, null);
+      assert.doesNotMatch((await new Client().get('/login')).text, /аккаунты әлі жасалмаған/);
+      const c = new Client();
+      await c.login('Керим', 'kerim-pass-1');
+      assert.equal((await c.get('/admin')).status, 200);
+    } finally {
+      Object.assign(config.owner, saved);
+      await db.q("UPDATE users SET is_owner = false WHERE login = 'Керим'");
+      await db.q("UPDATE users SET is_owner = true WHERE login = 'owner'");
+    }
+  });
+});
