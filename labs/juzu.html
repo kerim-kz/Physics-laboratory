@@ -1,0 +1,1364 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Жүзу шарттары зертханасы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&family=Space+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: a ticked rail of stages; the experiment pairs a wide bench with a close-up of the scales and a notebook that follows the tube being handled */
+:root{
+  --bg:#eef3f2; --surface:#ffffff; --surface-2:#f5f9f8; --ink:#10211f; --muted:#52666a; --line:#d9e5e3;
+  --primary:#0d6b63; --on-primary:#ffffff; --primary-soft:#dcefec; --accent:#b2541f; --accent-soft:#fbe9dc; --water:#2f8fc4; --salt:#5f9ab0;
+  --ok:#1d7a45; --ok-soft:#dcf1e3; --bad:#b4342a; --bad-soft:#f9e2de; --warn:#875708; --warn-soft:#fbeed3; --bench:#e5ded2;
+  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --f-mono:"Space Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1413; --surface:#13201f; --surface-2:#192827; --ink:#e6f0ee; --muted:#9db3b2; --line:#27403d;
+    --primary:#5ed0c2; --on-primary:#06231f; --primary-soft:#123430; --accent:#f09a5c; --accent-soft:#3a2314; --water:#58b6e8; --salt:#8ec4d8;
+    --ok:#62d08f; --ok-soft:#143021; --bad:#ff7f70; --bad-soft:#3d1c19; --warn:#e7b558; --warn-soft:#382a12; --bench:#241f1a; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1413; --surface:#13201f; --surface-2:#192827; --ink:#e6f0ee; --muted:#9db3b2; --line:#27403d;
+  --primary:#5ed0c2; --on-primary:#06231f; --primary-soft:#123430; --accent:#f09a5c; --accent-soft:#3a2314; --water:#58b6e8; --salt:#8ec4d8;
+  --ok:#62d08f; --ok-soft:#143021; --bad:#ff7f70; --bad-soft:#3d1c19; --warn:#e7b558; --warn-soft:#382a12; --bench:#241f1a; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:16px 48px}
+h1,h2,h3{text-wrap:balance;margin:0;font-weight:800;letter-spacing:-.015em}
+h2{font-size:1.5rem;line-height:1.2}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:14px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-weight:800;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.shell{max-width:1260px;margin:0 auto;display:grid;gap:14px}
+header.top{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:46px;height:46px;flex:none;border-radius:14px;background:var(--primary);display:grid;place-items:center}
+.logo svg{width:30px;height:30px}
+.brand .t1{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.brand .t2{font-weight:800;font-size:1.05rem;line-height:1.25}
+.status{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.on::before{background:var(--ok)} .pill.off::before{background:var(--warn)}
+.chip{font-size:13.5px;padding:5px 12px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-weight:800}
+
+/* ticked rail */
+.rail{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 10px 8px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.step{flex:1 0 auto;min-width:0;display:grid;gap:7px;justify-items:center;border:0;background:transparent;font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;padding:2px 10px 4px;min-height:48px;border-radius:9px}
+.step .tick{width:100%;min-width:26px;height:6px;border-radius:3px;background:var(--line)}
+.step.done .tick{background:var(--primary)}
+.step[aria-current="step"] .tick{background:var(--accent)}
+.step[aria-current="step"]{color:var(--ink);font-weight:800}
+.step .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.step.lock{opacity:.5}
+.step:hover:not([aria-current]){color:var(--ink)}
+.step:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+@media (max-width:760px){.step .lbl{display:none}.step[aria-current="step"] .lbl{display:inline}.step{padding:2px 7px 4px}}
+
+button{font:inherit;font-size:15px;font-weight:700;line-height:1.2;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:11px;padding:9px 14px;cursor:pointer;min-height:42px}
+button:hover:not(:disabled){border-color:var(--primary)}
+button:focus-visible,input:focus-visible,select:focus-visible,canvas:focus-visible,summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+button.primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary);font-weight:800}
+button.ac{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);font-weight:800}
+button.danger[data-armed]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button:disabled{opacity:.42;cursor:not-allowed}
+button.ghost{background:transparent}
+button.mini{min-height:32px;padding:4px 10px;font-size:13.5px;border-radius:8px}
+input[type=text],select{font:inherit;font-size:16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 12px;min-height:46px;width:100%}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ctl{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 6px 4px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.ctl > span{font-size:13.5px;font-weight:700;color:var(--muted)}
+.ctl button{min-height:36px;padding:5px 10px;font-size:14px}
+
+.page{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;display:grid;gap:18px;min-width:0}
+@media (max-width:560px){.page{padding:16px 14px 18px}}
+.page > *{min-width:0}
+.phead{display:grid;gap:6px}
+.phead .tag{font-family:var(--f-mono);font-size:12.5px;color:var(--accent)}
+.phead .goal{font-size:15.5px;color:var(--muted);max-width:86ch}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;padding-top:14px;border-top:1px solid var(--line)}
+.pnav .sp{flex:1}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.bench{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);gap:16px;align-items:start}
+@media (max-width:1020px){.two,.bench{grid-template-columns:minmax(0,1fr)}}
+.col{display:grid;gap:12px;min-width:0;align-content:start}
+.card{border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:grid;gap:10px;background:var(--surface-2);min-width:0}
+.card.pri{border-color:var(--primary);background:var(--primary-soft)}
+.card.ac{border-color:var(--accent);background:var(--accent-soft)}
+.prose{display:grid;gap:12px}
+.prose p,.prose li{max-width:74ch}
+ol,ul{margin:0;padding-left:1.3em;display:grid;gap:5px}
+.obj{display:grid;grid-template-columns:auto 1fr;gap:10px;font-size:15.5px}
+.obj code{font-family:var(--f-mono);font-size:12.5px;color:var(--primary);background:var(--primary-soft);border-radius:6px;padding:2px 8px;height:fit-content}
+.formula{display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;padding:4px 0}
+.formula math{font-size:1.22em}
+svg.fig{width:100%;height:auto;display:block;margin:0 auto;color:var(--ink)}
+table.ref{border-collapse:collapse;width:100%;font-size:14.5px}
+table.ref td,table.ref th{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left}
+table.ref td.v{font-family:var(--f-mono);text-align:right}
+table.ref th{font-size:12.5px;color:var(--muted)}
+.cond{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.cond{grid-template-columns:minmax(0,1fr)}}
+.ccard{display:grid;gap:6px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface);justify-items:start}
+.ccard .f{font-family:var(--f-mono);font-size:15px;font-weight:700;color:var(--primary)}
+.ccard b{font-size:14.5px}
+
+/* registration */
+.regwrap{min-height:calc(100vh - 60px);display:grid;place-items:center}
+.regcard{width:min(440px,100%);background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;display:grid}
+.regcard .band{height:126px;display:grid;place-items:center;background:linear-gradient(165deg,#0d6b63,#09403d)}
+.regcard .band svg{width:300px;height:110px}
+.regcard form,.regcard #regDone{padding:24px 24px 20px;display:grid;gap:16px}
+.regcard h1{font-size:1.95rem;line-height:1.1}
+.regcard label{display:grid;gap:6px;font-weight:700;font-size:15px}
+.regcard .go{width:100%;min-height:50px;font-size:16.5px}
+.err{color:var(--bad);font-size:14.5px;font-weight:700}
+
+/* bench */
+.hint{font-size:15.5px;background:var(--primary-soft);border:1px solid var(--primary);border-radius:14px;padding:10px 15px;min-height:calc(3em * 1.5 + 20px)}
+.hint.warn{background:var(--bad-soft);border-color:var(--bad)}
+.tabs2{display:flex;flex-wrap:wrap;gap:6px}
+.tabs2 button{min-height:42px;padding:6px 14px 6px 7px;font-size:14.5px;display:inline-flex;gap:8px;align-items:center;border-radius:999px}
+.tabs2 button .ck{font-family:var(--f-mono);font-size:12px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line)}
+.tabs2 button.done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+.tabs2 button small{font-weight:400;opacity:.8}
+@media (max-width:760px){.hint{min-height:0}.tabs2 button small{display:none}
+  .page.bp > *{order:8}.page.bp > .phead{order:0}.page.bp > .tabs2{order:1}.page.bp .bench{display:contents}.page.bp .bench > figure{order:2}.page.bp > .hint{order:3}.page.bp .bench > .col{order:4}}
+figure.view{margin:0;display:grid;gap:8px;min-width:0}
+figure.view figcaption{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px 10px;font-size:13px;font-family:var(--f-mono);color:var(--muted)}
+.cv{position:relative;width:100%;aspect-ratio:50/31;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--bench)}
+.cv canvas{display:block;width:100%;height:100%;touch-action:none}
+.cvz{position:relative;width:100%;aspect-ratio:2/1;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#101b1a}
+.cvz canvas{display:block;width:100%;height:100%}
+.boardhelp{font-size:13.5px;color:var(--muted)}
+.nb{display:grid;gap:10px}
+.bblk{display:grid;gap:8px;padding:9px 11px;border:1px dashed var(--line);border-radius:12px;background:var(--surface)}
+.bblk .t{display:flex;justify-content:space-between;align-items:center;gap:6px 10px;flex-wrap:wrap;font-weight:800;font-size:14.5px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:6px 12px}
+.fgrid label{display:grid;gap:2px;font-size:13px;color:var(--muted);font-weight:700}
+.fgrid .num{width:100%}
+.fld{display:flex;align-items:center;gap:8px;font-size:15.5px;flex-wrap:wrap}
+.fld > span:first-child{min-width:140px}
+@media (max-width:560px){.fld > span:first-child{min-width:0}}
+.num{width:92px;font-family:var(--f-mono);font-size:16px;text-align:center;border:0;border-bottom:1.5px dashed var(--muted);background:transparent;color:var(--ink);padding:5px 2px;border-radius:0;min-height:36px}
+.num:focus{border-bottom:1.5px solid var(--primary);outline:none;background:var(--primary-soft)}
+input:disabled,select:disabled{opacity:.85}
+.checklist{list-style:none;padding:0;display:grid;gap:5px}
+.checklist li{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:start;font-size:14.5px}
+.checklist li::before{content:"";width:18px;height:18px;margin-top:2px;border-radius:6px;border:1.5px solid var(--muted)}
+.checklist li.y::before{content:"✓";display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;background:var(--ok);border-color:var(--ok)}
+.checklist li.y{color:var(--muted)}
+.checklist li.now{font-weight:800}
+.checklist li.bad::before{content:"!";display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;background:var(--bad);border-color:var(--bad)}
+.tw{overflow-x:auto;min-width:0}
+table.t{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums;background:var(--surface)}
+table.t th,table.t td{border:1px solid var(--line);padding:5px 6px;text-align:center;vertical-align:middle}
+table.t th{background:var(--surface-2);font-weight:800;font-size:13.5px;white-space:nowrap}
+table.t td.n,table.t td.ro{font-family:var(--f-mono);color:var(--muted)}
+table.t td.who{font-size:13.5px;text-align:left;white-space:nowrap}
+table.t td input{width:100%;min-width:66px}
+table.t td select{min-height:34px;padding:3px 6px;font-size:14px;width:auto;min-width:84px}
+fieldset.rad{border:0;margin:0;padding:0;display:grid;gap:2px;min-width:0}
+fieldset.rad legend{font-weight:800;font-size:14.5px;padding:0;margin-bottom:4px}
+fieldset.rad label{display:flex;gap:9px;align-items:center;padding:5px 7px;border-radius:8px;cursor:pointer;font-size:14.5px}
+fieldset.rad label:hover{background:var(--surface-2)}
+fieldset.rad input{width:17px;height:17px;accent-color:var(--primary);flex:none}
+.tst{font-size:12.5px;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tst.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.tst.bad{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.warnmsg{font-size:14.5px;color:var(--warn);background:var(--warn-soft);border-radius:10px;padding:8px 12px}
+.okmsg{font-size:14.5px;color:var(--ok);background:var(--ok-soft);border-radius:10px;padding:8px 12px;font-weight:700}
+.given{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:15px;padding:8px 12px;border-radius:10px;background:var(--surface);border:1px dashed var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+fieldset.q{border:1px solid var(--line);border-radius:14px;padding:10px 14px 12px;margin:0;display:grid;gap:4px;background:var(--surface);min-width:0}
+fieldset.q legend{font-weight:800;padding:0 6px;font-size:15.5px}
+fieldset.q label{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:15.5px}
+fieldset.q label:hover{background:var(--surface-2)}
+fieldset.q input{width:18px;height:18px;accent-color:var(--primary);flex:none}
+.rules{display:grid;gap:8px;list-style:none;padding:0;counter-reset:r}
+.rules li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start;counter-increment:r;font-size:15.5px}
+.rules li::before{content:counter(r);font-family:var(--f-mono);font-size:12.5px;width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);border:1.5px solid var(--primary)}
+.summary{font-size:16px;line-height:1.65;padding:14px 16px;border-radius:14px;border:1px solid var(--primary);background:var(--primary-soft)}
+table.rubric{border-collapse:collapse;width:100%;font-size:15px}
+table.rubric td,table.rubric th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+table.rubric th{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+table.rubric td.k{font-family:var(--f-mono);color:var(--muted);white-space:nowrap}
+table.rubric td.o{font-family:var(--f-mono);font-size:12px;color:var(--primary);white-space:nowrap}
+table.rubric td.p{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.st{display:inline-grid;place-items:center;width:23px;height:23px;border-radius:50%;font-size:13px;font-weight:800;flex:none}
+.st.y{background:var(--ok-soft);color:var(--ok)} .st.x{background:var(--bad-soft);color:var(--bad)}
+.confirm{display:grid;gap:10px;border:1.5px solid var(--warn);background:var(--warn-soft);border-radius:12px;padding:12px 14px}
+.score{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;padding:16px 18px;border-radius:16px;background:var(--primary-soft);border:1.5px solid var(--primary)}
+.score .big{font-weight:800;font-size:2.6rem;line-height:1;color:var(--primary)}
+.score .big small{font-size:1rem;color:var(--muted);font-weight:600}
+.score .meta{display:grid;gap:2px;font-size:15px}
+.export{display:grid;gap:10px;padding:16px 18px;border-radius:16px;border:1.5px solid var(--accent);background:var(--accent-soft)}
+.export .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.export .doc{width:44px;height:52px;flex:none;border-radius:6px;background:#2b579a;color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;font-family:var(--f-mono)}
+.codebox{font-family:var(--f-mono);font-size:12.5px;word-break:break-all;background:var(--surface);border:1px dashed var(--primary);border-radius:10px;padding:10px;user-select:all}
+.teacher{display:grid;gap:16px}
+.t-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.t-tools select{width:auto;min-width:130px;min-height:42px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:2px;background:var(--surface-2)}
+.stat .v{font-size:1.35rem;font-weight:800}
+.stat .l{font-size:13.5px;color:var(--muted)}
+.bars{display:grid;gap:6px}
+.bar{display:grid;grid-template-columns:44px minmax(0,1fr) 46px;gap:10px;align-items:center;font-size:13px}
+.bar .k{font-family:var(--f-mono);color:var(--muted)}
+.bar .track{height:12px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar .fill{height:100%;background:var(--primary);display:block}
+.bar .fill.low{background:var(--accent)}
+.bar .pct{font-family:var(--f-mono);text-align:right}
+table.roster{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums;min-width:1000px}
+table.roster th,table.roster td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;white-space:nowrap}
+table.roster th{font-size:13px;color:var(--muted);font-weight:800}
+.dots{display:flex;gap:3px}
+.dot{width:12px;height:12px;border-radius:3px;background:var(--bad-soft);border:1px solid var(--bad)}
+.dot.y{background:var(--ok);border-color:var(--ok)}
+tr.detail td{white-space:normal;background:var(--surface-2);font-size:14px}
+.det{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:6px 18px}
+.grade{display:inline-grid;place-items:center;min-width:28px;height:26px;border-radius:8px;font-weight:800;font-family:var(--f-mono)}
+.g5{background:var(--ok-soft);color:var(--ok)}.g4{background:var(--primary-soft);color:var(--primary)}.g3{background:var(--warn-soft);color:var(--warn)}.g2{background:var(--bad-soft);color:var(--bad)}
+.verify{display:grid;gap:8px}
+.verify .row{display:flex;gap:8px;flex-wrap:wrap}
+.verify .row input{flex:1 1 260px;width:auto}
+.vout{font-size:15px;border-radius:10px;padding:10px 12px}
+.vout.good{background:var(--ok-soft);border:1px solid var(--ok)}
+.vout.badc{background:var(--bad-soft);border:1px solid var(--bad)}
+details.note{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface-2)}
+details.note summary{cursor:pointer;font-weight:800}
+details.note p{margin-top:8px;max-width:75ch;font-size:15px}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="shell">
+  <header class="top" id="topHeader" hidden>
+    <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 30 30"><path d="M2 19 Q7 15 12 19 T22 19 T32 19" fill="none" stroke="#fff" stroke-width="2"/><rect x="11" y="4" width="8" height="18" rx="4" fill="#f0c99a" stroke="#fff" stroke-width="1.4"/><rect x="12.4" y="14" width="5.2" height="7" rx="2.4" fill="#b2541f"/></svg></span><div><p class="t1">Физика · 7-сынып · №7 зертханалық жұмыс</p><p class="t2">Дененің сұйықта жүзу шарттарын анықтау</p></div></div>
+    <div class="status"><span id="modeBadge" class="pill">Қосылуда…</span><span id="studentChip" class="chip" hidden></span><button id="teacherBtn" type="button" hidden>Мұғалім панелі</button></div>
+  </header>
+
+  <nav class="rail" id="stepper" aria-label="Жұмыс кезеңдері" hidden>
+    <button class="step" type="button" data-p="0"><span class="tick"></span><span class="lbl">Тіркелу</span></button>
+    <button class="step" type="button" data-p="1"><span class="tick"></span><span class="lbl">Теория</span></button>
+    <button class="step" type="button" data-p="2"><span class="tick"></span><span class="lbl">Қауіпсіздік</span></button>
+    <button class="step" type="button" data-p="3"><span class="tick"></span><span class="lbl">Өлшеу</span></button>
+    <button class="step" type="button" data-p="4"><span class="tick"></span><span class="lbl">Болжам</span></button>
+    <button class="step" type="button" data-p="5"><span class="tick"></span><span class="lbl">Тексеру</span></button>
+    <button class="step" type="button" data-p="6"><span class="tick"></span><span class="lbl">Қорытынды</span></button>
+    <button class="step" type="button" data-p="7"><span class="tick"></span><span class="lbl">Тапсыру</span></button>
+  </nav>
+
+  <main id="pages" style="display:grid;gap:12px;min-width:0">
+    <p id="navMsg" class="warnmsg" hidden></p>
+
+    <section data-page="0" class="regwrap" aria-labelledby="regTitle">
+      <div class="regcard">
+        <div class="band" aria-hidden="true"><svg viewBox="0 0 300 110"><path d="M20 58 Q50 48 80 58 T140 58 T200 58 T260 58 T320 58" fill="none" stroke="#8fd9d0" stroke-width="2" opacity=".8"/><rect x="60" y="14" width="22" height="58" rx="11" fill="#f3e2c9" stroke="#8fd9d0" stroke-width="1.5"/><rect x="63" y="44" width="16" height="25" rx="8" fill="#c08a4a"/><rect x="140" y="30" width="22" height="58" rx="11" fill="#f3e2c9" stroke="#8fd9d0" stroke-width="1.5"/><rect x="143" y="52" width="16" height="33" rx="8" fill="#c08a4a"/><rect x="220" y="46" width="22" height="58" rx="11" fill="#f3e2c9" stroke="#8fd9d0" stroke-width="1.5"/><rect x="223" y="60" width="16" height="41" rx="8" fill="#c08a4a"/></svg></div>
+        <form id="startForm" novalidate>
+          <p class="label">№7 зертханалық жұмыс · 7-сынып</p>
+          <h1 id="regTitle">Тіркелу</h1>
+          <label for="stName">Аты-жөні<input id="stName" class="reg-in" type="text" autocomplete="name" placeholder="Мысалы, Аружан Серікова" maxlength="60"></label>
+          <label for="stCls">Сынып
+            <select id="stCls" class="reg-in">
+              <option value="">Сыныпты таңдаңыз</option>
+              <option>7 «А»</option><option>7 «Ә»</option><option>7 «Б»</option><option>7 «В»</option><option>7 «Г»</option><option>7 «Ғ»</option><option>7 «Д»</option><option>7 «Е»</option>
+              <option value="__other">Басқа сынып…</option>
+            </select>
+          </label>
+          <label for="stClsOther" id="otherWrap" hidden>Сынып атауы<input id="stClsOther" class="reg-in" type="text" placeholder="Мысалы, 7 «Ж»" maxlength="12"></label>
+          <button id="startBtn" class="primary go" type="submit" disabled>Қосылуда…</button>
+          <p id="startErr" class="err" aria-live="polite"></p>
+        </form>
+        <div id="regDone" hidden>
+          <p class="label">№7 зертханалық жұмыс · 7-сынып</p>
+          <h1>Сіз тіркелдіңіз</h1>
+          <p id="whoLine" style="font-size:16.5px"></p>
+          <button id="continueBtn" class="primary go" type="button">Жұмысты жалғастыру</button>
+        </div>
+        <div style="padding:0 24px 18px"><button id="teacherBtnReg" type="button" class="ghost" hidden>Мұғалім панелі</button></div>
+      </div>
+    </section>
+
+    <section class="page" data-page="1" hidden>
+      <div class="phead"><p class="tag">2-кезең · теория</p><h2>Дененің сұйықта жүзу шарттары</h2></div>
+      <div class="two">
+        <div class="prose">
+          <div style="display:grid;gap:7px"><p class="label">Оқу мақсаттары</p>
+            <div class="obj"><code>7.3.1.14</code><span>дененің сұйықта жүзу шарттарын зерттеу</span></div>
+            <div class="obj"><code>7.1.3.3</code><span>физика кабинетінде қауіпсіздік ережелерін білу және сақтау</span></div>
+          </div>
+          <p><b>Жұмыстың мақсаты:</b> эксперимент жүзінде дененің сұйықта жүзу шарттарын тексеру.</p>
+          <p><b>Тапсырма:</b> денелерді суға батырған кезде олардың суда жүзетінін, батып кететінін немесе қалқып шығатынын анықтау.</p>
+          <p><b>Құрал-жабдықтар:</b> динамометр, суы бар ыдыс, мензурка, ішіне массалары әртүрлі құм салынған бірдей үш пробирка, тығыздығы белгілі сұйығы бар ыдыс (тұз қосылған су).</p>
+          <p>Сұйыққа батырылған денеге екі күш әсер етеді: төмен қарай <b>ауырлық күші</b> <i>F</i><sub>а</sub> және жоғары қарай <b>ығыстырушы (Архимед) күші</b> <i>F</i><sub>ы</sub>. Дененің не істейтіні осы екі күштің қатысына байланысты.</p>
+          <div class="formula"><math display="block"><msub><mi>F</mi><mtext>ы</mtext></msub><mo>=</mo><msub><mi>ρ</mi><mtext>с</mtext></msub><mspace width=".15em"></mspace><mi>g</mi><mspace width=".15em"></mspace><msub><mi>V</mi><mtext>д</mtext></msub></math></div>
+          <div class="cond">
+            <div class="ccard"><span class="f">F<sub>а</sub> &gt; F<sub>ы</sub></span><b>Дене батып кетеді</b><span class="small muted">Ауырлық күші басым: дене түбіне дейін барады.</span></div>
+            <div class="ccard"><span class="f">F<sub>а</sub> = F<sub>ы</sub></span><b>Дене жүзеді</b><span class="small muted">Күштер теңеседі: дене сұйықтың ішінде кез келген тереңдікте тұра береді.</span></div>
+            <div class="ccard"><span class="f">F<sub>а</sub> &lt; F<sub>ы</sub></span><b>Дене қалқып шығады</b><span class="small muted">Ығыстырушы күш басым: дене беткі қабатқа шығып, бір бөлігі судан шығып тұрады.</span></div>
+          </div>
+          <div><p class="label" style="margin-bottom:6px">Жұмыс барысы</p>
+            <ol>
+              <li>Динамометр көмегімен (4.49, а) денеге әсер ететін <i>F</i><sub>а</sub> ауырлық күшін өлшеңдер.</li>
+              <li>Мензурканы пайдаланып (4.49, ә-сурет), дененің <i>V</i><sub>д</sub> көлемін анықтаңдар.</li>
+              <li>Денені сұйыққа батырған кезде оған әсер ететін ығыстырушы күшті, яғни <i>F</i><sub>ы</sub> Архимед күшін есептеңдер.</li>
+              <li><i>F</i><sub>а</sub> ауырлық күші мен <i>F</i><sub>ы</sub> ығыстырушы күшті салыстыру арқылы тапсырмада қойылған сұраққа жауап беріңдер.</li>
+              <li>Денені берілген сұйыққа батырып, жауаптарыңды тәжірибе жүзінде тексеріңдер.</li>
+              <li>Кестені толтырыңдар.</li>
+            </ol>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card"><p class="label">Сурет 4.49</p>
+            <svg class="fig" viewBox="0 0 420 220" role="img" aria-label="а) динамометрге ілінген пробирка; ә) мензуркадағы судың деңгейін пробиркасыз және пробиркамен салыстыру" style="max-width:400px">
+              <g stroke="currentColor" stroke-width="1.5" fill="none"><rect x="38" y="12" width="44" height="96" rx="5" fill="var(--surface)"/></g>
+              <g stroke="currentColor" stroke-width="1" opacity=".6"><path d="M46 26 H74 M46 42 H74 M46 58 H74 M46 74 H74 M46 90 H74"/></g>
+              <line x1="42" y1="60" x2="78" y2="60" stroke="#d6362a" stroke-width="2.4"/>
+              <line x1="60" y1="108" x2="60" y2="132" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="51" y="132" width="18" height="46" rx="9" fill="#f0e3cb" stroke="currentColor" stroke-width="1.2"/><rect x="53.5" y="156" width="13" height="20" rx="6" fill="#c08a4a"/>
+              <text x="60" y="206" font-family="Manrope,sans-serif" font-size="14" fill="currentColor" text-anchor="middle">а)</text>
+              <g transform="translate(200 0)">
+                <path d="M20 40 V176 H66 V40" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="21" y="92" width="44" height="83" fill="var(--water)" opacity=".3"/>
+                <path d="M110 40 V176 H156 V40" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="111" y="74" width="44" height="101" fill="var(--water)" opacity=".3"/>
+                <rect x="124" y="96" width="18" height="46" rx="9" fill="#f0e3cb" stroke="currentColor" stroke-width="1.2"/><rect x="126.5" y="120" width="13" height="20" rx="6" fill="#c08a4a"/>
+                <g stroke="currentColor" stroke-width="1" opacity=".75" stroke-dasharray="4 3"><path d="M4 92 H20"/><path d="M94 74 H110"/></g>
+                <path d="M-8 84 l12 8 l-12 8z" fill="currentColor" opacity=".7"/>
+                <g font-family="Manrope,sans-serif" font-size="13" fill="currentColor"><text x="26" y="86">V₁</text><text x="116" y="68">V₂</text></g>
+                <text x="88" y="206" font-family="Manrope,sans-serif" font-size="14" fill="currentColor" text-anchor="middle">ә)</text>
+              </g>
+            </svg>
+          </div>
+          <div class="card ac"><p class="label">Көзді деңгейге түзу ұстаңыз</p><p class="small">Мензуркадағы деңгейді менискінің <b>төменгі нүктесі</b> бойынша, көзді сол деңгеймен бір биіктікте ұстап оқиды. Жоғарыдан немесе төменнен қараса, өлшеу қате шығады.</p></div>
+          <div class="card"><p class="label">Кейбір сұйықтардың тығыздығы, кг/м³</p><table class="ref" id="rhoLiq"></table></div>
+          <div class="card pri"><p class="label">Есте болсын</p><p class="small">1 мл = 1 см³ = 10⁻⁶ м³, &nbsp; g = 9,8 Н/кг. Пробирка толық батырылса, <i>V</i><sub>д</sub> – оның толық көлемі.</p></div>
+        </div>
+      </div>
+      <div class="pnav"><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Қауіпсіздік →</button></div>
+    </section>
+
+    <section class="page" data-page="2" hidden>
+      <div class="phead"><p class="tag">3-кезең · қауіпсіздік · 7.1.3.3</p><h2>Қауіпсіздік ережелері</h2><p class="goal">Тәжірибеге кіру үшін тесттің 5 сұрағының кемінде 4-еуіне дұрыс жауап беріңіз. <b>Бағаға бірінші әрекеттің нәтижесі және тәжірибе кезінде ережелерді сақтағаныңыз есептеледі.</b></p></div>
+      <div class="two">
+        <ol class="rules">
+          <li><span>Шыны пробирка мен мензурканы үстелдің шетіне қоймаймыз, абайлап ұстаймыз.</span></li>
+          <li><span>Пробирканы мензуркаға немесе ыдысқа <b>лақтырмаймыз</b>: жіптен ұстап, абайлап батырамыз. Әйтпесе су шашырайды, шыны сынуы мүмкін.</span></li>
+          <li><span>Динамометрге оның <b>өлшеу шегінен</b> (2 Н) ауыр жүк ілмейміз.</span></li>
+          <li><span>Су төгілсе, оны бірден <b>шүберекпен сүртеміз</b>: тайғақ еден қауіпті.</span></li>
+          <li><span>Тұз қосылған суды <b>дәмін татпаймыз</b>, көзге тигізбейміз; қолға тисе, жуып тастаймыз.</span></li>
+          <li><span>Құмды шашпаймыз, жұмыс біткен соң үстелді тазартамыз.</span></li>
+        </ol>
+        <div class="col">
+          <div id="safeQ" style="display:grid;gap:10px"></div>
+          <div class="controls"><button id="safeCheck" type="button" class="primary">Тестті тексеру</button><button id="safeRetry" type="button" hidden>Тестті қайта тапсыру</button></div>
+          <p id="safeOut" aria-live="polite" hidden></p>
+        </div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Өлшеу →</button></div>
+    </section>
+
+    <section class="page bp" data-page="3" hidden>
+      <div class="phead"><p class="tag">4-кезең · өлшеу</p><h2 id="m3Title">1–2-қадам. Ауырлық күші мен көлемді өлшеу</h2><p class="goal">Үш пробирканың әрқайсысы үшін динамометрмен <i>F</i><sub>а</sub> ауырлық күшін, мензуркамен <i>V</i><sub>д</sub> көлемін өлшеңіз.</p></div>
+      <div class="tabs2" id="tubeTabs" role="group" aria-label="Пробиркалар"></div>
+      <p class="hint" id="hint3" aria-live="polite"></p>
+      <div class="bench">
+        <figure class="view">
+          <figcaption><span>Зертханалық үстел</span><span id="benchStat"></span></figcaption>
+          <div class="cv"><canvas id="cvB" tabindex="0" aria-label="Зертханалық үстел: үш пробирка, динамометр, мензурка, суы бар және тұзды суы бар ыдыстар"></canvas></div>
+          <div class="controls" id="ctlBar"></div>
+          <p class="boardhelp" id="help3"></p>
+        </figure>
+        <div class="col">
+          <figure class="view"><figcaption><span id="zoomCap">Жақыннан</span><span>шкалаларды осыдан оқыңыз</span></figcaption><div class="cvz"><canvas id="cvZ" aria-label="Құралдардың шкаласы жақыннан"></canvas></div></figure>
+          <div class="card nb" id="nb3"></div>
+          <div class="card"><p class="label">Қадамдар</p><ul class="checklist" id="chk3"></ul></div>
+        </div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Болжам →</button></div>
+    </section>
+
+    <section class="page" data-page="4" hidden>
+      <div class="phead"><p class="tag">5-кезең · есептеу және болжам</p><h2>3–4-қадам. Ығыстырушы күшті есептеп, күштерді салыстыру</h2><p class="goal">Әр пробирка үшін екі сұйықтағы <i>F</i><sub>ы</sub> күшін есептеңіз, оны <i>F</i><sub>а</sub>-мен салыстырыңыз да, не болатынын болжаңыз. <b>Тексеру беті болжам жасалғаннан кейін ашылады.</b></p></div>
+      <div class="given"><span>g = 9,8 Н/кг</span><span>1 см³ = 10⁻⁶ м³</span><span><i>F</i><sub>ы</sub> = ρ<sub>с</sub> g V<sub>д</sub></span><span>ρ<sub>су</sub> = 1000 кг/м³</span><span id="rhoSaltTxt"></span></div>
+      <div class="card">
+        <p class="label">Өлшеу нәтижелері</p>
+        <div class="tw"><table class="t"><thead><tr><th>Пробирка</th><th><i>F</i><sub>а</sub>, Н</th><th><i>V</i><sub>д</sub>, см³</th><th><i>V</i><sub>д</sub>, м³</th></tr></thead><tbody id="calcVBody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <p class="label">Ығыстырушы күш және болжам</p>
+        <div class="tw"><table class="t"><thead><tr><th>Тәжірибе реті</th><th>Сұйық</th><th><i>F</i><sub>а</sub>, Н</th><th><i>V</i><sub>д</sub>, м³</th><th><i>F</i><sub>ы</sub>, Н</th><th><i>F</i><sub>а</sub> мен <i>F</i><sub>ы</sub> қатысы</th><th>Болжам</th></tr></thead><tbody id="calcBody"></tbody></table></div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Тексеру →</button></div>
+    </section>
+
+    <section class="page bp" data-page="5" hidden>
+      <div class="phead"><p class="tag">6-кезең · тексеру</p><h2 id="t5Title">5–6-қадам. Тәжірибе жүзінде тексеру</h2><p class="goal">Әр пробирканы екі сұйыққа да батырып, не болатынын өз көзіңізбен көріңіз де, нәтижені кестеге жазыңыз.</p></div>
+      <p class="hint" id="hint5" aria-live="polite"></p>
+      <div class="bench">
+        <figure class="view">
+          <figcaption><span>Сұйығы бар ыдыстар</span><span id="benchStat5"></span></figcaption>
+          <div class="cv"><canvas id="cvT" tabindex="0" aria-label="Су және тұзды су құйылған ыдыстар, пробиркалар"></canvas></div>
+          <div class="controls" id="ctlBar5"></div>
+          <p class="boardhelp" id="help5"></p>
+        </figure>
+        <div class="col">
+          <div class="card nb" id="nb5"></div>
+          <div class="card"><p class="label">Қадамдар</p><ul class="checklist" id="chk5"></ul></div>
+        </div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Қорытынды →</button></div>
+    </section>
+
+    <section class="page" data-page="6" hidden>
+      <div class="phead"><p class="tag">7-кезең · қорытынды</p><h2>Толық кесте және қорытынды</h2></div>
+      <div class="card">
+        <p class="label">Толық кесте</p>
+        <div class="tw"><table class="t"><thead><tr><th>Тәжірибе реті</th><th>Сұйық</th><th><i>F</i><sub>а</sub>, Н</th><th><i>V</i><sub>д</sub>, м³</th><th><i>F</i><sub>ы</sub>, Н</th><th><i>F</i><sub>а</sub> мен <i>F</i><sub>ы</sub> қатысы</th><th>Болжам</th><th>Батады, жүзеді немесе қалқып шығады</th></tr></thead><tbody id="fullBody"></tbody></table></div>
+        <p class="legend"><span><i style="background:var(--ok)"></i>болжам расталды</span><span><i style="background:var(--bad)"></i>болжам расталмады</span></p>
+      </div>
+      <div id="conclBox" style="display:grid;gap:10px;max-width:900px"></div>
+      <div style="max-width:900px;display:grid;gap:6px"><p class="label">Сіздің қорытындыңыз</p><p class="summary" id="summary"></p></div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Тапсыру →</button></div>
+    </section>
+
+    <section class="page" data-page="7" hidden>
+      <div class="phead"><p class="tag">8-кезең · тапсыру</p><h2>Тапсыру және есепті жүктеу</h2></div>
+      <div id="resultBox" hidden style="display:grid;gap:14px;max-width:980px"></div>
+      <div id="preSubmit" class="two">
+        <div class="col">
+          <div id="completeness" class="card"></div>
+          <p class="small muted">Өлшеулер құралдардың көрсеткіштерімен, ал есептеулер сіздің өз сандарыңызбен тексеріледі. Тапсырғаннан кейін толық есепті Word файлы ретінде жүктеп аласыз.</p>
+          <p id="modeNote" class="small muted"></p>
+          <div><button id="submitBtn" class="primary" type="button" disabled>Жұмысты тапсыру</button></div>
+          <div id="confirmBox" class="confirm" hidden><p><b>Жұмысты тапсырасыз ба?</b> Тапсырғаннан кейін жауаптарды өзгерту мүмкін болмайды.</p><div class="controls"><button id="confirmYes" class="primary" type="button">Иә, тапсыру</button><button id="confirmNo" type="button">Болдырмау</button></div></div>
+          <p id="submitErr" class="err" aria-live="polite"></p>
+        </div>
+        <div><p class="label" style="margin-bottom:8px">Бағалау критерийлері · 10 балл</p><div class="tw"><table class="rubric"><thead><tr><th>№</th><th>Дескриптор</th><th>Мақсат</th><th style="text-align:right">Балл</th></tr></thead><tbody id="rubricBody"></tbody></table></div></div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span></div>
+    </section>
+  </main>
+
+  <section id="teacherView" class="page teacher" hidden aria-label="Мұғалім панелі">
+    <div class="phead"><p class="tag">7-сынып · №7 · нәтижелер нақты уақытта жаңарады</p><h2>Мұғалім панелі</h2>
+      <div class="t-tools"><label for="clsFilter" class="small muted">Сынып</label><select id="clsFilter"><option value="">Барлығы</option></select><button id="xlsxBtn" type="button" class="primary">📊 Сынып жиынтығы (Excel)</button><button id="copyTblBtn" type="button">Кестені көшіру</button><button id="backBtn" type="button">Зертханаға оралу</button></div></div>
+    <p id="tMsg" class="small muted" aria-live="polite"></p>
+    <div id="tOnline" style="display:grid;gap:16px">
+      <div class="stats" id="tStats"></div>
+      <div style="display:grid;gap:8px"><p class="label">Критерийлер бойынша орындалу</p><div class="bars" id="tBars"></div></div>
+      <div class="tw"><table class="roster"><thead><tr><th>Оқушы</th><th>Сынып</th><th>Нұсқа</th><th>Балл</th><th>Баға</th><th>К1 … К10</th><th>Дұрыс болжам</th><th>Сұрақтар</th><th>Қауіпсіздік</th><th>Тапсырылды</th><th></th></tr></thead><tbody id="tBody"></tbody></table></div>
+      <div id="tEmpty" class="empty" hidden>Әзірге ешкім тапсырған жоқ. Оқушылар жұмысты тапсырған сәтте нәтижелер осы кестеде пайда болады.</div>
+    </div>
+    <div class="verify"><p class="label">Нәтиже кодын тексеру</p><p style="font-size:15px">Оқушы офлайн режимде тапсырса, сізге нәтиже кодын жібереді. Кодты осында қойып тексеріңіз.</p><div class="row"><input id="codeIn" type="text" placeholder="J77.…" autocomplete="off" aria-label="Нәтиже коды"><button id="codeBtn" type="button">Тексеру</button></div><div id="codeOut" class="vout" hidden></div></div>
+    <details class="note"><summary>Оқушылар нәтижені онлайн қалай жібереді</summary>
+      <p>Онлайн жіберу үшін оқушы claude.ai аккаунтымен кіріп, бетті сіздің шақыруыңыз арқылы ашуы керек. Жеке аккаунтта оқушыны email арқылы «Editor» деңгейінде шақырыңыз, ал бетке жалпы сілтеме (public link) ашпаңыз. Team немесе Enterprise ұйымында ұйым мүшесіне «Contributor» деңгейі жеткілікті.</p>
+      <p>Басқа жағдайда бет офлайн режимде жұмыс істейді: оқушы жұмысты толық орындайды, балын көреді, Word есебін жүктейді және сізге нәтиже кодын жібереді.</p>
+      <p>Баға шкаласы: 0–39 % → «2», 40–64 % → «3», 65–84 % → «4», 85–100 % → «5».</p></details>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= constants ================= */
+const SALT = 'J77|fizika7|juzu', DEMO_SEED = 77018;
+const PAGE_NAMES = ['Тіркелу', 'Теория', 'Қауіпсіздік', 'Өлшеу', 'Болжам', 'Тексеру', 'Қорытынды', 'Тапсыру'];
+const G = 9.8, RHO_W = 1000, CM = 18, TABLE = 590, WW = 1000, WH = 620, DEG = Math.PI / 180, NT = 3, NR = 6;
+const TUBE = { r: 1.1, A: 3.8013, L: 10.5, V: 39.91 };
+const MENZ = { cx: 430, r: 1.5, A: 7.0686, yb: 578, max: 100 };
+const DYN = { x: 700, rod: 880, cMin: 40, cMax: 240, NPX: 58, MAX: 2, STOP: 2.08, TH: 13 };
+const RACK = [95, 175, 255];
+const VES = { L: 300, R: 640, r: 3.2, A: 32.17, h: 18, yb: 578, V0: 466 };
+const RACK5 = [818, 888, 958];
+const CLOTH0 = [{ x: 575, y: TABLE }, { x: 768, y: TABLE }];
+const LIQS = [{ k: 'w', n: 'су', nn: 'Су', rho: RHO_W, col: 'rgba(60,150,205,.42)' }];
+const SALTS = [
+  { rho: 1150, n: 'тұз ерітіндісі', nn: 'Тұз ерітіндісі', col: 'rgba(120,175,195,.5)' },
+  { rho: 1180, n: 'тұзды су', nn: 'Тұзды су', col: 'rgba(130,180,190,.5)' },
+  { rho: 1200, n: 'қаныққан тұзды су', nn: 'Қаныққан тұзды су', col: 'rgba(140,185,188,.52)' },
+];
+const OUT = ['Батып кетеді', 'Жүзеді (сұйықтың ішінде)', 'Қалқып шығады'];
+const OUTP = ['Батып кетті', 'Жүзді (сұйықтың ішінде)', 'Қалқып шықты'];
+const RELS = ['Fа > Fы', 'Fа = Fы', 'Fа < Fы'];
+const QS = [
+  { k: 'q1', q: 'Дене сұйықта жүзу (ішінде тұру) үшін қандай шарт орындалуы керек?', a: ['Fа = Fы, яғни ауырлық күші ығыстырушы күшке тең', 'Fа > Fы', 'Fа < Fы', 'Дененің массасы кіші болуы керек'], c: 0 },
+  { k: 'q2', q: 'Бірдей пробирка суда батып кетіп, тұзды суда қалқып шықты. Себебі:', a: ['Тұзды судың тығыздығы үлкен, сондықтан ондағы ығыстырушы күш те үлкен', 'Тұзды суда ауырлық күші кішірейеді', 'Тұзды су пробирканы итеріп шығарады, себебі ол тұзды', 'Пробирканың көлемі тұзды суда ұлғаяды'], c: 0 },
+  { k: 'q3', q: 'Пробиркаға құм қосқанда не өзгереді?', a: ['Ауырлық күші Fа артады, ал көлем өзгермегендіктен Fы сол күйінде қалады', 'Ығыстырушы күш Fы артады', 'Екі күш те бірдей артады', 'Ештеңе өзгермейді'], c: 0 },
+  { k: 'q4', q: 'Қалқып шыққан пробирканың бір бөлігі судан шығып тұрады. Неліктен?', a: ['Судан шыққан соң батырылған көлем азайып, Fы кемиді де, күштер теңеседі', 'Су пробирканы итеруін тоқтатады', 'Пробирканың массасы азаяды', 'Ауырлық күші жоғалады'], c: 0 },
+  { k: 'q5', q: 'Кеме темірден жасалса да, неліктен батпайды?', a: ['Кеменің іші қуыс: ығыстырылған судың көлемі үлкен, сондықтан Fы ауырлық күшіне теңеседі', 'Темір суда жеңілдейді', 'Кеменің қозғалысы оны ұстап тұрады', 'Теңіз суының тығыздығы темірден үлкен'], c: 0 },
+];
+const SAFE_Q = [
+  { q: 'Пробирканы мензуркаға қалай батырамыз?', a: ['Жіптен ұстап, абайлап батырамыз', 'Жоғарыдан тастаймыз', 'Мензурканы қисайтып домалатамыз', 'Қалай болса солай'], c: 0 },
+  { q: 'Массасы 250 г жүкті өлшеу шегі 2 Н динамометрге ілуге бола ма?', a: ['Жоқ: оның салмағы ≈ 2,5 Н, бұл өлшеу шегінен асады', 'Иә, динамометр кез келген жүкті көтереді', 'Иә, егер жылдам ілсе', 'Иә, 250 г – жеңіл жүк'], c: 0 },
+  { q: 'Тұз қосылған сумен қалай жұмыс істейміз?', a: ['Дәмін татпаймыз, көзге тигізбейміз; қолға тисе жуып тастаймыз', 'Дәмін татып, тұздылығын тексереміз', 'Көзге тамызып көреміз', 'Ішіп көреміз'], c: 0 },
+  { q: 'Су үстелге төгілсе:', a: ['Бірден шүберекпен сүртеміз', 'Өзі кеуіп қалады', 'Тәжірибені жалғастыра береміз', 'Үстіне қағаз қойып кетеміз'], c: 0 },
+  { q: 'Шыны пробирка сынып қалса:', a: ['Сынықтарды қолмен жинамай, мұғалімге хабарлаймыз', 'Сынықтарды қолмен жинаймыз', 'Сынықтарды құмға көміп тастаймыз', 'Тәжірибені сынық пробиркамен жалғастырамыз'], c: 0 },
+];
+const RUBRIC = [
+  { d: 'Динамометрдің бөлік құнын анықтап, нөлін түзетеді; үш пробирканың да ауырлық күшін Fа дұрыс өлшейді (±0,02 Н)', o: '7.3.1.14' },
+  { d: 'Мензурканың бөлік құнын анықтап, пробиркаларды толық батырып, көлемін V = V₂ − V₁ дұрыс өлшейді (3 пробирка, ±1 мл)', o: '7.3.1.14' },
+  { d: 'Көлемді см³-тен м³-ке дұрыс айналдырады (3 пробирка)', o: '7.3.1.14' },
+  { d: 'Екі сұйық үшін ығыстырушы күшті Fы = ρ g V дұрыс есептейді (6 мәннің кемінде 5-еуі)', o: '7.3.1.14' },
+  { d: 'Fа мен Fы күштерін салыстырып, қатысын дұрыс жазады (6 жолдың кемінде 5-еуі)', o: '7.3.1.14' },
+  { d: 'Тәжірибеге дейін болжам жасайды және болжамы өз салыстыруына сәйкес келеді (6 жолдың кемінде 5-еуі)', o: '7.3.1.14' },
+  { d: 'Әр пробирканы екі сұйыққа да батырып тексереді және нәтижені дұрыс жазады (6 жолдың кемінде 5-еуі)', o: '7.3.1.14' },
+  { d: 'Жүзу шарттарын тұжырымдап, нәтижені түсіндіреді (5 сұрақтың кемінде 4-еуі)', o: '7.3.1.14' },
+  { d: 'Қауіпсіздік ережелерін біледі: тесттің бірінші әрекетінде 5 сұрақтың кемінде 4-еуі дұрыс', o: '7.1.3.3' },
+  { d: 'Тәжірибеде қауіпсіздік ережелерін сақтайды: пробирканы шыны ыдысқа лақтырмайды, төгілген суды бірден сүртеді', o: '7.1.3.3' },
+];
+const VIOL = { drop: 'пробирканы шыны ыдысқа лақтырды (су шашырады)', over: 'динамометрді өлшеу шегінен асыра жүктеді', wet: 'төгілген суды сүртпеді' };
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const arr = (n, v) => Array.from({ length: n }, () => v);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function num(s){ if (s === null || s === undefined) return NaN; const t = String(s).trim().replace(/\s+/g, '').replace('−', '-').replace(',', '.'); if (!t || !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(t)) return NaN; return parseFloat(t); }
+function numSci(s){
+  if (s == null) return NaN; let t = String(s).trim().replace(/\s+/g, '').replace(/−/g, '-').replace(/,/g, '.'); if (!t) return NaN;
+  const sup = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁻': '-', '⁺': '+' };
+  t = t.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]+/g, m => '^' + m.split('').map(c => sup[c]).join('')).replace(/\^\^/g, '^');
+  let m = t.match(/^([+-]?(?:\d+\.?\d*|\.\d+))(?:[·*×xх⋅]10\^?\(?([+-]?\d+)\)?)?$/i); if (m) return parseFloat(m[1]) * (m[2] != null ? Math.pow(10, parseInt(m[2], 10)) : 1);
+  m = t.match(/^([+-]?(?:\d+\.?\d*|\.\d+))e([+-]?\d+)$/i); if (m) return parseFloat(m[1]) * Math.pow(10, parseInt(m[2], 10));
+  m = t.match(/^10\^?\(?([+-]?\d+)\)?$/); if (m) return Math.pow(10, parseInt(m[1], 10));
+  return NaN;
+}
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hashStr(s){ let h = 2166136261 >>> 0; for (const ch of String(s)){ h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
+const fmt = (x, d) => Number.isFinite(x) ? x.toFixed(d).replace('.', ',').replace('-', '−') : '—';
+const fin = Number.isFinite, near = (a, b, t) => fin(a) && fin(b) && Math.abs(a - b) <= t;
+const filled = x => String(x == null ? '' : x).trim() !== '';
+const r1 = x => Math.round(x * 10) / 10;
+
+/* ================= variant ================= */
+function makeVariant(seed){
+  const r = mulberry32((seed >>> 0) ^ 0x3f17b2c9); r(); const pick = a => a[Math.floor(r() * a.length)];
+  const salt = pick(SALTS), Vt = TUBE.V;
+  const mLight = r1(Vt * (0.66 + 0.1 * r())), mMid = r1(Vt * (RHO_W + salt.rho) / 2000 + (r() - 0.5) * 1.2), mHeavy = r1(Vt * salt.rho / 1000 * (1.14 + 0.08 * r()));
+  const ord = [0, 1, 2]; for (let i = 2; i > 0; i--){ const j = Math.floor(r() * (i + 1)); [ord[i], ord[j]] = [ord[j], ord[i]]; }
+  const ms = [mLight, mMid, mHeavy], tubes = ord.map(k => ({ m: ms[k], kind: k }));
+  const menzV0 = 38 + Math.floor(r() * 7);
+  return { seed: seed >>> 0, salt, tubes, menzV0, off0: pick([-0.06, -0.04, 0.04, 0.06]) };
+}
+const liqOf = k => k === 0 ? { rho: RHO_W, n: 'су', nn: 'Су', col: LIQS[0].col } : { rho: V.salt.rho, n: V.salt.n, nn: V.salt.nn, col: V.salt.col };
+const rowTube = r => r >> 1, rowLiq = r => r & 1;
+
+/* ================= state ================= */
+const blankE = () => ({ cvD: '', cvM: '', fa: arr(NT, ''), v1: arr(NT, ''), v2: arr(NT, ''), v: arr(NT, ''), vm: arr(NT, ''), rows: arr(NR, 0).map(() => ({ fy: '', rel: null, pred: null, obs: null })), q1: null, q2: null, q3: null, q4: null, q5: null });
+const blankM = () => ({ st: arr(NT, 'rack'), wire: false, zero: 0, over: false, zeroOk: false, levels: [], fa: arr(NT, false), vlog: arr(NT, false), cy: 70, pud: [] });
+const blankT = () => ({ st: arr(NT, 'rack'), seen: arr(NR, false), pud: [] });
+function defaults(){ return { ver: 1, started: false, name: '', cls: '', seed: 0, page: 0, seen: arr(8, false), M: blankM(), T: blankT(), viol: [], safe: { attempts: 0, first: null, passed: false, ans: arr(5, null), last: null }, E: blankE(), result: null }; }
+let V = makeVariant(DEMO_SEED), S = defaults();
+let uid = null, db = null, userCap = null, dlCap = null, isOwner = false, online = false, initDone = false, subs = [];
+let ALERT = null, lastH = '';
+const RT = { drag: null, need: true, pd: 0, dyn: null, menzH: 0, vesH: { L: 0, R: 0 }, ty: arr(NT, null), splash: [], cloth: null, warnBottom: false };
+
+function vcode(seed){ return ((seed || S.seed) >>> 0).toString(36).toUpperCase(); }
+function draftKey(){ return 'lab7-7-draft:' + (uid || 'local'); }
+function saveDraft(){ try { localStorage.setItem(draftKey(), JSON.stringify(S)); } catch (e) {} }
+let saveTimer = null; function saveSoon(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 350); }
+function loadDraft(){ try { const s = localStorage.getItem(draftKey()); if (s) { const d = JSON.parse(s); if (d && typeof d === 'object' && d.ver === 1) return d; } } catch (e) {} return null; }
+const s16 = x => x == null ? '' : String(x).slice(0, 16);
+const idx3 = x => Number.isInteger(x) && x >= 0 && x < 3 ? x : null;
+const bools = (a, n) => arr(n, false).map((_, i) => !!(Array.isArray(a) && a[i]));
+const cleanPud = p => (Array.isArray(p) ? p : []).filter(x => x && fin(x.x) && fin(x.r) && x.r > 0).slice(0, 12).map(x => ({ x: clamp(x.x, 0, WW), r: clamp(x.r, 0, 60) }));
+function cleanE(de){
+  const E = blankE(); de = de && typeof de === 'object' ? de : {};
+  E.cvD = s16(de.cvD); E.cvM = s16(de.cvM);
+  ['fa', 'v1', 'v2', 'v', 'vm'].forEach(k => { if (Array.isArray(de[k])) E[k] = E[k].map((_, i) => s16(de[k][i])); });
+  if (Array.isArray(de.rows)) E.rows = E.rows.map((r, i) => { const x = de.rows[i] || {}; return { fy: s16(x.fy), rel: idx3(x.rel), pred: idx3(x.pred), obs: idx3(x.obs) }; });
+  QS.forEach(q => { E[q.k] = Number.isInteger(de[q.k]) && de[q.k] >= 0 && de[q.k] < 4 ? de[q.k] : null; });
+  return E;
+}
+function cleanM(d){
+  const M = blankM(); d = d && typeof d === 'object' ? d : {}; const ok = ['rack', 'hook', 'menz'];
+  M.st = arr(NT, 'rack').map((_, i) => ok.includes((d.st || [])[i]) ? d.st[i] : 'rack');
+  if (M.st.filter(x => x === 'hook').length > 1) M.st = M.st.map(x => x === 'hook' ? 'rack' : x);
+  if (M.st.filter(x => x === 'menz').length > 1) M.st = M.st.map(x => x === 'menz' ? 'rack' : x);
+  M.wire = !!d.wire; M.zero = fin(d.zero) ? clamp(d.zero, -0.3, 0.3) : 0; M.over = !!d.over; M.zeroOk = !!d.zeroOk;
+  M.levels = (Array.isArray(d.levels) ? d.levels : []).filter(fin).slice(0, 40);
+  M.fa = bools(d.fa, NT); M.vlog = bools(d.vlog, NT); M.cy = fin(d.cy) ? clamp(d.cy, DYN.cMin, DYN.cMax) : 70; M.pud = cleanPud(d.pud); return M;
+}
+function cleanT(d){
+  const T = blankT(); d = d && typeof d === 'object' ? d : {}; const ok = ['rack', 'L', 'R'];
+  T.st = arr(NT, 'rack').map((_, i) => ok.includes((d.st || [])[i]) ? d.st[i] : 'rack');
+  ['L', 'R'].forEach(s => { const n = T.st.filter(x => x === s).length; if (n > 1) T.st = T.st.map(x => x === s ? 'rack' : x); });
+  T.seen = bools(d.seen, NR); T.pud = cleanPud(d.pud); return T;
+}
+function applyDraft(d){
+  const base = defaults(); S = Object.assign(base, d); S.E = cleanE(d.E); S.M = cleanM(d.M); S.T = cleanT(d.T);
+  S.viol = Array.isArray(d.viol) ? d.viol.filter(x => VIOL[x]) : []; S.safe = Object.assign(base.safe, d.safe || {}); if (!Array.isArray(S.safe.ans) || S.safe.ans.length !== 5) S.safe.ans = arr(5, null);
+  if (!Array.isArray(S.seen) || S.seen.length !== 8) S.seen = base.seen; if (!(S.page >= 0 && S.page <= 7)) S.page = 0;
+}
+function initM(){ if (!S.M.levels.length) S.M.levels = [V.menzV0]; }
+function addViol(k){ if (!S.viol.includes(k)) S.viol.push(k); saveSoon(); }
+const anyPud = () => !!(S.M.pud.length || S.T.pud.length);
+
+/* ================= grading (pure) ================= */
+function grade(st){
+  const Vv = makeVariant(st.seed || DEMO_SEED), E = cleanE(st.E), M = cleanM(st.M), T = cleanT(st.T), viol = (Array.isArray(st.viol) ? st.viol : []).filter(x => VIOL[x]);
+  const crit = arr(10, 0), info = arr(10, ''), q = k => E[k] === QS.find(x => x.k === k).c;
+  const lvls = M.levels.length ? M.levels : [Vv.menzV0], rhoOf = lk => lk === 0 ? RHO_W : Vv.salt.rho;
+  const mOf = i => Vv.tubes[i].m, faT = i => mOf(i) / 1000 * G;
+  /* K1 */
+  const okCvD = near(num(E.cvD), 0.02, 0.0011); let c1 = 0; const i1 = [];
+  for (let i = 0; i < NT; i++){ const ok = M.fa[i] && near(num(E.fa[i]), faT(i), 0.021); if (ok) c1++; i1.push((i + 1) + ': ' + (!M.fa[i] ? 'өлшенбеді' : ok ? 'дұрыс' : 'қате (≈ ' + fmt(faT(i), 2) + ' Н)')); }
+  crit[0] = okCvD && c1 === NT ? 1 : 0; info[0] = 'бөлік құны: ' + (okCvD ? 'дұрыс' : 'қате (0,02 Н)') + '; ' + i1.join('; ');
+  /* K2 */
+  const okCvM = near(num(E.cvM), 1, 0.01); let c2 = 0; const i2 = [];
+  for (let i = 0; i < NT; i++){ const v1 = num(E.v1[i]), v2 = num(E.v2[i]), v = num(E.v[i]);
+    const okL = fin(v1) && lvls.some(L => Math.abs(L - v1) <= 1.05), okD = near(v2 - v1, TUBE.V, 1.55), okA = near(v, v2 - v1, 0.051), ok = M.vlog[i] && okL && okD && okA; if (ok) c2++;
+    i2.push((i + 1) + ': ' + (!M.vlog[i] ? 'толық батырылмады' : ok ? 'дұрыс' : [!okL ? 'V₁ қате' : '', !okD ? 'V₂ − V₁ пробирканың көлемінен ауытқиды (≈ ' + fmt(TUBE.V, 0) + ' мл)' : '', !okA ? 'V = V₂ − V₁ есебі қате' : ''].filter(Boolean).join(', '))); }
+  crit[1] = okCvM && c2 === NT ? 1 : 0; info[1] = 'бөлік құны: ' + (okCvM ? 'дұрыс' : 'қате (1 мл)') + '; ' + i2.join('; ');
+  /* K3 */
+  let c3 = 0; for (let i = 0; i < NT; i++){ const v = num(E.v[i]), vm = numSci(E.vm[i]); if (fin(v) && fin(vm) && Math.abs(vm - v * 1e-6) <= 0.02 * Math.abs(v * 1e-6) + 1e-12) c3++; }
+  crit[2] = c3 === NT ? 1 : 0; info[2] = c3 + '/3 мән дұрыс';
+  /* K4 */
+  let c4 = 0; const fyOwn = arr(NR, NaN);
+  for (let r = 0; r < NR; r++){ const i = rowTube(r), vm = numSci(E.vm[i]), own = fin(vm) ? rhoOf(rowLiq(r)) * G * vm : NaN, fy = num(E.rows[r].fy);
+    fyOwn[r] = fin(fy) ? fy : own; if (fin(own) && [9.8, 9.81, 10].some(g => near(fy, rhoOf(rowLiq(r)) * g * vm, Math.max(0.006, 0.03 * own)))) c4++; }
+  crit[3] = c4 >= 5 ? 1 : 0; info[3] = c4 + '/6 мән дұрыс';
+  /* K5 */
+  let c5 = 0; for (let r = 0; r < NR; r++){ const fa = num(E.fa[rowTube(r)]), fy = fyOwn[r], rel = E.rows[r].rel;
+    if (!fin(fa) || !fin(fy) || rel == null) continue; const d = fa - fy, want = Math.abs(d) <= Math.max(0.006, 0.02 * fy) ? 1 : d > 0 ? 0 : 2; if (rel === want) c5++; }
+  crit[4] = c5 >= 5 ? 1 : 0; info[4] = c5 + '/6 қатыс дұрыс';
+  /* K6 */
+  let c6 = 0, nPred = 0; for (let r = 0; r < NR; r++){ const rel = E.rows[r].rel, p = E.rows[r].pred; if (p != null) nPred++; if (rel != null && p === rel) c6++; }
+  crit[5] = nPred === NR && c6 >= 5 ? 1 : 0; info[5] = nPred + '/6 болжам жасалды, оның ' + c6 + '-еуі өз салыстыруына сәйкес';
+  /* K7 */
+  let c7 = 0, nSeen = 0; for (let r = 0; r < NR; r++){ if (T.seen[r]) nSeen++; const real = outcomeOf(Vv, rowTube(r), rowLiq(r), 0); if (T.seen[r] && E.rows[r].obs === real) c7++; }
+  crit[6] = c7 >= 5 ? 1 : 0; info[6] = nSeen + '/6 тәжірибе жасалды, нәтиже дұрыс жазылғаны: ' + c7 + '/6';
+  /* K8 */
+  const nq = QS.filter(q => E[q.k] === QS.find(x => x.k === q.k).c).length; crit[7] = nq >= 4 ? 1 : 0; info[7] = nq + '/5 сұрақ дұрыс';
+  /* K9, K10 */
+  const sf = st.safe || {}; crit[8] = fin(sf.first) && sf.first >= 4 ? 1 : 0; info[8] = 'бірінші әрекет: ' + (fin(sf.first) ? sf.first + '/5' : '—');
+  const used = M.fa.some(Boolean) || M.vlog.some(Boolean) || T.seen.some(Boolean);
+  crit[9] = used && viol.length === 0 ? 1 : 0; info[9] = !used ? 'тәжірибе жасалмады' : viol.length ? 'бұзушылық: ' + viol.map(x => VIOL[x]).join('; ') : 'бұзушылық жоқ';
+  const score = crit.reduce((s, x) => s + x, 0), okPred = [0, 1, 2, 3, 4, 5].filter(r => T.seen[r] && E.rows[r].pred != null && E.rows[r].pred === outcomeOf(Vv, rowTube(r), rowLiq(r), 0)).length;
+  return { crit, info, score, grade5: grade5(score), okPred, nSeen, nq };
+}
+function outcomeOf(Vv, i, lk){ const m = Vv.tubes[i].m, fa = m / 1000 * G, fy = (lk === 0 ? RHO_W : Vv.salt.rho) * G * TUBE.V * 1e-6, d = fa - fy; return Math.abs(d) <= 0.0042 ? 1 : d > 0 ? 0 : 2; }
+function grade5(score){ const p = score * 10; return p < 40 ? 2 : p < 65 ? 3 : p < 85 ? 4 : 5; }
+function b64e(str){ const b = new TextEncoder().encode(str); let bin = ''; b.forEach(x => { bin += String.fromCharCode(x); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function b64d(s){ s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
+function makeCode(res, at, st){ st = st || S; const p = { n: st.name, c: st.cls, v: vcode(st.seed), s: res.score, k: res.crit.join(''), t: at, p2: res.okPred, x: res.nq }; const b = b64e(JSON.stringify(p)); return 'J77.' + b + '.' + hashStr(SALT + b).toString(36); }
+function readCode(code){ try { const m = String(code).trim().match(/^J77\.([A-Za-z0-9_-]+)\.([a-z0-9]+)$/); if (!m) return null; if (hashStr(SALT + m[1]).toString(36) !== m[2]) return { bad: true }; return JSON.parse(b64d(m[1])); } catch (e) { return null; } }
+
+/* ================= zip / docx / xlsx (no libraries) ================= */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files){
+  const enc = new TextEncoder(), parts = [], central = []; let off = 0; const d = new Date(), dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF, dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+  for (const f of files){
+    const nb = enc.encode(f.name), data = typeof f.data === 'string' ? enc.encode(f.data) : f.data, crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true); lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, nb.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nb, data);
+    const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, nb.length, true); ch.setUint32(42, off, true);
+    central.push(new Uint8Array(ch.buffer), nb); off += 30 + nb.length + data.length;
+  }
+  const cds = central.reduce((s, p) => s + p.length, 0), end = new DataView(new ArrayBuffer(22)); end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cds, true); end.setUint32(16, off, true);
+  const all = parts.concat(central, [new Uint8Array(end.buffer)]), out = new Uint8Array(all.reduce((s, p) => s + p.length, 0)); let o = 0; all.forEach(p => { out.set(p, o); o += p.length; }); return out;
+}
+const X = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+const isoNow = () => new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+function coreXml(title, creator){ return XML + `<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${X(title)}</dc:title><dc:creator>${X(creator)}</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${isoNow()}</dcterms:created></cp:coreProperties>`; }
+/* --- Word --- */
+function wr(r){ if (typeof r === 'string') r = { t: r }; return `<w:r><w:rPr>${r.b ? '<w:b/>' : ''}${r.i ? '<w:i/>' : ''}${r.color ? `<w:color w:val="${r.color}"/>` : ''}${r.sz ? `<w:sz w:val="${r.sz}"/><w:szCs w:val="${r.sz}"/>` : ''}${r.sub ? '<w:vertAlign w:val="subscript"/>' : ''}</w:rPr><w:t xml:space="preserve">${X(r.t)}</w:t></w:r>`; }
+function wp(runs, o){ o = o || {}; runs = Array.isArray(runs) ? runs : [runs]; return `<w:p><w:pPr>${o.style ? `<w:pStyle w:val="${o.style}"/>` : ''}${o.keep ? '<w:keepNext/>' : ''}${o.sp != null ? `<w:spacing w:before="${o.before || 0}" w:after="${o.sp}"/>` : ''}${o.ind ? `<w:ind w:left="${o.ind}" w:hanging="${o.hang || 0}"/>` : ''}${o.align ? `<w:jc w:val="${o.align}"/>` : ''}</w:pPr>${runs.map(wr).join('')}</w:p>`; }
+function wtbl(rows, widths, o){
+  o = o || {}; const tw = widths.reduce((a, b) => a + b, 0);
+  const trs = rows.map((row, ri) => `<w:tr>${ri === 0 && o.header ? '<w:trPr><w:tblHeader/></w:trPr>' : ''}${row.map((c, ci) => {
+    c = c && typeof c === 'object' && !Array.isArray(c) && !('t' in c) ? c : { r: c };
+    const hd = o.header && ri === 0, runs = (Array.isArray(c.r) ? c.r : [{ t: c.r == null ? '' : String(c.r) }]).map(x => typeof x === 'string' ? { t: x } : x).map(x => Object.assign({ b: hd || c.b }, x)), fill = c.fill || (hd ? 'D9EEF5' : null);
+    return `<w:tc><w:tcPr><w:tcW w:w="${widths[ci]}" w:type="dxa"/>${fill ? `<w:shd w:val="clear" w:color="auto" w:fill="${fill}"/>` : ''}<w:vAlign w:val="center"/></w:tcPr>${wp(runs, { align: c.align || (hd ? 'center' : o.align), sp: 0 })}</w:tc>`; }).join('')}</w:tr>`).join('');
+  return `<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="${tw}" w:type="dxa"/><w:tblLook w:val="04A0"/></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${trs}</w:tbl>` + wp('', { sp: 60 });
+}
+const BORD = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(b => `<w:${b} w:val="single" w:sz="4" w:space="0" w:color="7F8C8D"/>`).join('');
+const DOCX_STYLES = XML + `<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="kk-KZ"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="80" w:line="264" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style><w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:spacing w:after="40"/><w:jc w:val="center"/></w:pPr><w:rPr><w:b/><w:sz w:val="30"/><w:szCs w:val="30"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="220" w:after="80"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:color w:val="6B2FA0"/><w:sz w:val="26"/><w:szCs w:val="26"/></w:rPr></w:style><w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:name w:val="Normal Table"/><w:uiPriority w:val="99"/><w:semiHidden/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="108" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="108" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style><w:style w:type="table" w:styleId="TableGrid"><w:name w:val="Table Grid"/><w:basedOn w:val="TableNormal"/><w:tblPr><w:tblBorders>${BORD}</w:tblBorders><w:tblCellMar><w:top w:w="40" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:bottom w:w="40" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style></w:styles>`;
+function buildDocx(bodyXml, title, creator){
+  const doc = XML + `<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${bodyXml}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="850" w:bottom="1134" w:left="1418" w:header="709" w:footer="709" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  return zipStore([
+    { name: '[Content_Types].xml', data: XML + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>' },
+    { name: '_rels/.rels', data: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>' },
+    { name: 'word/_rels/document.xml.rels', data: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+    { name: 'word/document.xml', data: doc }, { name: 'word/styles.xml', data: DOCX_STYLES }, { name: 'docProps/core.xml', data: coreXml(title, creator) },
+  ]);
+}
+/* --- Excel --- */
+function colName(i){ let s = ''; i++; while (i > 0){ const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+function sheetXml(rows, widths, o){
+  o = o || {};
+  const body = rows.map((row, ri) => `<row r="${ri + 1}">${row.map((c, ci) => { if (c == null || c === '') return ''; c = typeof c === 'object' ? c : { v: c }; const ref = colName(ci) + (ri + 1), s = c.s != null ? c.s : 2;
+    return typeof c.v === 'number' && fin(c.v) ? `<c r="${ref}" s="${s}"><v>${c.v}</v></c>` : `<c r="${ref}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${X(c.v)}</t></is></c>`; }).join('')}</row>`).join('');
+  return XML + `<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0">${o.freeze ? '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>' : ''}</sheetView></sheetViews><cols>${widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${body}</sheetData>${o.filter ? `<autoFilter ref="${o.filter}"/>` : ''}<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>`;
+}
+const XLSX_STYLES = XML + '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="0.000"/><numFmt numFmtId="165" formatCode="0.0"/></numFmts><fonts count="3"><font><sz val="11"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="11"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="14"/><name val="Calibri"/><family val="2"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEFE6F8"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF9AA5AB"/></left><right style="thin"><color rgb="FF9AA5AB"/></right><top style="thin"><color rgb="FF9AA5AB"/></top><bottom style="thin"><color rgb="FF9AA5AB"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="9"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="1" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="2" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="11" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+function buildXlsx(sheets, title){
+  const n = sheets.length;
+  return zipStore([
+    { name: '[Content_Types].xml', data: XML + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' + sheets.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('') + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>' },
+    { name: '_rels/.rels', data: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>' },
+    { name: 'xl/workbook.xml', data: XML + '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + sheets.map((s, i) => `<sheet name="${X(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('') + '</sheets>' + sheets.map((s, i) => s.filter ? `<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${X(s.name)}'!$${s.filter.replace(':', ':$').replace(/([A-Z]+)(\d+)/g, '$1$$$2')}</definedName></definedNames>` : '').join('').replace(/<\/definedNames><definedNames>/g, '') + '</workbook>' },
+    { name: 'xl/_rels/workbook.xml.rels', data: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((_, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') + `<Relationship Id="rId${n + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
+    ...sheets.map((s, i) => ({ name: `xl/worksheets/sheet${i + 1}.xml`, data: sheetXml(s.rows, s.widths, s) })),
+    { name: 'xl/styles.xml', data: XLSX_STYLES }, { name: 'docProps/core.xml', data: coreXml(title, 'Физика зертханасы') },
+  ]);
+}
+async function saveFile(filename, bytes, msgEl){
+  const say = t => { if (msgEl) msgEl.textContent = t; };
+  if (dlCap){ try { await dlCap.save({ filename, data: bytes }); say('Файл сақталды: ' + filename); } catch (e) { if (!e || e.code !== 'declined') say('Файлды сақтау мүмкін болмады' + (e && e.code ? ' (' + e.code + ')' : '') + '.'); } return; }
+  try { const mime = /\.docx$/.test(filename) ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([bytes], { type: mime })); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); say('Файл жүктелді: ' + filename); } catch (e) { say('Файлды жүктеу мүмкін болмады.'); }
+}
+const safeName = s => (String(s || '').replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_+|_+$/g, '') || 'oqushy');
+function fmtTime(iso){ try { const d = new Date(iso); if (isNaN(d)) return iso || ''; const p = x => String(x).padStart(2, '0'); return p(d.getDate()) + '.' + p(d.getMonth() + 1) + '.' + d.getFullYear() + ', ' + p(d.getHours()) + ':' + p(d.getMinutes()); } catch (e) { return iso || ''; } }
+const dash = s => String(s == null ? '' : s).trim() || '—';
+
+
+/* ================= reports ================= */
+
+const rowName = (Vv, r) => (rowTube(r) + 1) + '-пробирка · ' + (rowLiq(r) === 0 ? 'су' : Vv.salt.n);
+function summaryText(E, st){
+  st = st || S; const Vv = makeVariant(st.seed || DEMO_SEED), T = cleanT(st.T), q = k => E[k] === QS.find(x => x.k === k).c; let h = '';
+  const obs = r => E.rows[r].obs != null ? OUTP[E.rows[r].obs].toLowerCase() : null;
+  const parts = []; for (let i = 0; i < NT; i++){ const a = obs(i * 2), b = obs(i * 2 + 1); if (a && b) parts.push((i + 1) + '-пробирка суда ' + a + ', ' + Vv.salt.n + 'нда ' + b); }
+  if (parts.length) h += 'Тәжірибе нәтижесі: ' + parts.join('; ') + '. ';
+  const nOk = [0, 1, 2, 3, 4, 5].filter(r => T.seen[r] && E.rows[r].pred != null && E.rows[r].pred === E.rows[r].obs).length, nSeen = T.seen.filter(Boolean).length;
+  if (nSeen) h += 'Жасалған ' + nSeen + ' тәжірибенің ' + nOk + '-еуінде болжам тәжірибе нәтижесімен сәйкес келді. ';
+  h += 'Демек, дененің сұйықта не істейтінін ауырлық күші мен ығыстырушы күштің қатысы анықтайды: Fа > Fы болса – батады, Fа = Fы болса – жүзеді, Fа < Fы болса – қалқып шығады. ';
+  if (q('q2')) h += 'Тұзды судың тығыздығы үлкен болғандықтан, ондағы ығыстырушы күш те үлкен: суда батқан пробирка тұзды суда қалқып шығуы мүмкін. ';
+  if (q('q5')) h += 'Темір кеменің батпауы да осы шартпен түсіндіріледі: қуыс корпус көп су ығыстырады.';
+  return h;
+}
+function reportDocx(sub){
+  const E = cleanE(sub.E), Vv = makeVariant(sub.seed || DEMO_SEED), T = cleanT(sub.T), crit = Array.isArray(sub.crit) ? sub.crit : [], info = Array.isArray(sub.info) ? sub.info : [];
+  const H = t => wp(t, { style: 'Heading1' }), P = (runs, o) => wp(runs, o), B = t => ({ t, b: true }), I = t => ({ t, i: true }), sb = t => ({ t, sub: true });
+  let b = wp([{ t: 'Физика · 7-сынып', color: '5B6B73', sz: 20 }], { align: 'center', sp: 40 }) + wp('№7 зертханалық жұмыс', { style: 'Title' }) + wp([{ t: 'Дененің сұйықта жүзу шарттарын анықтау', b: true, sz: 28 }], { align: 'center', sp: 200 });
+  b += wtbl([[{ r: 'Оқушы', b: true, fill: 'E7F2F0' }, sub.name || ''], [{ r: 'Сынып', b: true, fill: 'E7F2F0' }, sub.cls || ''], [{ r: 'Орындалған күні', b: true, fill: 'E7F2F0' }, fmtTime(sub.at)], [{ r: 'Нұсқа', b: true, fill: 'E7F2F0' }, sub.variant || ''], [{ r: 'Оқу мақсаттары', b: true, fill: 'E7F2F0' }, '7.3.1.14 – дененің сұйықта жүзу шарттарын зерттеу; 7.1.3.3 – физика кабинетінде қауіпсіздік ережелерін білу және сақтау']], [2600, 7000]);
+  b += P([B('Жұмыстың мақсаты: '), 'эксперимент жүзінде дененің сұйықта жүзу шарттарын тексеру.']);
+  b += P([B('Тапсырма: '), 'денелерді суға батырған кезде олардың суда жүзетінін, батып кететінін немесе қалқып шығатынын анықтау.']);
+  b += P([B('Құрал-жабдықтар: '), 'динамометр (өлшеу шегі 2 Н), суы бар ыдыс, мензурка (100 мл), ішіне массалары әртүрлі құм салынған бірдей үш пробирка, ' + Vv.salt.n + ' (ρ = ' + Vv.salt.rho + ' кг/м³).']);
+  b += H('Қысқаша теория') + P(['Сұйыққа батырылған денеге ауырлық күші ', I('F'), sb('а'), ' және ығыстырушы күш ', I('F'), sb('ы'), ' = ρ', sb('с'), I('gV'), sb('д'), ' әсер етеді. ', I('F'), sb('а'), ' > ', I('F'), sb('ы'), ' – дене батады; ', I('F'), sb('а'), ' = ', I('F'), sb('ы'), ' – жүзеді; ', I('F'), sb('а'), ' < ', I('F'), sb('ы'), ' – қалқып шығады.']);
+  b += H('Өлшеу нәтижелері') + P(['Динамометрдің бөлік құны: ', B(dash(E.cvD) + ' Н'), ';  мензурканың бөлік құны: ', B(dash(E.cvM) + ' мл'), '.']);
+  b += wtbl([['Пробирка', 'Fа, Н', 'V₁, мл', 'V₂, мл', 'Vд, см³', 'Vд, м³']].concat([0, 1, 2].map(i => [{ r: (i + 1) + '-пробирка', align: 'center' }, { r: dash(E.fa[i]), align: 'center' }, { r: dash(E.v1[i]), align: 'center' }, { r: dash(E.v2[i]), align: 'center' }, { r: dash(E.v[i]), align: 'center' }, { r: dash(E.vm[i]), align: 'center' }])), [2000, 1400, 1400, 1400, 1500, 1800], { header: true });
+  b += H('Кесте') + wtbl([['Тәжірибе реті', 'Сұйық', 'Fа, Н', 'Vд, м³', 'Fы, Н', 'Fа мен Fы қатысы', 'Болжам', 'Батады, жүзеді немесе қалқып шығады']].concat(arr(NR, 0).map((_, r) => {
+    const i = rowTube(r), R = E.rows[r], okP = R.pred != null && R.obs != null && R.pred === R.obs;
+    return [{ r: String(r + 1), align: 'center' }, { r: rowLiq(r) === 0 ? 'Су' : Vv.salt.nn }, { r: dash(E.fa[i]), align: 'center' }, { r: dash(E.vm[i]), align: 'center' }, { r: dash(R.fy), align: 'center' }, { r: R.rel != null ? RELS[R.rel] : '—', align: 'center' }, { r: R.pred != null ? OUT[R.pred] : '—' }, { r: [{ t: R.obs != null ? OUTP[R.obs] : '—' }, { t: R.obs != null && R.pred != null ? (okP ? '  ✓' : '  ✗') : '', b: true, color: okP ? '1D7A45' : 'B4342A' }] }];
+  })), [900, 1300, 900, 1400, 900, 1350, 1250, 1600], { header: true });
+  b += H('Қорытынды') + P(summaryText(E, sub) || '—') + P([B('Бақылау сұрақтарына жауаптар:')], { before: 120, sp: 60 });
+  QS.forEach((qq, i) => { const ans = E[qq.k], ok = ans === qq.c; b += P([B((i + 1) + '. ' + qq.q + ' ')], { sp: 0, keep: true }) + P([ans == null ? { t: 'Жауап берілмеген', i: true } : { t: qq.a[ans] }, { t: ans == null ? '' : ok ? '  ✓' : '  ✗', b: true, color: ok ? '1D7A45' : 'B4342A' }], { ind: 360, sp: 60 }); });
+  if (crit.length){
+    b += H('Бағалау') + P([B('Жинаған балл: '), String(sub.score) + ' / 10;  ', B('баға: '), '«' + sub.grade + '»']);
+    b += wtbl([['№', 'Бағалау критерийі', 'Балл']].concat(RUBRIC.map((r, i) => [{ r: [{ t: 'К' + (i + 1), sz: 21 }], align: 'center' }, { r: [{ t: r.d + ' (' + r.o + ')', sz: 21 }, { t: info[i] ? ' – ' + info[i] : '', color: '5B6B73', sz: 18 }] }, { r: crit[i] ? '1' : '0', align: 'center', b: true }])).concat([[{ r: '', fill: 'E7F2F0' }, { r: 'Барлығы', b: true, fill: 'E7F2F0' }, { r: String(sub.score), b: true, align: 'center', fill: 'E7F2F0' }]]), [800, 7900, 900], { header: true });
+  }
+  if (sub.code) b += P([B('Нәтиже коды: '), { t: sub.code, sz: 16 }]);
+  b += P(['Оқушының қолы: ____________________          Мұғалімнің қолы: ____________________'], { before: 360, sp: 0 });
+  return buildDocx(b, '№7 зертханалық жұмыс — ' + (sub.name || ''), sub.name || 'Оқушы');
+}
+function subFromState(){ const r = S.result || {}; return { name: S.name, cls: S.cls, variant: vcode(), seed: S.seed, at: r.at || new Date().toISOString(), E: S.E, M: S.M, T: S.T, crit: r.crit || [], info: r.info || [], score: r.score, grade: r.grade5, code: r.online ? '' : r.code }; }
+function classXlsx(list){
+  const head = ['№', 'Аты-жөні', 'Сынып', 'Нұсқа', 'Балл', 'Баға', ...RUBRIC.map((_, k) => 'К' + (k + 1)), 'Сұйық', 'ρ, кг/м³', 'Fа1, Н', 'Fа2, Н', 'Fа3, Н', 'V1, см³', 'V2, см³', 'V3, см³',
+    ...arr(NR, 0).map((_, r) => (rowTube(r) + 1) + '-пр. ' + (rowLiq(r) === 0 ? 'су' : 'ерітінді')), 'Дұрыс болжам', 'Сұрақтар (5-тен)', 'Тест (1-әрекет)', 'Бұзушылық', 'Тапсырылды'];
+  const N = x => { const v = numSci(x); return fin(v) ? v : (String(x || '').trim() || ''); };
+  const rows = [head.map(h => ({ v: h, s: 1 }))];
+  list.forEach((s, n) => { const E = cleanE(s.E), Vv = makeVariant(s.seed || DEMO_SEED), T = cleanT(s.T), vi = (Array.isArray(s.viol) ? s.viol : []).filter(x => VIOL[x]);
+    rows.push([{ v: n + 1, s: 5 }, s.name || '', s.cls || '', s.variant || '', { v: s.score || 0, s: 5 }, { v: s.grade || '', s: 5 }, ...(s.crit || arr(10, 0)).map(c => ({ v: c ? 1 : 0, s: 5 })),
+      Vv.salt.nn, { v: Vv.salt.rho, s: 5 }, ...[0, 1, 2].map(i => ({ v: N(E.fa[i]), s: 7 })), ...[0, 1, 2].map(i => ({ v: N(E.v[i]), s: 4 })),
+      ...arr(NR, 0).map((_, r) => E.rows[r].obs != null ? OUTP[E.rows[r].obs] : ''), { v: fin(s.okPred) ? s.okPred : '', s: 5 }, { v: fin(s.nq) ? s.nq : '', s: 5 }, { v: fin((s.safe || {}).first) ? s.safe.first : '', s: 5 }, vi.map(x => VIOL[x]).join('; '), fmtTime(s.at)]); });
+  const n = list.length, avg = n ? list.reduce((a, s) => a + (s.score || 0), 0) / n : 0, last = colName(head.length - 1) + (n + 1);
+  const sum = [[{ v: '7-сынып · №7 зертханалық жұмыс: дененің сұйықта жүзу шарттары', s: 6 }], [], [{ v: 'Көрсеткіш', s: 1 }, { v: 'Мәні', s: 1 }], ['Тапсырған оқушы', { v: n, s: 5 }], ['Орташа балл (10-нан)', { v: Math.round(avg * 10) / 10, s: 4 }]];
+  [5, 4, 3, 2].forEach(g => sum.push(['«' + g + '» бағасы', { v: list.filter(s => s.grade === g).length, s: 5 }]));
+  sum.push(['Қауіпсіздік ережесін бұзғандар', { v: list.filter(s => Array.isArray(s.viol) && s.viol.length).length, s: 5 }]);
+  sum.push([], [{ v: 'Критерий', s: 1 }, { v: 'Орындағандар, %', s: 1 }, { v: 'Дескриптор', s: 1 }]);
+  RUBRIC.forEach((r, k) => sum.push(['К' + (k + 1) + ' (' + r.o + ')', { v: n ? Math.round(100 * list.filter(s => s.crit && s.crit[k]).length / n) : 0, s: 5 }, r.d]));
+  sum.push([], ['Жасалған уақыты', fmtTime(new Date().toISOString())]);
+  return buildXlsx([
+    { name: 'Нәтижелер', rows, widths: [5, 26, 9, 11, 7, 6, ...arr(10, 5), 20, 10, 9, 9, 9, 9, 9, 9, ...arr(NR, 22), 12, 14, 10, 30, 17], freeze: true, filter: n ? 'A1:' + last : null },
+    { name: 'Жиынтық', rows: sum, widths: [32, 18, 100] },
+  ], '7-сынып №7 зертхана — сынып жиынтығы');
+}
+
+/* ================= physics ================= */
+const tubeMass = i => V.tubes[i].m;
+const Fa = i => tubeMass(i) / 1000 * G;
+const FyFull = rho => rho * G * TUBE.V * 1e-6;
+function subLen(m, rho, L){ const s = m / (rho / 1000 * TUBE.A); return s >= L ? L : s; }
+function menzSolve(){
+  const i = S.M.st.indexOf('menz'), V0 = S.M.levels.length ? S.M.levels[S.M.levels.length - 1] : V.menzV0;
+  if (i < 0) return { i: -1, H: V0 / MENZ.A, sub: 0, full: false, top: null };
+  const m = tubeMass(i), sFloat = subLen(m, RHO_W, TUBE.L), sunk = sFloat >= TUBE.L - 1e-9, forced = S.M.wire;
+  let sub = sunk || forced ? TUBE.L : sFloat, H = (V0 + TUBE.A * sub) / MENZ.A;
+  if (sunk || forced){ sub = Math.min(TUBE.L, H); H = (V0 + TUBE.A * sub) / MENZ.A; sub = Math.min(TUBE.L, H); }
+  const ys = MENZ.yb - H * CM, bottom = sunk || forced ? MENZ.yb : ys + sub * CM;
+  return { i, H, sub, full: sub >= TUBE.L - 0.02, top: bottom - TUBE.L * CM, V0 };
+}
+function vesSolve(side, i){
+  const lk = side === 'L' ? 0 : 1, rho = liqOf(lk).rho, m = tubeMass(i), s = subLen(m, rho, TUBE.L);
+  const neutral = Math.abs(Fa(i) - FyFull(rho)) <= 0.0042, sunk = s >= TUBE.L - 1e-9 && !neutral;
+  let sub = neutral || sunk ? TUBE.L : s, H = (VES.V0 + TUBE.A * sub) / VES.A;
+  const ys = VES.yb - H * CM; let bottom;
+  if (sunk) bottom = VES.yb; else if (neutral) bottom = ys + Math.min(H - 1.2, TUBE.L + 2.6) * CM; else bottom = ys + sub * CM;
+  return { lk, rho, H, ys, sub, neutral, sunk, out: neutral ? 1 : sunk ? 0 : 2, top: bottom - TUBE.L * CM };
+}
+const tubeX5 = i => { const st = S.T.st[i]; return st === 'L' ? VES.L : st === 'R' ? VES.R : RACK5[i]; };
+function pos3(i){
+  const d = RT.drag; if (d && d.kind === 'tube' && d.b === i) return { x: d.x, top: d.top };
+  const st = S.M.st[i], hp = TUBE.L * CM;
+  if (st === 'hook'){ const ds = RT.dyn || dynSolve(); return { x: DYN.x, top: ds.top }; }
+  if (st === 'menz'){ const ms = RT.menz || menzSolve(); return { x: MENZ.cx, top: ms.top }; }
+  return { x: RACK[i], top: TABLE - 6 - hp };
+}
+function pos5(i){
+  const d = RT.drag; if (d && d.kind === 'tube' && d.b === i) return { x: d.x, top: d.top };
+  const st = S.T.st[i], hp = TUBE.L * CM;
+  if (st === 'L' || st === 'R') return { x: VES[st], top: RT.ty[i] != null ? RT.ty[i] : vesSolve(st, i).top };
+  return { x: RACK5[i], top: TABLE - 6 - hp };
+}
+function dynSolve(){
+  const i = S.M.st.indexOf('hook'), hook0 = S.M.cy + 196;
+  if (i < 0) return { i: -1, F: 0, hook: hook0, top: null, W: 0 };
+  const W = Fa(i), F = Math.min(W, DYN.STOP), hook = hook0 + DYN.NPX * F;
+  return { i, F, hook, top: hook + DYN.TH, W };
+}
+const dynOffset = () => V.off0 + S.M.zero + (S.M.over ? 0.08 : 0);
+
+/* ================= canvases ================= */
+const C = {};
+const TOK = ['bg', 'surface', 'surface-2', 'ink', 'muted', 'line', 'primary', 'accent', 'ok', 'bad', 'bench', 'water'];
+function readColors(){ const cs = getComputedStyle(document.documentElement); TOK.forEach(k => { C[k] = cs.getPropertyValue('--' + k).trim() || '#888'; }); RT.need = true; }
+function makeView(id, W, H){
+  const cv = $(id); if (!cv) return null; const v = { cv, ctx: cv.getContext('2d'), w: 0, h: 0, T: { s: 1, ox: 0, oy: 0 } };
+  new ResizeObserver(() => { const r = cv.getBoundingClientRect(); if (!r.width) { v.w = 0; return; } const dpr = Math.min(2.5, window.devicePixelRatio || 1); v.w = r.width; v.h = r.height; cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); v.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); if (W){ const s = Math.min(v.w / W, v.h / H); v.T = { s, ox: (v.w - W * s) / 2, oy: (v.h - H * s) / 2 }; } RT.need = true; }).observe(cv);
+  return v;
+}
+let BV = null, TV = null, ZV = null, LBL = 1;
+function line(ctx, x1, y1, x2, y2){ ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+function circle(ctx, x, y, r){ ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); }
+function rrect(ctx, x, y, w, h, r){ ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+function label(ctx, t, x, y, o){ o = o || {}; const sz = (o.size || 13) * LBL; ctx.font = `${o.w || 700} ${sz}px "Manrope", system-ui, sans-serif`; ctx.textAlign = o.align || 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round'; ctx.lineWidth = 4; ctx.strokeStyle = o.halo || 'rgba(238,233,223,.92)'; ctx.strokeText(t, x, y); ctx.fillStyle = o.col || '#1b2a28'; ctx.fillText(t, x, y); }
+function drawRoom(ctx){
+  const g = ctx.createLinearGradient(0, 0, 0, TABLE); g.addColorStop(0, '#f0ece4'); g.addColorStop(1, '#e2dacc'); ctx.fillStyle = g; ctx.fillRect(0, 0, WW, TABLE);
+  ctx.strokeStyle = 'rgba(100,110,100,.06)'; ctx.lineWidth = 1; for (let y = 40; y < TABLE; y += 40) line(ctx, 0, y, WW, y);
+  const t = ctx.createLinearGradient(0, TABLE, 0, WH); t.addColorStop(0, '#9b7f58'); t.addColorStop(1, '#78603f'); ctx.fillStyle = t; ctx.fillRect(0, TABLE, WW, WH - TABLE);
+  ctx.fillStyle = '#b89467'; ctx.fillRect(0, TABLE, WW, 3);
+}
+function drawTube(ctx, i, x, top, tag){
+  const w = TUBE.r * 2 * CM, h = TUBE.L * CM, m = tubeMass(i), sandH = clamp(m / 8, 1, TUBE.L * 0.78) * CM, rr = w / 2;
+  ctx.save();
+  ctx.beginPath(); ctx.moveTo(x - rr, top); ctx.lineTo(x - rr, top + h - rr); ctx.arc(x, top + h - rr, rr, Math.PI, 0, true); ctx.lineTo(x + rr, top); ctx.closePath();
+  const g = ctx.createLinearGradient(x - rr, 0, x + rr, 0); g.addColorStop(0, 'rgba(190,215,210,.55)'); g.addColorStop(0.35, 'rgba(242,250,248,.75)'); g.addColorStop(1, 'rgba(180,205,200,.5)');
+  ctx.fillStyle = g; ctx.fill();
+  ctx.save(); ctx.clip();
+  const sg = ctx.createLinearGradient(x - rr, 0, x + rr, 0); sg.addColorStop(0, '#a9793f'); sg.addColorStop(0.4, '#d7a861'); sg.addColorStop(1, '#9c6e38');
+  ctx.fillStyle = sg; ctx.fillRect(x - rr, top + h - sandH, w, sandH);
+  ctx.fillStyle = 'rgba(255,255,255,.18)'; for (let k = 0; k < 7; k++) ctx.fillRect(x - rr + ((k * 7) % w), top + h - sandH + (k * 5) % Math.max(4, sandH), 2, 2);
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(70,110,105,.9)'; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(x - rr, top); ctx.lineTo(x - rr, top + h - rr); ctx.arc(x, top + h - rr, rr, Math.PI, 0, true); ctx.lineTo(x + rr, top); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(x - rr + 4, top + 5, 3, h - 16);
+  ctx.fillStyle = '#5d7a76'; ctx.fillRect(x - rr - 1.5, top - 3, w + 3, 4);
+  ctx.restore();
+  if (tag) label(ctx, tag, x, top + 14, { size: 11.5, w: 800, halo: 'rgba(255,255,255,.8)' });
+}
+function drawGlass(ctx, cx, rpx, rim, yb, wallT){
+  ctx.strokeStyle = 'rgba(80,120,125,.85)'; ctx.lineWidth = 1.4; const L = cx - rpx - wallT, R = cx + rpx + wallT;
+  ctx.beginPath(); ctx.moveTo(L, rim); ctx.lineTo(L, yb + wallT); ctx.lineTo(R, yb + wallT); ctx.lineTo(R, rim); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - rpx, rim); ctx.lineTo(cx - rpx, yb); ctx.lineTo(cx + rpx, yb); ctx.lineTo(cx + rpx, rim); ctx.strokeStyle = 'rgba(80,120,125,.35)'; ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(cx + rpx - 6, rim + 6, 3, yb - rim - 12);
+}
+function drawLiquid(ctx, cx, rpx, yb, H, col, men){
+  const ys = yb - H * CM; ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(cx - rpx, ys - men); ctx.quadraticCurveTo(cx - rpx + men * 1.2, ys, cx, ys); ctx.quadraticCurveTo(cx + rpx - men * 1.2, ys, cx + rpx, ys - men); ctx.lineTo(cx + rpx, yb); ctx.lineTo(cx - rpx, yb); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(25,85,120,.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(cx - rpx, ys - men); ctx.quadraticCurveTo(cx - rpx + men * 1.2, ys, cx, ys); ctx.quadraticCurveTo(cx + rpx - men * 1.2, ys, cx + rpx, ys - men); ctx.stroke();
+}
+function drawPuddles(ctx, pud){ pud.forEach(p => { ctx.fillStyle = 'rgba(60,150,205,.5)'; ctx.beginPath(); ctx.ellipse(p.x, TABLE + 2, p.r, Math.max(2, p.r * 0.16), 0, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(p.x - p.r * 0.3, TABLE + 1, p.r * 0.25, 1.2, 0, 0, Math.PI * 2); ctx.fill(); }); }
+function drawCloth(ctx, k){ const c = RT.cloth && RT.cloth.k === k ? RT.cloth : CLOTH0[k], x = c.x, y = c.y; ctx.fillStyle = '#0d6b63'; rrect(ctx, x - 44, y - 17, 88, 17, 4); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.3)'; for (let i = 0; i < 5; i++) ctx.fillRect(x - 38 + i * 17, y - 16, 6, 15); label(ctx, 'шүберек', x, y - 27, { size: 11 }); }
+function drawSplash(ctx){ RT.splash.forEach(p => { ctx.fillStyle = 'rgba(70,160,215,.75)'; circle(ctx, p.x, p.y, 2.2); ctx.fill(); }); }
+function drawRack(ctx, xs, lab){ const x0 = xs[0] - 34, w = xs[xs.length - 1] + 34 - x0; ctx.fillStyle = '#8d9b99'; ctx.fillRect(x0, TABLE - 6, w, 6); ctx.fillStyle = '#b9c6c4'; ctx.fillRect(x0, TABLE - 6, w, 2); label(ctx, lab, x0 + w / 2, TABLE + 16, { size: 12, col: '#fff', halo: 'rgba(70,55,35,.6)' }); }
+/* ---- measure bench ---- */
+function drawScene3(ctx){
+  const M = S.M, ds = RT.dyn || dynSolve(), ms = RT.menz || menzSolve(); drawRoom(ctx); drawRack(ctx, RACK, 'Пробиркалар');
+  ctx.fillStyle = '#4b5558'; ctx.fillRect(DYN.rod - 60, TABLE - 10, 120, 10); ctx.fillStyle = '#7d8b8c'; ctx.fillRect(DYN.rod - 4, 24, 8, TABLE - 34);
+  ctx.fillStyle = '#394244'; rrect(ctx, DYN.rod - 14, M.cy - 9, 28, 18, 3); ctx.fill(); ctx.fillStyle = '#8b9798'; ctx.fillRect(DYN.x, M.cy - 3, DYN.rod - DYN.x - 12, 6);
+  ctx.strokeStyle = '#394244'; ctx.lineWidth = 2; circle(ctx, DYN.x, M.cy + 2, 4); ctx.stroke();
+  const hx = DYN.x - 27, hy = M.cy + 6; ctx.fillStyle = '#f7f4ec'; rrect(ctx, hx, hy, 54, 180, 6); ctx.fill(); ctx.strokeStyle = '#0d6b63'; ctx.lineWidth = 2.2; ctx.stroke();
+  ctx.fillStyle = '#0d6b63'; ctx.font = `700 ${9 * LBL}px "Space Mono", monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('2 Н', DYN.x, hy + 11);
+  const ZM = M.cy + 30; ctx.strokeStyle = '#26302f';
+  for (let k = 0; k <= 100; k++){ const y = ZM + k * 0.02 * DYN.NPX, major = k % 5 === 0; ctx.lineWidth = major ? 0.9 : 0.35; ctx.globalAlpha = major ? 1 : 0.55; line(ctx, DYN.x - 9, y, DYN.x + (major ? 12 : 4), y); }
+  ctx.globalAlpha = 1; ctx.fillStyle = '#26302f'; ctx.font = `700 ${7.5 * LBL}px "Space Mono", monospace`; ctx.textAlign = 'right';
+  [0, 0.5, 1, 1.5, 2].forEach(v => ctx.fillText(String(v).replace('.', ','), DYN.x - 12, ZM + v * DYN.NPX));
+  const py = ZM + clamp(RT.pd, -0.1, 2.1) * DYN.NPX; ctx.strokeStyle = '#d6362a'; ctx.lineWidth = 2; line(ctx, DYN.x - 14, py, DYN.x + 16, py);
+  ctx.strokeStyle = '#8a9596'; ctx.lineWidth = 1; ctx.beginPath(); for (let k = 0; k <= 10; k++){ const y = hy + 16 + (py - hy - 16) * k / 10; ctx.lineTo(DYN.x + (k % 2 ? 4 : -4), y); } ctx.stroke();
+  ctx.strokeStyle = '#555f60'; ctx.lineWidth = 2; line(ctx, DYN.x, hy + 180, DYN.x, ds.hook); ctx.beginPath(); ctx.arc(DYN.x + 3, ds.hook, 4, Math.PI * 0.9, Math.PI * 2.2); ctx.stroke();
+  label(ctx, 'Динамометр', DYN.x + 66, M.cy + 42, { size: 12, align: 'left' });
+  const mrp = MENZ.r * CM; ctx.fillStyle = 'rgba(215,235,238,.25)'; ctx.fillRect(MENZ.cx - mrp, MENZ.yb - MENZ.max / MENZ.A * CM - 16, mrp * 2, MENZ.max / MENZ.A * CM + 16);
+  for (let i = 0; i < NT; i++){ const p = pos3(i), drag = RT.drag && RT.drag.kind === 'tube' && RT.drag.b === i;
+    if (M.st[i] === 'menz' || drag || M.st[i] === 'hook'){ ctx.strokeStyle = '#3b4240'; ctx.lineWidth = 1.1; line(ctx, p.x, p.top, p.x, p.top - (M.st[i] === 'hook' && !drag ? p.top - ds.hook : 16)); }
+    drawTube(ctx, i, p.x, p.top, String(i + 1));
+  }
+  drawLiquid(ctx, MENZ.cx, mrp, MENZ.yb, ms.H, LIQS[0].col, 2);
+  if (M.wire && ms.i >= 0){ const p = pos3(ms.i); ctx.strokeStyle = '#7d8b8c'; ctx.lineWidth = 3; line(ctx, p.x + 8, p.top - 2, p.x + 8, MENZ.yb - MENZ.max / MENZ.A * CM - 30); ctx.lineWidth = 2.4; line(ctx, p.x - 10, p.top + 1, p.x + 10, p.top + 1); label(ctx, 'сым', p.x + 26, p.top - 16, { size: 10.5 }); }
+  drawGlass(ctx, MENZ.cx, mrp, MENZ.yb - MENZ.max / MENZ.A * CM - 16, MENZ.yb, 3);
+  ctx.fillStyle = '#5d6d6e'; ctx.beginPath(); ctx.moveTo(MENZ.cx - 34, TABLE); ctx.lineTo(MENZ.cx - 26, TABLE - 9); ctx.lineTo(MENZ.cx + 26, TABLE - 9); ctx.lineTo(MENZ.cx + 34, TABLE); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(30,60,70,.8)';
+  for (let v = 0; v <= MENZ.max; v++){ const y = MENZ.yb - v / MENZ.A * CM, L = v % 10 === 0 ? 11 : v % 5 === 0 ? 7 : 4; ctx.lineWidth = v % 10 === 0 ? 0.8 : 0.35; line(ctx, MENZ.cx - mrp, y, MENZ.cx - mrp + L, y); }
+  ctx.fillStyle = 'rgba(30,60,70,.9)'; ctx.font = `700 ${6.5 * LBL}px "Space Mono", monospace`; ctx.textAlign = 'left'; for (let v = 10; v <= MENZ.max; v += 10) ctx.fillText(String(v), MENZ.cx - mrp + 12, MENZ.yb - v / MENZ.A * CM);
+  label(ctx, 'Мензурка 100 мл', MENZ.cx, MENZ.yb - MENZ.max / MENZ.A * CM - 30, { size: 12 });
+  drawPuddles(ctx, M.pud); drawCloth(ctx, 0); drawSplash(ctx);
+}
+/* ---- test bench ---- */
+function drawScene5(ctx){
+  const T = S.T; drawRoom(ctx); drawRack(ctx, RACK5, 'Пробиркалар');
+  ['L', 'R'].forEach(side => { const cx = VES[side], rp = VES.r * CM, rim = VES.yb - VES.h * CM, lk = side === 'L' ? 0 : 1;
+    ctx.fillStyle = 'rgba(215,235,238,.22)'; ctx.fillRect(cx - rp, rim, rp * 2, VES.yb - rim); });
+  for (let i = 0; i < NT; i++){ const st = T.st[i], p = pos5(i), drag = RT.drag && RT.drag.kind === 'tube' && RT.drag.b === i;
+    if (st !== 'rack' || drag){ ctx.strokeStyle = '#3b4240'; ctx.lineWidth = 1.1; line(ctx, p.x, p.top, p.x, p.top - 16); }
+    drawTube(ctx, i, p.x, p.top, String(i + 1));
+  }
+  ['L', 'R'].forEach(side => { const cx = VES[side], rp = VES.r * CM, rim = VES.yb - VES.h * CM, lk = side === 'L' ? 0 : 1, lq = liqOf(lk);
+    drawLiquid(ctx, cx, rp, VES.yb, RT.vesH[side], lq.col, 3); drawGlass(ctx, cx, rp, rim, VES.yb, 3);
+    label(ctx, lq.nn, cx, rim - 30, { size: 13 }); label(ctx, 'ρ = ' + lq.rho + ' кг/м³', cx, rim - 14, { size: 11, w: 500 }); });
+  drawPuddles(ctx, T.pud); drawCloth(ctx, 1); drawSplash(ctx);
+}
+function renderBench(view, fn){
+  const v = view; if (!v || !v.w) return; const ctx = v.ctx, T = v.T; ctx.clearRect(0, 0, v.w, v.h); ctx.fillStyle = C.bench; ctx.fillRect(0, 0, v.w, v.h);
+  LBL = clamp(0.62 / T.s, 1, 2); ctx.save(); ctx.translate(T.ox, T.oy); ctx.scale(T.s, T.s); fn(ctx); ctx.restore(); LBL = 1;
+}
+/* ---- close-up (measure page) ---- */
+function renderZoom(){
+  const v = ZV; if (!v || !v.w) return; const ctx = v.ctx, W = v.w, H = v.h; ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#101b1a'; ctx.fillRect(0, 0, W, H);
+  let PT = null; const pane = (x, y, w, h, title) => { ctx.fillStyle = '#f3efe6'; rrect(ctx, x, y, w, h, 10); ctx.fill(); PT = { x, y, w, title }; ctx.save(); rrect(ctx, x, y, w, h, 10); ctx.clip(); };
+  const head = () => { if (!PT) return; ctx.fillStyle = 'rgba(243,239,230,.94)'; ctx.fillRect(PT.x, PT.y, PT.w, 20); ctx.fillStyle = '#52666a'; ctx.font = '700 11px "Manrope", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(PT.title, PT.x + 8, PT.y + 10); };
+  const pw = (W - 18) / 2, ph = H - 12, x1 = 6, x2 = 12 + pw, y0 = 6, ms = RT.menz || menzSolve();
+  pane(x1, y0, pw, ph, 'Мензурка'); const lv = ms.H * MENZ.A, span = 14, ppu = (ph - 26) / span, c = clamp(lv, 7, 108), yv = val => y0 + 22 + (ph - 26) / 2 - (val - c) * ppu, gx0 = x1 + pw * 0.14, gx1 = x1 + pw * 0.86;
+  ctx.fillStyle = 'rgba(215,235,238,.45)'; ctx.fillRect(gx0, y0, gx1 - gx0, ph);
+  const ys = yv(lv), men = ppu * 0.5; ctx.fillStyle = 'rgba(60,150,205,.5)'; ctx.beginPath(); ctx.moveTo(gx0, ys - men); ctx.quadraticCurveTo(gx0 + men * 2.2, ys, (gx0 + gx1) / 2, ys); ctx.quadraticCurveTo(gx1 - men * 2.2, ys, gx1, ys - men); ctx.lineTo(gx1, y0 + ph); ctx.lineTo(gx0, y0 + ph); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(20,70,110,.9)'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(gx0, ys - men); ctx.quadraticCurveTo(gx0 + men * 2.2, ys, (gx0 + gx1) / 2, ys); ctx.quadraticCurveTo(gx1 - men * 2.2, ys, gx1, ys - men); ctx.stroke();
+  ctx.strokeStyle = 'rgba(80,120,125,.9)'; ctx.lineWidth = 2; line(ctx, gx0, y0, gx0, y0 + ph); line(ctx, gx1, y0, gx1, y0 + ph);
+  ctx.strokeStyle = '#1e2a2a'; ctx.fillStyle = '#1e2a2a'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  for (let val = Math.floor(c - span / 2) - 1; val <= Math.ceil(c + span / 2) + 1; val++){ if (val < 0 || val > 110) continue; const y = yv(val), L = val % 10 === 0 ? pw * 0.3 : val % 5 === 0 ? pw * 0.2 : pw * 0.12; ctx.lineWidth = val % 10 === 0 ? 1.6 : 1; line(ctx, gx0, y, gx0 + L, y);
+    if (val % 10 === 0){ ctx.font = '700 13px "Space Mono", monospace'; ctx.fillText(String(val), gx0 + L + 5, y); } else if (val % 5 === 0){ ctx.font = '400 10px "Space Mono", monospace'; ctx.fillText(String(val), gx0 + L + 4, y); } }
+  ctx.fillStyle = '#52666a'; ctx.font = '600 10px "Manrope", sans-serif'; ctx.textAlign = 'right'; ctx.fillText('мл', x1 + pw - 6, y0 + ph - 10); head(); ctx.restore();
+  pane(x2, y0, pw, ph, 'Динамометр'); const rd = RT.pd, sp = 0.34, pp = (ph - 26) / sp, cc = clamp(rd, 0.1, 2.0), yd = val => y0 + 22 + (ph - 26) / 2 + (val - cc) * pp, sx = x2 + pw * 0.3;
+  ctx.fillStyle = '#fbf8f1'; ctx.fillRect(x2 + pw * 0.1, y0, pw * 0.8, ph); ctx.strokeStyle = '#26302f'; ctx.fillStyle = '#26302f'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  for (let kk = Math.floor((cc - sp / 2) / 0.02) - 1; kk <= Math.ceil((cc + sp / 2) / 0.02) + 1; kk++){ if (kk < 0 || kk > 100) continue; const val = kk * 0.02, y = yd(val), major = kk % 5 === 0; ctx.lineWidth = major ? 1.6 : 1; line(ctx, sx, y, sx + (major ? pw * 0.4 : pw * 0.22), y);
+    if (major){ ctx.font = '700 13px "Space Mono", monospace'; ctx.fillText(fmt(val, 1), sx - 6, y); } }
+  const pyy = yd(clamp(rd, -0.1, 2.1)); ctx.strokeStyle = '#d6362a'; ctx.lineWidth = 2.4; line(ctx, sx - 4, pyy, x2 + pw * 0.86, pyy); ctx.fillStyle = '#d6362a'; ctx.beginPath(); ctx.moveTo(x2 + pw * 0.86, pyy); ctx.lineTo(x2 + pw * 0.92, pyy - 6); ctx.lineTo(x2 + pw * 0.92, pyy + 6); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#52666a'; ctx.font = '600 10px "Manrope", sans-serif'; ctx.textAlign = 'right'; ctx.fillText('Н', x2 + pw - 6, y0 + ph - 10); head(); ctx.restore();
+}
+
+/* ================= frames ================= */
+function frame3(dt){
+  const M = S.M, ds = dynSolve(); RT.dyn = ds; RT.menz = menzSolve(); RT.menzH = RT.menz.H;
+  const off = dynOffset(), target = clamp(ds.F + off, -0.1, 2.1), np = RT.pd + (target - RT.pd) * (1 - Math.exp(-dt / 0.12));
+  if (Math.abs(np - RT.pd) > 1e-5) RT.need = true; RT.pd = np;
+  const busy = RT.drag && RT.drag.kind === 'tube';
+  if (ds.i < 0 && !busy){ const ok = Math.abs(off) < 0.005; if (ok !== M.zeroOk){ M.zeroOk = ok; saveSoon(); renderSideLite(); } }
+  if (ds.i >= 0){
+    if (ds.W > DYN.MAX + 0.02 && !M.over){ M.over = true; addViol('over'); flash('Қауіпсіздік ережесі бұзылды: пробирканың салмағы динамометрдің өлшеу шегінен (2 Н) асады! Серіппе шамадан тыс созылып, нөл ауытқыды. Пробирканы алып, нөлді қайта түзетіңіз.', true); renderSideLite(); }
+    else if (!M.fa[ds.i] && Math.abs(RT.pd - target) < 0.004 && ds.W <= DYN.MAX){ M.fa[ds.i] = true; saveSoon(); renderSideLite(); }
+  }
+  const ms = RT.menz; if (ms.i >= 0 && ms.full && !M.vlog[ms.i]){ M.vlog[ms.i] = true; saveSoon(); renderSideLite(); }
+}
+function frame5(dt){
+  const T = S.T;
+  ['L', 'R'].forEach(side => { const i = T.st.indexOf(side); let H = VES.V0 / VES.A;
+    if (i >= 0){ const vs = vesSolve(side, i), tgt = vs.top, cur = RT.ty[i] == null ? VES.yb - VES.h * CM - TUBE.L * CM : RT.ty[i], nv = cur + (tgt - cur) * (1 - Math.exp(-dt / 0.45));
+      RT.ty[i] = Math.abs(nv - tgt) < 0.4 ? tgt : nv; if (Math.abs(nv - tgt) > 0.4) RT.need = true;
+      const bottom = RT.ty[i] + TUBE.L * CM, ysTmp = VES.yb - vs.H * CM, sub = clamp((bottom - ysTmp) / CM, 0, TUBE.L); H = (VES.V0 + TUBE.A * sub) / VES.A;
+      if (RT.ty[i] === tgt && !(RT.drag && RT.drag.kind === 'tube' && RT.drag.b === i)){
+        const row = i * 2 + vs.lk;
+        if (!T.seen[row]){ T.seen[row] = true; flash('Нәтиже алынды: ' + (i + 1) + '-пробирка ' + (vs.lk === 0 ? 'суда' : V.salt.n + 'нда') + ' ' + OUTP[vs.out].toLowerCase() + '. Дәптерге жазыңыз.'); saveSoon(); renderSide5(); }
+      }
+    }
+    RT.vesH[side] = H; });
+}
+function splashFrame(dt){ if (!RT.splash.length) return; RT.splash.forEach(p => { p.vy += 900 * dt; p.x += p.vx * dt; p.y += p.vy * dt; }); RT.splash = RT.splash.filter(p => p.y < TABLE); RT.need = true; }
+
+/* ================= pointer ================= */
+const locked = () => !S.started || !!S.result;
+function wpt(view, e){ const r = view.cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top; return { x: (px - view.T.ox) / view.T.s, y: (py - view.T.oy) / view.T.s, s: view.T.s }; }
+function tubeAt(page, x, y, tol){
+  for (let i = NT - 1; i >= 0; i--){ const p = page === 3 ? pos3(i) : pos5(i), hw = TUBE.r * CM + tol; if (Math.abs(x - p.x) <= hw && y >= p.top - 16 - tol && y <= p.top + TUBE.L * CM + tol) return i; }
+  return -1;
+}
+function vesselsOf(page){
+  if (page === 3) return [{ id: 'menz', cx: MENZ.cx, rp: MENZ.r * CM, rim: MENZ.yb - MENZ.max / MENZ.A * CM - 16, yb: MENZ.yb }];
+  return ['L', 'R'].map(s => ({ id: s, cx: VES[s], rp: VES.r * CM, rim: VES.yb - VES.h * CM, yb: VES.yb }));
+}
+function occupiedAt(page, id, me){ const st = page === 3 ? S.M.st : S.T.st; return st.some((s, i) => i !== me && s === id); }
+function dragTube(page, x, top){
+  const d = RT.drag, h = TUBE.L * CM, w = TUBE.r * 2 * CM, prevBottom = d.top + h;
+  for (const v of vesselsOf(page)){
+    if (d.inside === v.id){ x = clamp(x, v.cx - v.rp + w / 2 + 1, v.cx + v.rp - w / 2 - 1); top = Math.min(top, v.yb - h); if (top + h < v.rim - 1) d.inside = null; continue; }
+    if (Math.abs(x - v.cx) < v.rp + w / 2 + 4 && top + h > v.rim){
+      if (Math.abs(x - v.cx) <= v.rp + 6 && prevBottom <= v.rim + 6 && d.slid !== v.id && !occupiedAt(page, v.id, d.b)){ d.inside = v.id; x = clamp(x, v.cx - v.rp + w / 2 + 1, v.cx + v.rp - w / 2 - 1); top = Math.min(top, v.yb - h); }
+      else { top = v.rim - h - 1; d.slid = v.id; }
+    } else if (d.slid === v.id) d.slid = null;
+  }
+  d.x = clamp(x, 10, WW - 10); d.top = clamp(top, 10, TABLE - h);
+}
+function splashAt(x, y, n){ for (let i = 0; i < n; i++) RT.splash.push({ x, y, vx: (Math.random() - 0.5) * 220, vy: -120 - Math.random() * 200 }); }
+function releaseTube(page){
+  const d = RT.drag, i = d.b, h = TUBE.L * CM, tt = { x: d.x, y: d.top - DYN.TH }; RT.drag = null;
+  const st = page === 3 ? S.M.st : S.T.st, obj = page === 3 ? S.M : S.T;
+  if (page === 3){ const ds = RT.dyn || dynSolve(); if (Math.hypot(tt.x - DYN.x, tt.y - ds.hook) < 36 && ds.i < 0){ st[i] = 'hook'; S.M.wire = false; return afterMove(page); } }
+  if (!d.inside){ for (const v of vesselsOf(page)){ if (Math.abs(d.x - v.cx) <= v.rp + 2 && d.top + h <= v.rim + 2 && !occupiedAt(page, v.id, i)){ d.inside = v.id; d.x = clamp(d.x, v.cx - v.rp + TUBE.r * CM + 1, v.cx + v.rp - TUBE.r * CM - 1); break; } } }
+  if (d.inside){
+    const v = vesselsOf(page).find(x => x.id === d.inside), surfH = page === 3 ? (RT.menz || menzSolve()).H : RT.vesH[d.inside], surf = v.yb - surfH * CM;
+    if (d.top + h < surf - 28){ const ml = page === 3 ? 3 : 9; const pdx = v.cx + (page === 3 ? -62 : (d.inside === 'L' ? -70 : 70));
+      obj.pud.push({ x: pdx, r: 12 + ml * 1.4 }); splashAt(v.cx, surf, 16); addViol('drop');
+      if (page === 3){ const last = S.M.levels[S.M.levels.length - 1]; S.M.levels.push(Math.round((last - ml) * 100) / 100); }
+      flash('Қауіпсіздік ережесі бұзылды: пробирканы шыны ыдысқа лақтырдыңыз – су шашырап, үстелге төгілді, шыны сынуы мүмкін еді. Жіптен ұстап, абайлап батырыңыз. Төгілген суды шүберекпен сүртіңіз.', true); }
+    st[i] = d.inside; if (page === 5) RT.ty[i] = d.top; if (page === 3) S.M.wire = false;
+    return afterMove(page);
+  }
+  st[i] = 'rack'; if (page === 3) S.M.wire = false; if (page === 5) RT.ty[i] = null; afterMove(page);
+}
+function afterMove(page){ RT.need = true; saveSoon(); if (page === 3) renderSide(); else renderSide5(); }
+function attachPointer(view, page){
+  if (!view) return; const cv = view.cv;
+  cv.addEventListener('pointerdown', e => {
+    if (e.button) return; const p = wpt(view, e); if (locked()) return; if (!S.safe.passed){ flash('Алдымен «Қауіпсіздік» бетіндегі тесттен өтіңіз.'); return; }
+    const k = page === 3 ? 0 : 1, cl = RT.cloth && RT.cloth.k === k ? RT.cloth : CLOTH0[k], tol = Math.max(6, 10 / p.s);
+    if (Math.abs(p.x - cl.x) <= 48 && p.y >= cl.y - 25 && p.y <= cl.y + 6){ RT.cloth = { k, x: cl.x, y: cl.y }; RT.drag = { kind: 'cloth', page, dx: p.x - cl.x, dy: p.y - cl.y, lx: p.x }; cv.setPointerCapture(e.pointerId); e.preventDefault(); return; }
+    const bi = tubeAt(page, p.x, p.y, tol);
+    if (bi >= 0){ const pos = page === 3 ? pos3(bi) : pos5(bi), st = (page === 3 ? S.M.st : S.T.st)[bi];
+      RT.drag = { kind: 'tube', page, b: bi, dx: p.x - pos.x, dy: p.y - pos.top, x: pos.x, top: pos.top, inside: st === 'menz' || st === 'L' || st === 'R' ? st : null };
+      (page === 3 ? S.M.st : S.T.st)[bi] = 'drag'; if (page === 3) S.M.wire = false; if (page === 5) RT.ty[bi] = pos.top;
+      cv.setPointerCapture(e.pointerId); e.preventDefault(); RT.need = true; return; }
+    if (page === 3 && Math.abs(p.x - DYN.x) <= 32 && p.y >= S.M.cy - 12 && p.y <= S.M.cy + 190){ RT.drag = { kind: 'clamp', page, dy: p.y - S.M.cy }; cv.setPointerCapture(e.pointerId); e.preventDefault(); }
+  });
+  cv.addEventListener('pointermove', e => {
+    const d = RT.drag, p = wpt(view, e);
+    if (!d){ if (e.pointerType === 'mouse' && !locked()) cv.style.cursor = tubeAt(page, p.x, p.y, 6) >= 0 ? 'grab' : 'default'; return; }
+    if (d.page !== page) return;
+    if (d.kind === 'tube'){ dragTube(page, p.x - d.dx, p.y - d.dy); if (page === 5) RT.ty[d.b] = d.top; RT.need = true; }
+    else if (d.kind === 'clamp'){ S.M.cy = clamp(p.y - d.dy, DYN.cMin, DYN.cMax); RT.need = true; }
+    else if (d.kind === 'cloth'){ const c = RT.cloth; c.x = clamp(p.x - d.dx, 50, WW - 50); c.y = clamp(p.y - d.dy, 40, TABLE); const moved = Math.abs(p.x - d.lx); d.lx = p.x;
+      if (c.y >= TABLE - 16){ const obj = page === 3 ? S.M : S.T, before = obj.pud.length; obj.pud.forEach(q => { if (Math.abs(q.x - c.x) < 46 + q.r) q.r -= moved * 0.35; }); obj.pud = obj.pud.filter(q => q.r > 3); if (before && !obj.pud.length){ flash('Төгілген су сүртілді.'); saveSoon(); if (page === 3) renderSideLite(); else renderSide5Lite(); } }
+      RT.need = true; }
+  });
+  const end = () => { const d = RT.drag; if (!d || d.page !== page) return; if (d.kind === 'tube') releaseTube(page); else { RT.drag = null; if (d.kind === 'cloth') RT.cloth = null; RT.need = true; saveSoon(); } };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+}
+
+/* ================= hints & side panels ================= */
+function flash(msg, warn){ ALERT = { msg, warn: !!warn, until: performance.now() + 8000 }; lastH = ''; updateHints(); }
+function steps3(){
+  const E = S.E, M = S.M, out = [[filled(E.cvD) && filled(E.cvM), 'Динамометр мен мензурканың бөлік құнын анықтау'], [M.zeroOk || M.fa.some(Boolean), 'Динамометрдің нөлін тексеру және түзету']];
+  for (let i = 0; i < NT; i++) out.push([M.fa[i] && filled(E.fa[i]), (i + 1) + '-пробирка: Fа-ны өлшеу']);
+  for (let i = 0; i < NT; i++) out.push([M.vlog[i] && filled(E.v1[i]) && filled(E.v2[i]) && filled(E.v[i]), (i + 1) + '-пробирка: V₁, V₂ және V']);
+  if (M.pud.length) out.push([false, 'Төгілген суды шүберекпен сүрту', true]);
+  return out;
+}
+function steps5(){
+  const E = S.E, T = S.T, out = [];
+  for (let r = 0; r < NR; r++) out.push([T.seen[r] && E.rows[r].obs != null, rowName(V, r) + ': тексеру және нәтижені жазу']);
+  if (T.pud.length) out.push([false, 'Төгілген суды шүберекпен сүрту', true]);
+  return out;
+}
+const done3 = () => steps3().every(x => x[0]), done5 = () => steps5().every(x => x[0]);
+function hint3(){
+  if (!S.safe.passed) return 'Алдымен «Қауіпсіздік» бетіндегі тесттен өтіңіз.'; if (S.result) return 'Жұмыс тапсырылды. Үстелді тек қарауға болады.';
+  if (S.M.pud.length) return 'Үстелге су төгілді! «Шүберекті» сүйреп апарып, төгілген судың үстінен бірнеше рет жүргізіңіз.';
+  const st = steps3(), i = st.findIndex(x => !x[0]), M = S.M, hk = M.st.indexOf('hook'), mz = M.st.indexOf('menz');
+  if (i < 0) return 'Барлық өлшеу жасалды. «Болжам» бетіне өтіңіз.';
+  if (i === 0) return '«Жақыннан» терезесінде динамометр мен мензурканың шкаласын қарап, бөлік құнын анықтаңыз: екі көрші санның айырмасын олардың арасындағы бөліктер санына бөліңіз.';
+  if (i === 1) return hk >= 0 ? 'Ілгектен пробирканы алыңыз да, динамометрдің нөлін тексеріңіз.' : 'Ілгекте жүк жоқ. Көрсеткіш дәл 0-де тұр ма? «Жақыннан» терезесінен қарап, «Нөлді түзету ▲▼» батырмаларымен түзетіңіз.';
+  if (i >= 2 && i <= 4){ const t = i - 2; return hk === t ? 'Пробирка ауада ілініп тұр. Динамометрдің көрсетуін «Жақыннан» терезесінен оқып, Fа-ны дәптерге жазыңыз.' : (t + 1) + '-пробирканы сүйреп, динамометрдің ілгегіне апарыңыз: ол ілінеді. Ілер алдында массасын бағалаңыз (P ≈ m·g).'; }
+  const t = i - 5;
+  if (mz === t) return S.M.wire ? 'Пробирка толық батты. Мензуркадағы судың жаңа деңгейін V₂ оқып, V = V₂ − V₁ есептеңіз.' : 'Пробирка жүзіп тұр – ол суды толық ығыстырмайды. «⤓ Сыммен толық батыру» батырмасымен оны толық батырыңыз.';
+  return 'Алдымен мензуркадағы судың бастапқы көлемін V₁ жазыңыз. Сосын ' + (t + 1) + '-пробирканы жіптен ұстап, мензуркаға абайлап батырыңыз (лақтырмаңыз!).';
+}
+function hint5(){
+  if (S.result) return 'Жұмыс тапсырылды. Үстелді тек қарауға болады.';
+  if (S.T.pud.length) return 'Үстелге су төгілді! «Шүберекті» сүйреп апарып, төгілген судың үстінен бірнеше рет жүргізіңіз.';
+  const st = steps5(), i = st.findIndex(x => !x[0]); if (i < 0) return 'Алты тәжірибе де жасалды. «Қорытынды» бетіне өтіңіз.';
+  const t = rowTube(i), lk = rowLiq(i), side = lk === 0 ? 'сол жақтағы су' : 'оң жақтағы ' + V.salt.n;
+  if (S.T.seen[i]) return 'Нәтижені дәптердегі ' + rowName(V, i) + ' жолына жазыңыз: пробирка батты ма, сұйық ішінде жүзді ме, әлде қалқып шықты ма?';
+  return (t + 1) + '-пробирканы ' + side + ' құйылған ыдысқа сүйреп апарыңыз да, сұйыққа тигенше ақырын түсіріңіз (жоғарыдан тастамаңыз!). Сосын не болатынын бақылаңыз.';
+}
+function updateHints(){
+  const p = S.page; if (p !== 3 && p !== 5) return; if (RT.drag) return;
+  const a = ALERT && performance.now() < ALERT.until ? ALERT : null, el = p === 3 ? $('#hint3') : $('#hint5'), t = a ? a.msg : (p === 3 ? hint3() : hint5()), key = p + t + (a && a.warn);
+  if (key === lastH) return; lastH = key; el.textContent = t; el.classList.toggle('warn', !!(a && a.warn));
+}
+function ctl3(lk){
+  const dis = lk ? ' disabled' : '', mz = S.M.st.indexOf('menz');
+  return `<span class="ctl"><span>Динамометр</span><button type="button" data-act="clamp" data-v="-8"${dis}>▲ Көтеру</button><button type="button" data-act="clamp" data-v="8"${dis}>▼ Түсіру</button></span>`
+    + `<span class="ctl"><span>Нөлді түзету</span><button type="button" data-act="zero" data-v="-0.01"${dis} aria-label="Көрсеткішті жоғары">▲</button><button type="button" data-act="zero" data-v="0.01"${dis} aria-label="Көрсеткішті төмен">▼</button></span>`
+    + `<button type="button" class="ac" data-act="wire" aria-pressed="${S.M.wire}"${dis || mz < 0 ? ' disabled' : ''}>⤓ Сыммен толық батыру</button>`;
+}
+function ctl5(){
+  return `<span class="small muted">Пробирканы сүйреп, ыдысқа абайлап батырыңыз. Әр пробирканы екі сұйықта да тексеру керек.</span>`;
+}
+function nb3HTML(){
+  const E = S.E, M = S.M, lk = locked(), inp = (f, i) => `<input class="num" data-e="${f}${i == null ? '' : '.' + i}" id="nb-${f}${i == null ? '' : i}" inputmode="decimal" autocomplete="off" value="${esc(i == null ? E[f] : E[f][i])}"${lk ? ' disabled' : ''}>`;
+  let h = `<p class="label">Бақылау дәптері · өлшеу</p><div class="fld"><span>Динамометрдің бөлік құны</span>${inp('cvD')} Н</div><div class="fld"><span>Мензурканың бөлік құны</span>${inp('cvM')} мл</div>`;
+  for (let i = 0; i < NT; i++) h += `<div class="bblk"><div class="t"><span>${i + 1}-пробирка</span><span>${M.fa[i] ? '<span class="tst ok">Fа ✓</span> ' : ''}${M.vlog[i] ? '<span class="tst ok">V ✓</span>' : ''}</span></div><div class="fgrid"><label>Fа, Н${inp('fa', i)}</label><label>V₁, мл${inp('v1', i)}</label><label>V₂, мл${inp('v2', i)}</label><label>V = V₂ − V₁, см³${inp('v', i)}</label></div></div>`;
+  h += `<p class="small muted">V₁ – пробирка батырылғанға дейінгі, V₂ – батырылғаннан кейінгі судың көлемі. Деңгейді менискінің төменгі нүктесі бойынша оқыңыз.</p>`;
+  return h;
+}
+function nb5HTML(){
+  const E = S.E, T = S.T, lk = locked();
+  let h = `<p class="label">Бақылау дәптері · тексеру</p><div class="tw"><table class="t"><thead><tr><th>Тәжірибе</th><th>Нәтиже</th></tr></thead><tbody>`;
+  for (let r = 0; r < NR; r++){ const dis = lk || !T.seen[r];
+    h += `<tr><td class="who">${esc(rowName(V, r))}<br>${T.seen[r] ? '<span class="tst ok">тексерілді</span>' : '<span class="tst">тексерілмеді</span>'}</td><td><select data-e="rows.${r}.obs" id="nb-obs${r}"${dis ? ' disabled' : ''} aria-label="${esc(rowName(V, r))} нәтижесі"><option value="">—</option>${OUTP.map((t, k) => `<option value="${k}"${E.rows[r].obs === k ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></td></tr>`; }
+  h += `</tbody></table></div>`;
+  return h;
+}
+function renderSide(){
+  const lk = locked() || !S.safe.passed;
+  $('#tubeTabs').hidden = true; $('#ctlBar').innerHTML = ctl3(lk); $('#nb3').innerHTML = nb3HTML();
+  $('#help3').textContent = 'Пробирканы сүйреп жылжытыңыз (жіптен ұстағандай). Динамометрді жоғары-төмен сүйреуге болады. Шүберекпен төгілген суды сүртесіз.';
+  renderSideLite();
+}
+function renderSideLite(){
+  const st = steps3(), i = st.findIndex(x => !x[0]);
+  $('#chk3').innerHTML = st.map(([ok, t, bad], j) => `<li class="${ok ? 'y' : bad ? 'bad' : j === i ? 'now' : ''}">${esc(t)}</li>`).join('');
+  $('#benchStat').textContent = S.M.over ? 'динамометр шамадан тыс жүктелген еді' : '';
+  const w = $('#ctlBar [data-act="wire"]'); if (w){ w.setAttribute('aria-pressed', String(S.M.wire)); w.disabled = locked() || !S.safe.passed || S.M.st.indexOf('menz') < 0; }
+  lastH = ''; updateHints(); refreshDerived(); RT.need = true;
+}
+function renderSide5(){
+  const lk = locked(), T = S.T;
+  $('#ctlBar5').innerHTML = ctl5(); $('#nb5').innerHTML = nb5HTML();
+  $('#help5').textContent = 'Пробирканы сүйреп ыдысқа батырыңыз. Ол батады, жүзеді немесе қалқып шығады.';
+  renderSide5Lite();
+}
+function renderSide5Lite(){
+  const st = steps5(), i = st.findIndex(x => !x[0]);
+  $('#chk5').innerHTML = st.map(([ok, t, bad], j) => `<li class="${ok ? 'y' : bad ? 'bad' : j === i ? 'now' : ''}">${esc(t)}</li>`).join('');
+  $('#benchStat5').textContent = S.T.seen.filter(Boolean).length + '/6 тәжірибе';
+  lastH = ''; updateHints(); refreshDerived(); RT.need = true;
+}
+function act(a, b){
+  const dv = +b.dataset.v;
+  if (a === 'clamp') S.M.cy = clamp(S.M.cy + dv, DYN.cMin, DYN.cMax);
+  else if (a === 'zero') S.M.zero = Math.round((S.M.zero + dv) * 100) / 100;
+  else if (a === 'wire'){ if (S.M.st.indexOf('menz') < 0) return; S.M.wire = !S.M.wire; }
+  RT.need = true; saveSoon(); if (S.page === 3) renderSideLite(); else renderSide5Lite();
+}
+
+/* ================= tables ================= */
+function selHTML(path, opts, val, dis, aria){ return `<select data-e="${path}" id="sel-${path.replace(/\./g, '-')}"${dis ? ' disabled' : ''} aria-label="${esc(aria || '')}"><option value="">—</option>${opts.map((t, k) => `<option value="${k}"${val === k ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select>`; }
+function buildCalc(){
+  const E = S.E, lk = locked();
+  $('#rhoSaltTxt').innerHTML = 'ρ<sub>' + esc(V.salt.n) + '</sub> = ' + V.salt.rho + ' кг/м³';
+  $('#calcVBody').innerHTML = [0, 1, 2].map(i => `<tr><td class="who">${i + 1}-пробирка</td><td class="ro" id="ro-fa${i}">—</td><td class="ro" id="ro-v${i}">—</td><td><input class="num" data-e="vm.${i}" id="in-vm${i}" inputmode="decimal" autocomplete="off" style="min-width:112px" aria-label="${i + 1}-пробирка: V, м³"${lk ? ' disabled' : ''}></td></tr>`).join('');
+  $('#calcBody').innerHTML = arr(NR, 0).map((_, r) => { const i = rowTube(r), lq = liqOf(rowLiq(r));
+    return `<tr><td class="n">${r + 1}</td><td class="who">${i + 1}-пробирка · ${esc(lq.nn.toLowerCase())}</td><td class="ro" id="ro2-fa${r}">—</td><td class="ro" id="ro2-vm${r}">—</td><td><input class="num" data-e="rows.${r}.fy" id="in-fy${r}" inputmode="decimal" autocomplete="off" aria-label="${r + 1}-тәжірибе: Fы"${lk ? ' disabled' : ''}></td><td>${selHTML('rows.' + r + '.rel', RELS, E.rows[r].rel, lk, 'қатысы')}</td><td>${selHTML('rows.' + r + '.pred', OUT, E.rows[r].pred, lk, 'болжам')}</td></tr>`; }).join('');
+  $$('#calcVBody input[data-e], #calcBody input[data-e]').forEach(el => { el.value = getPath(S.E, el.dataset.e) || ''; });
+}
+function buildFull(){
+  const E = S.E, T = S.T;
+  $('#fullBody').innerHTML = arr(NR, 0).map((_, r) => { const i = rowTube(r), lq = liqOf(rowLiq(r)), R = E.rows[r], ok = R.pred != null && R.obs != null && R.pred === R.obs;
+    return `<tr><td class="n">${r + 1}</td><td class="who">${esc(lq.nn)}</td><td class="ro">${esc(dash(E.fa[i]))}</td><td class="ro">${esc(dash(E.vm[i]))}</td><td class="ro">${esc(dash(R.fy))}</td><td class="ro">${R.rel != null ? esc(RELS[R.rel]) : '—'}</td><td class="who">${R.pred != null ? esc(OUT[R.pred]) : '—'}</td><td class="who">${R.obs != null ? esc(OUTP[R.obs]) : '—'}${R.obs != null && R.pred != null ? ` <span class="st ${ok ? 'y' : 'x'}">${ok ? '✓' : '✗'}</span>` : ''}</td></tr>`; }).join('');
+}
+function getPath(o, p){ return p.split('.').reduce((a, k) => a == null ? a : a[k], o); }
+function setPath(o, p, v){ const ks = p.split('.'), last = ks.pop(), t = ks.reduce((a, k) => a[k], o); t[last] = v; }
+
+/* ================= inputs ================= */
+function qOrder(key, n){ const r = mulberry32(((S.seed || DEMO_SEED) + hashStr(key)) >>> 0); const id = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--){ const j = Math.floor(r() * (i + 1)); [id[i], id[j]] = [id[j], id[i]]; } return id; }
+function buildSafety(){ const at = S.safe.attempts; $('#safeQ').innerHTML = SAFE_Q.map((q, qi) => `<fieldset class="q"><legend>${qi + 1}. ${esc(q.q)}</legend>` + qOrder('safe' + qi + '|' + at, 4).map(ai => `<label><input type="radio" name="sq${qi}" id="sq${qi}-${ai}" value="${ai}"><span>${esc(q.a[ai])}</span></label>`).join('') + `</fieldset>`).join(''); S.safe.ans.forEach((a, qi) => { if (a !== null) { const el = document.getElementById(`sq${qi}-${a}`); if (el) el.checked = true; } }); }
+function buildQs(){ $('#conclBox').innerHTML = QS.map((q, i) => `<fieldset class="q"><legend>${i + 1}. ${esc(q.q)}</legend>` + qOrder(q.k, 4).map(ai => `<label><input type="radio" name="c-${q.k}" id="c-${q.k}-${ai}" value="${ai}" data-e="${q.k}"><span>${esc(q.a[ai])}</span></label>`).join('') + `</fieldset>`).join(''); }
+function buildRef(){ $('#rhoLiq').innerHTML = '<tr><th>Сұйық</th><th style="text-align:right">ρ</th></tr>' + [['Спирт', 800], ['Өсімдік майы', 920], ['Су', 1000], [V.salt.nn, V.salt.rho], ['Глицерин', 1260]].map(([n, r]) => `<tr><td>${esc(n)}</td><td class="v">${r}</td></tr>`).join(''); }
+function fillInputs(){ const E = S.E; $$('#pages input[data-e], #pages select[data-e]').forEach(el => { const k = el.dataset.e, v = getPath(E, k); if (el.type === 'radio') el.checked = v != null && +el.value === v; else if (el.tagName === 'SELECT') el.value = v == null ? '' : String(v); else el.value = v || ''; }); buildSafety(); }
+function onInput(e){
+  const t = e.target; if (!t || t.classList.contains('reg-in')) return; let m;
+  if ((m = (t.id || '').match(/^sq(\d)-(\d)$/))) { if (S.safe.passed) return; S.safe.ans[+m[1]] = +m[2]; saveSoon(); return; }
+  if (locked()) return; const k = t.dataset.e; if (!k) return;
+  if (t.type === 'radio') setPath(S.E, k, +t.value);
+  else if (t.tagName === 'SELECT') setPath(S.E, k, t.value === '' ? null : +t.value);
+  else setPath(S.E, k, t.value);
+  saveSoon();
+  if (t.id && t.id.indexOf('nb-') === 0) { if (S.page === 3) renderSideLite(); else renderSide5Lite(); }
+  else refreshDerived();
+}
+function safetyCheck(){
+  if (locked() || S.safe.passed) return; const o = $('#safeOut');
+  if (S.safe.ans.some(a => a === null)) { o.hidden = false; o.className = 'warnmsg'; o.textContent = 'Барлық 5 сұраққа жауап беріңіз.'; return; }
+  const sc = S.safe.ans.reduce((a, x, i) => a + (x === SAFE_Q[i].c ? 1 : 0), 0); S.safe.attempts++; if (S.safe.first === null) S.safe.first = sc; if (sc >= 4) S.safe.passed = true; S.safe.last = sc;
+  saveDraft(); renderSafety(); updateUI();
+}
+function safetyRetry(){ if (S.safe.passed) return; S.safe.ans = arr(5, null); S.safe.last = null; buildSafety(); renderSafety(); saveSoon(); }
+function renderSafety(){
+  const o = $('#safeOut'), sf = S.safe; $$('#safeQ input').forEach(el => { el.disabled = locked() || sf.passed || (sf.last != null && !sf.passed); });
+  $('#safeCheck').hidden = sf.passed || (sf.last != null && !sf.passed); $('#safeRetry').hidden = sf.passed || sf.last == null;
+  if (sf.passed) { o.hidden = false; o.className = 'okmsg'; o.textContent = `Тест өтілді${sf.last != null ? ' (' + sf.last + '/5)' : ''}. Тәжірибеге кіруге рұқсат етілді.` + (sf.first != null && sf.first < 4 ? ' Бағаға бірінші әрекеттің нәтижесі (' + sf.first + '/5) есептеледі.' : ''); }
+  else if (sf.last != null) { o.hidden = false; o.className = 'warnmsg'; o.textContent = `5 сұрақтың ${sf.last}-іне дұрыс жауап бердіңіз. Ережелерді қайта оқып, тестті қайталаңыз: кемінде 4 дұрыс жауап керек.`; }
+  else o.hidden = true;
+}
+
+/* ================= derived / pages ================= */
+const predAll = () => S.E.rows.every(r => r.pred != null);
+const calcAll = () => S.E.vm.every(filled) && S.E.rows.every(r => filled(r.fy) && r.rel != null && r.pred != null);
+function stepDone(){ const E = S.E; return [S.started, S.started && !!S.seen[1], S.safe.passed, done3(), calcAll(), done5(), QS.every(q => E[q.k] !== null), !!S.result]; }
+function refreshDerived(){
+  const st = stepDone(); $$('.step').forEach((b, i) => { b.classList.toggle('done', !!st[i]); b.classList.toggle('lock', (i === 3 && !S.safe.passed) || (i === 5 && !predAll())); });
+  const E = S.E;
+  for (let i = 0; i < NT; i++){ const a = $('#ro-fa' + i), b = $('#ro-v' + i); if (a) a.textContent = dash(E.fa[i]); if (b) b.textContent = dash(E.v[i]); }
+  for (let r = 0; r < NR; r++){ const i = rowTube(r), a = $('#ro2-fa' + r), b = $('#ro2-vm' + r); if (a) a.textContent = dash(E.fa[i]); if (b) b.textContent = dash(E.vm[i]); }
+  $('#summary').textContent = summaryText(S.E) || 'Тәжірибе жасап, сұрақтарға жауап берген сайын қорытынды осында құралады.';
+  renderCompleteness();
+}
+function renderCompleteness(){
+  const st = stepDone(), ml = []; if (!S.safe.passed) ml.push([2, 'тест']); if (!st[3]) ml.push([3, 'өлшеулер толық емес']); if (!st[4]) ml.push([4, 'есептеу мен болжам толық емес']); if (!st[5]) ml.push([5, 'тексеру толық емес']);
+  const nq = QS.filter(q => S.E[q.k] === null).length; if (nq) ml.push([6, nq + ' сұрақ']); if (anyPud()) ml.push([3, 'үстелдегі төгілген су сүртілмеген']);
+  $('#completeness').innerHTML = `<p class="label">Жұмыстың толықтығы</p>` + (ml.length ? `<p style="display:flex;gap:8px;align-items:center"><span class="st x">!</span><span>Аяқталмаған бөлімдер:</span></p><ul>` + ml.map(([p, k]) => `<li><button type="button" class="ghost" data-goto="${p}" style="min-height:0;padding:3px 8px">${PAGE_NAMES[p]}</button> — ${esc(k)}</li>`).join('') + `</ul>` : `<p style="display:flex;gap:8px;align-items:center"><span class="st y">✓</span><span>Барлық бөлім толтырылды</span></p>`);
+}
+function setPage(i, opts){
+  i = clamp(i | 0, 0, 7); const msg = $('#navMsg'); msg.hidden = true;
+  if (i > 0 && !S.started) i = 0;
+  else if (i === 3 && !S.safe.passed) { i = 2; msg.textContent = 'Тәжірибеге кіру үшін алдымен қауіпсіздік тестінен өтіңіз.'; msg.hidden = false; }
+  else if (i === 5 && !predAll()) { i = 4; msg.textContent = 'Тексеру беті болжам жасалғаннан кейін ашылады: алдымен алты жолдың да Fы, қатысы және болжамын толтырыңыз.'; msg.hidden = false; }
+  S.page = i; S.seen[i] = true; $$('#pages > [data-page]').forEach(p => { p.hidden = +p.dataset.page !== i; });
+  $$('.step').forEach((b, k) => { if (k === i) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+  const chrome = S.started && i > 0; $('#topHeader').hidden = !chrome; $('#stepper').hidden = !chrome;
+  ALERT = null; lastH = ''; RT.drag = null; RT.need = true; if (!(opts && opts.noScroll)) { try { window.scrollTo({ top: 0 }); } catch (e) {} }
+  const cur = $(`.step[data-p="${i}"]`); if (cur && cur.scrollIntoView && chrome) { try { cur.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) {} }
+  if (i === 3) renderSide(); if (i === 4) buildCalc(); if (i === 5) renderSide5(); if (i === 6) buildFull();
+  saveSoon(); refreshDerived();
+}
+function updateMode(){
+  const b = $('#modeBadge'); if (!initDone) { b.className = 'pill'; b.textContent = 'Қосылуда…'; return; }
+  if (online) { b.className = 'pill on'; b.textContent = 'Онлайн · нәтиже мұғалімге жіберіледі'; } else { b.className = 'pill off'; b.textContent = 'Офлайн · нәтиже коды беріледі'; }
+  $('#modeNote').textContent = online ? 'Тапсырған сәтте нәтижеңіз мұғалімнің кестесіне түседі.' : 'Бет офлайн режимде ашылған. Тапсырғаннан кейін нәтиже коды шығады, оны мұғаліміңізге жіберіңіз.';
+  $('#teacherBtn').hidden = $('#teacherBtnReg').hidden = !(isOwner && db);
+}
+function updateUI(){
+  $('#startForm').hidden = S.started; $('#regDone').hidden = !S.started; const chip = $('#studentChip'); chip.hidden = !S.started;
+  if (S.started) { chip.textContent = `${S.name} · ${S.cls}`; $('#whoLine').innerHTML = `<b>${esc(S.name)}</b>, ${esc(S.cls)} · нұсқа <span class="mono">${vcode()}</span>`; }
+  const sb = $('#startBtn'); sb.disabled = !initDone; sb.textContent = initDone ? 'Кіру' : 'Қосылуда…';
+  const lk = locked(); $$('#pages input[data-e], #pages select[data-e]').forEach(el => { el.disabled = lk; }); $('#submitBtn').disabled = lk; $('#preSubmit').hidden = !!S.result;
+  renderSafety(); renderResult(); if (S.page === 3) renderSide(); if (S.page === 4) buildCalc(); if (S.page === 5) renderSide5(); if (S.page === 6) buildFull(); refreshDerived(); RT.need = true;
+}
+
+/* ================= registration / submit ================= */
+function resetRT(){ RT.drag = null; RT.dyn = null; RT.menz = null; RT.pd = dynOffset(); RT.ty = arr(NT, null); RT.splash = []; RT.cloth = null; RT.vesH = { L: VES.V0 / VES.A, R: VES.V0 / VES.A }; }
+function startWork(e){
+  e.preventDefault(); const name = $('#stName').value.trim().replace(/\s+/g, ' '); let cls = $('#stCls').value; if (cls === '__other') cls = $('#stClsOther').value.trim();
+  if (name.length < 3 || !/\s/.test(name)) { $('#startErr').textContent = 'Аты-жөніңізді толық жазыңыз (аты мен тегі).'; $('#stName').focus(); return; }
+  if (!cls) { $('#startErr').textContent = 'Сыныбыңызды таңдаңыз.'; $('#stCls').focus(); return; }
+  $('#startErr').textContent = ''; const seed = uid ? hashStr('lab7-7|' + uid) : (Math.floor(Math.random() * 4294967295) >>> 0);
+  V = makeVariant(seed); const keep = S.result; S = defaults(); S.result = keep; S.started = true; S.name = name; S.cls = cls; S.seed = seed; initM(); resetRT();
+  buildQs(); buildRef(); fillInputs(); saveDraft(); updateUI(); setPage(1);
+}
+function buildSubmission(res, at){ return { name: S.name, cls: S.cls, variant: vcode(), seed: S.seed, score: res.score, grade: res.grade5, crit: res.crit, info: res.info, okPred: res.okPred, nSeen: res.nSeen, nq: res.nq, viol: S.viol.slice(), at, E: JSON.parse(JSON.stringify(S.E)), M: JSON.parse(JSON.stringify(S.M)), T: JSON.parse(JSON.stringify(S.T)), safe: { first: S.safe.first, attempts: S.safe.attempts }, app: 'lab7-7' }; }
+async function doSubmit(){
+  $('#confirmBox').hidden = true; $('#submitErr').textContent = ''; if (anyPud()) addViol('wet');
+  const res = grade(S), at = new Date().toISOString(), btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'Жіберілуде…'; let sent = false;
+  if (online && db && uid) { try { await db.doc('subs/' + uid).set(buildSubmission(res, at)); sent = true; } catch (err) { if (err && err.code === 'unavailable') { try { await new Promise(r => setTimeout(r, 600 + Math.random() * 600)); await db.doc('subs/' + uid).set(buildSubmission(res, at)); sent = true; } catch (e2) {} } if (!sent) { online = false; updateMode(); $('#submitErr').textContent = err && err.code === 'quota_exceeded' ? 'Мұғалімнің кестесі толып қалды. Нәтиже коды берілді, оны мұғаліміңізге жіберіңіз.' : 'Нәтижені мұғалімге жіберу мүмкін болмады. Нәтиже коды берілді, оны мұғаліміңізге жіберіңіз.'; } } }
+  S.result = { crit: res.crit, info: res.info, score: res.score, grade5: res.grade5, at, online: sent, code: makeCode(res, at) }; btn.textContent = 'Жұмысты тапсыру'; saveDraft(); updateUI(); setPage(7);
+}
+function renderResult(){
+  const box = $('#resultBox'), r = S.result; box.hidden = !r; if (!r) { box.innerHTML = ''; return; }
+  const rows = RUBRIC.map((rb, i) => `<tr><td class="k">К${i + 1}</td><td>${esc(rb.d)}<br><span class="muted" style="font-size:13.5px">${esc(r.info[i] || '')}</span></td><td class="o">${rb.o}</td><td class="p"><span class="st ${r.crit[i] ? 'y' : 'x'}">${r.crit[i] ? '✓' : '✗'}</span></td></tr>`).join('');
+  let html = `<div class="score"><div class="big">${r.score}<small> / 10</small></div><div class="meta"><span>Баға: <span class="grade g${r.grade5}">${r.grade5}</span></span><span class="muted">${esc(S.name)} · ${esc(S.cls)} · нұсқа <span class="mono">${vcode()}</span></span><span class="muted">Тапсырылды: ${esc(fmtTime(r.at))}</span></div></div>`;
+  html += `<div class="export"><div class="row"><span class="doc" aria-hidden="true">W</span><div style="display:grid;gap:2px;flex:1;min-width:200px"><b style="font-size:16.5px">Зертханалық жұмыстың есебі (Word)</b><span class="small">Өлшеулер, толық кесте, болжам мен нәтиже, қорытынды сұрақтары және бағалау. Файлды ашып, басып шығаруға немесе мұғалімге жіберуге болады.</span></div><button type="button" class="primary" id="docxBtn">📄 Есепті жүктеу (.docx)</button></div><span class="small muted" id="docxMsg" aria-live="polite"></span></div>`;
+  html += r.online ? `<p class="okmsg">✓ Нәтиже мұғалімге жіберілді.</p>` : `<div class="card"><p class="label">Нәтиже коды</p><p style="font-size:15px">Бұл кодты мұғаліміңізге жіберіңіз. Мұғалім оны өз панелінде тексереді.</p><div class="codebox" id="codeText">${esc(r.code)}</div><div class="controls"><button type="button" id="copyCodeBtn">Кодты көшіру</button><span id="copyMsg" class="small muted"></span></div></div>`;
+  html += `<div class="tw"><table class="rubric"><thead><tr><th>№</th><th>Дескриптор</th><th>Мақсат</th><th style="text-align:right">Балл</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  box.innerHTML = html;
+  const cb = $('#copyCodeBtn'); if (cb) cb.addEventListener('click', () => copyText(r.code, $('#copyMsg'), $('#codeText')));
+  $('#docxBtn').addEventListener('click', () => { try { saveFile('Juzu_7-7_' + safeName(S.name) + '.docx', reportDocx(subFromState()), $('#docxMsg')); } catch (e) { $('#docxMsg').textContent = 'Есепті жасау мүмкін болмады.'; } });
+}
+async function copyText(text, msgEl, selEl){ try { await navigator.clipboard.writeText(text); if (msgEl) msgEl.textContent = 'Көшірілді'; } catch (e) { if (selEl) { const rg = document.createRange(); rg.selectNodeContents(selEl); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); } if (msgEl) msgEl.textContent = 'Мәтін белгіленді, Ctrl+C арқылы көшіріңіз'; } }
+
+/* ================= teacher ================= */
+function showTeacher(on){ $('#teacherView').hidden = !on; $('#pages').hidden = on; $('#stepper').hidden = on || !(S.started && S.page > 0); $('#topHeader').hidden = !on && !(S.started && S.page > 0); $('#teacherBtn').textContent = on ? 'Зертханаға оралу' : 'Мұғалім панелі'; if (on) renderTeacher(); else setPage(S.page, { noScroll: true }); }
+function teacherList(){ const sel = $('#clsFilter'); return subs.filter(s => !sel.value || s.cls === sel.value).sort((a, b) => (a.cls || '').localeCompare(b.cls || '', 'kk') || (a.name || '').localeCompare(b.name || '', 'kk')); }
+function renderTeacher(){
+  const hasDb = !!(isOwner && db); $('#tOnline').hidden = !hasDb; $('#xlsxBtn').hidden = !hasDb; $('#copyTblBtn').hidden = !hasDb; $('#clsFilter').hidden = !hasDb; $('label[for="clsFilter"]').hidden = !hasDb;
+  if (!hasDb){ $('#tMsg').textContent = 'Нәтижелер кестесі тек беттің иесіне онлайн режимде көрінеді. Мұнда нәтиже кодын тексеруге болады.'; return; }
+  const sel = $('#clsFilter'), cur = sel.value, classes = Array.from(new Set(subs.map(s => s.cls || '').filter(Boolean))).sort((a, b) => a.localeCompare(b, 'kk'));
+  sel.innerHTML = '<option value="">Барлығы</option>' + classes.map(c => `<option value="${esc(c)}"${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  const list = teacherList(), n = list.length, avg = n ? list.reduce((a, s) => a + (s.score || 0), 0) / n : 0, gd = [5, 4, 3, 2].map(g => list.filter(s => s.grade === g).length), nv = list.filter(s => Array.isArray(s.viol) && s.viol.length).length;
+  $('#tStats').innerHTML = `<div class="stat"><span class="v mono">${n}</span><span class="l">Тапсырған оқушы</span></div><div class="stat"><span class="v mono">${n ? fmt(avg, 1) : '—'}</span><span class="l">Орташа балл (10-нан)</span></div><div class="stat"><span class="v mono">${gd.join(' · ')}</span><span class="l">«5» · «4» · «3» · «2» бағалар саны</span></div><div class="stat"><span class="v mono">${n ? nv : '—'}</span><span class="l">Қауіпсіздік ережесін бұзған оқушы</span></div>`;
+  $('#tBars').innerHTML = RUBRIC.map((rb, k) => { const p = n ? Math.round(100 * list.filter(s => s.crit && s.crit[k]).length / n) : 0; return `<div class="bar" title="${esc(rb.d)}"><span class="k">К${k + 1}</span><span class="track"><span class="fill${p < 50 ? ' low' : ''}" style="width:${p}%"></span></span><span class="pct">${n ? p + '%' : '—'}</span></div>`; }).join('');
+  $('#tEmpty').hidden = n > 0;
+  $('#tBody').innerHTML = list.map(s => {
+    const dots = (s.crit || []).map((c, k) => `<span class="dot${c ? ' y' : ''}" title="К${k + 1}"></span>`).join(''), E = cleanE(s.E), Vv = makeVariant(s.seed || DEMO_SEED), sf = s.safe || {}, vi = (Array.isArray(s.viol) ? s.viol : []).filter(x => VIOL[x]);
+    const meas = [0, 1, 2].map(i => (i + 1) + ': Fа = ' + dash(E.fa[i]) + ' Н (≈ ' + fmt(Vv.tubes[i].m / 1000 * G, 2) + '), V = ' + dash(E.v[i]) + ' см³').join('; ');
+    const obs = arr(NR, 0).map((_, r) => (rowTube(r) + 1) + (rowLiq(r) === 0 ? '·су' : '·ерітінді') + ': ' + (E.rows[r].obs != null ? OUTP[E.rows[r].obs] : '—') + (E.rows[r].pred != null && E.rows[r].obs != null ? (E.rows[r].pred === E.rows[r].obs ? ' ✓' : ' ✗') : '')).join('; ');
+    const det = `<div class="det"><span>Өлшеу: ${esc(meas)}</span><span>Сұйық: ${esc(Vv.salt.nn)} (${Vv.salt.rho} кг/м³)</span><span>Нәтижелер: ${esc(obs)}</span><span>Қорытынды сұрақтары: ${fin(s.nq) ? s.nq + '/5' : '—'}</span><span>Қауіпсіздік: тест ${fin(sf.first) ? sf.first + '/5' : '—'}; ${vi.length ? esc(vi.map(x => VIOL[x]).join('; ')) : 'бұзушылық жоқ'}</span>${(s.info || []).map((x, k) => `<span>К${k + 1}: ${esc(x)}</span>`).join('')}</div>`;
+    return `<tr data-id="${esc(s.id)}"><td><b>${esc(s.name)}</b></td><td>${esc(s.cls)}</td><td class="mono">${esc(s.variant)}</td><td class="mono"><b>${s.score}</b>/10</td><td><span class="grade g${s.grade}">${s.grade}</span></td><td><div class="dots">${dots}</div></td><td class="mono">${fin(s.okPred) ? s.okPred + '/6' : '—'}</td><td class="mono">${fin(s.nq) ? s.nq + '/5' : '—'}</td><td class="mono">${fin(sf.first) ? sf.first + '/5' : '—'}${vi.length ? ' · ⚠ ' + vi.length : ''}</td><td class="mono">${esc(fmtTime(s.at))}</td><td><button type="button" class="ghost" data-tact="det">Толығырақ</button> <button type="button" data-tact="doc" title="Оқушының есебін Word файлы ретінде жүктеу">📄 Word</button> <button type="button" class="danger" data-tact="del">Қайта тапсыру</button></td></tr><tr class="detail" hidden><td colspan="11">${det}</td></tr>`;
+  }).join('');
+}
+function teacherClick(e){
+  const b = e.target.closest('button[data-tact]'); if (!b) return; const tr = b.closest('tr'), id = tr.dataset.id, s = subs.find(x => x.id === id);
+  if (b.dataset.tact === 'det') { const d = tr.nextElementSibling; d.hidden = !d.hidden; b.textContent = d.hidden ? 'Толығырақ' : 'Жасыру'; }
+  else if (b.dataset.tact === 'doc') { if (s) saveFile('Juzu_7-7_' + safeName(s.name) + '.docx', reportDocx(s), $('#tMsg')); }
+  else { if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Нәтижені өшіру керек пе? Растау'; b._t = setTimeout(() => { delete b.dataset.armed; b.textContent = 'Қайта тапсыру'; }, 4000); return; } clearTimeout(b._t); b.disabled = true; db.doc('subs/' + id).delete().catch(() => { b.disabled = false; $('#tMsg').textContent = 'Нәтижені өшіру мүмкін болмады.'; }); }
+}
+function tableRows(){
+  const head = ['Аты-жөні', 'Сынып', 'Нұсқа', 'Балл', 'Баға', ...RUBRIC.map((_, k) => 'К' + (k + 1)), 'Fа1', 'Fа2', 'Fа3', 'V1', 'V2', 'V3', 'Дұрыс болжам', 'Сұрақтар', 'Тест', 'Бұзушылық', 'Тапсырылды'];
+  return [head, ...teacherList().map(s => { const E = cleanE(s.E); return [s.name, s.cls, s.variant, s.score, s.grade, ...(s.crit || []), ...E.fa, ...E.v, s.okPred, fin(s.nq) ? s.nq : '', (s.safe || {}).first, (Array.isArray(s.viol) ? s.viol : []).filter(x => VIOL[x]).map(x => VIOL[x]).join('; '), fmtTime(s.at)]; })].map(r => r.map(v => String(v == null ? '' : v).replace(/\t/g, ' ')).join('\t')).join('\n');
+}
+function verifyCode(){
+  const out = $('#codeOut'), r = readCode($('#codeIn').value); out.hidden = false;
+  if (!r) { out.className = 'vout badc'; out.textContent = 'Код танылмады. Оны толық, бос орынсыз қойыңыз.'; return; }
+  if (r.bad) { out.className = 'vout badc'; out.textContent = 'Код өзгертілген немесе толық емес: тексеру сомасы сәйкес келмейді.'; return; }
+  out.className = 'vout good'; out.innerHTML = `<b>Код дұрыс.</b> ${esc(r.n)} · ${esc(r.c)} · нұсқа <span class="mono">${esc(r.v)}</span><br>Балл: <b class="mono">${esc(r.s)}/10</b> · баға «${grade5(+r.s || 0)}» · дұрыс болжам: <span class="mono">${fin(r.p2) ? r.p2 + '/6' : '—'}</span> · қорытынды сұрақтары: <span class="mono">${fin(r.x) ? r.x + '/5' : '—'}</span><br>Критерийлер: <span class="mono">${esc(String(r.k).split('').map((c, i) => 'К' + (i + 1) + (c === '1' ? '✓' : '✗')).join(' '))}</span><br>Тапсырылды: ${esc(fmtTime(r.t))}`;
+}
+
+/* ================= capabilities ================= */
+async function initCaps(){
+  const cl = window.claude; if (cl && typeof cl.use === 'function') { try { [userCap, db, dlCap] = await Promise.all([cl.use('user'), cl.use('db'), cl.use('downloads')]); } catch (e) {} }
+  if (userCap) { try { uid = await userCap.id(); isOwner = await userCap.isOwner(); } catch (e) {} }
+  online = !!(db && uid); const d = loadDraft(); if (d) { applyDraft(d); V = makeVariant(S.seed || DEMO_SEED); initM(); resetRT(); }
+  buildQs(); buildRef(); initDone = true; fillInputs(); updateMode(); updateUI(); setPage(S.started ? S.page : 0, { noScroll: true });
+  if (online) { try { db.doc('subs/' + uid).onSnapshot(snap => {
+    if (snap.exists) { const x = snap.data() || {}; if (!S.result || !S.result.online) {
+      if (!S.started && x.E) { V = makeVariant(x.seed >>> 0); S = defaults(); S.started = true; S.name = x.name || ''; S.cls = x.cls || ''; S.seed = x.seed >>> 0; S.E = cleanE(x.E); S.M = cleanM(x.M); S.T = cleanT(x.T); S.viol = Array.isArray(x.viol) ? x.viol.filter(v => VIOL[v]) : []; S.safe = Object.assign(S.safe, x.safe || {}, { passed: true }); initM(); resetRT(); buildQs(); buildRef(); fillInputs(); }
+      S.result = { crit: x.crit || [], info: x.info || [], score: x.score || 0, grade5: x.grade || grade5(x.score || 0), at: x.at, online: true, code: '' }; saveDraft(); updateUI(); setPage(S.page, { noScroll: true }); } }
+    else if (S.result && S.result.online) { S.result = null; saveDraft(); updateUI(); } }, () => {}); } catch (e) {} }
+  if (isOwner && db) { try { db.collection('subs').onSnapshot(snap => { subs = snap.docs.filter(x => x.exists).map(x => Object.assign({ id: x.id }, x.data())); if (!$('#teacherView').hidden) renderTeacher(); }, () => { $('#tMsg').textContent = 'Нәтижелерді жүктеу мүмкін болмады.'; }); } catch (e) {} }
+  if (location.hash === '#teacher') showTeacher(true);
+}
+
+/* ================= loop & wiring ================= */
+let lastUI = 0, lastT = 0;
+function frame(now){
+  const dt = lastT ? Math.min(0.05, (now - lastT) / 1000) : 0; lastT = now;
+  if (S.started && (S.page === 3 || S.page === 5)){
+    if (S.page === 3) frame3(dt); else frame5(dt); splashFrame(dt);
+    if (RT.need){ RT.need = false; if (S.page === 3){ renderBench(BV, drawScene3); renderZoom(); } else renderBench(TV, drawScene5); }
+  }
+  if (now - lastUI > 200){ lastUI = now; updateHints(); }
+  requestAnimationFrame(frame);
+}
+function boot(){
+  initM(); BV = makeView('#cvB', WW, WH); TV = makeView('#cvT', WW, WH); ZV = makeView('#cvZ', 0, 0); readColors(); buildQs(); buildRef();
+  attachPointer(BV, 3); attachPointer(TV, 5);
+  $('#rubricBody').innerHTML = RUBRIC.map((r, i) => `<tr><td class="k">К${i + 1}</td><td>${esc(r.d)}</td><td class="o">${r.o}</td><td class="p">1</td></tr>`).join('') + `<tr><td></td><td><b>Барлығы</b></td><td></td><td class="p"><b>10</b></td></tr>`;
+  const mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', readColors);
+  new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+  $('#stepper').addEventListener('click', e => { const b = e.target.closest('.step'); if (b) setPage(+b.dataset.p); });
+  document.addEventListener('click', e => {
+    const g = e.target.closest('[data-go]'); if (g) { setPage(S.page + (+g.dataset.go)); return; } const gt = e.target.closest('[data-goto]'); if (gt) { setPage(+gt.dataset.goto); return; }
+    const b = e.target.closest('[data-act]'); if (!b || b.disabled) return; if (locked() || !S.safe.passed) return; act(b.dataset.act, b);
+  });
+  $('#pages').addEventListener('input', onInput); $('#pages').addEventListener('change', onInput);
+  $('#stCls').addEventListener('change', () => { $('#otherWrap').hidden = $('#stCls').value !== '__other'; }); $('#startForm').addEventListener('submit', startWork);
+  $('#continueBtn').addEventListener('click', () => { const st = stepDone(); const p = st.findIndex((x, i) => i > 0 && !x); setPage(p < 0 ? 7 : p); });
+  $('#safeCheck').addEventListener('click', safetyCheck); $('#safeRetry').addEventListener('click', safetyRetry);
+  $('#submitBtn').addEventListener('click', () => { $('#confirmBox').hidden = false; $('#confirmYes').focus(); }); $('#confirmNo').addEventListener('click', () => { $('#confirmBox').hidden = true; }); $('#confirmYes').addEventListener('click', doSubmit);
+  $('#teacherBtn').addEventListener('click', () => showTeacher($('#teacherView').hidden)); $('#teacherBtnReg').addEventListener('click', () => showTeacher(true)); $('#backBtn').addEventListener('click', () => showTeacher(false));
+  $('#clsFilter').addEventListener('change', renderTeacher); $('#tBody').addEventListener('click', teacherClick);
+  $('#xlsxBtn').addEventListener('click', () => { const list = teacherList(); if (!list.length){ $('#tMsg').textContent = 'Кестеде әзірге нәтиже жоқ.'; return; } try { saveFile('Juzu_7-7_synyp' + ($('#clsFilter').value ? '_' + safeName($('#clsFilter').value) : '') + '.xlsx', classXlsx(list), $('#tMsg')); } catch (e) { $('#tMsg').textContent = 'Excel файлын жасау мүмкін болмады.'; } });
+  $('#copyTblBtn').addEventListener('click', () => copyText(tableRows(), $('#tMsg'), null)); $('#codeBtn').addEventListener('click', verifyCode); $('#codeIn').addEventListener('keydown', e => { if (e.key === 'Enter') verifyCode(); });
+  RT.pd = dynOffset(); RT.vesH = { L: VES.V0 / VES.A, R: VES.V0 / VES.A }; fillInputs(); updateUI(); setPage(0, { noScroll: true }); requestAnimationFrame(frame); initCaps();
+}
+if (typeof document !== 'undefined' && document.querySelector) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot(); }
+window.__lab77 = { getS: () => S, getRT: () => RT, getV: () => V, setV: s => { V = makeVariant(s); }, grade, makeVariant, outcomeOf, vesSolve, menzSolve, dynSolve, cleanE, cleanM, cleanT, blankE, numSci, readCode, makeCode, reportDocx, classXlsx, QS, OUT, OUTP, RELS, TUBE, CONST: { MENZ, DYN, VES, RACK, RACK5, CM, TABLE, WW, WH, CLOTH0 }, rowTube, rowLiq, liqOf, Fa, FyFull };
+})();
+</script>
+
+</body></html>

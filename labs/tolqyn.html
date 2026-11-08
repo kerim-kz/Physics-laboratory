@@ -1,0 +1,1067 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Беттік толқын зертханасы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Roboto+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: a tab row with a thin progress line; the experiment pairs a cuvette (top view + side view on one canvas) with a stopwatch card and the notebook */
+:root{
+  --bg:#ecf4f6; --surface:#ffffff; --surface-2:#f4f9fa; --ink:#0e2530; --muted:#4f6873; --line:#d3e3e8;
+  --primary:#0a6b94; --on-primary:#ffffff; --primary-soft:#dcf0f7; --accent:#c9502f; --accent-soft:#fbe5dd;
+  --ok:#1d7a47; --ok-soft:#dbf1e4; --bad:#b83a2a; --bad-soft:#f9e1dd; --warn:#8a5a08; --warn-soft:#fbefd4; --bench:#d8cfbe;
+  --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --f-mono:"Roboto Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a1418; --surface:#111f26; --surface-2:#16272f; --ink:#e3eff3; --muted:#9fb6bf; --line:#23404b;
+    --primary:#5cc8ef; --on-primary:#06222e; --primary-soft:#123341; --accent:#ff8a6b; --accent-soft:#3b1f17;
+    --ok:#62d08f; --ok-soft:#133022; --bad:#ff7f70; --bad-soft:#3d1c19; --warn:#e7b558; --warn-soft:#382a12; --bench:#2a2620; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a1418; --surface:#111f26; --surface-2:#16272f; --ink:#e3eff3; --muted:#9fb6bf; --line:#23404b;
+  --primary:#5cc8ef; --on-primary:#06222e; --primary-soft:#123341; --accent:#ff8a6b; --accent-soft:#3b1f17;
+  --ok:#62d08f; --ok-soft:#133022; --bad:#ff7f70; --bad-soft:#3d1c19; --warn:#e7b558; --warn-soft:#382a12; --bench:#2a2620; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:16px 48px}
+h1,h2,h3{text-wrap:balance;margin:0;font-weight:800;letter-spacing:-.01em}
+h2{font-size:1.6rem;line-height:1.2}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:14px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-weight:800;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.shell{max-width:1260px;margin:0 auto;display:grid;gap:14px}
+header.top{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:46px;height:46px;flex:none;border-radius:14px;background:var(--primary);display:grid;place-items:center}
+.logo svg{width:32px;height:32px}
+.brand .t1{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.brand .t2{font-weight:800;font-size:1.12rem;line-height:1.2}
+.status{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.on::before{background:var(--ok)} .pill.off::before{background:var(--warn)}
+.chip{font-size:13.5px;padding:5px 12px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-weight:800}
+
+/* tabs with a progress line */
+.navwrap{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:6px 6px 0;display:grid;gap:6px}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.step{flex:1 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;background:transparent;border-radius:10px 10px 0 0;padding:8px 12px 10px;font:inherit;font-size:14.5px;font-weight:700;color:var(--muted);cursor:pointer;min-height:44px;border-bottom:3px solid transparent;white-space:nowrap}
+.step .n{font-family:var(--f-mono);font-size:12px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--line)}
+.step.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.step[aria-current="step"]{color:var(--primary);border-bottom-color:var(--primary);background:var(--primary-soft)}
+.step[aria-current="step"] .n{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.step.lock{opacity:.5}
+.step:hover:not([aria-current]){color:var(--ink)}
+.step:focus-visible{outline:2px solid var(--primary);outline-offset:-2px}
+.prog{height:4px;background:var(--surface-2);border-radius:4px;overflow:hidden;margin:0 -6px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#2aa3c9);width:0;transition:width .4s}
+@media (max-width:760px){.step .lbl{display:none}.step[aria-current="step"] .lbl{display:inline}.step{padding:8px 9px 10px}}
+
+button{font:inherit;font-size:15px;font-weight:800;line-height:1.2;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 14px;cursor:pointer;min-height:42px}
+button:hover:not(:disabled){border-color:var(--primary)}
+button:focus-visible,input:focus-visible,select:focus-visible,canvas:focus-visible,summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+button.primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+button.ac{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+button.danger[data-armed]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button:disabled{opacity:.42;cursor:not-allowed}
+button.ghost{background:transparent}
+button.mini{min-height:30px;padding:3px 9px;font-size:13px;border-radius:8px}
+input[type=text],select{font:inherit;font-size:16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 12px;min-height:46px;width:100%}
+input[type=range]{accent-color:var(--primary);width:150px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+.page{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;display:grid;gap:18px;min-width:0}
+@media (max-width:560px){.page{padding:16px 14px 18px}}
+.page > *{min-width:0}
+.phead{display:grid;gap:6px}
+.phead .tag{font-family:var(--f-mono);font-size:12.5px;color:var(--accent)}
+.phead .goal{font-size:15.5px;color:var(--muted);max-width:86ch}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;padding-top:14px;border-top:1px solid var(--line)}
+.pnav .sp{flex:1}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.bench{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(290px,1fr);gap:16px;align-items:start}
+@media (max-width:1020px){.two,.bench{grid-template-columns:minmax(0,1fr)}}
+.col{display:grid;gap:12px;min-width:0;align-content:start}
+.card{border:1px solid var(--line);border-radius:16px;padding:13px 15px;display:grid;gap:10px;background:var(--surface-2);min-width:0}
+.card.pri{border-color:var(--primary);background:var(--primary-soft)}
+.card.ac{border-color:var(--accent);background:var(--accent-soft)}
+.prose{display:grid;gap:12px}
+.prose p,.prose li{max-width:74ch}
+ol,ul{margin:0;padding-left:1.3em;display:grid;gap:5px}
+.obj{display:grid;grid-template-columns:auto 1fr;gap:10px;font-size:15.5px}
+.obj code{font-family:var(--f-mono);font-size:12.5px;color:var(--primary);background:var(--primary-soft);border-radius:6px;padding:2px 8px;height:fit-content}
+.formula{display:flex;justify-content:center;align-items:center;gap:26px;flex-wrap:wrap;padding:4px 0}
+.formula math{font-size:1.25em}
+.flist{display:grid;gap:8px;justify-items:start}
+.flist math{font-size:1.12em}
+svg.fig{width:100%;height:auto;display:block;margin:0 auto;color:var(--ink)}
+
+/* registration */
+.regwrap{min-height:calc(100vh - 60px);display:grid;place-items:center}
+.regcard{width:min(440px,100%);background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;display:grid}
+.regcard .band{height:120px;display:grid;place-items:center;background:linear-gradient(180deg,#0a6b94,#0b4f6e)}
+.regcard .band svg{width:300px;height:100px}
+.regcard form,.regcard #regDone{padding:24px 24px 20px;display:grid;gap:16px}
+.regcard h1{font-size:2.1rem;line-height:1.05}
+.regcard label{display:grid;gap:6px;font-weight:800;font-size:15px}
+.regcard .go{width:100%;min-height:50px;font-size:16.5px}
+.err{color:var(--bad);font-size:14.5px;font-weight:800}
+
+/* bench */
+.hint{font-size:15.5px;background:var(--primary-soft);border:1px solid var(--primary);border-radius:14px;padding:10px 15px;min-height:calc(3em * 1.5 + 20px)}
+.hint.warn{background:var(--bad-soft);border-color:var(--bad)}
+@media (max-width:760px){.hint{min-height:0}
+  .page.bp > *{order:8}.page.bp > .phead{order:0}.page.bp .bench{display:contents}.page.bp .bench > figure{order:1}.page.bp > .hint{order:2}.page.bp .bench > .col{order:3}}
+figure.view{margin:0;display:grid;gap:8px;min-width:0}
+figure.view figcaption{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px 10px;font-size:13px;font-family:var(--f-mono);color:var(--muted)}
+.cv{position:relative;width:100%;aspect-ratio:5/3;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--bench)}
+.cv canvas{display:block;width:100%;height:100%;touch-action:none}
+.boardhelp{font-size:13.5px;color:var(--muted)}
+.watch{display:grid;gap:6px;justify-items:center;text-align:center;padding:14px;border-radius:16px;background:#0d1b22;color:#e8f6fb;border:1px solid #1f3d4a}
+.watch .lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8fb4c2;font-weight:800}
+.watch .digits{font-family:var(--f-mono);font-weight:700;font-size:3rem;line-height:1;letter-spacing:.02em;color:#7ef0ff}
+.watch .digits small{font-size:1.1rem;color:#8fb4c2;margin-left:4px}
+.watch .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.led{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:3px 10px;border-radius:999px;border:1px solid #2a4c5a;color:#cde6ee}
+.led::before{content:"";width:9px;height:9px;border-radius:50%;background:#55707b}
+.led.calm::before{background:#4fe08c} .led.moving::before{background:#ffb648} .led.run::before{background:#7ef0ff}
+.nb{display:grid;gap:10px}
+.fld{display:flex;align-items:center;gap:8px;font-size:15.5px;flex-wrap:wrap}
+.fld > span:first-child{min-width:120px}
+.num{width:96px;font-family:var(--f-mono);font-size:16px;text-align:center;border:0;border-bottom:1.5px dashed var(--muted);background:transparent;color:var(--ink);padding:5px 2px;border-radius:0;min-height:36px}
+.num:focus{border-bottom:1.5px solid var(--primary);outline:none;background:var(--primary-soft)}
+input:disabled{opacity:.85}
+.checklist{list-style:none;padding:0;display:grid;gap:5px}
+.checklist li{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:start;font-size:14.5px}
+.checklist li::before{content:"";width:18px;height:18px;margin-top:2px;border-radius:6px;border:1.5px solid var(--muted)}
+.checklist li.y::before{content:"✓";display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;background:var(--ok);border-color:var(--ok)}
+.checklist li.y{color:var(--muted)}
+.checklist li.now{font-weight:800}
+.tw{overflow-x:auto;min-width:0}
+table.t{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums;background:var(--surface)}
+table.t th,table.t td{border:1px solid var(--line);padding:5px 7px;text-align:center;vertical-align:middle}
+table.t th{background:var(--surface-2);font-weight:800;font-size:14px;white-space:nowrap}
+table.t td.n,table.t td.ro{font-family:var(--f-mono);color:var(--muted)}
+table.t td input{width:100%;min-width:72px}
+.tst{font-size:12.5px;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tst.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.tst.bad{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+.chart-wrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);aspect-ratio:2.3/1}
+.chart-wrap canvas{display:block;width:100%;height:100%}
+.warnmsg{font-size:14.5px;color:var(--warn);background:var(--warn-soft);border-radius:10px;padding:8px 12px}
+.okmsg{font-size:14.5px;color:var(--ok);background:var(--ok-soft);border-radius:10px;padding:8px 12px;font-weight:800}
+.result-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:17px;font-weight:700;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px dashed var(--primary)}
+
+fieldset.q{border:1px solid var(--line);border-radius:14px;padding:10px 14px 12px;margin:0;display:grid;gap:4px;background:var(--surface);min-width:0}
+fieldset.q legend{font-weight:800;padding:0 6px;font-size:15.5px}
+fieldset.q label{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:15.5px}
+fieldset.q label:hover{background:var(--surface-2)}
+fieldset.q input{width:18px;height:18px;accent-color:var(--primary);flex:none}
+.rules{display:grid;gap:8px;list-style:none;padding:0;counter-reset:r}
+.rules li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start;counter-increment:r;font-size:15.5px}
+.rules li::before{content:counter(r);font-family:var(--f-mono);width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);border:1.5px solid var(--primary)}
+.summary{font-size:16px;line-height:1.65;padding:14px 16px;border-radius:14px;border:1px solid var(--primary);background:var(--primary-soft)}
+table.rubric{border-collapse:collapse;width:100%;font-size:15px}
+table.rubric td,table.rubric th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+table.rubric th{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+table.rubric td.k{font-family:var(--f-mono);color:var(--muted);white-space:nowrap}
+table.rubric td.o{font-family:var(--f-mono);font-size:12px;color:var(--primary);white-space:nowrap}
+table.rubric td.p{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.st{display:inline-grid;place-items:center;width:23px;height:23px;border-radius:50%;font-size:13px;font-weight:800;flex:none}
+.st.y{background:var(--ok-soft);color:var(--ok)} .st.x{background:var(--bad-soft);color:var(--bad)}
+.confirm{display:grid;gap:10px;border:1.5px solid var(--warn);background:var(--warn-soft);border-radius:12px;padding:12px 14px}
+.score{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;padding:16px 18px;border-radius:16px;background:var(--primary-soft);border:1.5px solid var(--primary)}
+.score .big{font-weight:800;font-size:2.8rem;line-height:1;color:var(--primary)}
+.score .big small{font-size:1rem;color:var(--muted);font-weight:600}
+.score .meta{display:grid;gap:2px;font-size:15px}
+.export{display:grid;gap:10px;padding:16px 18px;border-radius:16px;border:1.5px solid var(--accent);background:var(--accent-soft)}
+.export .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.export .doc{width:44px;height:52px;flex:none;border-radius:6px;background:#2b579a;color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;font-family:var(--f-mono)}
+.codebox{font-family:var(--f-mono);font-size:12.5px;word-break:break-all;background:var(--surface);border:1px dashed var(--primary);border-radius:10px;padding:10px;user-select:all}
+.teacher{display:grid;gap:16px}
+.t-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.t-tools select{width:auto;min-width:130px;min-height:42px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:2px;background:var(--surface-2)}
+.stat .v{font-size:1.5rem;font-weight:800}
+.stat .l{font-size:13.5px;color:var(--muted)}
+.bars{display:grid;gap:6px}
+.bar{display:grid;grid-template-columns:44px minmax(0,1fr) 46px;gap:10px;align-items:center;font-size:13px}
+.bar .k{font-family:var(--f-mono);color:var(--muted)}
+.bar .track{height:12px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar .fill{height:100%;background:var(--primary);display:block}
+.bar .fill.low{background:var(--accent)}
+.bar .pct{font-family:var(--f-mono);text-align:right}
+table.roster{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums;min-width:980px}
+table.roster th,table.roster td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;white-space:nowrap}
+table.roster th{font-size:13px;color:var(--muted);font-weight:800}
+.dots{display:flex;gap:3px}
+.dot{width:12px;height:12px;border-radius:3px;background:var(--bad-soft);border:1px solid var(--bad)}
+.dot.y{background:var(--ok);border-color:var(--ok)}
+tr.detail td{white-space:normal;background:var(--surface-2);font-size:14px}
+.det{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:6px 18px}
+.grade{display:inline-grid;place-items:center;min-width:28px;height:26px;border-radius:8px;font-weight:800;font-family:var(--f-mono)}
+.g5{background:var(--ok-soft);color:var(--ok)}.g4{background:var(--primary-soft);color:var(--primary)}.g3{background:var(--warn-soft);color:var(--warn)}.g2{background:var(--bad-soft);color:var(--bad)}
+.verify{display:grid;gap:8px}
+.verify .row{display:flex;gap:8px;flex-wrap:wrap}
+.verify .row input{flex:1 1 260px;width:auto}
+.vout{font-size:15px;border-radius:10px;padding:10px 12px}
+.vout.good{background:var(--ok-soft);border:1px solid var(--ok)}
+.vout.badc{background:var(--bad-soft);border:1px solid var(--bad)}
+details.note{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface-2)}
+details.note summary{cursor:pointer;font-weight:800}
+details.note p{margin-top:8px;max-width:75ch;font-size:15px}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="shell">
+  <header class="top" id="topHeader" hidden>
+    <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M3 18 Q8 12 13 18 T23 18 T33 18" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M3 24 Q8 18 13 24 T23 24 T33 24" fill="none" stroke="#9fe3f7" stroke-width="1.6"/><circle cx="9" cy="11" r="3.4" fill="#ff8a6b"/></svg></span><div><p class="t1">Физика · 9-сынып · №4 зертханалық жұмыс</p><p class="t2">Беттік толқындардың таралу жылдамдығын анықтау</p></div></div>
+    <div class="status"><span id="modeBadge" class="pill">Қосылуда…</span><span id="studentChip" class="chip" hidden></span><button id="teacherBtn" type="button" hidden>Мұғалім панелі</button></div>
+  </header>
+
+  <nav class="navwrap" id="stepper" aria-label="Жұмыс кезеңдері" hidden>
+    <div class="tabs">
+      <button class="step" type="button" data-p="0"><span class="n">1</span><span class="lbl">Тіркелу</span></button>
+      <button class="step" type="button" data-p="1"><span class="n">2</span><span class="lbl">Теория</span></button>
+      <button class="step" type="button" data-p="2"><span class="n">3</span><span class="lbl">Қауіпсіздік</span></button>
+      <button class="step" type="button" data-p="3"><span class="n">4</span><span class="lbl">Тәжірибе</span></button>
+      <button class="step" type="button" data-p="4"><span class="n">5</span><span class="lbl">Есептеу</span></button>
+      <button class="step" type="button" data-p="5"><span class="n">6</span><span class="lbl">Қорытынды</span></button>
+      <button class="step" type="button" data-p="6"><span class="n">7</span><span class="lbl">Тапсыру</span></button>
+    </div>
+    <div class="prog" aria-hidden="true"><i id="progBar"></i></div>
+  </nav>
+
+  <main id="pages" style="display:grid;gap:12px;min-width:0">
+    <p id="navMsg" class="warnmsg" hidden></p>
+
+    <section data-page="0" class="regwrap" aria-labelledby="regTitle">
+      <div class="regcard">
+        <div class="band" aria-hidden="true"><svg viewBox="0 0 300 100"><g fill="none" stroke="#bdeefc" stroke-width="1.6" opacity=".9"><circle cx="70" cy="56" r="14"/><circle cx="70" cy="56" r="34" opacity=".7"/><circle cx="70" cy="56" r="58" opacity=".45"/><circle cx="70" cy="56" r="84" opacity=".25"/></g><circle cx="70" cy="56" r="7" fill="#ff8a6b"/><rect x="250" y="40" width="22" height="32" rx="4" fill="#0d1b22"/><circle cx="261" cy="50" r="4" fill="#4fe08c"/></svg></div>
+        <form id="startForm" novalidate>
+          <p class="label">№4 зертханалық жұмыс · 9-сынып</p>
+          <h1 id="regTitle">Тіркелу</h1>
+          <label for="stName">Аты-жөні<input id="stName" class="reg-in" type="text" autocomplete="name" placeholder="Мысалы, Аружан Серікова" maxlength="60"></label>
+          <label for="stCls">Сынып
+            <select id="stCls" class="reg-in">
+              <option value="">Сыныпты таңдаңыз</option>
+              <option>9 «А»</option><option>9 «Ә»</option><option>9 «Б»</option><option>9 «В»</option><option>9 «Г»</option><option>9 «Ғ»</option><option>9 «Д»</option><option>9 «Е»</option>
+              <option value="__other">Басқа сынып…</option>
+            </select>
+          </label>
+          <label for="stClsOther" id="otherWrap" hidden>Сынып атауы<input id="stClsOther" class="reg-in" type="text" placeholder="Мысалы, 9 «Ж»" maxlength="12"></label>
+          <button id="startBtn" class="primary go" type="submit" disabled>Қосылуда…</button>
+          <p id="startErr" class="err" aria-live="polite"></p>
+        </form>
+        <div id="regDone" hidden>
+          <p class="label">№4 зертханалық жұмыс · 9-сынып</p>
+          <h1>Сіз тіркелдіңіз</h1>
+          <p id="whoLine" style="font-size:16.5px"></p>
+          <button id="continueBtn" class="primary go" type="button">Жұмысты жалғастыру</button>
+        </div>
+        <div style="padding:0 24px 18px"><button id="teacherBtnReg" type="button" class="ghost" hidden>Мұғалім панелі</button></div>
+      </div>
+    </section>
+
+    <section class="page" data-page="1" hidden>
+      <div class="phead"><p class="tag">2-кезең · теория</p><h2>Беттік толқындардың таралу жылдамдығы</h2></div>
+      <div class="two">
+        <div class="prose">
+          <div style="display:grid;gap:7px"><p class="label">Оқу мақсаты</p>
+            <div class="obj"><code>9.2.5.14</code><span>су бетіндегі толқындардың таралу жылдамдығын эксперимент түрінде анықтау</span></div>
+          </div>
+          <p><b>Жұмыстың мақсаты:</b> су бетіндегі толқындардың таралу жылдамдығын өлшеу.</p>
+          <p><b>Құрал-жабдықтар:</b> су құйылған ыдыс (кювета), қалтқы, секундомер (бұл симуляцияда – датчигі бар автоматты секундомер), өлшеуіш таспа.</p>
+          <p>Қалтқыны суға батырып жібергенде, ол тербеледі де, су бетінде толқын пайда болады. Толқын тербеліс көзінен барлық бағытта таралады. Толқын <b>энергияны</b> тасымалдайды, ал су бөлшектері тек өз орнының маңында тербеледі.</p>
+          <p>Толқындардың барлық түрі біртекті ортада тұрақты жылдамдықпен таралады:</p>
+          <div class="formula"><math display="block"><mi>v</mi><mo>=</mo><mfrac><mi>l</mi><mi>t</mi></mfrac></math></div>
+          <p class="small muted">Мұндағы l – тербеліс көзі (қалтқы) мен толқын жеткен соңғы нүкте (ыдыстың қарсы шеті) арасындағы қашықтық, t – толқынның таралу уақыты.</p>
+          <div class="card pri"><p class="label">Қателікті статистикалық әдіспен бағалау</p>
+            <div class="flist">
+              <math><msub><mi>v</mi><mtext>орт</mtext></msub><mo>=</mo><mfrac><mrow><msub><mi>v</mi><mn>1</mn></msub><mo>+</mo><msub><mi>v</mi><mn>2</mn></msub><mo>+</mo><mo>…</mo><mo>+</mo><msub><mi>v</mi><mn>5</mn></msub></mrow><mn>5</mn></mfrac></math>
+              <math><mi>Δ</mi><msub><mi>v</mi><mi>i</mi></msub><mo>=</mo><mo>|</mo><msub><mi>v</mi><mtext>орт</mtext></msub><mo>−</mo><msub><mi>v</mi><mi>i</mi></msub><mo>|</mo></math>
+              <math><mi>Δ</mi><msub><mi>v</mi><mtext>орт</mtext></msub><mo>=</mo><mfrac><mrow><mi>Δ</mi><msub><mi>v</mi><mn>1</mn></msub><mo>+</mo><mo>…</mo><mo>+</mo><mi>Δ</mi><msub><mi>v</mi><mn>5</mn></msub></mrow><mn>5</mn></mfrac></math>
+              <math><mi>ε</mi><mo>=</mo><mfrac><mrow><mi>Δ</mi><msub><mi>v</mi><mtext>орт</mtext></msub></mrow><msub><mi>v</mi><mtext>орт</mtext></msub></mfrac><mo>·</mo><mn>100</mn><mo>%</mo></math>
+              <math><mi>v</mi><mo>=</mo><msub><mi>v</mi><mtext>орт</mtext></msub><mo>±</mo><mi>Δ</mi><msub><mi>v</mi><mtext>орт</mtext></msub></math>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card"><p class="label">3-сурет. Кюветадағы қалтқы және толқын</p>
+            <svg class="fig" viewBox="0 0 420 200" role="img" aria-label="Су құйылған кювета, бір шетінде қалтқы, одан тараған толқындар, қалтқыдан қарсы шетке дейінгі қашықтық l">
+              <polygon points="40,60 330,60 390,110 100,110" fill="#5cc8ef" opacity=".25" stroke="var(--primary)" stroke-width="1.5"/>
+              <polygon points="100,110 390,110 390,140 100,140" fill="#5cc8ef" opacity=".35" stroke="var(--primary)" stroke-width="1.5"/>
+              <polygon points="40,60 100,110 100,140 40,90" fill="#5cc8ef" opacity=".3" stroke="var(--primary)" stroke-width="1.5"/>
+              <g fill="none" stroke="var(--primary)" stroke-width="1.2" opacity=".85"><ellipse cx="78" cy="84" rx="16" ry="8"/><ellipse cx="78" cy="84" rx="34" ry="16" opacity=".7"/><ellipse cx="78" cy="84" rx="54" ry="24" opacity=".5"/></g>
+              <ellipse cx="78" cy="82" rx="7" ry="4" fill="var(--accent)"/><rect x="76" y="70" width="4" height="10" fill="var(--accent)"/>
+              <line x1="78" y1="170" x2="390" y2="170" stroke="currentColor" stroke-width="1.3"/><path d="M78 170 l9 -4 v8z M390 170 l-9 -4 v8z" fill="currentColor"/>
+              <line x1="78" y1="150" x2="78" y2="176" stroke="currentColor" stroke-dasharray="3 3"/><line x1="390" y1="140" x2="390" y2="176" stroke="currentColor" stroke-dasharray="3 3"/>
+              <text x="234" y="190" font-family="Nunito,sans-serif" font-size="16" font-style="italic" fill="currentColor" text-anchor="middle">l</text>
+              <text x="60" y="44" font-family="Nunito,sans-serif" font-size="13" fill="currentColor">қалтқы</text>
+            </svg>
+          </div>
+          <div class="card"><p class="label">Жұмыс барысы</p>
+            <ol>
+              <li>Өлшеуіш таспамен қалтқыдан ыдыстың қарама-қарсы шетіне дейінгі l қашықтықты өлшеңіз.</li>
+              <li>Су тынышталғанын тексеріп, қалтқыны тереңірек батырып жіберіңіз: ол тербеліп, толқын тудырады.</li>
+              <li>Толқынның қарама-қарсы шетке жеткен уақытын секундомерден жазыңыз.</li>
+              <li>Тәжірибені 5 рет қайталаңыз. Әр жолы су тынышталғанша күтіңіз.</li>
+              <li>Әр тәжірибе үшін v-ны, сосын орташа мәнді, абсолют және салыстырмалы қателікті есептеңіз.</li>
+            </ol>
+          </div>
+          <div class="card ac"><p class="label">Білгенге артық етпес</p><p class="small">Таяз судағы беттік толқынның жылдамдығы су тереңдігіне тәуелді: <i>v</i> ≈ √(<i>g h</i>). Су неғұрлым терең болса, толқын соғұрлым жылдам таралады. Сондықтан әр ыдыста жылдамдық әртүрлі шығады.</p></div>
+        </div>
+      </div>
+      <div class="pnav"><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Қауіпсіздік →</button></div>
+    </section>
+
+    <section class="page" data-page="2" hidden>
+      <div class="phead"><p class="tag">3-кезең · қауіпсіздік</p><h2>Сумен жұмыс істеудің қауіпсіздік ережелері</h2><p class="goal">Тәжірибеге кіру үшін 4 сұрақтың кемінде 3-еуіне дұрыс жауап беріңіз.</p></div>
+      <div class="two">
+        <ol class="rules">
+          <li><span>Су үстелге немесе еденге төгілсе, оны <b>бірден сүртеміз</b>: еден тайғақ болады.</span></li>
+          <li><span>Электр құралдарын (датчик, қуат көзі) <b>судан алыс</b> ұстаймыз, оларды су қолмен ұстамаймыз.</span></li>
+          <li><span>Шыны ыдысты үстелдің ортасына абайлап қоямыз, шетке қоймаймыз.</span></li>
+          <li><span>Қалтқыны абайлап батырамыз, <b>суды шашыратпаймыз</b>.</span></li>
+          <li><span>Жұмыс біткен соң суды төгіп, ыдысты құрғатамыз.</span></li>
+        </ol>
+        <div class="col">
+          <div id="safeQ" style="display:grid;gap:10px"></div>
+          <div class="controls"><button id="safeCheck" type="button" class="primary">Тестті тексеру</button><button id="safeRetry" type="button" hidden>Тестті қайта тапсыру</button></div>
+          <p id="safeOut" aria-live="polite" hidden></p>
+        </div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Тәжірибе →</button></div>
+    </section>
+
+    <section class="page bp" data-page="3" hidden>
+      <div class="phead"><p class="tag">4-кезең · тәжірибе</p><h2>Толқынның таралу уақыты мен қашықтығын өлшеу</h2><p class="goal">l қашықтығын өлшеуіш таспамен өлшеңіз де, тәжірибені 5 рет жасаңыз. Әр тәжірибені су тынышталғаннан кейін бастаңыз.</p></div>
+      <p class="hint" id="hint3" aria-live="polite"></p>
+      <div class="bench">
+        <figure class="view">
+          <figcaption><span>Кювета: жоғарыдан және бүйірінен</span><span id="waterStat"></span></figcaption>
+          <div class="cv"><canvas id="cvW" tabindex="0" aria-label="Су құйылған кювета: жоғарыдан қарағанда толқындар мен өлшеуіш таспа, бүйірінен қарағанда су беті мен қалтқы"></canvas></div>
+          <div class="controls">
+            <button type="button" class="ac" data-act="push" id="pushBtn">▶ Қалтқыны батырып жіберу</button>
+            <label class="small" for="pushRange" style="display:inline-flex;align-items:center;gap:8px">Батыру тереңдігі <input type="range" id="pushRange" min="4" max="16" step="1" value="8"><b class="mono" id="pushVal">8 мм</b></label>
+            <button type="button" data-act="mag" aria-pressed="false" id="magBtn">🔍 Лупа</button>
+          </div>
+          <p class="boardhelp" id="help3"></p>
+        </figure>
+        <div class="col">
+          <div class="watch" aria-live="polite"><span class="lbl">Автоматты секундомер</span><span class="digits" id="watchDigits">0,00<small>с</small></span><div class="row"><span class="led" id="ledWater">су</span><span class="led" id="ledSensor">датчик</span></div><span class="small" id="watchNote" style="color:#8fb4c2"></span></div>
+          <div class="card nb" id="nb3"></div>
+          <div class="card"><p class="label">Қадамдар</p><ul class="checklist" id="chk3"></ul></div>
+        </div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Есептеу →</button></div>
+    </section>
+
+    <section class="page" data-page="4" hidden>
+      <div class="phead"><p class="tag">5-кезең · есептеу</p><h2>Жылдамдықты есептеу және қателікті бағалау</h2><p class="goal">Жылдамдықтар мен қателіктерді 0,001 м/с дәлдікпен, ε-ды 0,1 % дәлдікпен жазыңыз. t пен l дәптерден алынады.</p></div>
+      <div class="card">
+        <p class="label">Өлшеу және есептеу нәтижелері</p>
+        <div class="tw"><table class="t"><thead><tr><th>№</th><th>Уақыт t, с</th><th>Қашықтық l, м</th><th>v = l / t, м/с</th><th>Δv = |v<sub>орт</sub> − v|, м/с</th></tr></thead><tbody id="calcBody"></tbody></table></div>
+      </div>
+      <div class="two">
+        <div class="card nb">
+          <p class="label">Орташа мән және қателік</p>
+          <div class="fld"><span>v<sub>орт</sub> =</span><input class="num" data-e="vm" id="in-vm" inputmode="decimal" autocomplete="off"> м/с</div>
+          <div class="fld"><span>Δv<sub>орт</sub> =</span><input class="num" data-e="dvm" id="in-dvm" inputmode="decimal" autocomplete="off"> м/с</div>
+          <div class="fld"><span>ε =</span><input class="num" data-e="eps" id="in-eps" inputmode="decimal" autocomplete="off"> %</div>
+          <p class="label" style="margin-top:6px">Өлшеу нәтижесі</p>
+          <div class="result-line"><span><i>v</i> = (</span><input class="num" data-e="vf" id="in-vf" inputmode="decimal" autocomplete="off" aria-label="v орт"><span>±</span><input class="num" data-e="dvf" id="in-dvf" inputmode="decimal" autocomplete="off" aria-label="Δv орт"><span>) м/с</span></div>
+          <p class="small muted">Қателікті әдетте 1–2 мәнді цифрға дейін дөңгелектейді, ал орташа мәнді қателікпен бірдей разрядқа дейін жазады.</p>
+        </div>
+        <figure class="view"><figcaption><span>Әр тәжірибедегі жылдамдық, м/с</span><span>сызық – v орт, жолақ – ± Δv орт</span></figcaption><div class="chart-wrap"><canvas id="cvChart" aria-label="Бес тәжірибедегі жылдамдықтар, орташа мән және қателік жолағы"></canvas></div></figure>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Қорытынды →</button></div>
+    </section>
+
+    <section class="page" data-page="5" hidden>
+      <div class="phead"><p class="tag">6-кезең · қорытынды</p><h2>Қорытынды және нәтижені бағалау</h2></div>
+      <div id="conclBox" style="display:grid;gap:10px;max-width:900px"></div>
+      <div style="max-width:900px;display:grid;gap:6px"><p class="label">Сіздің қорытындыңыз</p><p class="summary" id="summary"></p></div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Тапсыру →</button></div>
+    </section>
+
+    <section class="page" data-page="6" hidden>
+      <div class="phead"><p class="tag">7-кезең · тапсыру</p><h2>Тапсыру және есепті жүктеу</h2></div>
+      <div id="resultBox" hidden style="display:grid;gap:14px;max-width:980px"></div>
+      <div id="preSubmit" class="two">
+        <div class="col">
+          <div id="completeness" class="card"></div>
+          <p class="small muted">Өлшеулер секундомер мен таспаның көрсеткіштерімен, ал есептеулер сіздің өз сандарыңызбен тексеріледі. Тапсырғаннан кейін толық есепті Word файлы ретінде жүктеп аласыз.</p>
+          <p id="modeNote" class="small muted"></p>
+          <div><button id="submitBtn" class="primary" type="button" disabled>Жұмысты тапсыру</button></div>
+          <div id="confirmBox" class="confirm" hidden><p><b>Жұмысты тапсырасыз ба?</b> Тапсырғаннан кейін жауаптарды өзгерту мүмкін болмайды.</p><div class="controls"><button id="confirmYes" class="primary" type="button">Иә, тапсыру</button><button id="confirmNo" type="button">Болдырмау</button></div></div>
+          <p id="submitErr" class="err" aria-live="polite"></p>
+        </div>
+        <div><p class="label" style="margin-bottom:8px">Бағалау критерийлері · 10 балл</p><div class="tw"><table class="rubric"><thead><tr><th>№</th><th>Дескриптор</th><th>Мақсат</th><th style="text-align:right">Балл</th></tr></thead><tbody id="rubricBody"></tbody></table></div></div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span></div>
+    </section>
+  </main>
+
+  <section id="teacherView" class="page teacher" hidden aria-label="Мұғалім панелі">
+    <div class="phead"><p class="tag">9-сынып · №4 · нәтижелер нақты уақытта жаңарады</p><h2>Мұғалім панелі</h2>
+      <div class="t-tools"><label for="clsFilter" class="small muted">Сынып</label><select id="clsFilter"><option value="">Барлығы</option></select><button id="xlsxBtn" type="button" class="primary">📊 Сынып жиынтығы (Excel)</button><button id="copyTblBtn" type="button">Кестені көшіру</button><button id="backBtn" type="button">Зертханаға оралу</button></div></div>
+    <p id="tMsg" class="small muted" aria-live="polite"></p>
+    <div id="tOnline" style="display:grid;gap:16px">
+      <div class="stats" id="tStats"></div>
+      <div style="display:grid;gap:8px"><p class="label">Критерийлер бойынша орындалу</p><div class="bars" id="tBars"></div></div>
+      <div class="tw"><table class="roster"><thead><tr><th>Оқушы</th><th>Сынып</th><th>Нұсқа</th><th>Балл</th><th>Баға</th><th>К1 … К10</th><th>v = v орт ± Δv, м/с</th><th>ε</th><th>Тапсырылды</th><th></th></tr></thead><tbody id="tBody"></tbody></table></div>
+      <div id="tEmpty" class="empty" hidden>Әзірге ешкім тапсырған жоқ. Оқушылар жұмысты тапсырған сәтте нәтижелер осы кестеде пайда болады.</div>
+    </div>
+    <div class="verify"><p class="label">Нәтиже кодын тексеру</p><p style="font-size:15px">Оқушы офлайн режимде тапсырса, сізге нәтиже кодын жібереді. Кодты осында қойып тексеріңіз.</p><div class="row"><input id="codeIn" type="text" placeholder="L94.…" autocomplete="off" aria-label="Нәтиже коды"><button id="codeBtn" type="button">Тексеру</button></div><div id="codeOut" class="vout" hidden></div></div>
+    <details class="note"><summary>Оқушылар нәтижені онлайн қалай жібереді</summary>
+      <p>Онлайн жіберу үшін оқушы claude.ai аккаунтымен кіріп, бетті сіздің шақыруыңыз арқылы ашуы керек. Жеке аккаунтта оқушыны email арқылы «Editor» деңгейінде шақырыңыз, ал бетке жалпы сілтеме (public link) ашпаңыз. Team немесе Enterprise ұйымында ұйым мүшесіне «Contributor» деңгейі жеткілікті.</p>
+      <p>Басқа жағдайда бет офлайн режимде жұмыс істейді: оқушы жұмысты толық орындайды, балын көреді, Word есебін жүктейді және сізге нәтиже кодын жібереді.</p>
+      <p>Баға шкаласы: 0–39 % → «2», 40–64 % → «3», 65–84 % → «4», 85–100 % → «5».</p></details>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= constants ================= */
+const SALT = 'L94|fizika9|tolqyn', DEMO_SEED = 94017;
+const PAGE_NAMES = ['Тіркелу', 'Теория', 'Қауіпсіздік', 'Тәжірибе', 'Есептеу', 'Қорытынды', 'Тапсыру'];
+const WW = 1000, WH = 600, VX = 60, VY = 52, SC = 12, WID = 20, FCY = VY + WID * SC / 2, TY = VY + 46, TH = 30, YB = 578, SV = 42, WALLH = 4.2;
+const NX = 220, CALM = 0.0008, NTR = 5;
+const QS = [
+  { k: 'q1', q: 'Су бетіндегі толқын нені тасымалдайды?', a: ['Энергияны; су бөлшектері тек өз орнының маңында тербеледі', 'Суды бір шетінен екінші шетіне', 'Қалтқыны', 'Ештеңе тасымалдамайды'], c: 0 },
+  { k: 'q2', q: 'Неліктен тәжірибені 5 рет қайталап, орташа мәнін аламыз?', a: ['Кездейсоқ қателіктердің әсерін азайту үшін', 'Толқынды күшейту үшін', 'Судың тереңдігін өзгерту үшін', 'Оқулықта солай жазылғандықтан ғана'], c: 0 },
+  { k: 'q3', q: 'Келесі тәжірибені неге су тынышталғаннан кейін бастау керек?', a: ['Қабырғалардан шағылған толқындар датчикті ерте іске қосып, уақыт қате өлшенеді', 'Су суып қалуы үшін', 'Қалтқы кеуіп қалуы үшін', 'Себебі жоқ'], c: 0 },
+  { k: 'q4', q: 'Ыдыстағы судың тереңдігін арттырсақ, беттік толқынның жылдамдығы:', a: ['Артады', 'Кемиді', 'Өзгермейді', 'Нөлге тең болады'], c: 0 },
+  { k: 'q5', q: 'v = (0,44 ± 0,01) м/с жазбасы нені білдіреді?', a: ['Жылдамдықтың нақты мәні 0,43 м/с пен 0,45 м/с аралығында жатыр', 'Жылдамдық дәл 0,45 м/с', 'Жылдамдық 0,01 м/с-қа тең', 'Салыстырмалы қателік 44 %'], c: 0 },
+];
+const SAFE_Q = [
+  { q: 'Су үстелге немесе еденге төгілсе:', a: ['Бірден сүртеміз, себебі еден тайғақ болады', 'Өзі кеуіп қалады', 'Үстіне қағаз тастаймыз да кетеміз', 'Ешкімге айтпаймыз'], c: 0 },
+  { q: 'Электр құралдарын (датчик, қуат көзі):', a: ['Судан алыс ұстаймыз, су қолмен ұстамаймыз', 'Судың ішіне қоямыз', 'Су қолмен қосамыз', 'Ыдыстың шетіне іліп қоямыз'], c: 0 },
+  { q: 'Шыны ыдысты:', a: ['Үстелдің ортасына абайлап қоямыз', 'Үстелдің шетіне қоямыз', 'Бір қолмен көтеріп жүреміз', 'Еденге қоямыз'], c: 0 },
+  { q: 'Қалтқыны қалай тербеліске түсіреміз?', a: ['Абайлап батырып, жібереміз; суды шашыратпаймыз', 'Суға қатты лақтырамыз', 'Суды қолмен шайқаймыз', 'Ыдысты сілкилейміз'], c: 0 },
+];
+const RUBRIC = [
+  'Тәжірибені 5 рет жүргізеді: әр тәжірибені су тынышталғаннан кейін бастайды',
+  'Секундомердің көрсеткіштерін (t) дұрыс жазады (5 мәннің кемінде 4-еуі)',
+  'Өлшеуіш таспамен l қашықтығын дұрыс өлшеп, метрмен жазады (±3 мм)',
+  'Әр тәжірибе үшін толқын жылдамдығын v = l/t дұрыс есептейді (5 мәннің кемінде 4-еуі)',
+  'Толқын жылдамдығының орташа мәнін дұрыс есептейді',
+  'Әр өлшеудің абсолют қателігін Δv = |v орт − v| дұрыс есептейді (5 мәннің кемінде 4-еуі)',
+  'Абсолют қателіктің орташа мәнін Δv орт дұрыс есептейді',
+  'Салыстырмалы қателікті ε = Δv орт / v орт · 100 % дұрыс есептейді',
+  'Өлшеу нәтижесін v = v орт ± Δv орт түрінде дұрыс жазады',
+  'Нәтижені түсіндіреді және бағалайды (5 сұрақтың кемінде 4-еуі)',
+].map(d => ({ d, o: '9.2.5.14' }));
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const arr = (n, v) => Array.from({ length: n }, () => v);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function num(s){ if (s === null || s === undefined) return NaN; const t = String(s).trim().replace(/\s+/g, '').replace('−', '-').replace(',', '.'); if (!t || !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(t)) return NaN; return parseFloat(t); }
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hashStr(s){ let h = 2166136261 >>> 0; for (const ch of String(s)){ h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
+const fmt = (x, d) => Number.isFinite(x) ? x.toFixed(d).replace('.', ',').replace('-', '−') : '—';
+const fin = Number.isFinite, near = (a, b, t) => fin(a) && fin(b) && Math.abs(a - b) <= t;
+const r1 = x => Math.round(x * 10) / 10;
+
+/* ================= variant & physics ================= */
+function makeVariant(seed){ const r = mulberry32((seed >>> 0) ^ 0x51ed270b); r(); const Lv = 45 + 0.5 * Math.floor(r() * 51), h = r1(1.2 + 0.1 * Math.floor(r() * 19)), xf = r1(2.5 + 0.1 * Math.floor(r() * 16)); return { seed: seed >>> 0, Lv, h, xf, l: r1(Lv - xf) }; }
+const maxPush = Vv => Math.min(16, Math.floor((Vv || V).h * 10 * 0.8));
+function gauss(r){ let u = 0, v = 0; while (u === 0) u = r(); v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+/* speed in cm/s: shallow-water speed with a small amplitude correction and a random spread */
+function trialSpeed(Vv, push, n){ const r = mulberry32(((Vv.seed >>> 0) ^ Math.imul(n + 1, 0x9E3779B1)) >>> 0); r(); const a = 0.025 * push; return Math.sqrt(981 * (Vv.h + a)) * (1 + 0.015 * gauss(r)); }
+
+/* ================= state ================= */
+const blankE = () => ({ l: '', t: arr(NTR, ''), v: arr(NTR, ''), dv: arr(NTR, ''), vm: '', dvm: '', eps: '', vf: '', dvf: '', q1: null, q2: null, q3: null, q4: null, q5: null });
+function defaults(){ return { ver: 1, started: false, name: '', cls: '', seed: 0, page: 0, seen: arr(7, false), T: arr(NTR, null), trialN: 0, tape: -4, safe: { attempts: 0, first: null, passed: false, ans: arr(4, null), last: null }, E: blankE(), result: null }; }
+let V = makeVariant(DEMO_SEED), S = defaults();
+let uid = null, db = null, userCap = null, dlCap = null, isOwner = false, online = false, initDone = false, subs = [];
+let ALERT = null, lastH = '';
+const RT = { drag: null, mag: false, lens: null, run: null, last: null, redo: null, pushDrag: null, need: true, sensorFlash: 0, bob: null };
+
+function vcode(seed){ return ((seed || S.seed) >>> 0).toString(36).toUpperCase(); }
+function draftKey(){ return 'lab9-4-draft:' + (uid || 'local'); }
+function saveDraft(){ try { localStorage.setItem(draftKey(), JSON.stringify(S)); } catch (e) {} }
+let saveTimer = null; function saveSoon(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 350); }
+function loadDraft(){ try { const s = localStorage.getItem(draftKey()); if (s) { const d = JSON.parse(s); if (d && typeof d === 'object' && d.ver === 1) return d; } } catch (e) {} return null; }
+function cleanE(de){
+  const E = blankE(); de = de && typeof de === 'object' ? de : {};
+  ['t', 'v', 'dv'].forEach(k => { if (Array.isArray(de[k])) E[k] = E[k].map((_, i) => de[k][i] == null ? '' : String(de[k][i]).slice(0, 12)); });
+  ['l', 'vm', 'dvm', 'eps', 'vf', 'dvf'].forEach(k => { if (de[k] != null) E[k] = String(de[k]).slice(0, 12); });
+  QS.forEach(q => { E[q.k] = Number.isInteger(de[q.k]) ? de[q.k] : null; }); return E;
+}
+function cleanT(d){ d = Array.isArray(d) ? d : []; return arr(NTR, null).map((_, i) => { const x = d[i]; if (!x || typeof x !== 'object' || !fin(x.t) || !fin(x.tD)) return null; return { t: x.t, tD: x.tD, push: fin(x.push) ? x.push : 0, valid: !!x.valid, n: x.n | 0, at: fin(x.at) ? x.at : 0 }; }); }
+function applyDraft(d){
+  const base = defaults(); S = Object.assign(base, d); S.E = cleanE(d.E); S.T = cleanT(d.T); S.trialN = d.trialN | 0; S.tape = fin(d.tape) ? clamp(d.tape, -4.5, 30) : -4;
+  S.safe = Object.assign(base.safe, d.safe || {}); if (!Array.isArray(S.safe.ans) || S.safe.ans.length !== 4) S.safe.ans = arr(4, null);
+  if (!Array.isArray(S.seen) || S.seen.length !== 7) S.seen = base.seen; if (!(S.page >= 0 && S.page <= 6)) S.page = 0;
+}
+
+/* ================= grading (pure) ================= */
+function grade(st){
+  const Vv = makeVariant(st.seed || DEMO_SEED), E = cleanE(st.E), T = cleanT(st.T), crit = arr(10, 0), info = arr(10, ''), lT = Vv.l / 100;
+  const n = x => num(x), q = k => E[k] === QS.find(x => x.k === k).c;
+  const done = T.filter(Boolean), valid = done.filter(x => x.valid && x.push >= 4);
+  crit[0] = valid.length === NTR ? 1 : 0; info[0] = 'тәжірибелер: ' + done.length + '/5' + (done.length > valid.length ? '; су тыныш емес кезде басталғаны: ' + (done.length - valid.length) : '');
+  let c2 = 0; T.forEach((x, i) => { if (x && near(n(E.t[i]), x.tD, 0.006)) c2++; }); crit[1] = c2 >= 4 ? 1 : 0; info[1] = c2 + '/5 мән дұрыс жазылды';
+  const l = n(E.l); crit[2] = near(l, lT, 0.003) ? 1 : 0;
+  info[2] = 'l = ' + (fin(l) ? fmt(l, 3) : '—') + (crit[2] ? ' м' : fin(l) && near(l / 100, lT, 0.003) ? ' (сантиметрмен жазылған, метрге айналдырылмаған)' : ' (дұрыс мәні ' + fmt(lT, 3) + ' м)');
+  const vin = E.v.map(n), tin = E.t.map(n);
+  let c4 = 0; vin.forEach((v, i) => { const own = fin(l) && fin(tin[i]) && tin[i] > 0 ? l / tin[i] : NaN; if (fin(own) && near(v, own, Math.max(0.0015, 0.004 * own))) c4++; }); crit[3] = c4 >= 4 ? 1 : 0; info[3] = c4 + '/5 мән дұрыс';
+  const vUse = vin.map((v, i) => fin(v) ? v : (fin(l) && fin(tin[i]) && tin[i] > 0 ? l / tin[i] : NaN)), vmOwn = vUse.every(fin) ? vUse.reduce((a, b) => a + b, 0) / NTR : NaN, vm = n(E.vm);
+  crit[4] = fin(vmOwn) && near(vm, vmOwn, Math.max(0.0015, 0.004 * vmOwn)) ? 1 : 0; info[4] = 'v орт = ' + (fin(vm) ? fmt(vm, 3) : '—') + ' (өз мәндеріңіз бойынша ' + fmt(vmOwn, 3) + ')';
+  const tol6 = Math.max(0.0015, 0.004 * Math.abs(fin(vm) ? vm : 0)); let c6 = 0; const dvin = E.dv.map(n);
+  dvin.forEach((dv, i) => { if (fin(vm) && fin(vin[i]) && near(dv, Math.abs(vm - vin[i]), tol6)) c6++; }); crit[5] = c6 >= 4 ? 1 : 0; info[5] = c6 + '/5 мән дұрыс';
+  const dvUse = dvin.map((dv, i) => fin(dv) ? dv : (fin(vm) && fin(vin[i]) ? Math.abs(vm - vin[i]) : NaN)), dvmOwn = dvUse.every(fin) ? dvUse.reduce((a, b) => a + b, 0) / NTR : NaN, dvm = n(E.dvm);
+  crit[6] = fin(dvmOwn) && near(dvm, dvmOwn, Math.max(0.0012, 0.003 * Math.abs(fin(vm) ? vm : 0))) ? 1 : 0; info[6] = 'Δv орт = ' + (fin(dvm) ? fmt(dvm, 3) : '—') + ' (өз мәндеріңіз бойынша ' + fmt(dvmOwn, 4) + ')';
+  const eps = n(E.eps), epsOwn = fin(dvm) && fin(vm) && vm > 0 ? dvm / vm * 100 : NaN; crit[7] = fin(epsOwn) && near(eps, epsOwn, Math.max(0.2, 0.08 * epsOwn)) ? 1 : 0;
+  info[7] = 'ε = ' + (fin(eps) ? fmt(eps, 1) : '—') + ' % (өз мәндеріңіз бойынша ' + fmt(epsOwn, 1) + ' %)';
+  const vf = n(E.vf), dvf = n(E.dvf); crit[8] = fin(vm) && fin(dvm) && near(vf, vm, Math.max(0.006, 0.014 * vm)) && near(dvf, dvm, Math.max(0.0035, 0.008 * vm)) && dvf > 0 ? 1 : 0;
+  info[8] = 'v = (' + (fin(vf) ? fmt(vf, 3) : '—') + ' ± ' + (fin(dvf) ? fmt(dvf, 3) : '—') + ') м/с';
+  const nq = QS.filter(x => q(x.k)).length; crit[9] = nq >= 4 ? 1 : 0; info[9] = nq + '/5 сұрақ дұрыс';
+  const score = crit.reduce((s, x) => s + x, 0), tv = done.length ? done.map(x => lT / x.tD).reduce((a, b) => a + b, 0) / done.length : NaN;
+  return { crit, info, score, grade5: grade5(score), vm: fin(vm) ? vm : null, dvm: fin(dvm) ? dvm : null, eps: fin(eps) ? eps : null, vTrue: fin(tv) ? Math.round(tv * 1000) / 1000 : null };
+}
+function grade5(score){ const p = score * 10; return p < 40 ? 2 : p < 65 ? 3 : p < 85 ? 4 : 5; }
+function b64e(str){ const b = new TextEncoder().encode(str); let bin = ''; b.forEach(x => { bin += String.fromCharCode(x); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function b64d(s){ s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
+function makeCode(res, at, st){ st = st || S; const p = { n: st.name, c: st.cls, v: vcode(st.seed), s: res.score, k: res.crit.join(''), t: at, m: res.vm, d: res.dvm, e: res.eps }; const b = b64e(JSON.stringify(p)); return 'L94.' + b + '.' + hashStr(SALT + b).toString(36); }
+function readCode(code){ try { const m = String(code).trim().match(/^L94\.([A-Za-z0-9_-]+)\.([a-z0-9]+)$/); if (!m) return null; if (hashStr(SALT + m[1]).toString(36) !== m[2]) return { bad: true }; return JSON.parse(b64d(m[1])); } catch (e) { return null; } }
+
+/* ================= zip / docx / xlsx (no libraries) ================= */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files){
+  const enc = new TextEncoder(), parts = [], central = []; let off = 0; const d = new Date(), dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF, dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+  for (const f of files){
+    const nb = enc.encode(f.name), data = typeof f.data === 'string' ? enc.encode(f.data) : f.data, crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30)); lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true); lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, nb.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nb, data);
+    const ch = new DataView(new ArrayBuffer(46)); ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true); ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, nb.length, true); ch.setUint32(42, off, true);
+    central.push(new Uint8Array(ch.buffer), nb); off += 30 + nb.length + data.length;
+  }
+  const cds = central.reduce((s, p) => s + p.length, 0), end = new DataView(new ArrayBuffer(22)); end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cds, true); end.setUint32(16, off, true);
+  const all = parts.concat(central, [new Uint8Array(end.buffer)]), out = new Uint8Array(all.reduce((s, p) => s + p.length, 0)); let o = 0; all.forEach(p => { out.set(p, o); o += p.length; }); return out;
+}
+const X = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+const isoNow = () => new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+function coreXml(title, creator){ return XML + `<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${X(title)}</dc:title><dc:creator>${X(creator)}</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${isoNow()}</dcterms:created></cp:coreProperties>`; }
+/* --- Word --- */
+function wr(r){ if (typeof r === 'string') r = { t: r }; return `<w:r><w:rPr>${r.b ? '<w:b/>' : ''}${r.i ? '<w:i/>' : ''}${r.color ? `<w:color w:val="${r.color}"/>` : ''}${r.sz ? `<w:sz w:val="${r.sz}"/><w:szCs w:val="${r.sz}"/>` : ''}${r.sub ? '<w:vertAlign w:val="subscript"/>' : ''}</w:rPr><w:t xml:space="preserve">${X(r.t)}</w:t></w:r>`; }
+function wp(runs, o){ o = o || {}; runs = Array.isArray(runs) ? runs : [runs]; return `<w:p><w:pPr>${o.style ? `<w:pStyle w:val="${o.style}"/>` : ''}${o.keep ? '<w:keepNext/>' : ''}${o.sp != null ? `<w:spacing w:before="${o.before || 0}" w:after="${o.sp}"/>` : ''}${o.ind ? `<w:ind w:left="${o.ind}" w:hanging="${o.hang || 0}"/>` : ''}${o.align ? `<w:jc w:val="${o.align}"/>` : ''}</w:pPr>${runs.map(wr).join('')}</w:p>`; }
+function wtbl(rows, widths, o){
+  o = o || {}; const tw = widths.reduce((a, b) => a + b, 0);
+  const trs = rows.map((row, ri) => `<w:tr>${ri === 0 && o.header ? '<w:trPr><w:tblHeader/></w:trPr>' : ''}${row.map((c, ci) => {
+    c = c && typeof c === 'object' && !Array.isArray(c) && !('t' in c) ? c : { r: c };
+    const hd = o.header && ri === 0, runs = (Array.isArray(c.r) ? c.r : [{ t: c.r == null ? '' : String(c.r) }]).map(x => typeof x === 'string' ? { t: x } : x).map(x => Object.assign({ b: hd || c.b }, x)), fill = c.fill || (hd ? 'D9EEF5' : null);
+    return `<w:tc><w:tcPr><w:tcW w:w="${widths[ci]}" w:type="dxa"/>${fill ? `<w:shd w:val="clear" w:color="auto" w:fill="${fill}"/>` : ''}<w:vAlign w:val="center"/></w:tcPr>${wp(runs, { align: c.align || (hd ? 'center' : o.align), sp: 0 })}</w:tc>`; }).join('')}</w:tr>`).join('');
+  return `<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="${tw}" w:type="dxa"/><w:tblLook w:val="04A0"/></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${trs}</w:tbl>` + wp('', { sp: 60 });
+}
+const BORD = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(b => `<w:${b} w:val="single" w:sz="4" w:space="0" w:color="7F8C8D"/>`).join('');
+const DOCX_STYLES = XML + `<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="kk-KZ"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="80" w:line="264" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style><w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:spacing w:after="40"/><w:jc w:val="center"/></w:pPr><w:rPr><w:b/><w:sz w:val="30"/><w:szCs w:val="30"/></w:rPr></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="220" w:after="80"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:color w:val="0A5F80"/><w:sz w:val="26"/><w:szCs w:val="26"/></w:rPr></w:style><w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:name w:val="Normal Table"/><w:uiPriority w:val="99"/><w:semiHidden/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="108" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="108" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style><w:style w:type="table" w:styleId="TableGrid"><w:name w:val="Table Grid"/><w:basedOn w:val="TableNormal"/><w:tblPr><w:tblBorders>${BORD}</w:tblBorders><w:tblCellMar><w:top w:w="40" w:type="dxa"/><w:left w:w="100" w:type="dxa"/><w:bottom w:w="40" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style></w:styles>`;
+function buildDocx(bodyXml, title, creator){
+  const doc = XML + `<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${bodyXml}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="850" w:bottom="1134" w:left="1418" w:header="709" w:footer="709" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  return zipStore([
+    { name: '[Content_Types].xml', data: XML + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>' },
+    { name: '_rels/.rels', data: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>' },
+    { name: 'word/_rels/document.xml.rels', data: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+    { name: 'word/document.xml', data: doc }, { name: 'word/styles.xml', data: DOCX_STYLES }, { name: 'docProps/core.xml', data: coreXml(title, creator) },
+  ]);
+}
+/* --- Excel --- */
+function colName(i){ let s = ''; i++; while (i > 0){ const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+function sheetXml(rows, widths, o){
+  o = o || {};
+  const body = rows.map((row, ri) => `<row r="${ri + 1}">${row.map((c, ci) => { if (c == null || c === '') return ''; c = typeof c === 'object' ? c : { v: c }; const ref = colName(ci) + (ri + 1), s = c.s != null ? c.s : 2;
+    return typeof c.v === 'number' && fin(c.v) ? `<c r="${ref}" s="${s}"><v>${c.v}</v></c>` : `<c r="${ref}" s="${s}" t="inlineStr"><is><t xml:space="preserve">${X(c.v)}</t></is></c>`; }).join('')}</row>`).join('');
+  return XML + `<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><sheetViews><sheetView workbookViewId="0">${o.freeze ? '<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>' : ''}</sheetView></sheetViews><cols>${widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${body}</sheetData>${o.filter ? `<autoFilter ref="${o.filter}"/>` : ''}<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="landscape" fitToWidth="1" fitToHeight="0"/></worksheet>`;
+}
+const XLSX_STYLES = XML + '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="0.000"/><numFmt numFmtId="165" formatCode="0.0"/></numFmts><fonts count="3"><font><sz val="11"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="11"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="14"/><name val="Calibri"/><family val="2"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFD9EEF5"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF9AA5AB"/></left><right style="thin"><color rgb="FF9AA5AB"/></right><top style="thin"><color rgb="FF9AA5AB"/></top><bottom style="thin"><color rgb="FF9AA5AB"/></bottom><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="8"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="165" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="1" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/><xf numFmtId="2" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+function buildXlsx(sheets, title){
+  const n = sheets.length;
+  return zipStore([
+    { name: '[Content_Types].xml', data: XML + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' + sheets.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('') + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>' },
+    { name: '_rels/.rels', data: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>' },
+    { name: 'xl/workbook.xml', data: XML + '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView/></bookViews><sheets>' + sheets.map((s, i) => `<sheet name="${X(s.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('') + '</sheets>' + sheets.map((s, i) => s.filter ? `<definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${X(s.name)}'!$${s.filter.replace(':', ':$').replace(/([A-Z]+)(\d+)/g, '$1$$$2')}</definedName></definedNames>` : '').join('').replace(/<\/definedNames><definedNames>/g, '') + '</workbook>' },
+    { name: 'xl/_rels/workbook.xml.rels', data: XML + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((_, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') + `<Relationship Id="rId${n + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
+    ...sheets.map((s, i) => ({ name: `xl/worksheets/sheet${i + 1}.xml`, data: sheetXml(s.rows, s.widths, s) })),
+    { name: 'xl/styles.xml', data: XLSX_STYLES }, { name: 'docProps/core.xml', data: coreXml(title, 'Физика зертханасы') },
+  ]);
+}
+async function saveFile(filename, bytes, msgEl){
+  const say = t => { if (msgEl) msgEl.textContent = t; };
+  if (dlCap){ try { await dlCap.save({ filename, data: bytes }); say('Файл сақталды: ' + filename); } catch (e) { if (!e || e.code !== 'declined') say('Файлды сақтау мүмкін болмады' + (e && e.code ? ' (' + e.code + ')' : '') + '.'); } return; }
+  try { const mime = /\.docx$/.test(filename) ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([bytes], { type: mime })); a.download = filename; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000); say('Файл жүктелді: ' + filename); } catch (e) { say('Файлды жүктеу мүмкін болмады.'); }
+}
+const safeName = s => (String(s || '').replace(/[^\p{L}\p{N}]+/gu, '_').replace(/^_+|_+$/g, '') || 'oqushy');
+function fmtTime(iso){ try { const d = new Date(iso); if (isNaN(d)) return iso || ''; const p = x => String(x).padStart(2, '0'); return p(d.getDate()) + '.' + p(d.getMonth() + 1) + '.' + d.getFullYear() + ', ' + p(d.getHours()) + ':' + p(d.getMinutes()); } catch (e) { return iso || ''; } }
+const dash = s => String(s == null ? '' : s).trim() || '—';
+function summaryText(E){
+  const q = k => E[k] === QS.find(x => x.k === k).c, vm = num(E.vm), dvm = num(E.dvm), eps = num(E.eps), vf = num(E.vf), dvf = num(E.dvf); let h = '';
+  if (fin(vm)) h += 'Бес тәжірибенің нәтижесі бойынша су бетіндегі толқынның орташа таралу жылдамдығы ' + fmt(vm, 3) + ' м/с. ';
+  if (fin(dvm) && fin(eps)) h += 'Абсолют қателік ' + fmt(dvm, 3) + ' м/с, салыстырмалы қателік ' + fmt(eps, 1) + ' %' + (eps <= 5 ? ' – өлшеу дәлдігі жақсы. ' : '. ');
+  if (fin(vf) && fin(dvf)) h += 'Өлшеу нәтижесі: v = (' + fmt(vf, 3) + ' ± ' + fmt(dvf, 3) + ') м/с. ';
+  if (q('q2')) h += 'Тәжірибені бірнеше рет қайталау кездейсоқ қателіктердің әсерін азайтады. '; if (q('q3')) h += 'Әр өлшеуді су тынышталған соң бастау керек, әйтпесе шағылған толқындар нәтижені бұрмалайды. '; if (q('q4')) h += 'Беттік толқынның жылдамдығы судың тереңдігіне тәуелді.';
+  return h;
+}
+/* the student's report as a Word document; works from a submission-like object, so the teacher can rebuild any student's report */
+function reportDocx(sub){
+  const E = cleanE(sub.E), T = cleanT(sub.T), crit = Array.isArray(sub.crit) ? sub.crit : [], info = Array.isArray(sub.info) ? sub.info : [];
+  const H = t => wp(t, { style: 'Heading1' }), P = (runs, o) => wp(runs, o), B = t => ({ t, b: true }), sub_ = t => ({ t, sub: true }), I = t => ({ t, i: true });
+  let b = wp([{ t: 'Физика · 9-сынып', color: '5B6B73', sz: 20 }], { align: 'center', sp: 40 }) + wp('№4 зертханалық жұмыс', { style: 'Title' }) + wp([{ t: 'Беттік толқындардың таралу жылдамдығын анықтау', b: true, sz: 28 }], { align: 'center', sp: 200 });
+  b += wtbl([[{ r: 'Оқушы', b: true, fill: 'F2F7F9' }, sub.name || ''], [{ r: 'Сынып', b: true, fill: 'F2F7F9' }, sub.cls || ''], [{ r: 'Орындалған күні', b: true, fill: 'F2F7F9' }, fmtTime(sub.at)], [{ r: 'Нұсқа', b: true, fill: 'F2F7F9' }, sub.variant || ''], [{ r: 'Оқу мақсаты', b: true, fill: 'F2F7F9' }, '9.2.5.14 – су бетіндегі толқындардың таралу жылдамдығын эксперимент түрінде анықтау']], [2600, 7000]);
+  b += P([B('Жұмыстың мақсаты: '), 'су бетіндегі толқындардың таралу жылдамдығын өлшеу.']) + P([B('Құрал-жабдықтар: '), 'су құйылған ыдыс (кювета), қалтқы, секундомер (датчигі бар автоматты секундомер), өлшеуіш таспа.']);
+  b += H('Қысқаша теория') + P(['Толқындардың барлық түрі біртекті ортада тұрақты жылдамдықпен таралады: ', I('v'), ' = ', I('l'), ' / ', I('t'), ', мұндағы ', I('l'), ' – тербеліс көзі мен толқын жеткен соңғы нүкте арасындағы қашықтық, ', I('t'), ' – толқынның таралу уақыты.']);
+  b += P(['Қателік статистикалық әдіспен бағаланады: ', I('Δv'), sub_('i'), ' = |', I('v'), sub_('орт'), ' − ', I('v'), sub_('i'), '|, ', I('Δv'), sub_('орт'), ' – абсолют қателіктердің орташа мәні, ', I('ε'), ' = ', I('Δv'), sub_('орт'), ' / ', I('v'), sub_('орт'), ' · 100 %.']);
+  b += H('Өлшеу және есептеу нәтижелері');
+  const rows = [['№', 'Уақыт t, с', 'Қашықтық l, м', 'Жылдамдық v, м/с', 'Δv, м/с']];
+  for (let i = 0; i < NTR; i++) rows.push([{ r: String(i + 1), align: 'center' }, { r: dash(E.t[i]), align: 'center' }, { r: dash(E.l), align: 'center' }, { r: dash(E.v[i]), align: 'center' }, { r: dash(E.dv[i]), align: 'center' }]);
+  rows.push([{ r: 'Орташа', b: true, fill: 'F2F7F9' }, { r: '', fill: 'F2F7F9' }, { r: '', fill: 'F2F7F9' }, { r: [B('v'), { t: 'орт', sub: true, b: true }, B(' = ' + dash(E.vm))], align: 'center', fill: 'F2F7F9' }, { r: [B('Δv'), { t: 'орт', sub: true, b: true }, B(' = ' + dash(E.dvm))], align: 'center', fill: 'F2F7F9' }]);
+  b += wtbl(rows, [1150, 1850, 2000, 2300, 2300], { header: true });
+  b += P(['Толқын жылдамдығының орташа мәні: ', I('v'), sub_('орт'), ' = ', B(dash(E.vm) + ' м/с')]) + P(['Абсолют қателіктің орташа мәні: ', I('Δv'), sub_('орт'), ' = ', B(dash(E.dvm) + ' м/с')]) + P(['Салыстырмалы қателік: ', I('ε'), ' = ', B(dash(E.eps) + ' %')]);
+  b += P([B('Өлшеу нәтижесі: '), I('v'), ' = (', B(dash(E.vf)), ' ± ', B(dash(E.dvf)), ') м/с,  ', I('ε'), ' = ', dash(E.eps), ' %'], { sp: 120 });
+  b += H('Қорытынды') + P(summaryText(E) || '—');
+  b += P([B('Бақылау сұрақтарына жауаптар:')], { before: 120, sp: 60 });
+  QS.forEach((qq, i) => { const ans = E[qq.k], ok = ans === qq.c; b += P([B((i + 1) + '. ' + qq.q + ' ')], { sp: 0, keep: true }) + P([ans == null ? { t: 'Жауап берілмеген', i: true } : { t: qq.a[ans] }, { t: ans == null ? '' : ok ? '  ✓' : '  ✗', b: true, color: ok ? '1D7A47' : 'B83A2A' }], { ind: 360, sp: 60 }); });
+  if (crit.length){
+    b += H('Бағалау') + P([B('Жинаған балл: '), String(sub.score) + ' / 10;  ', B('баға: '), '«' + sub.grade + '»']);
+    b += wtbl([['№', 'Бағалау критерийі', 'Балл']].concat(RUBRIC.map((r, i) => [{ r: [{ t: 'К' + (i + 1), sz: 21 }], align: 'center' }, { r: [{ t: r.d, sz: 21 }, { t: info[i] ? ' (' + info[i] + ')' : '', color: '5B6B73', sz: 18 }] }, { r: crit[i] ? '1' : '0', align: 'center', b: true }])).concat([[{ r: '', fill: 'F2F7F9' }, { r: 'Барлығы', b: true, fill: 'F2F7F9' }, { r: String(sub.score), b: true, align: 'center', fill: 'F2F7F9' }]]), [800, 7900, 900], { header: true });
+  }
+  if (sub.code) b += P([B('Нәтиже коды: '), { t: sub.code, sz: 16 }]);
+  b += P(['Оқушының қолы: ____________________          Мұғалімнің қолы: ____________________'], { before: 360, sp: 0 });
+  return buildDocx(b, '№4 зертханалық жұмыс — ' + (sub.name || ''), sub.name || 'Оқушы');
+}
+function subFromState(){ const r = S.result || {}; return { name: S.name, cls: S.cls, variant: vcode(), at: r.at || new Date().toISOString(), E: S.E, T: S.T, crit: r.crit || [], info: r.info || [], score: r.score, grade: r.grade5, code: r.online ? '' : r.code }; }
+function classXlsx(list){
+  const head = ['№', 'Аты-жөні', 'Сынып', 'Нұсқа', 'Балл', 'Баға', ...RUBRIC.map((_, k) => 'К' + (k + 1)), 'l, м', 't₁, с', 't₂, с', 't₃, с', 't₄, с', 't₅, с', 'v орт, м/с', 'Δv орт, м/с', 'ε, %', 'v (датчик бойынша), м/с', 'Жарамды тәжірибе', 'Тапсырылды'];
+  const N = x => { const v = num(x); return fin(v) ? v : (String(x || '').trim() || ''); };
+  const rows = [head.map(h => ({ v: h, s: 1 }))];
+  list.forEach((s, i) => { const E = cleanE(s.E), T = cleanT(s.T); rows.push([{ v: i + 1, s: 5 }, s.name || '', s.cls || '', s.variant || '', { v: s.score || 0, s: 5 }, { v: s.grade || '', s: 5 }, ...(s.crit || arr(10, 0)).map(c => ({ v: c ? 1 : 0, s: 5 })), { v: N(E.l), s: 3 }, ...E.t.map(t => ({ v: N(t), s: 7 })), { v: N(E.vm), s: 3 }, { v: N(E.dvm), s: 3 }, { v: N(E.eps), s: 4 }, { v: fin(s.vTrue) ? s.vTrue : '', s: 3 }, { v: T.filter(x => x && x.valid).length, s: 5 }, fmtTime(s.at)]); });
+  const last = colName(head.length - 1) + (list.length + 1);
+  const n = list.length, avg = n ? list.reduce((a, s) => a + (s.score || 0), 0) / n : 0;
+  const sum = [[{ v: '9-сынып · №4 зертханалық жұмыс: беттік толқындардың таралу жылдамдығы', s: 6 }], [], [{ v: 'Көрсеткіш', s: 1 }, { v: 'Мәні', s: 1 }], ['Тапсырған оқушы', { v: n, s: 5 }], ['Орташа балл (10-нан)', { v: Math.round(avg * 10) / 10, s: 4 }]];
+  [5, 4, 3, 2].forEach(g => sum.push(['«' + g + '» бағасы', { v: list.filter(s => s.grade === g).length, s: 5 }]));
+  sum.push([], [{ v: 'Критерий', s: 1 }, { v: 'Орындағандар, %', s: 1 }, { v: 'Дескриптор', s: 1 }]);
+  RUBRIC.forEach((r, k) => sum.push(['К' + (k + 1), { v: n ? Math.round(100 * list.filter(s => s.crit && s.crit[k]).length / n) : 0, s: 5 }, r.d]));
+  sum.push([], ['Жасалған уақыты', fmtTime(new Date().toISOString())]);
+  return buildXlsx([
+    { name: 'Нәтижелер', rows, widths: [5, 26, 9, 11, 7, 6, ...arr(10, 5), 8, 7, 7, 7, 7, 7, 11, 12, 8, 14, 11, 17], freeze: true, filter: n ? 'A1:' + last : null },
+    { name: 'Жиынтық', rows: sum, widths: [28, 18, 90] },
+  ], '9-сынып №4 зертхана — сынып жиынтығы');
+}
+
+/* ================= water simulation ================= */
+const SIM = { nx: NX, ny: 0, dx: 0, u: null, u0: null, un: null, c: 40, dt: 0.002, simT: 0, maxU: 0, active: false, cv: null, img: null };
+function simInit(){
+  SIM.ny = Math.round(NX * WID / V.Lv); SIM.dx = V.Lv / NX; const N = NX * SIM.ny; SIM.u = new Float32Array(N); SIM.u0 = new Float32Array(N); SIM.un = new Float32Array(N);
+  SIM.dt = 0.45 * SIM.dx / 70; SIM.maxU = 0; SIM.rms = 0; SIM.active = false;
+  if (document.createElement){ SIM.cv = document.createElement('canvas'); SIM.cv.width = NX; SIM.cv.height = SIM.ny; SIM.img = SIM.cv.getContext('2d').createImageData(NX, SIM.ny); paintWater(); }
+}
+function simKick(A){
+  const { nx, ny, dx, u, u0 } = SIM, fi = V.xf / dx, fj = (ny - 1) / 2, sg = 1.0, R = Math.ceil(3.5 * sg / dx);
+  for (let j = Math.max(0, Math.floor(fj - R)); j <= Math.min(ny - 1, Math.ceil(fj + R)); j++) for (let i = Math.max(0, Math.floor(fi - R)); i <= Math.min(nx - 1, Math.ceil(fi + R)); i++){
+    const r2 = ((i - fi) * dx) ** 2 + ((j - fj) * dx) ** 2, q = r2 / (sg * sg), z = -A * (1 - q) * Math.exp(-q); u[j * nx + i] += z; u0[j * nx + i] += z; }
+  SIM.active = true;
+}
+function simStep(){
+  const { nx, ny, u, u0, un, dt, dx } = SIM, k = (SIM.c * dt / dx) ** 2, damp = Math.exp(Math.log(0.45) * dt); let mx = 0, s2 = 0;
+  for (let j = 0; j < ny; j++){ const jm = (j > 0 ? j - 1 : 1) * nx, jp = (j < ny - 1 ? j + 1 : ny - 2) * nx, row = j * nx;
+    for (let i = 0; i < nx; i++){ const id = row + i, im = i > 0 ? i - 1 : 1, ip = i < nx - 1 ? i + 1 : nx - 2, c0 = u[id];
+      const lap = u[row + im] + u[row + ip] + u[jm + i] + u[jp + i] - 4 * c0, v = c0 + damp * (c0 - u0[id]) + k * lap; un[id] = v; s2 += v * v; const a = v < 0 ? -v : v; if (a > mx) mx = a; } }
+  SIM.u0 = u; SIM.u = un; SIM.un = u0; SIM.maxU = mx; SIM.rms = Math.sqrt(s2 / (nx * ny)); SIM.simT += dt;
+  if (mx < 0.0006){ SIM.u.fill(0); SIM.u0.fill(0); SIM.maxU = 0; SIM.rms = 0; SIM.active = false; }
+}
+function paintWater(){
+  if (!SIM.img) return; const { nx, ny, u, dx } = SIM, d = SIM.img.data, K = 20 / (2 * dx);
+  for (let j = 0; j < ny; j++){ const jm = (j > 0 ? j - 1 : 0) * nx, jp = (j < ny - 1 ? j + 1 : ny - 1) * nx;
+    for (let i = 0; i < nx; i++){ const id = j * nx + i, gx = u[j * nx + Math.min(nx - 1, i + 1)] - u[j * nx + Math.max(0, i - 1)], gy = u[jp + i] - u[jm + i];
+      let L = clamp(0.42 + (gx * 0.8 + gy * 0.6) * K + u[id] * 8, 0, 1); const f = 0.12 + 0.78 * L * L, p = id * 4;
+      d[p] = 22 + (232 - 22) * f; d[p + 1] = 118 + (248 - 118) * f; d[p + 2] = 158 + (253 - 158) * f; d[p + 3] = 255; } }
+  SIM.cv.getContext('2d').putImageData(SIM.img, 0, 0);
+}
+const calm = () => !(SIM.rms >= CALM);
+function nextSlot(){ if (RT.redo != null) return RT.redo; return S.T.findIndex(x => !x); }
+function startTrial(push){
+  if (locked() || !S.safe.passed) return;
+  if (RT.run){ flash('Алдыңғы өлшеу әлі аяқталған жоқ: толқын қарсы шетке жеткенше күтіңіз.'); return; }
+  const slot = nextSlot(); if (slot < 0){ flash('Бес тәжірибе де жасалды. Қайсыбірін қайталау үшін дәптердегі ↺ батырмасын басыңыз.'); return; }
+  push = clamp(Math.round(push), 0, maxPush()); if (push < 1) return;
+  const wasCalm = calm(); S.trialN++;
+  const v = trialSpeed(V, push, S.trialN); let tTrue = V.l / v; if (!wasCalm) tTrue *= 0.5 + 0.3 * mulberry32(S.trialN * 7919 + V.seed)();
+  SIM.c = v; simKick(0.025 * push);
+  RT.run = { slot, push, valid: wasCalm, weak: push < 4, tTrue, t0: SIM.simT }; RT.bob = { t0: SIM.simT, push }; RT.last = null;
+  if (!wasCalm) flash('Су әлі тынышталмаған еді! Шағылған толқындар датчикті ерте іске қосуы мүмкін, бұл өлшеу дұрыс болмайды. Келесі жолы су тынышталғанша күтіңіз.', true); else { ALERT = null; lastH = ''; }
+  saveSoon(); renderSide();
+}
+function trialTick(){
+  const r = RT.run; if (!r) return; const el = SIM.simT - r.t0;
+  if (r.weak){ if (el >= r.tTrue + 0.8){ RT.run = null; RT.last = { weak: true }; flash('Толқын тым әлсіз болды: датчик оны сезбеді, секундомер тоқтамады. Қалтқыны тереңірек (кемінде 4 мм) батырыңыз.', true); renderSide(); } return; }
+  if (el >= r.tTrue){
+    const tD = Math.round(r.tTrue * 100) / 100; S.T[r.slot] = { t: Math.round(r.tTrue * 10000) / 10000, tD, push: r.push, valid: r.valid, n: S.trialN, at: Date.now() };
+    RT.last = { tD, slot: r.slot, valid: r.valid }; RT.run = null; RT.redo = null; RT.sensorFlash = performance.now() + 1500;
+    if (r.valid){ ALERT = null; lastH = ''; }
+    saveSoon(); renderSide();
+  }
+}
+
+/* ================= canvas ================= */
+const C = {};
+const TOK = ['bg', 'surface', 'surface-2', 'ink', 'muted', 'line', 'primary', 'accent', 'ok', 'bad', 'bench'];
+function readColors(){ const cs = getComputedStyle(document.documentElement); TOK.forEach(k => { C[k] = cs.getPropertyValue('--' + k).trim() || '#888'; }); RT.need = true; drawChart(); }
+let VW = null;
+function makeView(){
+  const cv = $('#cvW'), v = { cv, ctx: cv.getContext('2d'), w: 0, h: 0, T: { s: 1, ox: 0, oy: 0 } };
+  new ResizeObserver(() => { const r = cv.getBoundingClientRect(); if (!r.width) { v.w = 0; return; } const dpr = Math.min(2.5, window.devicePixelRatio || 1); v.w = r.width; v.h = r.height; cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); v.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); const s = Math.min(v.w / WW, v.h / WH); v.T = { s, ox: (v.w - WW * s) / 2, oy: (v.h - WH * s) / 2 }; RT.need = true; }).observe(cv);
+  VW = v; return v;
+}
+function line(ctx, x1, y1, x2, y2){ ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+function circle(ctx, x, y, r){ ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); }
+const wx = cm => VX + cm * SC;
+function floatDepth(){ if (RT.pushDrag) return RT.pushDrag.push; const b = RT.bob; if (!b) return 0; const t = SIM.simT - b.t0; if (t > 2.5){ RT.bob = null; return 0; } return b.push * Math.exp(-t / 0.4) * Math.cos(2 * Math.PI * t / 0.32); }
+function drawScene(ctx, LBL){
+  const Lv = V.Lv, xr = wx(Lv), yb2 = VY + WID * SC, fx = wx(V.xf), sensorOn = performance.now() < RT.sensorFlash, running = !!RT.run;
+  ctx.fillStyle = '#d8cfbe'; ctx.fillRect(0, 0, WW, WH);
+  ctx.fillStyle = 'rgba(120,96,60,.06)'; for (let y = 0; y < WH; y += 14) ctx.fillRect(0, y, WW, 6);
+  ctx.fillStyle = '#4b3d2a'; ctx.font = `800 ${13 * LBL}px "Nunito", sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('Жоғарыдан қарағанда', VX - 8, 22); ctx.fillText('Бүйірінен қарағанда (тік бағытта ×3,5)', VX - 8, YB - WALLH * SV - 22);
+  /* top view: vessel */
+  ctx.fillStyle = 'rgba(210,235,245,.9)'; ctx.fillRect(VX - 9, VY - 9, Lv * SC + 18, WID * SC + 18); ctx.strokeStyle = 'rgba(70,110,130,.8)'; ctx.lineWidth = 1.5; ctx.strokeRect(VX - 9, VY - 9, Lv * SC + 18, WID * SC + 18);
+  if (SIM.cv){ ctx.imageSmoothingEnabled = true; ctx.drawImage(SIM.cv, VX, VY, Lv * SC, WID * SC); }
+  ctx.strokeStyle = 'rgba(40,80,100,.9)'; ctx.lineWidth = 1.2; ctx.strokeRect(VX, VY, Lv * SC, WID * SC);
+  /* sensor */
+  ctx.fillStyle = '#16232a'; ctx.fillRect(xr + 12, FCY - 22, 40, 44); ctx.fillStyle = sensorOn ? '#4fe08c' : running ? '#ffb648' : '#55707b'; circle(ctx, xr + 32, FCY - 6, 6); ctx.fill();
+  if (sensorOn){ circle(ctx, xr + 32, FCY - 6, 12); ctx.fillStyle = 'rgba(79,224,140,.3)'; ctx.fill(); }
+  ctx.fillStyle = '#d9e7ec'; ctx.font = `700 ${9 * LBL}px "Nunito", sans-serif`; ctx.textAlign = 'center'; ctx.fillText('датчик', xr + 32, FCY + 12 + 3 * (LBL - 1)); ctx.strokeStyle = '#16232a'; ctx.lineWidth = 2; line(ctx, xr + 12, FCY, xr + 1, FCY);
+  /* float (top) */
+  const dz = floatDepth(), fr = 13 * (1 + Math.max(0, dz) * 0.012);
+  circle(ctx, fx, FCY, fr + 4); ctx.fillStyle = 'rgba(0,40,60,.18)'; ctx.fill(); circle(ctx, fx, FCY, fr); ctx.fillStyle = '#fff'; ctx.fill(); ctx.beginPath(); ctx.arc(fx, FCY, fr, Math.PI, 0); ctx.closePath(); ctx.fillStyle = '#e04a2f'; ctx.fill(); ctx.strokeStyle = '#7a2414'; ctx.lineWidth = 1.2; circle(ctx, fx, FCY, fr); ctx.stroke(); circle(ctx, fx, FCY, 2.4); ctx.fillStyle = '#222'; ctx.fill();
+  /* tape */
+  const tz = wx(S.tape), tl = 80 * SC; ctx.save(); ctx.fillStyle = 'rgba(242,194,48,.93)'; ctx.fillRect(tz, TY, tl, TH); ctx.strokeStyle = 'rgba(120,90,10,.8)'; ctx.lineWidth = 1; ctx.strokeRect(tz, TY, tl, TH);
+  ctx.strokeStyle = '#1d1a10';
+  for (let mm = 0; mm <= 800; mm++){ const x = tz + mm * SC / 10; if (x > WW) break; const L = mm % 100 === 0 ? 14 : mm % 10 === 0 ? 10 : mm % 5 === 0 ? 7 : 4; ctx.lineWidth = mm % 10 === 0 ? 0.8 : 0.35; line(ctx, x, TY, x, TY + L); }
+  ctx.fillStyle = '#1d1a10'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let cm = 0; cm <= 80; cm++){ const x = tz + cm * SC; if (x > WW + 10) break; if (cm % 10 === 0){ ctx.font = '700 11px "Roboto Mono", monospace'; ctx.fillText(String(cm), x + (cm ? 0 : 6), TY + 22); } else { ctx.font = '500 4.6px "Roboto Mono", monospace'; ctx.fillText(String(cm), x, TY + 15.5); } }
+  ctx.fillStyle = '#8b8f95'; ctx.fillRect(tz - 4, TY - 2, 4, TH + 4); ctx.strokeStyle = 'rgba(29,26,16,.7)'; ctx.lineWidth = 0.8; ctx.setLineDash([3, 3]); line(ctx, tz, TY + TH, tz, FCY - 15); ctx.setLineDash([]);
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(180,40,30,.85)'; ctx.lineWidth = 0.9; line(ctx, xr, TY - 6, xr, TY + TH + 6);
+  ctx.fillStyle = '#4b3d2a'; ctx.font = `700 ${11 * LBL}px "Nunito", sans-serif`; ctx.textAlign = 'left'; ctx.fillText('өлшеуіш таспа', Math.max(tz + 6, 8), TY - 9 - 3 * (LBL - 1));
+  /* side view */
+  const wallTop = YB - WALLH * SV, hp = V.h * SV;
+  ctx.fillStyle = 'rgba(210,235,245,.75)'; ctx.fillRect(VX - 9, wallTop, Lv * SC + 18, YB - wallTop + 9);
+  const jc = Math.round((SIM.ny - 1) / 2), u = SIM.u, sd = x => x * 6 / (1 + Math.abs(x) * 20); ctx.beginPath(); ctx.moveTo(VX, YB);
+  for (let i = 0; i <= NX - 1; i++){ const val = u ? u[jc * NX + i] : 0; ctx.lineTo(VX + (i + 0.5) * SIM.dx * SC, YB - hp - sd(val) * SV); }
+  ctx.lineTo(xr, YB); ctx.closePath(); const g = ctx.createLinearGradient(0, YB - hp, 0, YB); g.addColorStop(0, '#3fb3d8'); g.addColorStop(1, '#1b6f93'); ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = '#bdeefc'; ctx.lineWidth = 1.2; ctx.beginPath(); for (let i = 0; i <= NX - 1; i++){ const val = u ? u[jc * NX + i] : 0, x = VX + (i + 0.5) * SIM.dx * SC, y = YB - hp - sd(val) * SV; if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); } ctx.stroke();
+  ctx.fillStyle = 'rgba(70,110,130,.9)'; ctx.fillRect(VX - 9, wallTop, 9, YB - wallTop + 9); ctx.fillRect(xr, wallTop, 9, YB - wallTop + 9); ctx.fillRect(VX - 9, YB, Lv * SC + 18, 9);
+  /* float (side) */
+  const fz = YB - hp + floatDepth() * SV / 10;
+  ctx.fillStyle = '#e04a2f'; ctx.beginPath(); ctx.ellipse(fx, fz - 6, 15, 9, 0, Math.PI, 0); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(fx, fz - 6, 15, 9, 0, 0, Math.PI); ctx.fill(); ctx.strokeStyle = '#7a2414'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.ellipse(fx, fz - 6, 15, 9, 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.strokeStyle = '#7a2414'; ctx.lineWidth = 2.4; line(ctx, fx, fz - 15, fx, fz - 34); circle(ctx, fx, fz - 36, 4); ctx.fillStyle = '#e04a2f'; ctx.fill();
+  if (RT.pushDrag){ ctx.fillStyle = '#0d1b22'; ctx.font = `800 ${13 * LBL}px "Nunito", sans-serif`; ctx.textAlign = 'left'; ctx.fillText('батыру: ' + Math.round(RT.pushDrag.push) + ' мм', fx + 22, fz - 20); }
+  else if (!RT.run){ ctx.fillStyle = 'rgba(13,27,34,.75)'; ctx.font = `700 ${11 * LBL}px "Nunito", sans-serif`; ctx.textAlign = 'left'; ctx.fillText('↓ төмен сүйреп, жіберіңіз', fx + 22, fz - 26); }
+  ctx.fillStyle = '#16232a'; ctx.fillRect(xr + 12, YB - hp - 16, 26, 20); ctx.fillStyle = sensorOn ? '#4fe08c' : running ? '#ffb648' : '#55707b'; circle(ctx, xr + 25, YB - hp - 6, 4); ctx.fill();
+}
+function render(){
+  const v = VW; if (!v || !v.w) return; const ctx = v.ctx, T = v.T; ctx.clearRect(0, 0, v.w, v.h); ctx.fillStyle = '#d8cfbe'; ctx.fillRect(0, 0, v.w, v.h);
+  const LBL = clamp(0.6 / T.s, 1, 2.1); ctx.save(); ctx.translate(T.ox, T.oy); ctx.scale(T.s, T.s); drawScene(ctx, LBL); ctx.restore();
+  const Lz = RT.lens; if (Lz && RT.mag){ const rad = Math.min(110, Math.max(60, v.w * 0.13)), z = Math.max(4, 1.8 / T.s); let lx = Lz.px, ly = Lz.py; if (Lz.touch){ ly = Lz.py - rad - 22; if (ly < rad * 0.5) ly = Lz.py + rad + 22; }
+    const wxp = (Lz.px - T.ox) / T.s, wyp = (Lz.py - T.oy) / T.s, s2 = T.s * z; ctx.save(); ctx.beginPath(); ctx.arc(lx, ly, rad, 0, Math.PI * 2); ctx.clip(); ctx.translate(lx - wxp * s2, ly - wyp * s2); ctx.scale(s2, s2); drawScene(ctx, 1); ctx.restore();
+    ctx.save(); ctx.strokeStyle = '#0a6b94'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(lx, ly, rad, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+}
+
+/* ================= pointer ================= */
+function wpt(e){ const v = VW, r = v.cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top; return { x: (px - v.T.ox) / v.T.s, y: (py - v.T.oy) / v.T.s, px, py, s: v.T.s }; }
+const locked = () => !S.started || !!S.result;
+function attachPointer(){
+  const cv = VW.cv;
+  cv.addEventListener('pointerdown', e => {
+    if (e.button) return; const p = wpt(e);
+    if (RT.mag){ RT.lens = { px: p.px, py: p.py, touch: e.pointerType !== 'mouse' }; RT.lensDown = true; if (e.pointerType !== 'mouse') cv.setPointerCapture(e.pointerId); RT.need = true; return; }
+    if (locked()) return; if (!S.safe.passed){ flash('Алдымен «Қауіпсіздік» бетіндегі тесттен өтіңіз.'); return; }
+    const tol = Math.max(10, 12 / p.s), fx = wx(V.xf), fz = YB - V.h * SV;
+    if (Math.abs(p.x - fx) <= 18 + tol && p.y >= fz - 48 - tol && p.y <= fz + 16 + tol){ if (RT.run){ flash('Алдыңғы өлшеу әлі аяқталған жоқ.'); return; } RT.pushDrag = { y0: p.y, push: 0 }; cv.setPointerCapture(e.pointerId); e.preventDefault(); RT.need = true; return; }
+    if (p.y >= TY - tol / 2 && p.y <= TY + TH + tol / 2 && p.x >= wx(S.tape) - 8 && p.x <= wx(S.tape) + 80 * SC){ RT.drag = { dx: p.x - wx(S.tape) }; cv.setPointerCapture(e.pointerId); e.preventDefault(); }
+  });
+  cv.addEventListener('pointermove', e => {
+    const p = wpt(e);
+    if (RT.mag){ if (e.pointerType === 'mouse' || RT.lensDown){ RT.lens = { px: p.px, py: p.py, touch: e.pointerType !== 'mouse' }; RT.need = true; } return; }
+    if (RT.pushDrag){ RT.pushDrag.push = clamp((p.y - RT.pushDrag.y0) / (SV / 10), 0, maxPush()); RT.need = true; return; }
+    if (RT.drag){ let z = (p.x - RT.drag.dx - VX) / SC; if (Math.abs(z - V.xf) < 0.35) z = V.xf; S.tape = clamp(Math.round(z * 10) / 10, -4.5, 30); RT.need = true; return; }
+    if (e.pointerType === 'mouse'){ const fx = wx(V.xf), fz = YB - V.h * SV; cv.style.cursor = locked() ? 'default' : (Math.abs(p.x - fx) <= 22 && p.y >= fz - 50 && p.y <= fz + 18) ? 'ns-resize' : (p.y >= TY && p.y <= TY + TH && p.x >= wx(S.tape) && p.x <= wx(S.tape) + 80 * SC) ? 'ew-resize' : 'default'; }
+  });
+  const end = e => {
+    if (RT.mag){ RT.lensDown = false; if (e && e.pointerType !== 'mouse'){ RT.lens = null; RT.need = true; } return; }
+    if (RT.pushDrag){ const pu = RT.pushDrag.push; RT.pushDrag = null; RT.need = true; if (pu >= 1) startTrial(pu); else flash('Қалтқыны төмен қарай сүйреп батырыңыз (бірнеше миллиметр), сосын жіберіңіз.'); return; }
+    if (RT.drag){ RT.drag = null; saveSoon(); renderSideLite(); }
+  };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('pointerleave', e => { if (RT.mag && e.pointerType === 'mouse'){ RT.lens = null; RT.need = true; } });
+  cv.addEventListener('keydown', e => { if (locked() || !S.safe.passed) return; if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ e.preventDefault(); S.tape = clamp(Math.round((S.tape + (e.key === "ArrowLeft" ? -1 : 1) * (e.shiftKey ? 1 : 0.1)) * 10) / 10, -4.5, 30); saveSoon(); RT.need = true; } });
+}
+
+/* ================= hints / side ================= */
+function flash(msg, warn){ ALERT = { msg, warn: !!warn, until: performance.now() + 7000 }; lastH = ''; updateHints(); }
+const filled = x => String(x == null ? '' : x).trim() !== '';
+function steps(){ const E = S.E; return [[filled(E.l), 'Өлшеуіш таспамен l-ді өлшеп, метрмен жазу']].concat(S.T.map((x, i) => [!!x && filled(E.t[i]), (i + 1) + '-тәжірибе: толқын тудырып, t-ны жазу'])); }
+function hint3(){
+  if (!S.safe.passed) return 'Алдымен «Қауіпсіздік» бетіндегі тесттен өтіңіз.'; if (S.result) return 'Жұмыс тапсырылды. Кюветаны тек қарауға болады.';
+  if (RT.run) return 'Толқын таралып жатыр… Датчик толқынды сезгенде секундомер өзі тоқтайды.';
+  const st = steps(), i = st.findIndex(x => !x[0]);
+  if (RT.last && RT.last.slot != null && !filled(S.E.t[RT.last.slot])) return 'Секундомер тоқтады: ' + fmt(RT.last.tD, 2) + ' с. Бұл мәнді дәптердегі ' + (RT.last.slot + 1) + '-тәжірибе жолына жазыңыз.' + (calm() ? '' : ' Келесі тәжірибе алдында су тынышталғанша күтіңіз.');
+  if (i < 0) return 'Барлық өлшеулер жасалды. «Есептеу» бетіне өтіңіз.' + (S.T.some(x => x && !x.valid) ? ' Ескерту: ⚠ белгіленген тәжірибе су тыныш емес кезде басталды, оны ↺ батырмасымен қайталаған жөн.' : '');
+  if (i === 0 && (S.T.some(Boolean) || Math.abs(S.tape - V.xf) > 0.05)) return 'Өлшеуіш таспаны сүйреп, оның нөлін (сұр ұшын) қалтқының центріне дәл келтіріңіз. «🔍 Лупа» арқылы ыдыстың қарсы ішкі шетіне (қызыл сызық) келетін көрсеткішті оқып, l-ді метрмен жазыңыз (мысалы, 0,523 м).';
+  if (i === 0) return 'Таспаның нөлі қалтқының центрінде тұр. «🔍 Лупа» арқылы ыдыстың қарсы ішкі шетіне (қызыл сызық) келетін көрсеткішті оқыңыз да, l-ді метрмен жазыңыз.';
+  if (!calm()) return 'Су әлі тербеліп тұр: толқындар қабырғалардан шағылып жүр. Су тынышталғанша күтіңіз («су тыныш» шамы жасыл болады).';
+  return 'Су тыныш. Бүйір көріністегі қалтқыны төмен сүйреп батырыңыз да, жіберіңіз (немесе «▶ Қалтқыны батырып жіберу» батырмасын басыңыз). Толқын қарсы шетке жеткенде секундомер өзі тоқтайды.';
+}
+function updateHints(){
+  if (S.page !== 3) return; const a = ALERT && performance.now() < ALERT.until ? ALERT : null, el = $('#hint3'), t = a ? a.msg : hint3(), key = t + (a && a.warn);
+  if (key === lastH) return; lastH = key; el.textContent = t; el.classList.toggle('warn', !!(a && a.warn));
+}
+function updateWatch(){
+  if (S.page !== 3) return; const d = $('#watchDigits'), r = RT.run; let t = 0, note = '';
+  if (r){ t = SIM.simT - r.t0; note = (nextSlotLabel(r.slot)) + ' · өлшеу жүріп жатыр'; } else if (RT.last && RT.last.tD != null){ t = RT.last.tD; note = (RT.last.slot + 1) + '-тәжірибе · секундомер тоқтады'; } else { const s = nextSlot(); note = s >= 0 ? 'Келесі: ' + (s + 1) + '-тәжірибе' : 'Бес тәжірибе де жасалды'; }
+  const txt = fmt(Math.floor(t * 100) / 100, 2); if (d.dataset.v !== txt){ d.dataset.v = txt; d.innerHTML = txt + '<small>с</small>'; }
+  const lw = $('#ledWater'), cl = r ? 'led run' : calm() ? 'led calm' : 'led moving', tx = r ? 'толқын таралуда' : calm() ? 'су тыныш' : 'су тербеліп тұр'; if (lw.className !== cl){ lw.className = cl; lw.textContent = tx; }
+  const ls = $('#ledSensor'), sOn = performance.now() < RT.sensorFlash, cs = sOn ? 'led calm' : r ? 'led moving' : 'led', ts = sOn ? 'датчик: толқын жетті' : r ? 'датчик күтуде' : 'датчик'; if (ls.className !== cs){ ls.className = cs; ls.textContent = ts; }
+  const wn = $('#watchNote'); if (wn.textContent !== note) wn.textContent = note;
+  const ws = $('#waterStat'); const wtx = r ? 'толқын таралуда' : calm() ? 'су тыныш' : 'су тербеліп тұр'; if (ws.textContent !== wtx) ws.textContent = wtx;
+}
+const nextSlotLabel = s => (s + 1) + '-тәжірибе';
+function nbHTML(){
+  const E = S.E, lk = locked();
+  let h = `<p class="label">Бақылау дәптері</p><div class="fld"><span>l (қалтқы → қарсы шет) =</span><input class="num" data-e="l" id="nb-l" inputmode="decimal" autocomplete="off" value="${esc(E.l)}"${lk ? ' disabled' : ''}> м</div>`;
+  h += `<div class="tw"><table class="t"><thead><tr><th>№</th><th>t, с</th><th>Күйі</th><th></th></tr></thead><tbody>` + S.T.map((x, i) => `<tr><td class="n">${i + 1}</td><td><input class="num" data-e="t" data-i="${i}" id="nb-t${i}" inputmode="decimal" autocomplete="off" value="${esc(E.t[i])}"${lk ? ' disabled' : ''} aria-label="${i + 1}-тәжірибе: t, с"></td><td>${!x ? (RT.redo === i ? '<span class="tst">қайталанады</span>' : '<span class="tst">өлшенбеген</span>') : x.valid ? '<span class="tst ok">✓ өлшенді</span>' : '<span class="tst bad">⚠ су тыныш емес еді</span>'}</td><td>${x ? `<button type="button" class="mini" data-act="redo" data-v="${i}"${lk || RT.run ? ' disabled' : ''} title="Қайта өлшеу">↺</button>` : ''}</td></tr>`).join('') + `</tbody></table></div>`;
+  h += `<p class="small muted">t-ны секундомерден 0,01 с дәлдікпен жазыңыз. l-ді метрмен 0,001 м дәлдікпен жазыңыз.</p>`;
+  return h;
+}
+function renderSide(){
+  $('#nb3').innerHTML = nbHTML(); const lk = locked() || !S.safe.passed;
+  $('#pushBtn').disabled = lk || !!RT.run; const pr = $('#pushRange'), mp = maxPush(); pr.max = String(mp); if (+pr.value > mp) pr.value = String(mp); $('#pushVal').textContent = pr.value + ' мм';
+  $('#magBtn').setAttribute('aria-pressed', String(RT.mag));
+  $('#help3').textContent = RT.mag ? 'Таспаның үстіне курсорды (саусақты) апарыңыз: лупа шығады. Лупаны өшіру үшін «🔍 Лупа» батырмасын қайта басыңыз.' : 'Таспаны оңға-солға сүйреңіз (пернетақтада ← →). Қалтқыны бүйір көріністе төмен сүйреп батырыңыз да, жіберіңіз.';
+  renderSideLite();
+}
+function renderSideLite(){
+  const st = steps(), i = st.findIndex(x => !x[0]); $('#chk3').innerHTML = st.map(([ok, t], j) => `<li class="${ok ? 'y' : j === i ? 'now' : ''}">${esc(t)}</li>`).join('');
+  lastH = ''; updateHints(); refreshDerived(); RT.need = true;
+}
+
+/* ================= calc / chart ================= */
+function buildCalc(){ $('#calcBody').innerHTML = arr(NTR, 0).map((_, k) => `<tr><td class="n">${k + 1}</td><td class="ro" id="ro-t${k}">—</td><td class="ro" id="ro-l${k}">—</td><td><input class="num" data-e="v" data-i="${k}" id="in-v${k}" inputmode="decimal" autocomplete="off" aria-label="${k + 1}-тәжірибе: v, м/с"></td><td><input class="num" data-e="dv" data-i="${k}" id="in-dv${k}" inputmode="decimal" autocomplete="off" aria-label="${k + 1}-тәжірибе: Δv, м/с"></td></tr>`).join(''); }
+function drawChart(){
+  const cv = $('#cvChart'); if (!cv) return; const r = cv.getBoundingClientRect(); if (!r.width) return;
+  const dpr = Math.min(2.5, window.devicePixelRatio || 1); cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = r.width, H = r.height, m = { l: 56, r: 14, t: 14, b: 30 }; ctx.fillStyle = C.surface; ctx.fillRect(0, 0, W, H);
+  const E = S.E, vs = E.v.map(num), vm = num(E.vm), dvm = num(E.dvm), all = vs.concat([vm]).filter(fin);
+  let lo = all.length ? Math.min(...all) : 0.3, hi = all.length ? Math.max(...all) : 0.6; if (fin(vm) && fin(dvm)){ lo = Math.min(lo, vm - dvm); hi = Math.max(hi, vm + dvm); } const pad = Math.max(0.01, (hi - lo) * 0.25); lo -= pad; hi += pad;
+  const Y = v => H - m.b - (v - lo) / (hi - lo) * (H - m.t - m.b), Xp = k => m.l + (k + 0.5) * (W - m.l - m.r) / NTR;
+  const stp = (hi - lo) / 5, p10 = Math.pow(10, Math.floor(Math.log10(stp))), st = [1, 2, 5, 10].map(x => x * p10).find(x => x >= stp) || stp;
+  ctx.strokeStyle = C.line; ctx.fillStyle = C.muted; ctx.lineWidth = 1; ctx.font = `11px "Roboto Mono", monospace`; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st){ line(ctx, m.l, Y(v), W - m.r, Y(v)); ctx.fillText(fmt(v, st < 0.01 ? 3 : 2), m.l - 6, Y(v)); }
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top'; for (let k = 0; k < NTR; k++) ctx.fillText(String(k + 1), Xp(k), H - m.b + 8);
+  if (fin(vm)){ if (fin(dvm) && dvm > 0){ ctx.fillStyle = C['primary']; ctx.globalAlpha = 0.14; ctx.fillRect(m.l, Y(vm + dvm), W - m.l - m.r, Y(vm - dvm) - Y(vm + dvm)); ctx.globalAlpha = 1; } ctx.strokeStyle = C.primary; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); line(ctx, m.l, Y(vm), W - m.r, Y(vm)); ctx.setLineDash([]); }
+  vs.forEach((v, k) => { if (fin(v)){ ctx.fillStyle = C.accent; circle(ctx, Xp(k), Y(v), 6); ctx.fill(); ctx.strokeStyle = C.surface; ctx.lineWidth = 2; ctx.stroke(); } });
+}
+
+/* ================= inputs ================= */
+function qOrder(key, n){ const r = mulberry32(((S.seed || DEMO_SEED) + hashStr(key)) >>> 0); const idx = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--){ const j = Math.floor(r() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; } return idx; }
+function buildSafety(){ const at = S.safe.attempts; $('#safeQ').innerHTML = SAFE_Q.map((q, qi) => `<fieldset class="q"><legend>${qi + 1}. ${esc(q.q)}</legend>` + qOrder('safe' + qi + '|' + at, 4).map(ai => `<label><input type="radio" name="sq${qi}" id="sq${qi}-${ai}" value="${ai}"><span>${esc(q.a[ai])}</span></label>`).join('') + `</fieldset>`).join(''); S.safe.ans.forEach((a, qi) => { if (a !== null) { const el = document.getElementById(`sq${qi}-${a}`); if (el) el.checked = true; } }); }
+function buildQs(){ $('#conclBox').innerHTML = QS.map((q, i) => `<fieldset class="q"><legend>${i + 1}. ${esc(q.q)}</legend>` + qOrder(q.k, 4).map(ai => `<label><input type="radio" name="c-${q.k}" id="c-${q.k}-${ai}" value="${ai}" data-e="${q.k}"><span>${esc(q.a[ai])}</span></label>`).join('') + `</fieldset>`).join(''); }
+function fillInputs(){
+  const E = S.E; $$('#pages input[data-e]').forEach(el => { const k = el.dataset.e; if (el.type === 'radio') el.checked = E[k] != null && +el.value === E[k]; else if (el.dataset.i != null) el.value = E[k][+el.dataset.i] || ''; else el.value = E[k] || ''; });
+  buildSafety();
+}
+function onInput(e){
+  const t = e.target; if (!t || t.classList.contains('reg-in')) return; let m;
+  if (t.id === 'pushRange'){ $('#pushVal').textContent = t.value + ' мм'; return; }
+  if ((m = (t.id || '').match(/^sq(\d)-(\d)$/))) { if (S.safe.passed) return; S.safe.ans[+m[1]] = +m[2]; saveSoon(); return; }
+  if (locked()) return; const k = t.dataset.e; if (!k) return;
+  if (t.type === 'radio') S.E[k] = +t.value; else if (t.dataset.i != null) S.E[k][+t.dataset.i] = t.value; else S.E[k] = t.value;
+  saveSoon(); if (t.id && t.id.indexOf('nb-') === 0) renderSideLite(); else { refreshDerived(); drawChart(); }
+}
+function safetyCheck(){
+  if (locked() || S.safe.passed) return; const o = $('#safeOut');
+  if (S.safe.ans.some(a => a === null)) { o.hidden = false; o.className = 'warnmsg'; o.textContent = 'Барлық 4 сұраққа жауап беріңіз.'; return; }
+  const sc = S.safe.ans.reduce((a, x, i) => a + (x === SAFE_Q[i].c ? 1 : 0), 0); S.safe.attempts++; if (S.safe.first === null) S.safe.first = sc; if (sc >= 3) S.safe.passed = true; S.safe.last = sc;
+  saveDraft(); renderSafety(); updateUI();
+}
+function safetyRetry(){ if (S.safe.passed) return; S.safe.ans = arr(4, null); S.safe.last = null; buildSafety(); renderSafety(); saveSoon(); }
+function renderSafety(){
+  const o = $('#safeOut'), sf = S.safe; $$('#safeQ input').forEach(el => { el.disabled = locked() || sf.passed || (sf.last != null && !sf.passed); });
+  $('#safeCheck').hidden = sf.passed || (sf.last != null && !sf.passed); $('#safeRetry').hidden = sf.passed || sf.last == null;
+  if (sf.passed) { o.hidden = false; o.className = 'okmsg'; o.textContent = `Тест өтілді${sf.last != null ? ' (' + sf.last + '/4)' : ''}. Тәжірибеге кіруге рұқсат етілді.`; }
+  else if (sf.last != null) { o.hidden = false; o.className = 'warnmsg'; o.textContent = `4 сұрақтың ${sf.last}-іне дұрыс жауап бердіңіз. Ережелерді қайта оқып, тестті қайталаңыз: кемінде 3 дұрыс жауап керек.`; }
+  else o.hidden = true;
+}
+
+/* ================= derived ================= */
+function stepDone(){
+  const E = S.E;
+  return [S.started, S.started && !!S.seen[1], S.safe.passed, steps().every(x => x[0]), E.v.every(filled) && E.dv.every(filled) && ['vm', 'dvm', 'eps', 'vf', 'dvf'].every(k => filled(E[k])), QS.every(q => E[q.k] !== null), !!S.result];
+}
+function refreshDerived(){
+  const st = stepDone(); $$('.step').forEach((b, i) => { b.classList.toggle('done', !!st[i]); b.classList.toggle('lock', i === 3 && !S.safe.passed); });
+  $('#progBar').style.width = Math.round(100 * st.filter(Boolean).length / 7) + '%';
+  const E = S.E; for (let k = 0; k < NTR; k++){ const a = $('#ro-t' + k), b = $('#ro-l' + k); if (a) a.textContent = String(E.t[k] || '').trim() || '—'; if (b) b.textContent = String(E.l || '').trim() || '—'; }
+  $('#summary').textContent = summaryText(S.E) || 'Есептеулер мен сұрақтарға жауап берген сайын қорытынды осында құралады.'; renderCompleteness();
+}
+function renderCompleteness(){
+  const st = stepDone(), ml = []; if (!S.safe.passed) ml.push([2, 'тест']); if (!st[3]) ml.push([3, 'өлшеулер толық емес']); if (!st[4]) ml.push([4, 'есептеулер толық емес']); const nq = QS.filter(q => S.E[q.k] === null).length; if (nq) ml.push([5, nq + ' сұрақ']);
+  $('#completeness').innerHTML = `<p class="label">Жұмыстың толықтығы</p>` + (ml.length ? `<p style="display:flex;gap:8px;align-items:center"><span class="st x">!</span><span>Аяқталмаған бөлімдер:</span></p><ul>` + ml.map(([p, k]) => `<li><button type="button" class="ghost" data-goto="${p}" style="min-height:0;padding:3px 8px">${PAGE_NAMES[p]}</button> — ${esc(k)}</li>`).join('') + `</ul>` : `<p style="display:flex;gap:8px;align-items:center"><span class="st y">✓</span><span>Барлық бөлім толтырылды</span></p>`);
+}
+function setPage(i, opts){
+  i = clamp(i | 0, 0, 6); const msg = $('#navMsg');
+  if (i > 0 && !S.started) { i = 0; msg.hidden = true; } else if (i === 3 && !S.safe.passed) { i = 2; msg.textContent = 'Тәжірибеге кіру үшін алдымен қауіпсіздік тестінен өтіңіз.'; msg.hidden = false; } else msg.hidden = true;
+  S.page = i; S.seen[i] = true; $$('#pages > [data-page]').forEach(p => { p.hidden = +p.dataset.page !== i; });
+  $$('.step').forEach((b, k) => { if (k === i) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+  const chrome = S.started && i > 0; $('#topHeader').hidden = !chrome; $('#stepper').hidden = !chrome;
+  ALERT = null; lastH = ''; RT.drag = null; RT.need = true; if (!(opts && opts.noScroll)) { try { window.scrollTo({ top: 0 }); } catch (e) {} }
+  const cur = $(`.step[data-p="${i}"]`); if (cur && cur.scrollIntoView && chrome) { try { cur.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) {} }
+  if (i === 3) renderSide(); if (i === 4) requestAnimationFrame(drawChart); saveSoon(); refreshDerived();
+}
+function updateMode(){
+  const b = $('#modeBadge'); if (!initDone) { b.className = 'pill'; b.textContent = 'Қосылуда…'; return; }
+  if (online) { b.className = 'pill on'; b.textContent = 'Онлайн · нәтиже мұғалімге жіберіледі'; } else { b.className = 'pill off'; b.textContent = 'Офлайн · нәтиже коды беріледі'; }
+  $('#modeNote').textContent = online ? 'Тапсырған сәтте нәтижеңіз мұғалімнің кестесіне түседі.' : 'Бет офлайн режимде ашылған. Тапсырғаннан кейін нәтиже коды шығады, оны мұғаліміңізге жіберіңіз.';
+  $('#teacherBtn').hidden = $('#teacherBtnReg').hidden = !(isOwner && db);
+}
+function updateUI(){
+  $('#startForm').hidden = S.started; $('#regDone').hidden = !S.started; const chip = $('#studentChip'); chip.hidden = !S.started;
+  if (S.started) { chip.textContent = `${S.name} · ${S.cls}`; $('#whoLine').innerHTML = `<b>${esc(S.name)}</b>, ${esc(S.cls)} · нұсқа <span class="mono">${vcode()}</span>`; }
+  const sb = $('#startBtn'); sb.disabled = !initDone; sb.textContent = initDone ? 'Кіру' : 'Қосылуда…';
+  const lk = locked(); $$('#pages input[data-e]').forEach(el => { el.disabled = lk; }); $('#submitBtn').disabled = lk; $('#preSubmit').hidden = !!S.result;
+  renderSafety(); renderResult(); if (S.page === 3) renderSide(); refreshDerived(); RT.need = true;
+}
+
+/* ================= registration / submit ================= */
+function startWork(e){
+  e.preventDefault(); const name = $('#stName').value.trim().replace(/\s+/g, ' '); let cls = $('#stCls').value; if (cls === '__other') cls = $('#stClsOther').value.trim();
+  if (name.length < 3 || !/\s/.test(name)) { $('#startErr').textContent = 'Аты-жөніңізді толық жазыңыз (аты мен тегі).'; $('#stName').focus(); return; }
+  if (!cls) { $('#startErr').textContent = 'Сыныбыңызды таңдаңыз.'; $('#stCls').focus(); return; }
+  $('#startErr').textContent = ''; const seed = uid ? hashStr('lab9-4|' + uid) : (Math.floor(Math.random() * 4294967295) >>> 0);
+  V = makeVariant(seed); simInit(); const keep = S.result; S = defaults(); S.result = keep; S.started = true; S.name = name; S.cls = cls; S.seed = seed;
+  buildQs(); fillInputs(); saveDraft(); updateUI(); setPage(1);
+}
+function buildSubmission(res, at){ return { name: S.name, cls: S.cls, variant: vcode(), seed: S.seed, score: res.score, grade: res.grade5, crit: res.crit, info: res.info, vm: res.vm, dvm: res.dvm, eps: res.eps, vTrue: res.vTrue, at, E: JSON.parse(JSON.stringify(S.E)), T: JSON.parse(JSON.stringify(S.T)), safe: { first: S.safe.first, attempts: S.safe.attempts }, truth: { Lv: V.Lv, h: V.h, l: V.l }, app: 'lab9-4' }; }
+async function doSubmit(){
+  $('#confirmBox').hidden = true; $('#submitErr').textContent = ''; const res = grade(S), at = new Date().toISOString(), btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'Жіберілуде…'; let sent = false;
+  if (online && db && uid) { try { await db.doc('subs/' + uid).set(buildSubmission(res, at)); sent = true; } catch (err) { if (err && err.code === 'unavailable') { try { await new Promise(r => setTimeout(r, 600 + Math.random() * 600)); await db.doc('subs/' + uid).set(buildSubmission(res, at)); sent = true; } catch (e2) {} } if (!sent) { online = false; updateMode(); $('#submitErr').textContent = err && err.code === 'quota_exceeded' ? 'Мұғалімнің кестесі толып қалды. Нәтиже коды берілді, оны мұғаліміңізге жіберіңіз.' : 'Нәтижені мұғалімге жіберу мүмкін болмады. Нәтиже коды берілді, оны мұғаліміңізге жіберіңіз.'; } } }
+  S.result = { crit: res.crit, info: res.info, score: res.score, grade5: res.grade5, at, online: sent, code: makeCode(res, at) }; btn.textContent = 'Жұмысты тапсыру'; saveDraft(); updateUI(); setPage(6);
+}
+function renderResult(){
+  const box = $('#resultBox'), r = S.result; box.hidden = !r; if (!r) { box.innerHTML = ''; return; }
+  const rows = RUBRIC.map((rb, i) => `<tr><td class="k">К${i + 1}</td><td>${esc(rb.d)}<br><span class="muted" style="font-size:13.5px">${esc(r.info[i] || '')}</span></td><td class="o">${rb.o}</td><td class="p"><span class="st ${r.crit[i] ? 'y' : 'x'}">${r.crit[i] ? '✓' : '✗'}</span></td></tr>`).join('');
+  let html = `<div class="score"><div class="big">${r.score}<small> / 10</small></div><div class="meta"><span>Баға: <span class="grade g${r.grade5}">${r.grade5}</span></span><span class="muted">${esc(S.name)} · ${esc(S.cls)} · нұсқа <span class="mono">${vcode()}</span></span><span class="muted">Тапсырылды: ${esc(fmtTime(r.at))}</span></div></div>`;
+  html += `<div class="export"><div class="row"><span class="doc" aria-hidden="true">W</span><div style="display:grid;gap:2px;flex:1;min-width:200px"><b style="font-size:16.5px">Зертханалық жұмыстың есебі (Word)</b><span class="small">Кесте, есептеулер, қателік, қорытынды, сұрақтарға жауаптар және бағалау. Файлды ашып, басып шығаруға немесе мұғалімге жіберуге болады.</span></div><button type="button" class="primary" id="docxBtn">📄 Есепті жүктеу (.docx)</button></div><span class="small muted" id="docxMsg" aria-live="polite"></span></div>`;
+  html += r.online ? `<p class="okmsg">✓ Нәтиже мұғалімге жіберілді.</p>` : `<div class="card"><p class="label">Нәтиже коды</p><p style="font-size:15px">Бұл кодты мұғаліміңізге жіберіңіз. Мұғалім оны өз панелінде тексереді.</p><div class="codebox" id="codeText">${esc(r.code)}</div><div class="controls"><button type="button" id="copyCodeBtn">Кодты көшіру</button><span id="copyMsg" class="small muted"></span></div></div>`;
+  html += `<div class="tw"><table class="rubric"><thead><tr><th>№</th><th>Дескриптор</th><th>Мақсат</th><th style="text-align:right">Балл</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  box.innerHTML = html;
+  const cb = $('#copyCodeBtn'); if (cb) cb.addEventListener('click', () => copyText(r.code, $('#copyMsg'), $('#codeText')));
+  $('#docxBtn').addEventListener('click', () => { try { saveFile('Tolqyn_9-4_' + safeName(S.name) + '.docx', reportDocx(subFromState()), $('#docxMsg')); } catch (e) { $('#docxMsg').textContent = 'Есепті жасау мүмкін болмады.'; } });
+}
+async function copyText(text, msgEl, selEl){ try { await navigator.clipboard.writeText(text); if (msgEl) msgEl.textContent = 'Көшірілді'; } catch (e) { if (selEl) { const rg = document.createRange(); rg.selectNodeContents(selEl); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); } if (msgEl) msgEl.textContent = 'Мәтін белгіленді, Ctrl+C арқылы көшіріңіз'; } }
+
+/* ================= teacher ================= */
+function showTeacher(on){ $('#teacherView').hidden = !on; $('#pages').hidden = on; $('#stepper').hidden = on || !(S.started && S.page > 0); $('#topHeader').hidden = !on && !(S.started && S.page > 0); $('#teacherBtn').textContent = on ? 'Зертханаға оралу' : 'Мұғалім панелі'; if (on) renderTeacher(); else setPage(S.page, { noScroll: true }); }
+function teacherList(){ const sel = $('#clsFilter'); return subs.filter(s => !sel.value || s.cls === sel.value).sort((a, b) => (a.cls || '').localeCompare(b.cls || '', 'kk') || (a.name || '').localeCompare(b.name || '', 'kk')); }
+function renderTeacher(){
+  const hasDb = !!(isOwner && db); $('#tOnline').hidden = !hasDb; $('#xlsxBtn').hidden = !hasDb; $('#copyTblBtn').hidden = !hasDb; $('#clsFilter').hidden = !hasDb; $('label[for="clsFilter"]').hidden = !hasDb;
+  if (!hasDb){ $('#tMsg').textContent = 'Нәтижелер кестесі тек беттің иесіне онлайн режимде көрінеді. Мұнда нәтиже кодын тексеруге болады.'; return; }
+  const sel = $('#clsFilter'), cur = sel.value, classes = Array.from(new Set(subs.map(s => s.cls || '').filter(Boolean))).sort((a, b) => a.localeCompare(b, 'kk'));
+  sel.innerHTML = '<option value="">Барлығы</option>' + classes.map(c => `<option value="${esc(c)}"${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  const list = teacherList(), n = list.length, avg = n ? list.reduce((a, s) => a + (s.score || 0), 0) / n : 0, gd = [5, 4, 3, 2].map(g => list.filter(s => s.grade === g).length), eps = list.map(s => s.eps).filter(fin);
+  $('#tStats').innerHTML = `<div class="stat"><span class="v mono">${n}</span><span class="l">Тапсырған оқушы</span></div><div class="stat"><span class="v mono">${n ? fmt(avg, 1) : '—'}</span><span class="l">Орташа балл (10-нан)</span></div><div class="stat"><span class="v mono">${gd.join(' · ')}</span><span class="l">«5» · «4» · «3» · «2» бағалар саны</span></div><div class="stat"><span class="v mono">${eps.length ? fmt(eps.reduce((a, b) => a + b, 0) / eps.length, 1) + ' %' : '—'}</span><span class="l">Орташа салыстырмалы қателік</span></div>`;
+  $('#tBars').innerHTML = RUBRIC.map((rb, k) => { const p = n ? Math.round(100 * list.filter(s => s.crit && s.crit[k]).length / n) : 0; return `<div class="bar" title="${esc(rb.d)}"><span class="k">К${k + 1}</span><span class="track"><span class="fill${p < 50 ? ' low' : ''}" style="width:${p}%"></span></span><span class="pct">${n ? p + '%' : '—'}</span></div>`; }).join('');
+  $('#tEmpty').hidden = n > 0;
+  $('#tBody').innerHTML = list.map(s => {
+    const dots = (s.crit || []).map((c, k) => `<span class="dot${c ? ' y' : ''}" title="К${k + 1}"></span>`).join(''), E = cleanE(s.E), T = cleanT(s.T), tr = s.truth || {};
+    const det = `<div class="det"><span>l = ${esc(dash(E.l))} м${fin(tr.l) ? ' (дұрыс мәні ' + fmt(tr.l / 100, 3) + ' м)' : ''}</span><span>t: ${E.t.map(x => esc(dash(x))).join(' · ')} с</span><span>Секундомер: ${T.map(x => x ? fmt(x.tD, 2) + (x.valid ? '' : '⚠') : '—').join(' · ')} с</span><span>v: ${E.v.map(x => esc(dash(x))).join(' · ')} м/с</span><span>Δv: ${E.dv.map(x => esc(dash(x))).join(' · ')} м/с</span><span>Ыдыс: ${fin(tr.Lv) ? fmt(tr.Lv, 1) + ' см' : '—'}, су тереңдігі ${fin(tr.h) ? fmt(tr.h, 1) + ' см' : '—'}; датчик бойынша v ≈ ${fin(s.vTrue) ? fmt(s.vTrue, 3) : '—'} м/с</span>${(s.info || []).map((x, k) => `<span>К${k + 1}: ${esc(x)}</span>`).join('')}</div>`;
+    return `<tr data-id="${esc(s.id)}"><td><b>${esc(s.name)}</b></td><td>${esc(s.cls)}</td><td class="mono">${esc(s.variant)}</td><td class="mono"><b>${s.score}</b>/10</td><td><span class="grade g${s.grade}">${s.grade}</span></td><td><div class="dots">${dots}</div></td><td class="mono">${fin(s.vm) ? fmt(s.vm, 3) : '—'} ± ${fin(s.dvm) ? fmt(s.dvm, 3) : '—'}</td><td class="mono">${fin(s.eps) ? fmt(s.eps, 1) + ' %' : '—'}</td><td class="mono">${esc(fmtTime(s.at))}</td><td><button type="button" class="ghost" data-tact="det">Толығырақ</button> <button type="button" data-tact="doc" title="Оқушының есебін Word файлы ретінде жүктеу">📄 Word</button> <button type="button" class="danger" data-tact="del">Қайта тапсыру</button></td></tr><tr class="detail" hidden><td colspan="10">${det}</td></tr>`;
+  }).join('');
+}
+function teacherClick(e){
+  const b = e.target.closest('button[data-tact]'); if (!b) return; const tr = b.closest('tr'), id = tr.dataset.id, s = subs.find(x => x.id === id);
+  if (b.dataset.tact === 'det') { const d = tr.nextElementSibling; d.hidden = !d.hidden; b.textContent = d.hidden ? 'Толығырақ' : 'Жасыру'; }
+  else if (b.dataset.tact === 'doc') { if (s) saveFile('Tolqyn_9-4_' + safeName(s.name) + '.docx', reportDocx(s), $('#tMsg')); }
+  else { if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Нәтижені өшіру керек пе? Растау'; b._t = setTimeout(() => { delete b.dataset.armed; b.textContent = 'Қайта тапсыру'; }, 4000); return; } clearTimeout(b._t); b.disabled = true; db.doc('subs/' + id).delete().catch(() => { b.disabled = false; $('#tMsg').textContent = 'Нәтижені өшіру мүмкін болмады.'; }); }
+}
+function tableRows(){
+  const head = ['Аты-жөні', 'Сынып', 'Нұсқа', 'Балл', 'Баға', ...RUBRIC.map((_, k) => 'К' + (k + 1)), 'l, м', 't1', 't2', 't3', 't4', 't5', 'v орт', 'Δv орт', 'ε, %', 'Тапсырылды'];
+  return [head, ...teacherList().map(s => { const E = cleanE(s.E); return [s.name, s.cls, s.variant, s.score, s.grade, ...(s.crit || []), E.l, ...E.t, E.vm, E.dvm, E.eps, fmtTime(s.at)]; })].map(r => r.map(v => String(v == null ? '' : v).replace(/\t/g, ' ')).join('\t')).join('\n');
+}
+function verifyCode(){
+  const out = $('#codeOut'), r = readCode($('#codeIn').value); out.hidden = false;
+  if (!r) { out.className = 'vout badc'; out.textContent = 'Код танылмады. Оны толық, бос орынсыз қойыңыз.'; return; }
+  if (r.bad) { out.className = 'vout badc'; out.textContent = 'Код өзгертілген немесе толық емес: тексеру сомасы сәйкес келмейді.'; return; }
+  out.className = 'vout good'; out.innerHTML = `<b>Код дұрыс.</b> ${esc(r.n)} · ${esc(r.c)} · нұсқа <span class="mono">${esc(r.v)}</span><br>Балл: <b class="mono">${esc(r.s)}/10</b> · баға «${grade5(+r.s || 0)}» · v = <span class="mono">${fin(r.m) ? fmt(r.m, 3) : '—'} ± ${fin(r.d) ? fmt(r.d, 3) : '—'}</span> м/с, ε = <span class="mono">${fin(r.e) ? fmt(r.e, 1) + ' %' : '—'}</span><br>Критерийлер: <span class="mono">${esc(String(r.k).split('').map((c, i) => 'К' + (i + 1) + (c === '1' ? '✓' : '✗')).join(' '))}</span><br>Тапсырылды: ${esc(fmtTime(r.t))}`;
+}
+
+/* ================= capabilities ================= */
+async function initCaps(){
+  const cl = window.claude; if (cl && typeof cl.use === 'function') { try { [userCap, db, dlCap] = await Promise.all([cl.use('user'), cl.use('db'), cl.use('downloads')]); } catch (e) {} }
+  if (userCap) { try { uid = await userCap.id(); isOwner = await userCap.isOwner(); } catch (e) {} }
+  online = !!(db && uid); const d = loadDraft(); if (d) { applyDraft(d); V = makeVariant(S.seed || DEMO_SEED); simInit(); }
+  buildQs(); initDone = true; fillInputs(); updateMode(); updateUI(); setPage(S.started ? S.page : 0, { noScroll: true });
+  if (online) { try { db.doc('subs/' + uid).onSnapshot(snap => {
+    if (snap.exists) { const x = snap.data() || {}; if (!S.result || !S.result.online) {
+      if (!S.started && x.E) { V = makeVariant(x.seed >>> 0); simInit(); S = defaults(); S.started = true; S.name = x.name || ''; S.cls = x.cls || ''; S.seed = x.seed >>> 0; S.E = cleanE(x.E); S.T = cleanT(x.T); S.safe = Object.assign(S.safe, x.safe || {}, { passed: true }); buildQs(); fillInputs(); }
+      S.result = { crit: x.crit || [], info: x.info || [], score: x.score || 0, grade5: x.grade || grade5(x.score || 0), at: x.at, online: true, code: '' }; saveDraft(); updateUI(); setPage(S.page, { noScroll: true }); } }
+    else if (S.result && S.result.online) { S.result = null; saveDraft(); updateUI(); } }, () => {}); } catch (e) {} }
+  if (isOwner && db) { try { db.collection('subs').onSnapshot(snap => { subs = snap.docs.filter(x => x.exists).map(x => Object.assign({ id: x.id }, x.data())); if (!$('#teacherView').hidden) renderTeacher(); }, () => { $('#tMsg').textContent = 'Нәтижелерді жүктеу мүмкін болмады.'; }); } catch (e) {} }
+  if (location.hash === '#teacher') showTeacher(true);
+}
+
+/* ================= loop & wiring ================= */
+let lastUI = 0, lastT = 0, simAcc = 0;
+function frame(now){
+  const fdt = lastT ? Math.min(1 / 30, (now - lastT) / 1000) : 0; lastT = now;
+  if (SIM.active || RT.run){ simAcc += fdt; let n = 0; while (simAcc >= SIM.dt && n < 40){ simStep(); simAcc -= SIM.dt; n++; if (RT.run) trialTick(); } if (n >= 40) simAcc = 0; if (S.page === 3){ paintWater(); RT.need = true; } }
+  else simAcc = 0;
+  if (RT.bob || RT.sensorFlash > now - 50) RT.need = true;
+  if (S.page === 3 && RT.need){ RT.need = false; render(); }
+  if (now - lastUI > 120){ lastUI = now; updateHints(); updateWatch(); const pb = $('#pushBtn'); if (pb && S.page === 3){ const dis = locked() || !S.safe.passed || !!RT.run; if (pb.disabled !== dis) pb.disabled = dis; } }
+  requestAnimationFrame(frame);
+}
+function boot(){
+  simInit(); makeView(); readColors(); buildCalc(); buildQs(); attachPointer(); new ResizeObserver(() => drawChart()).observe($('#cvChart'));
+  $('#rubricBody').innerHTML = RUBRIC.map((r, i) => `<tr><td class="k">К${i + 1}</td><td>${esc(r.d)}</td><td class="o">${r.o}</td><td class="p">1</td></tr>`).join('') + `<tr><td></td><td><b>Барлығы</b></td><td></td><td class="p"><b>10</b></td></tr>`;
+  const mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', readColors);
+  new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+  $('#stepper').addEventListener('click', e => { const b = e.target.closest('.step'); if (b) setPage(+b.dataset.p); });
+  document.addEventListener('click', e => {
+    const g = e.target.closest('[data-go]'); if (g) { setPage(S.page + (+g.dataset.go)); return; } const gt = e.target.closest('[data-goto]'); if (gt) { setPage(+gt.dataset.goto); return; }
+    const b = e.target.closest('[data-act]'); if (!b || b.disabled) return; const a = b.dataset.act;
+    if (a === 'mag'){ RT.mag = !RT.mag; RT.lens = null; renderSide(); return; }
+    if (locked() || !S.safe.passed) return;
+    if (a === 'push') startTrial(+$('#pushRange').value);
+    else if (a === 'redo'){ if (RT.run) return; RT.redo = +b.dataset.v; RT.last = null; flash((RT.redo + 1) + '-тәжірибені қайта жасаңыз: су тынышталғанын тексеріп, қалтқыны батырып жіберіңіз. Жаңа уақытты дәптерге қайта жазыңыз.'); renderSide(); }
+  });
+  $('#pages').addEventListener('input', onInput); $('#pages').addEventListener('change', onInput);
+  $('#stCls').addEventListener('change', () => { $('#otherWrap').hidden = $('#stCls').value !== '__other'; }); $('#startForm').addEventListener('submit', startWork);
+  $('#continueBtn').addEventListener('click', () => { const st = stepDone(); const p = st.findIndex((x, i) => i > 0 && !x); setPage(p < 0 ? 6 : p); });
+  $('#safeCheck').addEventListener('click', safetyCheck); $('#safeRetry').addEventListener('click', safetyRetry);
+  $('#submitBtn').addEventListener('click', () => { $('#confirmBox').hidden = false; $('#confirmYes').focus(); }); $('#confirmNo').addEventListener('click', () => { $('#confirmBox').hidden = true; }); $('#confirmYes').addEventListener('click', doSubmit);
+  $('#teacherBtn').addEventListener('click', () => showTeacher($('#teacherView').hidden)); $('#teacherBtnReg').addEventListener('click', () => showTeacher(true)); $('#backBtn').addEventListener('click', () => showTeacher(false));
+  $('#clsFilter').addEventListener('change', renderTeacher); $('#tBody').addEventListener('click', teacherClick);
+  $('#xlsxBtn').addEventListener('click', () => { const list = teacherList(); if (!list.length){ $('#tMsg').textContent = 'Кестеде әзірге нәтиже жоқ.'; return; } try { saveFile('Tolqyn_9-4_synyp' + ($('#clsFilter').value ? '_' + safeName($('#clsFilter').value) : '') + '.xlsx', classXlsx(list), $('#tMsg')); } catch (e) { $('#tMsg').textContent = 'Excel файлын жасау мүмкін болмады.'; } });
+  $('#copyTblBtn').addEventListener('click', () => copyText(tableRows(), $('#tMsg'), null)); $('#codeBtn').addEventListener('click', verifyCode); $('#codeIn').addEventListener('keydown', e => { if (e.key === 'Enter') verifyCode(); });
+  fillInputs(); updateUI(); setPage(0, { noScroll: true }); requestAnimationFrame(frame); initCaps();
+}
+if (typeof document !== 'undefined' && document.querySelector) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot(); }
+window.__lab94 = { getS: () => S, getRT: () => RT, getV: () => V, getSIM: () => SIM, simInit, simKick, simStep, setV: s => { V = makeVariant(s); }, grade, makeVariant, trialSpeed, cleanE, cleanT, blankE, readCode, makeCode, reportDocx, classXlsx, zipStore, QS, maxPush };
+})();
+</script>
+
+</body></html>

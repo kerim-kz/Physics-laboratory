@@ -1,0 +1,1066 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Линза фокусы зертханасы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Mono&family=PT+Sans:ital,wght@0,400;0,700;1,400&family=PT+Serif:wght@700&display=swap">
+<style>
+/* Layout: a circle-and-line stepper; the experiment pairs a side view of the optical bench with the face of the screen, where the student judges sharpness by eye */
+:root{
+  --bg:#f2eee5; --surface:#fffdf8; --surface-2:#f7f3ea; --ink:#1f1c17; --muted:#615a4e; --line:#e0d8c8;
+  --primary:#16646b; --on-primary:#ffffff; --primary-soft:#dceeee; --amber:#a35f00; --amber-soft:#fbebd0;
+  --ok:#2a7a3f; --ok-soft:#dcf0e0; --bad:#b4342a; --bad-soft:#f9e1dd; --warn:#8a5a08; --warn-soft:#fbefd4; --bench:#22262c;
+  --f-display:"PT Serif",Georgia,serif; --f-body:"PT Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --f-mono:"PT Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111315; --surface:#191c20; --surface-2:#1f2328; --ink:#ece7dc; --muted:#a8a194; --line:#2f343b;
+    --primary:#6cc6c9; --on-primary:#0b2224; --primary-soft:#173236; --amber:#f0b03e; --amber-soft:#3a2b12;
+    --ok:#69cf86; --ok-soft:#15301d; --bad:#ff7f70; --bad-soft:#3d1c19; --warn:#e7b558; --warn-soft:#382a12; --bench:#15181c; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111315; --surface:#191c20; --surface-2:#1f2328; --ink:#ece7dc; --muted:#a8a194; --line:#2f343b;
+  --primary:#6cc6c9; --on-primary:#0b2224; --primary-soft:#173236; --amber:#f0b03e; --amber-soft:#3a2b12;
+  --ok:#69cf86; --ok-soft:#15301d; --bad:#ff7f70; --bad-soft:#3d1c19; --warn:#e7b558; --warn-soft:#382a12; --bench:#15181c; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:16px 48px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:700}
+h2{font-size:1.55rem;line-height:1.2}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:14px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{font-weight:700;font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.shell{max-width:1260px;margin:0 auto;display:grid;gap:14px}
+header.top{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:46px;height:46px;flex:none;border-radius:50%;background:var(--bench);display:grid;place-items:center}
+.logo svg{width:34px;height:34px}
+.brand .t1{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.brand .t2{font-family:var(--f-display);font-weight:700;font-size:1.15rem;line-height:1.2}
+.status{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.on::before{background:var(--ok)} .pill.off::before{background:var(--warn)}
+.chip{font-size:13.5px;padding:5px 12px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-weight:700}
+
+/* stepper: circles joined by a line */
+.stepper{display:flex;padding:10px 6px 8px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.step{flex:1 1 0;min-width:0;position:relative;display:grid;justify-items:center;gap:4px;border:0;background:transparent;padding:2px 2px 4px;font:inherit;font-size:13.5px;color:var(--muted);cursor:pointer;min-height:56px;border-radius:10px}
+.step::before{content:"";position:absolute;top:17px;right:50%;width:100%;height:2px;background:var(--line);z-index:0}
+.step:first-child::before{display:none}
+.step.done::before,.step[aria-current="step"]::before{background:var(--primary)}
+.step .n{position:relative;z-index:1;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:2px solid var(--line);font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.step .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.step.done .n{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.step[aria-current="step"] .n{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 0 0 4px var(--amber-soft)}
+.step[aria-current="step"] .lbl{color:var(--ink);font-weight:700}
+.step.lock{opacity:.5}
+.step:hover:not([aria-current]) .n{border-color:var(--primary)}
+.step:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+@media (max-width:760px){.step .lbl{display:none}.step{min-height:44px}}
+
+button{font:inherit;font-size:15px;font-weight:700;line-height:1.2;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;min-height:42px}
+button:hover:not(:disabled){border-color:var(--primary)}
+button:focus-visible,input:focus-visible,select:focus-visible,canvas:focus-visible,summary:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+button.primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+button.am{border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
+button.danger[data-armed]{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+button:disabled{opacity:.42;cursor:not-allowed}
+button.ghost{background:transparent}
+input[type=text],select{font:inherit;font-size:16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 12px;min-height:46px;width:100%}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;border-radius:0;min-height:40px;padding:7px 12px;font-size:14px}
+.seg button + button{border-left:1px solid var(--line)}
+.sep{width:1px;align-self:stretch;background:var(--line);margin:0 2px}
+
+.page{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;display:grid;gap:18px;min-width:0}
+@media (max-width:560px){.page{padding:16px 14px 18px}}
+.page > *{min-width:0}
+.phead{display:grid;gap:6px}
+.phead .tag{font-family:var(--f-mono);font-size:12.5px;color:var(--amber)}
+.phead .goal{font-size:15.5px;color:var(--muted);max-width:86ch}
+.pnav{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;padding-top:14px;border-top:1px solid var(--line)}
+.pnav .sp{flex:1}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.bench2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,1fr);gap:16px;align-items:start}
+@media (max-width:1020px){.two,.bench2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:820px){.three{grid-template-columns:minmax(0,1fr)}}
+.col{display:grid;gap:12px;min-width:0;align-content:start}
+.card{border:1px solid var(--line);border-radius:14px;padding:13px 15px;display:grid;gap:10px;background:var(--surface-2);min-width:0}
+.card.pri{border-color:var(--primary);background:var(--primary-soft)}
+.card.am{border-color:var(--amber);background:var(--amber-soft)}
+.prose{display:grid;gap:12px}
+.prose p,.prose li{max-width:74ch}
+ol,ul{margin:0;padding-left:1.3em;display:grid;gap:5px}
+.obj{display:grid;grid-template-columns:auto 1fr;gap:10px;font-size:15.5px}
+.obj code{font-family:var(--f-mono);font-size:12.5px;color:var(--primary);background:var(--primary-soft);border-radius:6px;padding:2px 8px;height:fit-content}
+.formula{display:flex;justify-content:center;align-items:center;gap:26px;flex-wrap:wrap;padding:4px 0}
+.formula math{font-size:1.25em}
+svg.fig{width:100%;height:auto;display:block;margin:0 auto;color:var(--ink)}
+table.ref{border-collapse:collapse;width:100%;font-size:15px}
+table.ref td,table.ref th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.ref th{font-size:13px;color:var(--muted)}
+.mcard{display:grid;gap:6px;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)}
+.mcard .k{font-family:var(--f-mono);font-size:12.5px;color:var(--amber)}
+.mcard b{font-family:var(--f-display)}
+
+/* registration */
+.regwrap{min-height:calc(100vh - 60px);display:grid;place-items:center}
+.regcard{width:min(440px,100%);background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:grid}
+.regcard .band{height:124px;display:grid;place-items:center;background:#1c1f24}
+.regcard .band svg{width:300px;height:110px}
+.regcard form,.regcard #regDone{padding:24px 24px 20px;display:grid;gap:16px}
+.regcard h1{font-size:2.1rem;line-height:1.05}
+.regcard label{display:grid;gap:6px;font-weight:700;font-size:15px}
+.regcard .go{width:100%;min-height:50px;font-size:16.5px}
+.err{color:var(--bad);font-size:14.5px;font-weight:700}
+
+/* bench */
+.hint{font-size:15.5px;background:var(--primary-soft);border:1px solid var(--primary);border-radius:12px;padding:10px 15px;min-height:calc(3em * 1.5 + 20px)}
+.hint.warn{background:var(--bad-soft);border-color:var(--bad)}
+.tabs2{display:flex;flex-wrap:wrap;gap:6px}
+.tabs2 button{min-height:42px;padding:6px 12px 6px 7px;font-size:14.5px;display:inline-flex;gap:8px;align-items:center;border-radius:999px}
+.tabs2 button .ck{font-family:var(--f-mono);font-size:12px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line)}
+.tabs2 button.done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+.tabs2 button small{font-weight:400;opacity:.8}
+@media (max-width:760px){.hint{min-height:0}.tabs2 button small{display:none}
+  .page.bp > *{order:8}.page.bp > .phead{order:0}.page.bp > .tabs2{order:1}.page.bp > figure.benchf{order:2}.page.bp > .ctlwrap{order:3}.page.bp > .hint{order:4}.page.bp .bench2{display:contents}.page.bp .bench2 > figure{order:5}.page.bp .bench2 > .col{order:6}}
+figure.view{margin:0;display:grid;gap:6px;min-width:0}
+figure.view figcaption{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px 10px;font-size:13px;font-family:var(--f-mono);color:var(--muted)}
+.cv{position:relative;width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--bench)}
+.cv.b{aspect-ratio:5/2}
+.cv.s{aspect-ratio:4/3}
+.cv canvas{display:block;width:100%;height:100%;touch-action:none}
+.ctlwrap{display:grid;gap:8px}
+.boardhelp{font-size:13.5px;color:var(--muted)}
+.nb{display:grid;gap:10px}
+.nbblk{display:grid;gap:6px;padding:8px 10px;border-radius:10px;border:1px dashed var(--line);background:var(--surface)}
+.nbblk .t{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:700;font-size:14.5px}
+.rec{font-size:12.5px;font-family:var(--f-mono);padding:2px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-weight:400}
+.rec.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.fld{display:flex;align-items:center;gap:8px;font-size:15.5px;flex-wrap:wrap}
+.fld > span:first-child{min-width:132px}
+.num{width:92px;font-family:var(--f-mono);font-size:16px;text-align:center;border:0;border-bottom:1.5px dashed var(--muted);background:transparent;color:var(--ink);padding:5px 2px;border-radius:0;min-height:36px}
+.num:focus{border-bottom:1.5px solid var(--primary);outline:none;background:var(--primary-soft)}
+input:disabled{opacity:.85}
+.checklist{list-style:none;padding:0;display:grid;gap:5px}
+.checklist li{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:start;font-size:14.5px}
+.checklist li::before{content:"";width:18px;height:18px;margin-top:2px;border-radius:50%;border:1.5px solid var(--muted)}
+.checklist li.y::before{content:"✓";display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;background:var(--ok);border-color:var(--ok)}
+.checklist li.y{color:var(--muted)}
+.checklist li.now{font-weight:700}
+.tw{overflow-x:auto;min-width:0}
+table.t{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums;background:var(--surface)}
+table.t th,table.t td{border:1px solid var(--line);padding:5px 7px;text-align:center;vertical-align:middle}
+table.t th{background:var(--surface-2);font-weight:700;font-size:14px;white-space:nowrap}
+table.t td.n,table.t td.ro{font-family:var(--f-mono);color:var(--muted)}
+table.t td input{width:100%;min-width:70px}
+.chart-wrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface);aspect-ratio:2.4/1}
+.chart-wrap canvas{display:block;width:100%;height:100%}
+.warnmsg{font-size:14.5px;color:var(--warn);background:var(--warn-soft);border-radius:10px;padding:8px 12px}
+.okmsg{font-size:14.5px;color:var(--ok);background:var(--ok-soft);border-radius:10px;padding:8px 12px;font-weight:700}
+.badmsg{font-size:14.5px;color:var(--bad);background:var(--bad-soft);border-radius:10px;padding:8px 12px;font-weight:700}
+
+fieldset.q{border:1px solid var(--line);border-radius:12px;padding:10px 14px 12px;margin:0;display:grid;gap:4px;background:var(--surface);min-width:0}
+fieldset.q legend{font-weight:700;padding:0 6px;font-size:15.5px}
+fieldset.q label{display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:15.5px}
+fieldset.q label:hover{background:var(--surface-2)}
+fieldset.q input{width:18px;height:18px;accent-color:var(--primary);flex:none}
+.rules{display:grid;gap:8px;list-style:none;padding:0;counter-reset:r}
+.rules li{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start;counter-increment:r;font-size:15.5px}
+.rules li::before{content:counter(r);font-family:var(--f-mono);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--amber-soft);color:var(--amber);border:1.5px solid var(--amber)}
+.summary{font-size:16px;line-height:1.65;padding:14px 16px;border-radius:12px;border:1px solid var(--primary);background:var(--primary-soft)}
+table.rubric{border-collapse:collapse;width:100%;font-size:15px}
+table.rubric td,table.rubric th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+table.rubric th{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+table.rubric td.k{font-family:var(--f-mono);color:var(--muted);white-space:nowrap}
+table.rubric td.o{font-family:var(--f-mono);font-size:12px;color:var(--primary);white-space:nowrap}
+table.rubric td.p{font-family:var(--f-mono);text-align:right;white-space:nowrap}
+.st{display:inline-grid;place-items:center;width:23px;height:23px;border-radius:50%;font-size:13px;font-weight:800;flex:none}
+.st.y{background:var(--ok-soft);color:var(--ok)} .st.x{background:var(--bad-soft);color:var(--bad)}
+.confirm{display:grid;gap:10px;border:1.5px solid var(--warn);background:var(--warn-soft);border-radius:12px;padding:12px 14px}
+.score{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;padding:16px 18px;border-radius:14px;background:var(--primary-soft);border:1.5px solid var(--primary)}
+.score .big{font-family:var(--f-display);font-weight:700;font-size:2.8rem;line-height:1;color:var(--primary)}
+.score .big small{font-size:1rem;color:var(--muted);font-weight:400}
+.score .meta{display:grid;gap:2px;font-size:15px}
+.codebox{font-family:var(--f-mono);font-size:12.5px;word-break:break-all;background:var(--surface);border:1px dashed var(--primary);border-radius:10px;padding:10px;user-select:all}
+.teacher{display:grid;gap:16px}
+.t-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.t-tools select{width:auto;min-width:130px;min-height:42px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:2px;background:var(--surface-2)}
+.stat .v{font-family:var(--f-display);font-size:1.5rem;font-weight:700}
+.stat .l{font-size:13.5px;color:var(--muted)}
+.bars{display:grid;gap:6px}
+.bar{display:grid;grid-template-columns:44px minmax(0,1fr) 46px;gap:10px;align-items:center;font-size:13px}
+.bar .k{font-family:var(--f-mono);color:var(--muted)}
+.bar .track{height:12px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar .fill{height:100%;background:var(--primary);display:block}
+.bar .fill.low{background:var(--amber)}
+.bar .pct{font-family:var(--f-mono);text-align:right}
+table.roster{border-collapse:collapse;width:100%;font-size:14.5px;font-variant-numeric:tabular-nums;min-width:960px}
+table.roster th,table.roster td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;white-space:nowrap}
+table.roster th{font-size:13px;color:var(--muted);font-weight:700}
+.dots{display:flex;gap:3px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--bad-soft);border:1px solid var(--bad)}
+.dot.y{background:var(--ok);border-color:var(--ok)}
+tr.detail td{white-space:normal;background:var(--surface-2);font-size:14px}
+.det{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:6px 18px}
+.grade{display:inline-grid;place-items:center;min-width:28px;height:26px;border-radius:8px;font-weight:800;font-family:var(--f-mono)}
+.g5{background:var(--ok-soft);color:var(--ok)}.g4{background:var(--primary-soft);color:var(--primary)}.g3{background:var(--warn-soft);color:var(--warn)}.g2{background:var(--bad-soft);color:var(--bad)}
+.verify{display:grid;gap:8px}
+.verify .row{display:flex;gap:8px;flex-wrap:wrap}
+.verify .row input{flex:1 1 260px;width:auto}
+.vout{font-size:15px;border-radius:10px;padding:10px 12px}
+.vout.good{background:var(--ok-soft);border:1px solid var(--ok)}
+.vout.badc{background:var(--bad-soft);border:1px solid var(--bad)}
+details.note{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface-2)}
+details.note summary{cursor:pointer;font-weight:700}
+details.note p{margin-top:8px;max-width:75ch;font-size:15px}
+.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="shell">
+  <header class="top" id="topHeader" hidden>
+    <div class="brand"><span class="logo" aria-hidden="true"><svg viewBox="0 0 34 34"><path d="M2 11 L17 11 L30 17 M2 23 L17 23 L30 17" fill="none" stroke="#f0b03e" stroke-width="1.6"/><path d="M17 4 Q22 17 17 30 Q12 17 17 4Z" fill="#8fd3e0" opacity=".85"/></svg></span><div><p class="t1">Физика · 8-сынып · №11 зертханалық жұмыс</p><p class="t2">Жұқа линзаның фокустық қашықтығы мен оптикалық күші</p></div></div>
+    <div class="status"><span id="modeBadge" class="pill">Қосылуда…</span><span id="studentChip" class="chip" hidden></span><button id="teacherBtn" type="button" hidden>Мұғалім панелі</button></div>
+  </header>
+
+  <nav class="stepper" id="stepper" aria-label="Жұмыс кезеңдері" hidden>
+    <button class="step" type="button" data-p="0"><span class="n">1</span><span class="lbl">Тіркелу</span></button>
+    <button class="step" type="button" data-p="1"><span class="n">2</span><span class="lbl">Теория</span></button>
+    <button class="step" type="button" data-p="2"><span class="n">3</span><span class="lbl">Қауіпсіздік</span></button>
+    <button class="step" type="button" data-p="3"><span class="n">4</span><span class="lbl">Тәжірибе</span></button>
+    <button class="step" type="button" data-p="4"><span class="n">5</span><span class="lbl">Есептеу</span></button>
+    <button class="step" type="button" data-p="5"><span class="n">6</span><span class="lbl">Қорытынды</span></button>
+    <button class="step" type="button" data-p="6"><span class="n">7</span><span class="lbl">Тапсыру</span></button>
+  </nav>
+
+  <main id="pages" style="display:grid;gap:12px;min-width:0">
+    <p id="navMsg" class="warnmsg" hidden></p>
+
+    <section data-page="0" class="regwrap" aria-labelledby="regTitle">
+      <div class="regcard">
+        <div class="band" aria-hidden="true"><svg viewBox="0 0 300 110"><line x1="10" y1="55" x2="290" y2="55" stroke="#5d646e" stroke-dasharray="4 5"/><circle cx="40" cy="55" r="12" fill="#f0b03e" opacity=".9"/><circle cx="40" cy="55" r="26" fill="#f0b03e" opacity=".15"/><path d="M52 52 L150 22 L262 72 M52 58 L150 88 L262 38" fill="none" stroke="#f0b03e" stroke-width="1.6" opacity=".85"/><path d="M150 12 Q164 55 150 98 Q136 55 150 12Z" fill="#8fd3e0" opacity=".8"/><rect x="262" y="18" width="7" height="74" fill="#ece6d6"/></svg></div>
+        <form id="startForm" novalidate>
+          <p class="label">№11 зертханалық жұмыс · 8-сынып</p>
+          <h1 id="regTitle">Тіркелу</h1>
+          <label for="stName">Аты-жөні<input id="stName" class="reg-in" type="text" autocomplete="name" placeholder="Мысалы, Аружан Серікова" maxlength="60"></label>
+          <label for="stCls">Сынып
+            <select id="stCls" class="reg-in">
+              <option value="">Сыныпты таңдаңыз</option>
+              <option>8 «А»</option><option>8 «Ә»</option><option>8 «Б»</option><option>8 «В»</option><option>8 «Г»</option><option>8 «Ғ»</option><option>8 «Д»</option><option>8 «Е»</option>
+              <option value="__other">Басқа сынып…</option>
+            </select>
+          </label>
+          <label for="stClsOther" id="otherWrap" hidden>Сынып атауы<input id="stClsOther" class="reg-in" type="text" placeholder="Мысалы, 8 «Ж»" maxlength="12"></label>
+          <button id="startBtn" class="primary go" type="submit" disabled>Қосылуда…</button>
+          <p id="startErr" class="err" aria-live="polite"></p>
+        </form>
+        <div id="regDone" hidden>
+          <p class="label">№11 зертханалық жұмыс · 8-сынып</p>
+          <h1>Сіз тіркелдіңіз</h1>
+          <p id="whoLine" style="font-size:16.5px"></p>
+          <button id="continueBtn" class="primary go" type="button">Жұмысты жалғастыру</button>
+        </div>
+        <div style="padding:0 24px 18px"><button id="teacherBtnReg" type="button" class="ghost" hidden>Мұғалім панелі</button></div>
+      </div>
+    </section>
+
+    <section class="page" data-page="1" hidden>
+      <div class="phead"><p class="tag">2-кезең · теория</p><h2>Жұқа линзаның фокустық қашықтығы және оптикалық күші</h2></div>
+      <div class="two">
+        <div class="prose">
+          <div style="display:grid;gap:7px"><p class="label">Оқу мақсаттары</p>
+            <div class="obj"><code>8.5.1.14</code><span>жұқа линзаның фокустық қашықтығын және оптикалық күшін анықтау</span></div>
+            <div class="obj"><code>8.1.3.3</code><span>физика кабинетінде қауіпсіздік ережелерін білу және сақтау</span></div>
+          </div>
+          <p><b>Жұмыстың мақсаты:</b> линзаның фокустық қашықтығы мен оптикалық күшін үш әдіспен анықтау және әдістерді салыстыру.</p>
+          <p><b>Құрал-жабдықтар:</b> жинағыш линза, экран, өлшеуіш шкаласы бар оптикалық орындық (оқулықта – өлшеуіш таспа), ток көзі, тұғырлы шам.</p>
+          <p>Линзаның бас оптикалық осіне параллель сәулелер линзадан өткен соң бір нүктеде – <b>фокуста</b> қиылысады. Линзадан фокусқа дейінгі қашықтық – <b>фокустық қашықтық F</b>. Фокустық қашықтыққа кері шама – линзаның <b>оптикалық күші</b>, оның бірлігі – диоптрия (1 дптр = 1 м⁻¹). Есептегенде F міндетті түрде метрмен алынады.</p>
+          <div class="formula"><math display="block"><mi>D</mi><mo>=</mo><mfrac><mn>1</mn><mi>F</mi></mfrac></math><math display="block"><mfrac><mn>1</mn><mi>F</mi></mfrac><mo>=</mo><mfrac><mn>1</mn><mi>d</mi></mfrac><mo>+</mo><mfrac><mn>1</mn><mi>f</mi></mfrac></math><math display="block"><mi>F</mi><mo>=</mo><mfrac><mrow><mi>d</mi><mspace width=".15em"></mspace><mi>f</mi></mrow><mrow><mi>d</mi><mo>+</mo><mi>f</mi></mrow></mfrac></math></div>
+          <p class="small muted">Мұнда d – денеден (шамнан) линзаға дейінгі, f – линзадан кескінге (экранға) дейінгі қашықтық.</p>
+          <div class="three">
+            <div class="mcard"><span class="k">1-әдіс</span><b>Алыс дене (терезе)</b><span class="small">Терезе алыс тұрғандықтан одан келетін сәулелер параллельге жуық. Терезенің анық кескіні фокуста түседі: <i>F</i> ≈ <i>f</i>.</span></div>
+            <div class="mcard"><span class="k">2-әдіс</span><b>Линза формуласы</b><span class="small">Шамның үлкейтілген және кішірейтілген анық кескіндерін алып, d мен f-ті өлшейміз де, F-ті формуламен есептейміз.</span></div>
+            <div class="mcard"><span class="k">3-әдіс</span><b>Бірдей кескін</b><span class="small">Кескін шаммен бірдей болса, d = f = 2F. Сондықтан <i>F</i> = <i>f</i> / 2.</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card"><p class="label">13-сурет. Фокуста орналасқан экрандағы терезенің кескіні</p>
+            <svg class="fig" viewBox="0 0 420 200" role="img" aria-label="Тұғырдағы линза және экран, экранда терезенің кескіні, арақашықтық f = F" style="max-width:400px">
+              <line x1="20" y1="160" x2="400" y2="160" stroke="currentColor" opacity=".35"/>
+              <path d="M120 40 Q138 85 120 130 Q102 85 120 40Z" fill="var(--primary)" opacity=".25" stroke="var(--primary)" stroke-width="1.5"/>
+              <rect x="116" y="130" width="8" height="26" fill="currentColor" opacity=".5"/><ellipse cx="120" cy="160" rx="26" ry="6" fill="currentColor" opacity=".45"/>
+              <polygon points="300,20 318,10 318,170 300,180" fill="var(--surface-2)" stroke="currentColor" stroke-width="1.3"/>
+              <g transform="translate(304 70)"><rect width="10" height="22" fill="#9fd0f0" stroke="currentColor" stroke-width=".8"/><line x1="5" y1="0" x2="5" y2="22" stroke="currentColor" stroke-width=".8"/><line x1="0" y1="9" x2="10" y2="9" stroke="currentColor" stroke-width=".8"/></g>
+              <line x1="120" y1="186" x2="306" y2="186" stroke="currentColor" stroke-width="1.2"/><path d="M120 186 l8 -4 v8z M306 186 l-8 -4 v8z" fill="currentColor"/>
+              <text x="200" y="180" font-family="PT Sans,sans-serif" font-size="15" fill="currentColor" text-anchor="middle" font-style="italic">f = F</text>
+              <text x="120" y="30" font-family="PT Sans,sans-serif" font-size="14" fill="currentColor" text-anchor="middle">линза</text><text x="309" y="196" font-family="PT Sans,sans-serif" font-size="14" fill="currentColor" text-anchor="middle">экран</text>
+            </svg>
+          </div>
+          <div class="card"><p class="label">Жинағыш линзада кескін салу (F &lt; d &lt; 2F)</p>
+            <svg class="fig" viewBox="0 0 440 210" role="img" aria-label="Жинағыш линза: дене F пен 2F арасында, кескін нақты, төңкерілген, үлкейтілген, 2F-тен әрі">
+              <line x1="10" y1="100" x2="432" y2="100" stroke="currentColor" opacity=".55"/>
+              <line x1="220" y1="30" x2="220" y2="178" stroke="var(--primary)" stroke-width="2"/><path d="M220 26 l-6 10 h12z M220 182 l-6 -10 h12z" fill="var(--primary)"/>
+              <g fill="currentColor"><circle cx="150" cy="100" r="3"/><circle cx="290" cy="100" r="3"/><circle cx="80" cy="100" r="3"/><circle cx="360" cy="100" r="3"/></g>
+              <g font-family="PT Sans,sans-serif" font-size="13" fill="currentColor" text-anchor="middle"><text x="150" y="118">F</text><text x="290" y="118">F</text><text x="80" y="118">2F</text><text x="360" y="118">2F</text></g>
+              <line x1="110" y1="100" x2="110" y2="62" stroke="var(--amber)" stroke-width="3"/><path d="M110 56 l-6 10 h12z" fill="var(--amber)"/>
+              <line x1="412.5" y1="100" x2="412.5" y2="164" stroke="var(--amber)" stroke-width="3" opacity=".75"/><path d="M412.5 170 l-6 -10 h12z" fill="var(--amber)" opacity=".75"/>
+              <g fill="none" stroke="var(--amber)" stroke-width="1.4"><path d="M110 60 L220 60 L412.5 170"/><path d="M110 60 L412.5 170"/><path d="M110 60 L220 170 L412.5 170"/></g>
+              <g stroke="currentColor" stroke-width="1" fill="none" opacity=".75"><path d="M110 190 H220 M412.5 196 H220"/></g>
+              <g font-family="PT Sans,sans-serif" font-size="14" font-style="italic" fill="currentColor" text-anchor="middle"><text x="165" y="186">d</text><text x="316" y="192">f</text><text x="98" y="80">h</text><text x="426" y="140">H</text></g>
+            </svg>
+          </div>
+          <div class="card am"><p class="label">Кескіннің түрі шамның орнына тәуелді</p>
+            <table class="ref"><tr><th>Шамның орны</th><th>Экрандағы кескін</th></tr><tr><td>d &gt; 2F</td><td>нақты, төңкерілген, кішірейтілген</td></tr><tr><td>d = 2F</td><td>нақты, төңкерілген, өлшемі бірдей (f = 2F)</td></tr><tr><td>F &lt; d &lt; 2F</td><td>нақты, төңкерілген, үлкейтілген</td></tr><tr><td>d &lt; F</td><td>экранда кескін алынбайды</td></tr></table>
+          </div>
+        </div>
+      </div>
+      <div class="pnav"><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Қауіпсіздік →</button></div>
+    </section>
+
+    <section class="page" data-page="2" hidden>
+      <div class="phead"><p class="tag">3-кезең · қауіпсіздік · 8.1.3.3</p><h2>Қауіпсіздік ережелері</h2><p class="goal">Тәжірибеге кіру үшін тесттің 5 сұрағының кемінде 4-еуіне дұрыс жауап беріңіз. <b>Бағаға бірінші әрекеттің нәтижесі және тәжірибе кезінде ережелерді сақтағаныңыз есептеледі.</b></p></div>
+      <div class="two">
+        <ol class="rules">
+          <li><span>Тізбекті тек <b>ток көзі өшірулі</b> кезде жалғаймыз және ажыратамыз.</span></li>
+          <li><span>Жанып тұрған шамның шыны колбасы қатты қызады. <b>Ыстық колбаны қолмен ұстамаймыз</b>, шамды тек тұғырынан ұстап жылжытамыз.</span></li>
+          <li><span>Линза арқылы <b>Күнге қарамаймыз</b>: көздің торлы қабығы күйіп қалуы мүмкін.</span></li>
+          <li><span>Жинағыш линзамен шоғырланған күн сәулесін қағазға, киімге, қолға бағыттамаймыз: өрт шығуы немесе күйік болуы мүмкін.</span></li>
+          <li><span>Линзаны құлатпаймыз, оның бетін саусақпен ұстамаймыз.</span></li>
+          <li><span>Жұмыс біткенде <b>ток көзін өшіреміз</b>, шам суығанша оны ұстамаймыз.</span></li>
+        </ol>
+        <div class="col">
+          <div id="safeQ" style="display:grid;gap:10px"></div>
+          <div class="controls"><button id="safeCheck" type="button" class="primary">Тестті тексеру</button><button id="safeRetry" type="button" hidden>Тестті қайта тапсыру</button></div>
+          <p id="safeOut" aria-live="polite" hidden></p>
+        </div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Тәжірибе →</button></div>
+    </section>
+
+    <section class="page bp" data-page="3" hidden>
+      <div class="phead"><p class="tag">4-кезең · тәжірибе</p><h2>Оптикалық орындықтағы тәжірибе</h2><p class="goal" id="taskGoal"></p></div>
+      <div class="tabs2" id="taskTabs" role="group" aria-label="Тапсырмалар"></div>
+      <p class="hint" id="hint3" aria-live="polite"></p>
+      <figure class="view benchf">
+        <figcaption><span>Оптикалық орындық (бүйірінен) · шкала, см</span><span id="benchStat"></span></figcaption>
+        <div class="cv b"><canvas id="cvB" tabindex="0" aria-label="Оптикалық орындық: шам, линза және экран рейтерлерде, астында сантиметрлік шкала"></canvas></div>
+      </figure>
+      <div class="ctlwrap">
+        <div class="controls" id="elBar"></div>
+        <div class="controls" id="pwBar"></div>
+        <p class="boardhelp" id="help3"></p>
+      </div>
+      <div class="bench2">
+        <figure class="view">
+          <figcaption><span>Экрандағы кескін · тор көзі 1 см</span><span class="seg" role="group" aria-label="Экранды үлкейту"><button type="button" data-act="zoom" data-v="1" aria-pressed="true">×1</button><button type="button" data-act="zoom" data-v="3" aria-pressed="false">×3</button></span></figcaption>
+          <div class="cv s"><canvas id="cvS" aria-label="Экранның беті: линза берген кескін, экран дұрыс орында болса анық, әйтпесе бұлыңғыр"></canvas></div>
+          <div class="controls"><button type="button" class="am" data-act="record" id="recBtn">📸 Кескінді тіркеу</button><span class="small muted" id="recNote"></span></div>
+        </figure>
+        <div class="col">
+          <div class="card"><p class="label">Қадамдар</p><ul class="checklist" id="chk3"></ul></div>
+          <div class="card nb" id="nb3"></div>
+        </div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Есептеу →</button></div>
+    </section>
+
+    <section class="page" data-page="4" hidden>
+      <div class="phead"><p class="tag">5-кезең · есептеу</p><h2>Фокустық қашықтық пен оптикалық күшті есептеу</h2><p class="goal">F-ті метрмен 0,001 м дәлдікпен, D-ны 0,1 дптр дәлдікпен жазыңыз. Өлшеулер дәптерден алынады.</p></div>
+      <div class="two">
+        <div class="col">
+          <div class="card"><p class="label">1-тапсырма · алыс дене (терезе)</p>
+            <div class="tw"><table class="t"><thead><tr><th>f, см</th><th><i>F</i> ≈ <i>f</i>, м</th><th><i>D</i>, дптр</th></tr></thead><tbody><tr><td class="ro" id="ro-f1">—</td><td><input class="num" data-e="F1" id="in-F1" inputmode="decimal" autocomplete="off" aria-label="1-тапсырма: F, м"></td><td><input class="num" data-e="D1" id="in-D1" inputmode="decimal" autocomplete="off" aria-label="1-тапсырма: D, дптр"></td></tr></tbody></table></div>
+          </div>
+          <div class="card"><p class="label">3-тапсырма · өлшемі бірдей кескін</p>
+            <div class="tw"><table class="t"><thead><tr><th>d, см</th><th>f, см</th><th><i>F</i> = <i>f</i> / 2, м</th><th><i>D</i>, дптр</th></tr></thead><tbody><tr><td class="ro" id="ro-d3">—</td><td class="ro" id="ro-f3">—</td><td><input class="num" data-e="F3" id="in-F3" inputmode="decimal" autocomplete="off" aria-label="3-тапсырма: F, м"></td><td><input class="num" data-e="D3" id="in-D3" inputmode="decimal" autocomplete="off" aria-label="3-тапсырма: D, дптр"></td></tr></tbody></table></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card"><p class="label">2-тапсырма · линза формуласы</p>
+            <div class="tw"><table class="t"><thead><tr><th>№</th><th>Кескін</th><th>d, см</th><th>f, см</th><th><i>F</i>, м</th><th><i>D</i>, дптр</th></tr></thead><tbody>
+              <tr><td class="n">1</td><td class="small">үлкейтілген</td><td class="ro" id="ro-d2a">—</td><td class="ro" id="ro-f2a">—</td><td><input class="num" data-e="F2a" id="in-F2a" inputmode="decimal" autocomplete="off" aria-label="1-өлшеу: F, м"></td><td><input class="num" data-e="D2a" id="in-D2a" inputmode="decimal" autocomplete="off" aria-label="1-өлшеу: D, дптр"></td></tr>
+              <tr><td class="n">2</td><td class="small">кішірейтілген</td><td class="ro" id="ro-d2b">—</td><td class="ro" id="ro-f2b">—</td><td><input class="num" data-e="F2b" id="in-F2b" inputmode="decimal" autocomplete="off" aria-label="2-өлшеу: F, м"></td><td><input class="num" data-e="D2b" id="in-D2b" inputmode="decimal" autocomplete="off" aria-label="2-өлшеу: D, дптр"></td></tr>
+            </tbody></table></div>
+            <div class="fld"><span>Орташа мән <i>F</i><sub>орт</sub> =</span><input class="num" data-e="F2m" id="in-F2m" inputmode="decimal" autocomplete="off"> м</div>
+            <div class="formula" style="justify-content:flex-start"><math><mi>F</mi><mo>=</mo><mfrac><mrow><mi>d</mi><mspace width=".15em"></mspace><mi>f</mi></mrow><mrow><mi>d</mi><mo>+</mo><mi>f</mi></mrow></mfrac></math><math><msub><mi>F</mi><mtext>орт</mtext></msub><mo>=</mo><mfrac><mrow><msub><mi>F</mi><mn>1</mn></msub><mo>+</mo><msub><mi>F</mi><mn>2</mn></msub></mrow><mn>2</mn></mfrac></math></div>
+            <p class="small muted">Есте болсын: 1 см = 0,01 м. Мысалы, F = 12,5 см = 0,125 м, D = 1 / 0,125 м = 8,0 дптр.</p>
+          </div>
+        </div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Қорытынды →</button></div>
+    </section>
+
+    <section class="page" data-page="5" hidden>
+      <div class="phead"><p class="tag">6-кезең · қорытынды</p><h2>Үш әдісті салыстыру және қорытынды</h2></div>
+      <figure class="view" style="max-width:820px"><figcaption><span>Үш әдіспен табылған фокустық қашықтық, см</span><span>сіздің есептеулеріңіз бойынша</span></figcaption><div class="chart-wrap"><canvas id="cvChart" aria-label="Үш әдіспен табылған фокустық қашықтықтардың бағаналы диаграммасы"></canvas></div></figure>
+      <div id="conclBox" style="display:grid;gap:10px;max-width:900px"></div>
+      <div style="max-width:900px;display:grid;gap:6px"><p class="label">Сіздің қорытындыңыз</p><p class="summary" id="summary"></p></div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span><button type="button" class="primary" data-go="1">Келесі: Тапсыру →</button></div>
+    </section>
+
+    <section class="page" data-page="6" hidden>
+      <div class="phead"><p class="tag">7-кезең · тапсыру</p><h2>Тапсыру</h2></div>
+      <div id="resultBox" hidden style="display:grid;gap:14px;max-width:980px"></div>
+      <div id="preSubmit" class="two">
+        <div class="col">
+          <div id="completeness" class="card"></div>
+          <p class="small muted">Өлшеулер сіз тіркеген кескіндер бойынша тексеріледі, ал есептеулер – сіздің өз өлшеулеріңіз бойынша.</p>
+          <p id="modeNote" class="small muted"></p>
+          <div><button id="submitBtn" class="primary" type="button" disabled>Жұмысты тапсыру</button></div>
+          <div id="confirmBox" class="confirm" hidden><p><b>Жұмысты тапсырасыз ба?</b> Тапсырғаннан кейін жауаптарды өзгерту мүмкін болмайды.</p><div class="controls"><button id="confirmYes" class="primary" type="button">Иә, тапсыру</button><button id="confirmNo" type="button">Болдырмау</button></div></div>
+          <p id="submitErr" class="err" aria-live="polite"></p>
+        </div>
+        <div><p class="label" style="margin-bottom:8px">Бағалау критерийлері · 10 балл</p><div class="tw"><table class="rubric"><thead><tr><th>№</th><th>Дескриптор</th><th>Мақсат</th><th style="text-align:right">Балл</th></tr></thead><tbody id="rubricBody"></tbody></table></div></div>
+      </div>
+      <div class="pnav"><button type="button" data-go="-1">← Артқа</button><span class="sp"></span></div>
+    </section>
+  </main>
+
+  <section id="teacherView" class="page teacher" hidden aria-label="Мұғалім панелі">
+    <div class="phead"><p class="tag">№11 · 8-сынып · нәтижелер нақты уақытта жаңарады</p><h2>Мұғалім панелі</h2>
+      <div class="t-tools"><label for="clsFilter" class="small muted">Сынып</label><select id="clsFilter"><option value="">Барлығы</option></select><button id="csvBtn" type="button">CSV жүктеу</button><button id="copyTblBtn" type="button">Кестені көшіру</button><button id="backBtn" type="button">Зертханаға оралу</button></div></div>
+    <p id="tMsg" class="small muted"></p>
+    <div id="tOnline" style="display:grid;gap:16px">
+      <div class="stats" id="tStats"></div>
+      <div style="display:grid;gap:8px"><p class="label">Критерийлер бойынша орындалу</p><div class="bars" id="tBars"></div></div>
+      <div class="tw"><table class="roster"><thead><tr><th>Оқушы</th><th>Сынып</th><th>Нұсқа</th><th>Балл</th><th>Баға</th><th>К1 … К10</th><th>F₁ / F орт / F₃, см</th><th>F нақты</th><th>Қауіпсіздік</th><th>Тапсырылды</th><th></th></tr></thead><tbody id="tBody"></tbody></table></div>
+      <div id="tEmpty" class="empty" hidden>Әзірге ешкім тапсырған жоқ. Оқушылар жұмысты тапсырған сәтте нәтижелер осы кестеде пайда болады.</div>
+    </div>
+    <div class="verify"><p class="label">Нәтиже кодын тексеру</p><p style="font-size:15px">Оқушы офлайн режимде тапсырса, сізге нәтиже кодын жібереді. Кодты осында қойып тексеріңіз.</p><div class="row"><input id="codeIn" type="text" placeholder="L11.…" autocomplete="off" aria-label="Нәтиже коды"><button id="codeBtn" type="button">Тексеру</button></div><div id="codeOut" class="vout" hidden></div></div>
+    <details class="note"><summary>Оқушылар нәтижені онлайн қалай жібереді</summary>
+      <p>Онлайн жіберу үшін оқушы claude.ai аккаунтымен кіріп, бетті сіздің шақыруыңыз арқылы ашуы керек. Жеке аккаунтта оқушыны email арқылы «Editor» деңгейінде шақырыңыз, ал бетке жалпы сілтеме (public link) ашпаңыз. Team немесе Enterprise ұйымында ұйым мүшесіне «Contributor» деңгейі жеткілікті.</p>
+      <p>Басқа жағдайда бет офлайн режимде жұмыс істейді: оқушы жұмысты толық орындайды, балын көреді және сізге нәтиже кодын жібереді.</p>
+      <p>Баға шкаласы: 0–39 % → «2», 40–64 % → «3», 65–84 % → «4», 85–100 % → «5».</p></details>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ================= constants ================= */
+const SALT = 'L11|fizika8|linza', DEMO_SEED = 111017;
+const PAGE_NAMES = ['Тіркелу', 'Теория', 'Қауіпсіздік', 'Тәжірибе', 'Есептеу', 'Қорытынды', 'Тапсыру'];
+const BW = 1000, BH = 400, X0 = 50, PXC = 9, RAIL = 318, AXIS = 172; /* bench world: 9 units = 1 cm */
+const SW = 560, SH = 420, PPC = 40; /* screen view world: 14 × 10.5 cm */
+const AP = 4, HOBJ = 2, SHARP = 0.1, MINSEP = 4;
+const TASKS = [{ n: '1-тапсырма', t: 'алыс дене' }, { n: '2-тапсырма', t: 'линза формуласы' }, { n: '3-тапсырма', t: 'бірдей кескін' }];
+const QS = [
+  { k: 'q1', q: 'Үш әдістің қайсысы ең қарапайым?', a: ['Алыс дененің (терезенің) кескіні бойынша: тек бір қашықтық өлшенеді', 'Линза формуласы әдісі', 'Өлшемі бірдей кескін әдісі', 'Үшеуі бірдей күрделі'], c: 0 },
+  { k: 'q2', q: 'Терезе әдісімен табылған F неге нақты мәннен сәл үлкен шығады?', a: ['Терезе шексіз алыс емес, сондықтан оның кескіні фокустан сәл әрі түседі', 'Терезенің әйнегі жарықты сындырады', 'Күн сәулесі линзаны қыздырады', 'Экран тым үлкен'], c: 0 },
+  { k: 'q3', q: 'Қай әдіс ең дәл нәтиже береді?', a: ['Линза формуласы әдісі: жүйелі қатесі жоқ, екі өлшеудің орташасы алынады', 'Терезе әдісі, себебі ол ең қарапайым', 'Бірдей кескін әдісі, себебі өлшемдерді көзбен дәл салыстыруға болады', 'Әдістердің дәлдігі бірдей'], c: 0 },
+  { k: 'q4', q: 'Шам линзадан F < d < 2F қашықтықта тұрса, экрандағы кескін:', a: ['Нақты, төңкерілген, үлкейтілген', 'Нақты, тура, кішірейтілген', 'Жалған, тура, үлкейтілген', 'Нақты, төңкерілген, кішірейтілген'], c: 0 },
+  { k: 'q5', q: 'Оптикалық күші D = 5 дптр линзаның фокустық қашықтығы:', a: ['0,2 м (20 см)', '5 м', '0,5 м', '5 см'], c: 0 },
+];
+const SAFE_Q = [
+  { q: 'Тізбекті қашан жалғауға болады?', a: ['Ток көзі өшірулі кезде', 'Ток көзі қосулы кезде', 'Шам жанып тұрғанда', 'Кез келген уақытта'], c: 0 },
+  { q: 'Жанып тұрған шамды қалай жылжытамыз?', a: ['Тек тұғырынан ұстаймыз, ыстық колбаны ұстамаймыз', 'Шыны колбасынан ұстаймыз', 'Сымынан тартамыз', 'Екі қолмен колбасынан ұстаймыз'], c: 0 },
+  { q: 'Линза арқылы Күнге қарауға бола ма?', a: ['Жоқ, көздің торлы қабығы күйіп қалуы мүмкін', 'Иә, линза көзді қорғайды', 'Иә, бұлтты күні', 'Иә, бір секундқа ғана'], c: 0 },
+  { q: 'Жинағыш линзамен шоғырланған күн сәулесін:', a: ['Қағазға, киімге, қолға бағыттамаймыз', 'Қолға бағыттап көреміз', 'Қағазды тұтату үшін қолданамыз', 'Досымызға бағыттаймыз'], c: 0 },
+  { q: 'Жұмыс біткенде:', a: ['Ток көзін өшіреміз, шам суығанша оны ұстамаймыз', 'Шамды жанып тұрған күйі қалдырамыз', 'Шамды бірден қолмен шешеміз', 'Линзаны шамның үстіне қоямыз'], c: 0 },
+];
+const RUBRIC = [
+  { d: '1-тапсырма: терезенің анық кескінін алады, линза мен экран арасындағы f қашықтығын дұрыс өлшейді (±0,3 см)', o: '8.5.1.14' },
+  { d: '1-тапсырма: F-ті метрмен өрнектейді және D = 1/F оптикалық күшті дұрыс есептейді', o: '8.5.1.14' },
+  { d: '2-тапсырма: үлкейтілген және кішірейтілген анық кескіндер алады; d мен f-ті дұрыс өлшейді (4 мәннің кемінде 3-еуі ±0,3 см)', o: '8.5.1.14' },
+  { d: '2-тапсырма: линза формуласы бойынша F мен D-ны дұрыс есептейді (4 мәннің кемінде 3-еуі) және орташа мәнді табады', o: '8.5.1.14' },
+  { d: '3-тапсырма: өлшемі шаммен бірдей анық кескін алады (Γ = 0,93–1,07), d мен f-ті дұрыс өлшейді', o: '8.5.1.14' },
+  { d: '3-тапсырма: F = f/2 және D-ны дұрыс есептейді', o: '8.5.1.14' },
+  { d: 'Нәтиженің дәлдігі: 2-тапсырманың орташа мәні линзаның нақты фокустық қашықтығынан 5 %-дан аспайды', o: '8.5.1.14' },
+  { d: 'Әдістерді салыстырып, нәтижені түсіндіреді (5 сұрақтың кемінде 4-еуі)', o: '8.5.1.14' },
+  { d: 'Қауіпсіздік ережелерін біледі: тесттің бірінші әрекетінде 5 сұрақтың кемінде 4-еуі дұрыс', o: '8.1.3.3' },
+  { d: 'Тәжірибеде қауіпсіздік ережелерін сақтайды: ыстық колбаны ұстамайды, тізбекті ток көзі өшірулі кезде жалғайды, жұмыс соңында ток көзін өшіреді', o: '8.1.3.3' },
+];
+const VIOL = { hot: 'ыстық шам колбасын ұстады', live: 'тізбекті ток көзі қосулы кезде жалғады/ажыратты' };
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const arr = (n, v) => Array.from({ length: n }, () => v);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function num(s){ if (s === null || s === undefined) return NaN; const t = String(s).trim().replace(/\s+/g, '').replace('−', '-').replace(',', '.'); if (!t || !/^[-+]?(\d+\.?\d*|\.\d+)$/.test(t)) return NaN; return parseFloat(t); }
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function hashStr(s){ let h = 2166136261 >>> 0; for (const ch of String(s)){ h ^= ch.codePointAt(0); h = Math.imul(h, 16777619) >>> 0; } return h >>> 0; }
+const fmt = (x, d) => Number.isFinite(x) ? x.toFixed(d).replace('.', ',').replace('-', '−') : '—';
+const fin = Number.isFinite, near = (a, b, t) => fin(a) && fin(b) && Math.abs(a - b) <= t;
+const r1 = x => Math.round(x * 10) / 10;
+
+/* ================= variant & optics ================= */
+function makeVariant(seed){ const r = mulberry32((seed >>> 0) ^ 0x2c1b3c6d); r(); const F = 8 + 0.5 * Math.floor(r() * 25), Dw = 350 + 10 * Math.floor(r() * 16); return { seed: seed >>> 0, F, Dw }; }
+const defP = () => [{ lens: 15, scr: 60 }, { lamp: 6, lens: 26, scr: 62 }, { lamp: 6, lens: 36, scr: 78 }];
+/* k: task index; P: positions on the bench (cm). d for task 1 is the window distance. */
+function optics(k, P, Vv){ Vv = Vv || V; const d = k === 0 ? Vv.Dw : P.lens - P.lamp, s = P.scr - P.lens, Pw = 1 / Vv.F - 1 / d; return { d, s, Pw, v: Pw > 1e-9 ? 1 / Pw : null, c: Math.min(8, AP * Math.abs(1 - s * Pw)), m: s / d }; }
+const sharp = r => !!r && r.c <= SHARP + 1e-9;
+function moveEl(k, el, x){
+  const P = S.P[k]; x = r1(x);
+  const lo = el === 'lamp' ? 2 : el === 'lens' ? (k === 0 ? 2 : P.lamp + MINSEP) : P.lens + MINSEP;
+  const hi = el === 'lamp' ? P.lens - MINSEP : el === 'lens' ? P.scr - MINSEP : 98;
+  P[el] = r1(clamp(x, lo, hi));
+}
+
+/* ================= state ================= */
+const blankE = () => ({ f1: '', F1: '', D1: '', d2a: '', f2a: '', d2b: '', f2b: '', F2a: '', D2a: '', F2b: '', D2b: '', F2m: '', d3: '', f3: '', F3: '', D3: '', q1: null, q2: null, q3: null, q4: null, q5: null });
+const TXT = ['f1', 'F1', 'D1', 'd2a', 'f2a', 'd2b', 'f2b', 'F2a', 'D2a', 'F2b', 'D2b', 'F2m', 'd3', 'f3', 'F3', 'D3'];
+const blankR = () => ({ t1: null, t2a: null, t2b: null, t3: null });
+function defaults(){ return { ver: 1, started: false, name: '', cls: '', seed: 0, page: 0, seen: arr(7, false), k: 0, P: defP(), conn: false, pw: false, viol: [], R: blankR(), safe: { attempts: 0, first: null, passed: false, ans: arr(5, null), last: null }, E: blankE(), result: null }; }
+let V = makeVariant(DEMO_SEED), S = defaults();
+let uid = null, db = null, userCap = null, dlCap = null, isOwner = false, online = false, initDone = false, subs = [];
+let ALERT = null, lastH = '';
+const RT = { sel: 'scr', drag: null, mag: false, lens: null, zoom: 1, heat: 0, heatDrawn: 0, hot: null, need: true };
+const lampOn = () => S.conn && S.pw;
+
+function vcode(seed){ return ((seed || S.seed) >>> 0).toString(36).toUpperCase(); }
+function draftKey(){ return 'lab8-11-draft:' + (uid || 'local'); }
+function saveDraft(){ try { localStorage.setItem(draftKey(), JSON.stringify(S)); } catch (e) {} }
+let saveTimer = null; function saveSoon(){ clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 350); }
+function loadDraft(){ try { const s = localStorage.getItem(draftKey()); if (s) { const d = JSON.parse(s); if (d && typeof d === 'object' && d.ver === 1) return d; } } catch (e) {} return null; }
+function cleanE(de){ const E = blankE(); de = de && typeof de === 'object' ? de : {}; TXT.forEach(k => { if (de[k] != null) E[k] = String(de[k]).slice(0, 12); }); QS.forEach(q => { E[q.k] = Number.isInteger(de[q.k]) ? de[q.k] : null; }); return E; }
+function cleanRec(r){ if (!r || typeof r !== 'object') return null; const o = {}; for (const k of ['d', 's', 'c', 'm']) { if (!fin(r[k])) return null; o[k] = r[k]; } o.at = fin(r.at) ? r.at : 0; return o; }
+function cleanR(d){ d = d && typeof d === 'object' ? d : {}; return { t1: cleanRec(d.t1), t2a: cleanRec(d.t2a), t2b: cleanRec(d.t2b), t3: cleanRec(d.t3) }; }
+function cleanP(d){
+  const base = defP(); d = Array.isArray(d) ? d : [];
+  return base.map((b, k) => { const x = d[k] && typeof d[k] === 'object' ? d[k] : {}; const o = {}; Object.keys(b).forEach(e => { o[e] = fin(x[e]) ? r1(clamp(x[e], 2, 98)) : b[e]; });
+    if (k > 0 && !(o.lamp + MINSEP <= o.lens)) return b; if (!(o.lens + MINSEP <= o.scr)) return b; return o; });
+}
+function applyDraft(d){
+  const base = defaults(); S = Object.assign(base, d); S.E = cleanE(d.E); S.R = cleanR(d.R); S.P = cleanP(d.P); S.conn = !!d.conn; S.pw = !!d.pw;
+  S.viol = Array.isArray(d.viol) ? d.viol.filter(x => VIOL[x]) : []; S.safe = Object.assign(base.safe, d.safe || {}); if (!Array.isArray(S.safe.ans) || S.safe.ans.length !== 5) S.safe.ans = arr(5, null);
+  if (!Array.isArray(S.seen) || S.seen.length !== 7) S.seen = base.seen; if (!(S.page >= 0 && S.page <= 6)) S.page = 0; S.k = clamp(S.k | 0, 0, 2);
+}
+
+/* ================= grading (pure) ================= */
+function grade(st){
+  const Vv = makeVariant(st.seed || DEMO_SEED), E = cleanE(st.E), R = cleanR(st.R), viol = Array.isArray(st.viol) ? st.viol.filter(x => VIOL[x]) : [], crit = arr(10, 0), info = arr(10, '');
+  const n = k => num(E[k]), q = k => E[k] === QS.find(x => x.k === k).c;
+  const Fok = (Fin, Fown) => fin(Fown) && near(Fin, Fown, 0.0015);
+  const Dok = (Din, Fin, Fown) => { const F = fin(Fin) && Fin > 0 ? Fin : Fown; return fin(F) && F > 0 && near(Din, 1 / F, Math.max(0.08, 0.015 / F)); };
+  const off = r => { if (!r) return NaN; const v = 1 / (1 / Vv.F - 1 / r.d); return Math.abs(r.s - v); };
+  const imgTxt = r => !r ? 'тіркелмеген' : sharp(r) ? 'анық' : 'бұлыңғыр (экран анық кескін орнынан ' + fmt(off(r), 1) + ' см)';
+  /* K1 */
+  const t1 = R.t1, f1 = n('f1'); crit[0] = sharp(t1) && near(f1, t1.s, 0.3) ? 1 : 0;
+  info[0] = 'кескін: ' + imgTxt(t1) + '; f = ' + (fin(f1) ? fmt(f1, 1) : '—') + ' см' + (t1 ? ' (шын мәні ' + fmt(t1.s, 1) + ' см)' : '');
+  /* K2 */
+  const F1own = fin(f1) ? f1 / 100 : NaN, okF1 = Fok(n('F1'), F1own), okD1 = Dok(n('D1'), n('F1'), F1own); crit[1] = okF1 && okD1 ? 1 : 0;
+  info[1] = 'F: ' + (okF1 ? 'дұрыс' : 'қате') + '; D: ' + (okD1 ? 'дұрыс' : 'қате');
+  /* K3 */
+  const a = R.t2a, b = R.t2b, imgs = sharp(a) && sharp(b) && a.m >= 1.15 && b.m <= 0.87;
+  let c3 = 0; if (a){ if (near(n('d2a'), a.d, 0.3)) c3++; if (near(n('f2a'), a.s, 0.3)) c3++; } if (b){ if (near(n('d2b'), b.d, 0.3)) c3++; if (near(n('f2b'), b.s, 0.3)) c3++; }
+  crit[2] = imgs && c3 >= 3 ? 1 : 0; info[2] = 'үлкейтілген: ' + imgTxt(a) + '; кішірейтілген: ' + imgTxt(b) + '; өлшеулер: ' + c3 + '/4 дұрыс';
+  /* K4 */
+  let c4 = 0; const Fin = [];
+  [['d2a', 'f2a', 'F2a', 'D2a'], ['d2b', 'f2b', 'F2b', 'D2b']].forEach(([dk, fk, Fk, Dk]) => { const d = n(dk), f = n(fk), own = fin(d) && fin(f) && d + f > 0 ? d * f / (d + f) / 100 : NaN; if (Fok(n(Fk), own)) c4++; if (Dok(n(Dk), n(Fk), own)) c4++; Fin.push(fin(n(Fk)) ? n(Fk) : own); });
+  const Fm = n('F2m'), meanOwn = Fin.every(fin) ? (Fin[0] + Fin[1]) / 2 : NaN, okM = near(Fm, meanOwn, 0.0011);
+  crit[3] = c4 >= 3 && okM ? 1 : 0; info[3] = c4 + '/4 мән дұрыс; орташа мән: ' + (okM ? 'дұрыс' : 'қате');
+  /* K5 */
+  const t3 = R.t3, eq = !!t3 && t3.m >= 0.93 && t3.m <= 1.07, okd3 = !!t3 && near(n('d3'), t3.d, 0.3), okf3 = !!t3 && near(n('f3'), t3.s, 0.3);
+  crit[4] = sharp(t3) && eq && okd3 && okf3 ? 1 : 0; info[4] = 'кескін: ' + imgTxt(t3) + (t3 ? '; Γ = ' + fmt(t3.m, 2) + (eq ? '' : ' (өлшемі бірдей емес)') : '') + '; d: ' + (okd3 ? 'дұрыс' : 'қате') + ', f: ' + (okf3 ? 'дұрыс' : 'қате');
+  /* K6 */
+  const f3 = n('f3'), F3own = fin(f3) ? f3 / 200 : NaN, okF3 = Fok(n('F3'), F3own), okD3 = Dok(n('D3'), n('F3'), F3own); crit[5] = okF3 && okD3 ? 1 : 0;
+  info[5] = 'F: ' + (okF3 ? 'дұрыс' : 'қате') + '; D: ' + (okD3 ? 'дұрыс' : 'қате');
+  /* K7 */
+  const Ft = Vv.F / 100, dev = fin(Fm) ? Math.abs(Fm - Ft) / Ft * 100 : NaN; crit[6] = fin(dev) && dev <= 5 ? 1 : 0;
+  info[6] = 'F орт = ' + (fin(Fm) ? fmt(Fm, 3) + ' м' : '—') + '; нақты мәннен ауытқу: ' + (fin(dev) ? fmt(dev, 1) + ' %' : '—');
+  /* K8 */
+  const nq = QS.filter(x => q(x.k)).length; crit[7] = nq >= 4 ? 1 : 0; info[7] = nq + '/5 сұрақ дұрыс';
+  /* K9 */
+  const sf = st.safe || {}; crit[8] = fin(sf.first) && sf.first >= 4 ? 1 : 0; info[8] = 'бірінші әрекет: ' + (fin(sf.first) ? sf.first + '/5' : '—');
+  /* K10 */
+  const used = !!(R.t2a || R.t2b || R.t3); crit[9] = used && viol.length === 0 && !st.pw ? 1 : 0;
+  info[9] = !used ? 'шаммен тәжірибе жасалмады' : (viol.length ? 'бұзушылық: ' + viol.map(x => VIOL[x]).join('; ') : 'бұзушылық жоқ') + (st.pw ? '; жұмыс соңында ток көзі өшірілмеді' : '; ток көзі өшірілді');
+  const score = crit.reduce((s, x) => s + x, 0);
+  const cm = x => fin(x) ? Math.round(x * 1000) / 10 : null;
+  return { crit, info, score, grade5: grade5(score), F1: cm(n('F1')), F2m: cm(Fm), F3: cm(n('F3')), Ft: Vv.F };
+}
+function grade5(score){ const p = score * 10; return p < 40 ? 2 : p < 65 ? 3 : p < 85 ? 4 : 5; }
+function b64e(str){ const b = new TextEncoder().encode(str); let bin = ''; b.forEach(x => { bin += String.fromCharCode(x); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function b64d(s){ s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
+function makeCode(res, at, st){ st = st || S; const p = { n: st.name, c: st.cls, v: vcode(st.seed), s: res.score, k: res.crit.join(''), t: at, F: res.Ft, a: res.F2m }; const b = b64e(JSON.stringify(p)); return 'L11.' + b + '.' + hashStr(SALT + b).toString(36); }
+function readCode(code){ try { const m = String(code).trim().match(/^L11\.([A-Za-z0-9_-]+)\.([a-z0-9]+)$/); if (!m) return null; if (hashStr(SALT + m[1]).toString(36) !== m[2]) return { bad: true }; return JSON.parse(b64d(m[1])); } catch (e) { return null; } }
+
+/* ================= canvases ================= */
+const C = {};
+const TOK = ['bg', 'surface', 'surface-2', 'ink', 'muted', 'line', 'primary', 'amber', 'ok', 'bad', 'bench'];
+function readColors(){ const cs = getComputedStyle(document.documentElement); TOK.forEach(k => { C[k] = cs.getPropertyValue('--' + k).trim() || '#888'; }); RT.need = true; if (SV) SV.key = ''; drawChart(); }
+function makeView(id, W, H){
+  const cv = $(id), v = { cv, ctx: cv.getContext('2d'), w: 0, h: 0, dpr: 1, T: { s: 1, ox: 0, oy: 0 }, key: '' };
+  new ResizeObserver(() => { const r = cv.getBoundingClientRect(); if (!r.width) { v.w = 0; return; } const dpr = Math.min(2.5, window.devicePixelRatio || 1); v.w = r.width; v.h = r.height; v.dpr = dpr; cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); v.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); const s = Math.min(v.w / W, v.h / H); v.T = { s, ox: (v.w - W * s) / 2, oy: (v.h - H * s) / 2 }; v.key = ''; RT.need = true; }).observe(cv);
+  return v;
+}
+let BV = null, SV = null;
+function line(ctx, x1, y1, x2, y2){ ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+function circle(ctx, x, y, r){ ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); }
+const bx = cm => X0 + cm * PXC;
+
+/* ---- bench (side view) ---- */
+function drawBenchScene(ctx, LBL){
+  const k = S.k, P = S.P[k], on = lampOn(), heat = RT.heat;
+  const g = ctx.createLinearGradient(0, 0, 0, BH); g.addColorStop(0, '#2b2f36'); g.addColorStop(1, '#20242a'); ctx.fillStyle = g; ctx.fillRect(0, 0, BW, BH);
+  ctx.fillStyle = '#353a42'; ctx.fillRect(0, RAIL + 30, BW, BH - RAIL - 30);
+  /* window (task 1) */
+  if (k === 0){
+    const wg = ctx.createLinearGradient(0, 40, 0, 300); wg.addColorStop(0, '#bfe0ff'); wg.addColorStop(1, '#e8f4ff'); ctx.fillStyle = wg; ctx.fillRect(0, 40, 30, 250);
+    ctx.fillStyle = '#4c4236'; ctx.fillRect(26, 36, 7, 258); ctx.fillRect(0, 160, 30, 7); ctx.fillRect(0, 36, 33, 6); ctx.fillRect(0, 288, 33, 6);
+    ctx.save(); ctx.globalAlpha = 0.12; ctx.fillStyle = '#dff0ff'; ctx.beginPath(); ctx.moveTo(33, AXIS - 60); ctx.lineTo(bx(P.lens), AXIS - 26); ctx.lineTo(bx(P.lens), AXIS + 26); ctx.lineTo(33, AXIS + 60); ctx.closePath(); ctx.fill(); ctx.restore();
+    ctx.fillStyle = '#c9d3df'; ctx.font = '600 13px "PT Sans", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('← терезе (бірнеше метр алыста)', 44, 30);
+  }
+  /* power source (always on the table, top left in tasks 2–3) */
+  if (k > 0){
+    ctx.fillStyle = '#3f4650'; ctx.strokeStyle = '#59616c'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(16, 14, 150, 50, 7) : ctx.rect(16, 14, 150, 50); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#d6dbe2'; ctx.font = '700 12px "PT Sans", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('ТОК КӨЗІ', 28, 30); ctx.font = '400 11px "PT Mono", monospace'; ctx.fillText(S.pw ? 'ҚОСУЛЫ' : 'өшірулі', 28, 48);
+    circle(ctx, 104, 39, 6); ctx.fillStyle = S.pw ? '#5fe08a' : '#1d2a22'; ctx.fill(); if (S.pw){ circle(ctx, 104, 39, 12); ctx.fillStyle = 'rgba(95,224,138,.25)'; ctx.fill(); }
+    ctx.fillStyle = '#d23b31'; circle(ctx, 134, 39, 5); ctx.fill(); ctx.fillStyle = '#1b1b1b'; circle(ctx, 152, 39, 5); ctx.fill();
+    if (S.conn){ const lx = bx(P.lamp); ctx.lineWidth = 2.2; ctx.strokeStyle = '#d23b31'; ctx.beginPath(); ctx.moveTo(134, 39); ctx.bezierCurveTo(150, 120, lx - 30, AXIS + 70, lx - 3, AXIS + 40); ctx.stroke(); ctx.strokeStyle = '#111'; ctx.beginPath(); ctx.moveTo(152, 39); ctx.bezierCurveTo(175, 110, lx - 20, AXIS + 80, lx + 3, AXIS + 40); ctx.stroke(); }
+  }
+  /* rail + tape */
+  ctx.fillStyle = '#9aa1a9'; ctx.fillRect(X0 - 26, RAIL - 4, 100 * PXC + 52, 8); ctx.fillStyle = '#6e757d'; ctx.fillRect(X0 - 26, RAIL + 26, 100 * PXC + 52, 4);
+  ctx.fillStyle = '#efe6c8'; ctx.fillRect(X0 - 8, RAIL + 4, 100 * PXC + 16, 22);
+  ctx.strokeStyle = '#33291a';
+  for (let mm = 0; mm <= 1000; mm++){ const x = X0 + mm * 0.9, L = mm % 100 === 0 ? 13 : mm % 50 === 0 ? 10 : mm % 10 === 0 ? 7 : 3.5; ctx.lineWidth = mm % 10 === 0 ? 0.8 : 0.3; ctx.globalAlpha = mm % 10 === 0 ? 1 : 0.75; line(ctx, x, RAIL + 4, x, RAIL + 4 + L); }
+  ctx.globalAlpha = 1; ctx.fillStyle = '#33291a'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let cm = 0; cm <= 100; cm++){ if (cm % 10 === 0){ ctx.font = '700 9.5px "PT Mono", monospace'; ctx.fillText(String(cm), bx(cm), RAIL + 21); } else { ctx.font = '400 3.4px "PT Mono", monospace'; ctx.fillText(String(cm), bx(cm), RAIL + 13.6); } }
+  /* light cone lamp -> lens */
+  if (k > 0 && on){ ctx.save(); ctx.globalAlpha = 0.13; ctx.fillStyle = '#ffd27a'; ctx.beginPath(); ctx.moveTo(bx(P.lamp), AXIS); ctx.lineTo(bx(P.lens), AXIS - 26); ctx.lineTo(bx(P.lens), AXIS + 26); ctx.closePath(); ctx.fill(); ctx.restore(); }
+  /* riders */
+  const els = k === 0 ? ['lens', 'scr'] : ['lamp', 'lens', 'scr'];
+  els.forEach(el => {
+    const x = bx(P[el]), sel = RT.sel === el && !RT.mag;
+    ctx.fillStyle = sel ? '#6a5530' : '#4b525b'; ctx.fillRect(x - 18, RAIL - 18, 36, 14); ctx.strokeStyle = sel ? '#f0b03e' : '#2d3238'; ctx.lineWidth = sel ? 2 : 1; ctx.strokeRect(x - 18, RAIL - 18, 36, 14);
+    ctx.strokeStyle = '#e0362b'; ctx.lineWidth = 1; line(ctx, x, RAIL - 4, x, RAIL + 9); ctx.fillStyle = '#e0362b'; ctx.beginPath(); ctx.moveTo(x - 3.5, RAIL - 4); ctx.lineTo(x + 3.5, RAIL - 4); ctx.lineTo(x, RAIL + 1); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#7d858e';
+    if (el === 'lamp'){
+      ctx.fillRect(x - 3, AXIS + 36, 6, RAIL - 18 - AXIS - 36); ctx.fillStyle = '#8b8f95'; ctx.fillRect(x - 10, AXIS + 18, 20, 20);
+      if (on){ const gl = ctx.createRadialGradient(x, AXIS, 4, x, AXIS, 90); gl.addColorStop(0, 'rgba(255,214,130,.65)'); gl.addColorStop(1, 'rgba(255,214,130,0)'); ctx.fillStyle = gl; circle(ctx, x, AXIS, 90); ctx.fill(); }
+      circle(ctx, x, AXIS, 20); ctx.fillStyle = on ? 'rgba(255,240,200,.85)' : heat > 0.25 ? `rgba(255,150,80,${0.15 + heat * 0.35})` : 'rgba(220,230,240,.18)'; ctx.fill(); ctx.strokeStyle = 'rgba(230,236,245,.75)'; ctx.lineWidth = 1.2; ctx.stroke();
+      ctx.strokeStyle = on ? '#fff6d0' : '#8a7a5a'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(x, AXIS + 9); ctx.lineTo(x, AXIS - 9); ctx.lineTo(x + 6, AXIS - 9); ctx.stroke();
+      if (!on && heat > 0.25){ ctx.fillStyle = '#ffb27a'; ctx.font = '700 12px "PT Sans", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('ыстық!', x, AXIS - 32); }
+    } else if (el === 'lens'){
+      ctx.fillRect(x - 3, AXIS + 30, 6, RAIL - 18 - AXIS - 30);
+      ctx.strokeStyle = '#8d949c'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(x, AXIS, 9, 31, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, AXIS - 27); ctx.quadraticCurveTo(x + 11, AXIS, x, AXIS + 27); ctx.quadraticCurveTo(x - 11, AXIS, x, AXIS - 27); ctx.closePath(); ctx.fillStyle = 'rgba(150,215,235,.55)'; ctx.fill(); ctx.strokeStyle = 'rgba(200,240,250,.95)'; ctx.lineWidth = 1.2; ctx.stroke();
+    } else {
+      ctx.fillRect(x - 3, AXIS + 72, 6, RAIL - 18 - AXIS - 72); ctx.fillStyle = '#ece6d6'; ctx.fillRect(x - 4, AXIS - 72, 8, 144); ctx.strokeStyle = '#9b9482'; ctx.lineWidth = 1; ctx.strokeRect(x - 4, AXIS - 72, 8, 144);
+      const lit = k === 0 || on; if (lit){ const o = optics(k, P), a = clamp(0.9 - o.c * 0.12, 0.15, 0.9); ctx.fillStyle = k === 0 ? `rgba(200,230,255,${a})` : `rgba(255,220,140,${a})`; const hh = clamp(o.m * (k === 0 ? 75 : HOBJ / 2) * PXC + o.c * PXC / 2, 2, 70); ctx.fillRect(x - 5, AXIS - hh, 3, hh * 2); }
+    }
+    ctx.fillStyle = sel ? '#f0b03e' : '#c9ced6'; ctx.font = `700 ${13 * LBL}px "PT Sans", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(el === 'lamp' ? 'Шам' : el === 'lens' ? 'Линза' : 'Экран', x, el === 'scr' ? AXIS - 86 : AXIS - (el === 'lens' ? 46 : 38) - 6 * (LBL - 1));
+  });
+  ctx.strokeStyle = 'rgba(200,205,215,.18)'; ctx.setLineDash([5, 6]); ctx.lineWidth = 1; line(ctx, X0 - 20, AXIS, BW - 20, AXIS); ctx.setLineDash([]);
+}
+function renderBench(){
+  const v = BV; if (!v || !v.w) return; const ctx = v.ctx, T = v.T; ctx.clearRect(0, 0, v.w, v.h); ctx.fillStyle = '#20242a'; ctx.fillRect(0, 0, v.w, v.h);
+  const LBL = clamp(0.62 / T.s, 1, 2.1);
+  ctx.save(); ctx.translate(T.ox, T.oy); ctx.scale(T.s, T.s); drawBenchScene(ctx, LBL); ctx.restore();
+  const Lz = RT.lens; if (Lz && RT.mag){ const rad = Math.min(105, Math.max(58, v.w * 0.11)), z = Math.max(4, 1.6 / T.s); let lx = Lz.px, ly = Lz.py; if (Lz.touch){ ly = Lz.py - rad - 22; if (ly < rad * 0.5) ly = Lz.py + rad + 22; }
+    const wx = (Lz.px - T.ox) / T.s, wy = (Lz.py - T.oy) / T.s, s2 = T.s * z; ctx.save(); ctx.beginPath(); ctx.arc(lx, ly, rad, 0, Math.PI * 2); ctx.clip(); ctx.translate(lx - wx * s2, ly - wy * s2); ctx.scale(s2, s2); drawBenchScene(ctx, 1); ctx.restore();
+    ctx.save(); ctx.strokeStyle = '#f0b03e'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(lx, ly, rad, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+  RT.heatDrawn = RT.heat;
+}
+
+/* ---- screen face (image with defocus blur) ---- */
+const OFF1 = document.createElement ? document.createElement('canvas') : null, OFF2 = document.createElement ? document.createElement('canvas') : null;
+function zig(ctx, T, x1, y1, x2, y2, amp, per){
+  const L = Math.hypot(x2 - x1, y2 - y1), n = Math.max(2, Math.round(L / per)), ux = (x2 - x1) / L, uy = (y2 - y1) / L; ctx.beginPath();
+  for (let i = 0; i <= n * 2; i++){ const t = i / (n * 2) * L, o = i % 2 ? amp : -amp; const p = T(x1 + ux * t - uy * o, y1 + uy * t + ux * o); if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); }
+  ctx.stroke();
+}
+function drawObjectImage(c, k, o, cx, cy, ppc){
+  const m = o.m, T = (X, Y) => [cx - X * m * ppc, cy + Y * m * ppc];
+  if (k === 0){
+    const rect = (x1, y1, x2, y2, col) => { const a = T(x1, y1), b = T(x2, y2); c.fillStyle = col; c.fillRect(Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.abs(b[0] - a[0]), Math.abs(b[1] - a[1])); };
+    rect(-60, -75, 60, 75, '#cfe6ff'); rect(-60, 20, 60, 75, '#e9f4ff');
+    c.fillStyle = '#f6fbff'; [[-35, 52, 13], [-20, 56, 10], [25, 45, 11]].forEach(([x, y, r]) => { const p = T(x, y); circle(c, p[0], p[1], Math.max(0.5, r * m * ppc)); c.fill(); });
+    c.fillStyle = '#4f7c43'; const tr = T(30, -20); c.beginPath(); c.ellipse(tr[0], tr[1], Math.max(0.5, 26 * m * ppc), Math.max(0.5, 34 * m * ppc), 0, 0, Math.PI * 2); c.fill(); rect(27, -75, 33, -45, '#5b4532');
+    rect(-60, -75, 60, -60, '#7d9dbb');
+    const fr = '#3a3127'; rect(-66, -81, 66, -75, fr); rect(-66, 75, 66, 81, fr); rect(-66, -81, -60, 81, fr); rect(60, -81, 66, 81, fr); rect(-4, -75, 4, 75, fr); rect(-60, 12, 60, 20, fr);
+  } else {
+    const b = clamp(0.95 / Math.sqrt(Math.max(m, 0.2)), 0.42, 1), w = Math.max(0.7, 0.05 * m * ppc);
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    c.strokeStyle = `rgba(255,200,110,${0.35 * b})`; c.lineWidth = w * 4; zig(c, T, 0, -1, 0, 1, 0.07, 0.11); zig(c, T, 0, 1, 0.7, 1, 0.07, 0.11);
+    c.strokeStyle = `rgba(255,244,205,${b})`; c.lineWidth = w; zig(c, T, 0, -1, 0, 1, 0.07, 0.11); zig(c, T, 0, 1, 0.7, 1, 0.07, 0.11);
+    c.strokeStyle = `rgba(255,190,110,${0.5 * b})`; c.lineWidth = w * 0.8; const p1 = T(0, -1), p2 = T(0, -1.35); line(c, p1[0], p1[1], p2[0], p2[1]); const p3 = T(0.7, 1), p4 = T(0.7, 1.3); line(c, p3[0], p3[1], p4[0], p4[1]);
+  }
+}
+function screenKey(){ const k = S.k, P = S.P[k]; return [k, P.lamp, P.lens, P.scr, lampOn(), RT.zoom, SV.w, SV.h, SV.dpr].join('|'); }
+function renderScreen(){
+  const v = SV; if (!v || !v.w || !OFF1) return; const key = screenKey(); if (key === v.key) return; v.key = key;
+  const ctx = v.ctx, W = v.w, H = v.h, dpr = v.dpr, k = S.k, P = S.P[k], o = optics(k, P), ppc = PPC * RT.zoom * Math.min(W / SW, H / SH), cx = W / 2, cy = H / 2;
+  ctx.save(); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+  const bg = ctx.createRadialGradient(cx, cy, 10, cx, cy, Math.max(W, H) * 0.7); bg.addColorStop(0, '#3d3b35'); bg.addColorStop(1, '#2c2a26'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  ctx.lineWidth = 1; for (let i = -40; i <= 40; i++){ const x = cx + i * ppc, y = cy + i * ppc; ctx.strokeStyle = i === 0 ? 'rgba(235,225,200,.30)' : i % 5 === 0 ? 'rgba(235,225,200,.20)' : 'rgba(235,225,200,.10)'; if (x >= 0 && x <= W) line(ctx, x, 0, x, H); if (y >= 0 && y <= H) line(ctx, 0, y, W, y); }
+  if (RT.zoom > 1){ ctx.strokeStyle = 'rgba(235,225,200,.06)'; for (let i = -80; i <= 80; i++){ if (i % 2 === 0) continue; const x = cx + i * ppc / 2, y = cy + i * ppc / 2; if (x >= 0 && x <= W) line(ctx, x, 0, x, H); if (y >= 0 && y <= H) line(ctx, 0, y, W, y); } }
+  const light = k === 0 || lampOn();
+  if (light && o.Pw > -1){
+    const r = o.c / 2 * ppc, rd = r * dpr; let q = 1; if (rd > 5) q = Math.max(1 / 16, Math.pow(2, -Math.ceil(Math.log2(rd / 5))));
+    const w2 = Math.max(2, Math.round(W * dpr * q)), h2 = Math.max(2, Math.round(H * dpr * q));
+    OFF1.width = w2; OFF1.height = h2; const c1 = OFF1.getContext('2d'); c1.setTransform(dpr * q, 0, 0, dpr * q, 0, 0); c1.fillStyle = '#000'; c1.fillRect(0, 0, W, H); drawObjectImage(c1, k, o, cx, cy, ppc);
+    OFF2.width = w2; OFF2.height = h2; const c2 = OFF2.getContext('2d'); c2.fillStyle = '#000'; c2.fillRect(0, 0, w2, h2); c2.globalCompositeOperation = 'lighter';
+    const rq = rd * q, N = rq < 0.35 ? 1 : clamp(Math.round(Math.PI * rq * rq * 0.8) + 4, 6, 64); c2.globalAlpha = 1 / N;
+    for (let i = 0; i < N; i++){ const rr = N === 1 ? 0 : rq * Math.sqrt((i + 0.5) / N), th = i * 2.399963; c2.drawImage(OFF1, rr * Math.cos(th), rr * Math.sin(th)); }
+    ctx.globalCompositeOperation = 'lighter'; ctx.imageSmoothingEnabled = true; ctx.drawImage(OFF2, 0, 0, W, H);
+  }
+  ctx.restore();
+}
+
+/* ================= bench pointer ================= */
+function wpt(e){ const v = BV, r = v.cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top; return { x: (px - v.T.ox) / v.T.s, y: (py - v.T.oy) / v.T.s, px, py, s: v.T.s }; }
+const locked = () => !S.started || !!S.result;
+function benchHit(x, y, tol){
+  const k = S.k, P = S.P[k], els = k === 0 ? ['scr', 'lens'] : ['scr', 'lens', 'lamp'];
+  for (const el of els){ const ex = bx(P[el]); if (el === 'lamp' && Math.hypot(x - ex, y - AXIS) <= 22 + tol / 3) return { el, bulb: true };
+    const top = el === 'scr' ? AXIS - 76 : el === 'lens' ? AXIS - 36 : AXIS - 24; if (Math.abs(x - ex) <= 18 + tol / 3 && y >= top && y <= RAIL + 30) return { el }; }
+  return null;
+}
+function addViol(kind){ if (!S.viol.includes(kind)) S.viol.push(kind); saveSoon(); }
+function attachPointer(){
+  const cv = BV.cv;
+  cv.addEventListener('pointerdown', e => {
+    if (e.button) return; const p = wpt(e);
+    if (RT.mag){ RT.lens = { px: p.px, py: p.py, touch: e.pointerType !== 'mouse' }; RT.lensDown = true; if (e.pointerType !== 'mouse') cv.setPointerCapture(e.pointerId); RT.need = true; return; }
+    if (locked()) return; if (!S.safe.passed){ flash('Алдымен «Қауіпсіздік» бетіндегі тесттен өтіңіз.'); return; }
+    const h = benchHit(p.x, p.y, Math.max(8, 10 / p.s)); if (!h) return; e.preventDefault();
+    if (h.bulb && (lampOn() || RT.heat > 0.25)){ RT.hot = { x: p.x, y: p.y }; cv.setPointerCapture(e.pointerId); flash('Абайлаңыз! Шамның шыны колбасы ыстық – оны қолмен ұстауға болмайды. Шамды тек төменгі тұғырынан (рейтерінен) ұстап жылжытыңыз.', true); return; }
+    RT.sel = h.el; RT.drag = { el: h.el, dx: p.x - bx(S.P[S.k][h.el]) }; cv.setPointerCapture(e.pointerId); renderCtl(); RT.need = true;
+  });
+  cv.addEventListener('pointermove', e => {
+    const p = wpt(e);
+    if (RT.mag){ if (e.pointerType === 'mouse' || RT.lensDown){ RT.lens = { px: p.px, py: p.py, touch: e.pointerType !== 'mouse' }; RT.need = true; } return; }
+    if (RT.hot){ if (Math.hypot(p.x - RT.hot.x, p.y - RT.hot.y) > 6){ RT.hot = null; addViol('hot'); flash('Қауіпсіздік ережесі бұзылды: ыстық колбаны ұстадыңыз. Шамды тек тұғырынан ұстап жылжытыңыз. Бұл бағаға әсер етеді.', true); } return; }
+    if (RT.drag){ moveEl(S.k, RT.drag.el, (p.x - RT.drag.dx - X0) / PXC); RT.need = true; return; }
+    if (e.pointerType === 'mouse'){ const h = locked() ? null : benchHit(p.x, p.y, 8); cv.style.cursor = !h ? 'default' : h.bulb && (lampOn() || RT.heat > 0.25) ? 'not-allowed' : 'ew-resize'; }
+  });
+  const end = e => {
+    if (RT.mag){ RT.lensDown = false; if (e && e.pointerType !== 'mouse'){ RT.lens = null; RT.need = true; } return; }
+    RT.hot = null; if (RT.drag){ RT.drag = null; ALERT = null; lastH = ''; saveSoon(); renderSideLite(); RT.need = true; }
+  };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('pointerleave', e => { if (RT.mag && e.pointerType === 'mouse'){ RT.lens = null; RT.need = true; } });
+  cv.addEventListener('keydown', e => { if (locked() || !S.safe.passed) return; if (e.key === 'ArrowLeft' || e.key === 'ArrowRight'){ e.preventDefault(); nudge((e.key === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 1 : 0.1)); } });
+}
+function nudge(dv){ const k = S.k; if (k === 0 && RT.sel === 'lamp') RT.sel = 'scr'; moveEl(k, RT.sel, S.P[k][RT.sel] + dv); saveSoon(); RT.need = true; renderSideLite(); }
+
+/* ================= actions ================= */
+function record(){
+  const k = S.k, P = S.P[k], o = optics(k, P);
+  if (k > 0 && !lampOn()){ flash('Экранда кескін жоқ: шам жанып тұрған жоқ. Шамды ток көзіне жалғап, ток көзін қосыңыз.', true); return; }
+  if (o.Pw <= 0){ flash('Экранда шамның кескіні пайда болмайды, тек жарық дақ көрінеді. Шамды линзадан алысырақ қойыңыз.', true); return; }
+  const rec = { d: Math.round(o.d * 100) / 100, s: Math.round(o.s * 100) / 100, c: Math.round(o.c * 1000) / 1000, m: Math.round(o.m * 1000) / 1000, at: Date.now() };
+  if (k === 0){ S.R.t1 = rec; flash('Кескін тіркелді. Енді шкаладан линза мен экранның орнын оқып, f қашықтығын дәптерге жазыңыз.'); }
+  else if (k === 1){
+    if (o.m >= 1.15){ S.R.t2a = rec; flash('Үлкейтілген кескін тіркелді (1-өлшеу). Шкаладан d₁ мен f₁-ді өлшеп, дәптерге жазыңыз.'); }
+    else if (o.m <= 0.87){ S.R.t2b = rec; flash('Кішірейтілген кескін тіркелді (2-өлшеу). Шкаладан d₂ мен f₂-ні өлшеп, дәптерге жазыңыз.'); }
+    else { flash('Кескіннің өлшемі шамның өлшеміне жуық. 2-тапсырмада айқын үлкейтілген, сосын айқын кішірейтілген кескін алыңыз (өлшемі бірдей кескін – 3-тапсырмада).', true); return; }
+  } else { S.R.t3 = rec; flash('Кескін тіркелді. Шкаладан d₃ пен f₃-ті өлшеп, дәптерге жазыңыз.'); }
+  saveSoon(); renderSide();
+}
+function act(a, b){
+  switch (a){
+    case 'sel': RT.sel = b.dataset.v; RT.mag = false; RT.lens = null; break;
+    case 'nudge': nudge(+b.dataset.v); return;
+    case 'mag': RT.mag = !RT.mag; RT.lens = null; break;
+    case 'conn': if (S.pw){ addViol('live'); flash('Қауіпсіздік ережесі бұзылды: тізбекті ток көзі қосулы кезде ' + (S.conn ? 'ажыраттыңыз' : 'жалғадыңыз') + '. Тізбекті тек ток көзі өшірулі кезде жалғаңыз. Бұл бағаға әсер етеді.', true); } S.conn = !S.conn; break;
+    case 'pw': S.pw = !S.pw; if (S.pw && !S.conn) flash('Ток көзі қосылды, бірақ шам жалғанбаған.'); else if (!S.pw && allDone()) flash('Ток көзі өшірілді. Шам суығанша оны ұстамаңыз.'); break;
+    case 'record': record(); return;
+  }
+  saveSoon(); renderSide(); RT.need = true;
+}
+
+/* ================= hints / side ================= */
+function flash(msg, warn){ ALERT = { msg, warn: !!warn, until: performance.now() + 7000 }; lastH = ''; updateHints(); }
+const filled = x => String(x == null ? '' : x).trim() !== '';
+function allDone(){ const R = S.R, E = S.E; return !!(R.t1 && R.t2a && R.t2b && R.t3) && ['f1', 'd2a', 'f2a', 'd2b', 'f2b', 'd3', 'f3'].every(k => filled(E[k])); }
+function steps(k){
+  const R = S.R, E = S.E, any2 = !!(R.t2a || R.t2b || R.t3);
+  if (k === 0) return [[!!R.t1, 'Экранды жылжытып, терезенің анық кескінін алу және тіркеу'], [filled(E.f1), 'Шкаладан f қашықтығын өлшеп, дәптерге жазу']];
+  if (k === 1) return [[S.conn || any2, 'Ток көзі өшірулі кезде шамды жалғау'], [S.pw || any2, 'Ток көзін қосу'], [!!R.t2a, 'Үлкейтілген анық кескін алу және тіркеу'], [filled(E.d2a) && filled(E.f2a), 'd₁ мен f₁-ді өлшеу'], [!!R.t2b, 'Кішірейтілген анық кескін алу және тіркеу'], [filled(E.d2b) && filled(E.f2b), 'd₂ мен f₂-ні өлшеу']];
+  return [[!!R.t3, 'Өлшемі шаммен бірдей анық кескін алу және тіркеу'], [filled(E.d3) && filled(E.f3), 'd₃ пен f₃-ті өлшеу'], [allDone() && !S.pw, 'Жұмыс соңында ток көзін өшіру']];
+}
+function hint3(){
+  if (!S.safe.passed) return 'Алдымен «Қауіпсіздік» бетіндегі тесттен өтіңіз.'; if (S.result) return 'Жұмыс тапсырылды. Орындықты тек қарауға болады.';
+  const k = S.k, st = steps(k), i = st.findIndex(x => !x[0]), o = optics(k, S.P[k]);
+  if (k > 0 && i >= 0 && st[i][1].indexOf('кескін') >= 0){
+    if (!S.conn) return 'Шам ток көзіне жалғанбаған. Ток көзі өшірулі екенін тексеріп, «🔌 Шамды ток көзіне жалғау» батырмасын басыңыз, сосын ток көзін қосыңыз.';
+    if (!S.pw) return '«⏻ Ток көзін қосу» батырмасын басыңыз: шам жанады.';
+    if (o.Pw <= 0) return 'Экранда шамның кескіні жоқ, тек жарық дақ. Шамды линзадан алысырақ қойыңыз (немесе линзаны жылжытыңыз).';
+  }
+  const H = [
+    ['«Экран» таңдап, оны сүйреп немесе ← → батырмаларымен жылжытыңыз. Экрандағы кескін бұлыңғыр не анық болып өзгереді. Ең анық болған орында «📸 Кескінді тіркеу» батырмасын басыңыз. Анықтықты «×3» үлкейтіп тексеріңіз.',
+     '«🔍 Шкаланы үлкейту» құралымен линза мен экранның қызыл көрсеткіштерін шкаладан оқыңыз. Олардың айырмасы f = x(экран) − x(линза). Мәнді 0,1 см дәлдікпен дәптерге жазыңыз.'],
+    ['Ток көзі өшірулі екенін тексеріп, «🔌 Шамды ток көзіне жалғау» батырмасын басыңыз.', '«⏻ Ток көзін қосу» батырмасын басыңыз: шам жанады.',
+     'Шамды линзаға жақындатып (бірақ тым жақын емес), экранды жылжытып, қылдың үлкейтілген төңкерілген анық кескінін алыңыз: кескін 2 см-ден айқын үлкен болсын. Шамды тек тұғырынан ұстаңыз – колба ыстық!',
+     'Шкаладан шамның, линзаның және экранның көрсеткіштерін оқыңыз: d₁ = x(линза) − x(шам), f₁ = x(экран) − x(линза).',
+     'Енді шамды линзадан алыстатыңыз, экранды жылжытып, кішірейтілген анық кескін алыңыз да, тіркеңіз.',
+     'd₂ мен f₂-ні шкаладан өлшеп, дәптерге жазыңыз.'],
+    ['Шам мен экранды линзадан шамамен бірдей қашықтыққа қойыңыз. Кескін анық әрі биіктігі шамның қылындай (h = 2 см, экранда 2 тор көзі) болатын орынды табыңыз. Әрі шамды, әрі экранды кезекпен жылжытып көріңіз.',
+     'd₃ пен f₃-ті шкаладан өлшеп, дәптерге жазыңыз.',
+     'Тәжірибе аяқталды. «⏻ Ток көзін өшіру» батырмасын басыңыз. Шам суығанша оны ұстамаңыз.'],
+  ];
+  if (i < 0){ const nx = [0, 1, 2].find(t => !steps(t).every(x => x[0])); return 'Бұл тапсырма орындалды.' + (nx != null ? ' Келесі: ' + TASKS[nx].n + '.' : ' Барлық тапсырма орындалды – «Есептеу» бетіне өтіңіз.'); }
+  if (k === 2 && i === 2 && !allDone()) return 'Алдымен барлық тапсырмаларды аяқтаңыз, сосын ток көзін өшіріңіз.';
+  return H[k][i];
+}
+function updateHints(){
+  if (RT.drag || S.page !== 3) return; const a = ALERT && performance.now() < ALERT.until ? ALERT : null, el = $('#hint3'), t = a ? a.msg : hint3(), key = t + (a && a.warn);
+  if (key === lastH) return; lastH = key; el.textContent = t; el.classList.toggle('warn', !!(a && a.warn));
+}
+const GOALS = [
+  'Линза терезеге қаратылған. Экранды жылжытып, терезенің ең анық кескінін алыңыз. Линзадан экранға дейінгі қашықтық F-ке жуық.',
+  'Шамның қылының алдымен үлкейтілген, сосын кішірейтілген анық кескінін алыңыз. Әр жолы d мен f қашықтықтарын өлшеңіз.',
+  'Шамның қылы мен оның кескінінің өлшемдері бірдей болатындай етіп шамды, линзаны және экранды орналастырыңыз. Бұл кезде d = f = 2F.',
+];
+function renderCtl(){
+  const k = S.k, lk = locked() || !S.safe.passed, els = k === 0 ? [['lens', 'Линза'], ['scr', 'Экран']] : [['lamp', 'Шам'], ['lens', 'Линза'], ['scr', 'Экран']];
+  if (!els.some(x => x[0] === RT.sel)) RT.sel = 'scr';
+  $('#elBar').innerHTML = `<span class="seg" role="group" aria-label="Жылжитын құрал">${els.map(([v, t]) => `<button type="button" data-act="sel" data-v="${v}" aria-pressed="${RT.sel === v && !RT.mag}"${lk ? ' disabled' : ''}>${t}</button>`).join('')}</span>`
+    + `<span class="seg" role="group" aria-label="Дәл жылжыту">${[[-1, '⟸ 1 см'], [-0.1, '← 1 мм'], [0.1, '1 мм →'], [1, '1 см ⟹']].map(([v, t]) => `<button type="button" data-act="nudge" data-v="${v}"${lk ? ' disabled' : ''}>${t}</button>`).join('')}</span>`
+    + `<button type="button" data-act="mag" aria-pressed="${RT.mag}">🔍 Шкаланы үлкейту</button>`;
+  $('#pwBar').innerHTML = `<button type="button" class="${S.conn ? '' : 'am'}" data-act="conn"${lk ? ' disabled' : ''}>🔌 ${S.conn ? 'Шамды ажырату' : 'Шамды ток көзіне жалғау'}</button><button type="button" class="${S.pw ? 'primary' : ''}" data-act="pw"${lk ? ' disabled' : ''}>⏻ ${S.pw ? 'Ток көзін өшіру' : 'Ток көзін қосу'}</button><span class="small muted">${S.conn ? 'Шам жалғанған' : 'Шам жалғанбаған'} · ток көзі ${S.pw ? 'қосулы' : 'өшірулі'}</span>`;
+  $('#help3').textContent = RT.mag ? 'Шкаланың үстіне курсорды (саусақты) апарыңыз: лупа шығады. Құралдарды жылжыту үшін «Шам», «Линза» немесе «Экран» батырмасын басыңыз.' : 'Рейтерді (құралдың төменгі бөлігін) сүйреңіз немесе құралды таңдап, ← → батырмаларымен жылжытыңыз. Пернетақтада: ← →, Shift бірге – 1 см.';
+}
+function nbHTML(k){
+  const R = S.R, st = r => r ? `<span class="rec ok">✓ тіркелді</span>` : `<span class="rec">тіркелмеген</span>`, inp = (key, lab, unit) => `<div class="fld"><span>${lab}</span><input class="num" data-e="${key}" id="nb-${key}" inputmode="decimal" autocomplete="off" value="${esc(S.E[key])}"${locked() ? ' disabled' : ''}> ${unit}</div>`;
+  let h = `<p class="label">Бақылау дәптері · ${TASKS[k].n}</p>`;
+  if (k === 0) h += `<div class="nbblk"><div class="t"><span>Терезенің кескіні</span>${st(R.t1)}</div>${inp('f1', 'f (линза → экран) =', 'см')}</div>`;
+  else if (k === 1) h += `<div class="nbblk"><div class="t"><span>1-өлшеу · үлкейтілген кескін</span>${st(R.t2a)}</div>${inp('d2a', 'd₁ (шам → линза) =', 'см')}${inp('f2a', 'f₁ (линза → экран) =', 'см')}</div><div class="nbblk"><div class="t"><span>2-өлшеу · кішірейтілген кескін</span>${st(R.t2b)}</div>${inp('d2b', 'd₂ =', 'см')}${inp('f2b', 'f₂ =', 'см')}</div>`;
+  else h += `<div class="nbblk"><div class="t"><span>Өлшемі бірдей кескін</span>${st(R.t3)}</div>${inp('d3', 'd₃ (шам → линза) =', 'см')}${inp('f3', 'f₃ (линза → экран) =', 'см')}</div>`;
+  h += `<p class="small muted">${k === 0 ? 'Шкаладағы көрсеткіштердің айырмасын 0,1 см дәлдікпен жазыңыз.' : 'Шамның қылының биіктігі h = 2,0 см. Қашықтықтарды 0,1 см дәлдікпен жазыңыз.'}</p>`;
+  return h;
+}
+function renderSide(){
+  const k = S.k;
+  $('#taskTabs').innerHTML = TASKS.map((t, i) => { const d = steps(i).every(x => x[0]); return `<button type="button" data-act2="task" data-v="${i}" aria-pressed="${k === i}" class="${d ? 'done' : ''}"><span class="ck">${d ? '✓' : i + 1}</span>${t.n} <small>· ${t.t}</small></button>`; }).join('');
+  $('#taskGoal').textContent = GOALS[k];
+  renderCtl(); $('#nb3').innerHTML = nbHTML(k); $('#recBtn').disabled = locked() || !S.safe.passed;
+  renderSideLite();
+}
+function renderSideLite(){
+  const k = S.k, st = steps(k), i = st.findIndex(x => !x[0]);
+  $('#chk3').innerHTML = st.map(([ok, t], j) => `<li class="${ok ? 'y' : j === i ? 'now' : ''}">${esc(t)}</li>`).join('');
+  const rec = k === 0 ? S.R.t1 : k === 1 ? (S.R.t2a || S.R.t2b) : S.R.t3; $('#recNote').textContent = rec ? 'Қайта тіркесеңіз, бұрынғы жазба ауыстырылады.' : '';
+  $('#benchStat').textContent = TASKS[k].n + (k > 0 ? ' · шам ' + (lampOn() ? 'жанып тұр' : 'сөнген') : '');
+  $$('#taskTabs button').forEach((b, j) => b.classList.toggle('done', steps(j).every(x => x[0])));
+  lastH = ''; updateHints(); refreshDerived(); RT.need = true;
+}
+
+/* ================= calc / chart ================= */
+function drawChart(){
+  const cv = $('#cvChart'); if (!cv) return; const r = cv.getBoundingClientRect(); if (!r.width) return;
+  const dpr = Math.min(2.5, window.devicePixelRatio || 1); cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr); const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const W = r.width, H = r.height, m = { l: 132, r: 60, t: 14, b: 14 }; ctx.fillStyle = C.surface; ctx.fillRect(0, 0, W, H);
+  const vals = [num(S.E.F1), num(S.E.F2m), num(S.E.F3)].map(x => fin(x) ? x * 100 : NaN), labs = ['1-әдіс (терезе)', '2-әдіс (формула)', '3-әдіс (2F)'];
+  const mx = Math.max(10, ...vals.filter(fin)) * 1.15, rowH = (H - m.t - m.b) / 3, X = v => m.l + v / mx * (W - m.l - m.r);
+  ctx.font = `15px "PT Sans", sans-serif`; ctx.textBaseline = 'middle';
+  labs.forEach((l, i) => { const y = m.t + rowH * (i + 0.5); ctx.fillStyle = C.muted; ctx.textAlign = 'right'; ctx.fillText(l, m.l - 10, y);
+    if (fin(vals[i])){ ctx.fillStyle = i === 1 ? C.primary : C.amber; const bh = Math.min(26, rowH * 0.55); ctx.beginPath(); ctx.roundRect ? ctx.roundRect(m.l, y - bh / 2, X(vals[i]) - m.l, bh, 4) : ctx.rect(m.l, y - bh / 2, X(vals[i]) - m.l, bh); ctx.fill(); ctx.fillStyle = C.ink; ctx.textAlign = 'left'; ctx.font = `14px "PT Mono", monospace`; ctx.fillText(fmt(vals[i], 1) + ' см', X(vals[i]) + 8, y); ctx.font = `15px "PT Sans", sans-serif`; }
+    else { ctx.fillStyle = C.muted; ctx.textAlign = 'left'; ctx.fillText('—', m.l + 6, y); } });
+  ctx.strokeStyle = C.line; ctx.lineWidth = 1; line(ctx, m.l, m.t, m.l, H - m.b);
+}
+
+/* ================= notebook inputs ================= */
+function qOrder(key, n){ const r = mulberry32(((S.seed || DEMO_SEED) + hashStr(key)) >>> 0); const idx = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--){ const j = Math.floor(r() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; } return idx; }
+function buildSafety(){ const at = S.safe.attempts; $('#safeQ').innerHTML = SAFE_Q.map((q, qi) => `<fieldset class="q"><legend>${qi + 1}. ${esc(q.q)}</legend>` + qOrder('safe' + qi + '|' + at, 4).map(ai => `<label><input type="radio" name="sq${qi}" id="sq${qi}-${ai}" value="${ai}"><span>${esc(q.a[ai])}</span></label>`).join('') + `</fieldset>`).join(''); S.safe.ans.forEach((a, qi) => { if (a !== null) { const el = document.getElementById(`sq${qi}-${a}`); if (el) el.checked = true; } }); }
+function buildQs(){ $('#conclBox').innerHTML = QS.map((q, i) => `<fieldset class="q"><legend>${i + 1}. ${esc(q.q)}</legend>` + qOrder(q.k, 4).map(ai => `<label><input type="radio" name="c-${q.k}" id="c-${q.k}-${ai}" value="${ai}" data-e="${q.k}"><span>${esc(q.a[ai])}</span></label>`).join('') + `</fieldset>`).join(''); }
+function fillInputs(){
+  const E = S.E; $$('#pages input[data-e]').forEach(el => { const k = el.dataset.e; if (el.type === 'radio') el.checked = E[k] != null && +el.value === E[k]; else el.value = E[k] || ''; });
+  buildSafety();
+}
+function onInput(e){
+  const t = e.target; if (!t || t.classList.contains('reg-in')) return; let m;
+  if ((m = (t.id || '').match(/^sq(\d)-(\d)$/))) { if (S.safe.passed) return; S.safe.ans[+m[1]] = +m[2]; saveSoon(); return; }
+  if (locked()) return; const k = t.dataset.e; if (!k) return;
+  if (t.type === 'radio') S.E[k] = +t.value; else S.E[k] = t.value;
+  saveSoon(); if (t.id && t.id.indexOf('nb-') === 0) renderSideLite(); else refreshDerived();
+}
+function safetyCheck(){
+  if (locked() || S.safe.passed) return; const o = $('#safeOut');
+  if (S.safe.ans.some(a => a === null)) { o.hidden = false; o.className = 'warnmsg'; o.textContent = 'Барлық 5 сұраққа жауап беріңіз.'; return; }
+  const sc = S.safe.ans.reduce((a, x, i) => a + (x === SAFE_Q[i].c ? 1 : 0), 0); S.safe.attempts++; if (S.safe.first === null) S.safe.first = sc; if (sc >= 4) S.safe.passed = true; S.safe.last = sc;
+  saveDraft(); renderSafety(); updateUI();
+}
+function safetyRetry(){ if (S.safe.passed) return; S.safe.ans = arr(5, null); S.safe.last = null; buildSafety(); renderSafety(); saveSoon(); }
+function renderSafety(){
+  const o = $('#safeOut'), sf = S.safe; $$('#safeQ input').forEach(el => { el.disabled = locked() || sf.passed || (sf.last != null && !sf.passed); });
+  $('#safeCheck').hidden = sf.passed || (sf.last != null && !sf.passed); $('#safeRetry').hidden = sf.passed || sf.last == null;
+  if (sf.passed) { o.hidden = false; o.className = 'okmsg'; o.textContent = `Тест өтілді${sf.last != null ? ' (' + sf.last + '/5)' : ''}. Тәжірибеге кіруге рұқсат етілді.` + (sf.first != null && sf.first < 4 ? ' Бағаға бірінші әрекеттің нәтижесі (' + sf.first + '/5) есептеледі.' : ''); }
+  else if (sf.last != null) { o.hidden = false; o.className = 'warnmsg'; o.textContent = `5 сұрақтың ${sf.last}-іне дұрыс жауап бердіңіз. Ережелерді қайта оқып, тестті қайталаңыз: кемінде 4 дұрыс жауап керек.`; }
+  else o.hidden = true;
+}
+
+/* ================= derived ================= */
+function stepDone(){
+  const E = S.E;
+  return [S.started, S.started && !!S.seen[1], S.safe.passed, allDone(), ['F1', 'D1', 'F2a', 'D2a', 'F2b', 'D2b', 'F2m', 'F3', 'D3'].every(k => filled(E[k])), QS.every(q => E[q.k] !== null), !!S.result];
+}
+function refreshDerived(){
+  const st = stepDone(); $$('.step').forEach((b, i) => { b.classList.toggle('done', !!st[i]); b.classList.toggle('lock', i === 3 && !S.safe.passed); });
+  const E = S.E; ['f1', 'd2a', 'f2a', 'd2b', 'f2b', 'd3', 'f3'].forEach(k => { const el = $('#ro-' + k); if (el) el.textContent = String(E[k] || '').trim() || '—'; });
+  renderSummary(); renderCompleteness(); if (S.page === 5) drawChart();
+}
+function renderSummary(){
+  const E = S.E, q = k => E[k] === QS.find(x => x.k === k).c, F1 = num(E.F1), F2 = num(E.F2m), F3 = num(E.F3); let h = '';
+  if (fin(F2)) h += 'Линза формуласы бойынша линзаның фокустық қашықтығы F ≈ ' + fmt(F2, 3) + ' м' + (F2 > 0 ? ', оптикалық күші D ≈ ' + fmt(1 / F2, 1) + ' дптр' : '') + '. ';
+  if (fin(F1) && fin(F3)) h += 'Терезе әдісі ' + fmt(F1, 3) + ' м, бірдей кескін әдісі ' + fmt(F3, 3) + ' м нәтиже берді. ';
+  if (q('q1')) h += 'Ең қарапайым әдіс – алыс дененің кескіні бойынша. '; if (q('q2')) h += 'Терезе шексіз алыс болмағандықтан, бұл әдіс F-ті сәл үлкейтіп береді. '; if (q('q3')) h += 'Ең дәл әдіс – линза формуласы.';
+  $('#summary').textContent = h || 'Есептеулер мен сұрақтарға жауап берген сайын қорытынды осында құралады.';
+}
+function renderCompleteness(){
+  const st = stepDone(), ml = []; if (!S.safe.passed) ml.push([2, 'тест']); if (!st[3]) ml.push([3, 'тапсырмалар немесе өлшеулер толық емес']); if (!st[4]) ml.push([4, 'есептеулер толық емес']); const nq = QS.filter(q => S.E[q.k] === null).length; if (nq) ml.push([5, nq + ' сұрақ']);
+  if (S.pw) ml.push([3, 'ток көзі әлі қосулы тұр']);
+  $('#completeness').innerHTML = `<p class="label">Жұмыстың толықтығы</p>` + (ml.length ? `<p style="display:flex;gap:8px;align-items:center"><span class="st x">!</span><span>Аяқталмаған бөлімдер:</span></p><ul>` + ml.map(([p, k]) => `<li><button type="button" class="ghost" data-goto="${p}" style="min-height:0;padding:3px 8px">${PAGE_NAMES[p]}</button> — ${esc(k)}</li>`).join('') + `</ul>` : `<p style="display:flex;gap:8px;align-items:center"><span class="st y">✓</span><span>Барлық бөлім толтырылды</span></p>`);
+}
+function setPage(i, opts){
+  i = clamp(i | 0, 0, 6); const msg = $('#navMsg');
+  if (i > 0 && !S.started) { i = 0; msg.hidden = true; } else if (i === 3 && !S.safe.passed) { i = 2; msg.textContent = 'Тәжірибеге кіру үшін алдымен қауіпсіздік тестінен өтіңіз.'; msg.hidden = false; } else msg.hidden = true;
+  S.page = i; S.seen[i] = true; $$('#pages > [data-page]').forEach(p => { p.hidden = +p.dataset.page !== i; });
+  $$('.step').forEach((b, k) => { if (k === i) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); });
+  const chrome = S.started && i > 0; $('#topHeader').hidden = !chrome; $('#stepper').hidden = !chrome;
+  ALERT = null; lastH = ''; RT.drag = null; RT.need = true; if (SV) SV.key = ''; if (!(opts && opts.noScroll)) { try { window.scrollTo({ top: 0 }); } catch (e) {} }
+  if (i === 3) renderSide(); if (i === 5) requestAnimationFrame(drawChart); saveSoon(); refreshDerived();
+}
+function updateMode(){
+  const b = $('#modeBadge'); if (!initDone) { b.className = 'pill'; b.textContent = 'Қосылуда…'; return; }
+  if (online) { b.className = 'pill on'; b.textContent = 'Онлайн · нәтиже мұғалімге жіберіледі'; } else { b.className = 'pill off'; b.textContent = 'Офлайн · нәтиже коды беріледі'; }
+  $('#modeNote').textContent = online ? 'Тапсырған сәтте нәтижеңіз мұғалімнің кестесіне түседі.' : 'Бет офлайн режимде ашылған. Тапсырғаннан кейін нәтиже коды шығады, оны мұғаліміңізге жіберіңіз.';
+  $('#teacherBtn').hidden = $('#teacherBtnReg').hidden = !(isOwner && db);
+}
+function updateUI(){
+  $('#startForm').hidden = S.started; $('#regDone').hidden = !S.started; const chip = $('#studentChip'); chip.hidden = !S.started;
+  if (S.started) { chip.textContent = `${S.name} · ${S.cls}`; $('#whoLine').innerHTML = `<b>${esc(S.name)}</b>, ${esc(S.cls)} · нұсқа <span class="mono">${vcode()}</span>`; }
+  const sb = $('#startBtn'); sb.disabled = !initDone; sb.textContent = initDone ? 'Кіру' : 'Қосылуда…';
+  const lk = locked(); $$('#pages input[data-e]').forEach(el => { el.disabled = lk; }); $('#submitBtn').disabled = lk; $('#preSubmit').hidden = !!S.result;
+  renderSafety(); renderResult(); if (S.page === 3) renderSide(); refreshDerived(); RT.need = true;
+}
+
+/* ================= registration / submit ================= */
+function startWork(e){
+  e.preventDefault(); const name = $('#stName').value.trim().replace(/\s+/g, ' '); let cls = $('#stCls').value; if (cls === '__other') cls = $('#stClsOther').value.trim();
+  if (name.length < 3 || !/\s/.test(name)) { $('#startErr').textContent = 'Аты-жөніңізді толық жазыңыз (аты мен тегі).'; $('#stName').focus(); return; }
+  if (!cls) { $('#startErr').textContent = 'Сыныбыңызды таңдаңыз.'; $('#stCls').focus(); return; }
+  $('#startErr').textContent = ''; const seed = uid ? hashStr('lab8-11|' + uid) : (Math.floor(Math.random() * 4294967295) >>> 0);
+  V = makeVariant(seed); const keep = S.result; S = defaults(); S.result = keep; S.started = true; S.name = name; S.cls = cls; S.seed = seed;
+  buildQs(); fillInputs(); saveDraft(); updateUI(); setPage(1);
+}
+function buildSubmission(res, at){ return { name: S.name, cls: S.cls, variant: vcode(), seed: S.seed, score: res.score, grade: res.grade5, crit: res.crit, info: res.info, F1: res.F1, F2m: res.F2m, F3: res.F3, Ft: res.Ft, viol: S.viol.slice(), pw: S.pw, at, E: JSON.parse(JSON.stringify(S.E)), R: JSON.parse(JSON.stringify(S.R)), safe: { first: S.safe.first, attempts: S.safe.attempts }, app: 'lab8-11' }; }
+async function doSubmit(){
+  $('#confirmBox').hidden = true; $('#submitErr').textContent = ''; const res = grade(S), at = new Date().toISOString(), btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'Жіберілуде…'; let sent = false;
+  if (online && db && uid) { try { await db.doc('subs/' + uid).set(buildSubmission(res, at)); sent = true; } catch (err) { if (err && err.code === 'unavailable') { try { await new Promise(r => setTimeout(r, 600 + Math.random() * 600)); await db.doc('subs/' + uid).set(buildSubmission(res, at)); sent = true; } catch (e2) {} } if (!sent) { online = false; updateMode(); $('#submitErr').textContent = err && err.code === 'quota_exceeded' ? 'Мұғалімнің кестесі толып қалды. Нәтиже коды берілді, оны мұғаліміңізге жіберіңіз.' : 'Нәтижені мұғалімге жіберу мүмкін болмады. Нәтиже коды берілді, оны мұғаліміңізге жіберіңіз.'; } } }
+  S.result = { crit: res.crit, info: res.info, score: res.score, grade5: res.grade5, at, online: sent, code: makeCode(res, at) }; btn.textContent = 'Жұмысты тапсыру'; saveDraft(); updateUI(); setPage(6);
+}
+function fmtTime(iso){ try { const d = new Date(iso); if (isNaN(d)) return iso || ''; return d.toLocaleDateString('kk-KZ') + ', ' + d.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return iso || ''; } }
+function renderResult(){
+  const box = $('#resultBox'), r = S.result; box.hidden = !r; if (!r) { box.innerHTML = ''; return; }
+  const rows = RUBRIC.map((rb, i) => `<tr><td class="k">К${i + 1}</td><td>${rb.d}<br><span class="muted" style="font-size:13.5px">${esc(r.info[i] || '')}</span></td><td class="o">${rb.o}</td><td class="p"><span class="st ${r.crit[i] ? 'y' : 'x'}">${r.crit[i] ? '✓' : '✗'}</span></td></tr>`).join('');
+  let html = `<div class="score"><div class="big">${r.score}<small> / 10</small></div><div class="meta"><span>Баға: <span class="grade g${r.grade5}">${r.grade5}</span></span><span class="muted">${esc(S.name)} · ${esc(S.cls)} · нұсқа <span class="mono">${vcode()}</span></span><span class="muted">Тапсырылды: ${esc(fmtTime(r.at))}</span></div></div>`;
+  html += r.online ? `<p class="okmsg">✓ Нәтиже мұғалімге жіберілді.</p>` : `<div class="card"><p class="label">Нәтиже коды</p><p style="font-size:15px">Бұл кодты мұғаліміңізге жіберіңіз. Мұғалім оны өз панелінде тексереді.</p><div class="codebox" id="codeText">${esc(r.code)}</div><div class="controls"><button type="button" id="copyCodeBtn">Кодты көшіру</button>${dlCap ? '<button type="button" id="reportBtn">Есепті жүктеу (HTML)</button>' : ''}<span id="copyMsg" class="small muted"></span></div></div>`;
+  html += `<p class="card pri" style="font-size:15.5px">Сіздің линзаңыздың нақты фокустық қашықтығы: <b class="mono">F = ${fmt(V.F, 1)} см</b> (D = ${fmt(100 / V.F, 1)} дптр). Терезе ${fmt(V.Dw / 100, 1)} м қашықтықта болды.</p>`;
+  html += `<div class="tw"><table class="rubric"><thead><tr><th>№</th><th>Дескриптор</th><th>Мақсат</th><th style="text-align:right">Балл</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  box.innerHTML = html;
+  const cb = $('#copyCodeBtn'); if (cb) cb.addEventListener('click', () => copyText(r.code, $('#copyMsg'), $('#codeText'))); const rb = $('#reportBtn'); if (rb) rb.addEventListener('click', downloadReport);
+}
+async function copyText(text, msgEl, selEl){ try { await navigator.clipboard.writeText(text); if (msgEl) msgEl.textContent = 'Көшірілді'; } catch (e) { if (selEl) { const rg = document.createRange(); rg.selectNodeContents(selEl); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(rg); } if (msgEl) msgEl.textContent = 'Мәтін белгіленді, Ctrl+C арқылы көшіріңіз'; } }
+async function downloadReport(){
+  const r = S.result, E = S.E; if (!r || !dlCap) return; const tr = (a, b) => `<tr><th>${a}</th><td>${b}</td></tr>`;
+  const html = `<!doctype html><html lang="kk"><meta charset="utf-8"><title>№11 зертханалық жұмыс — ${esc(S.name)}</title><style>body{font-family:system-ui,sans-serif;max-width:860px;margin:24px auto;padding:0 16px}table{border-collapse:collapse;width:100%;margin:10px 0}td,th{border:1px solid #ccd;padding:5px 8px;text-align:left}code{word-break:break-all}</style><h1>№11 зертханалық жұмыс: жұқа линзаның фокустық қашықтығы</h1><table>${tr('Оқушы', esc(S.name))}${tr('Сынып', esc(S.cls))}${tr('Нұсқа', vcode())}${tr('Тапсырылды', esc(fmtTime(r.at)))}${tr('Балл', r.score + ' / 10')}${tr('Баға', r.grade5)}</table><table><tr><th>Тапсырма</th><th>d, см</th><th>f, см</th><th>F, м</th><th>D, дптр</th></tr><tr><td>1 (терезе)</td><td>—</td><td>${esc(E.f1)}</td><td>${esc(E.F1)}</td><td>${esc(E.D1)}</td></tr><tr><td>2.1</td><td>${esc(E.d2a)}</td><td>${esc(E.f2a)}</td><td>${esc(E.F2a)}</td><td>${esc(E.D2a)}</td></tr><tr><td>2.2</td><td>${esc(E.d2b)}</td><td>${esc(E.f2b)}</td><td>${esc(E.F2b)}</td><td>${esc(E.D2b)}</td></tr><tr><td>3 (2F)</td><td>${esc(E.d3)}</td><td>${esc(E.f3)}</td><td>${esc(E.F3)}</td><td>${esc(E.D3)}</td></tr></table><p>F орт (2-тапсырма) = ${esc(E.F2m)} м</p><h2>Критерийлер</h2><table>${RUBRIC.map((rb, i) => `<tr><td>К${i + 1}</td><td>${rb.d}</td><td>${r.crit[i] ? '1' : '0'}</td></tr>`).join('')}</table><p>Нәтиже коды: <code>${esc(r.code)}</code></p></html>`;
+  try { await dlCap.save({ filename: 'zerthana-8-11-' + (S.name.replace(/[^\p{L}\p{N}]+/gu, '_') || 'oqushy') + '.html', data: html }); $('#copyMsg').textContent = 'Есеп сақталды'; } catch (e) { if (e && e.code !== 'declined') $('#copyMsg').textContent = 'Есепті жүктеу мүмкін болмады, кодты көшіріңіз.'; }
+}
+
+/* ================= teacher ================= */
+function showTeacher(on){ $('#teacherView').hidden = !on; $('#pages').hidden = on; $('#stepper').hidden = on || !(S.started && S.page > 0); $('#topHeader').hidden = !on && !(S.started && S.page > 0); $('#teacherBtn').textContent = on ? 'Зертханаға оралу' : 'Мұғалім панелі'; if (on) renderTeacher(); else setPage(S.page, { noScroll: true }); }
+function renderTeacher(){
+  const hasDb = !!(isOwner && db); $('#tOnline').hidden = !hasDb; $('#csvBtn').hidden = !hasDb || !dlCap; $('#copyTblBtn').hidden = !hasDb; $('#clsFilter').hidden = !hasDb; $('label[for="clsFilter"]').hidden = !hasDb;
+  $('#tMsg').textContent = hasDb ? '' : 'Нәтижелер кестесі тек беттің иесіне онлайн режимде көрінеді. Мұнда нәтиже кодын тексеруге болады.'; if (!hasDb) return;
+  const sel = $('#clsFilter'), cur = sel.value, classes = Array.from(new Set(subs.map(s => s.cls || '').filter(Boolean))).sort((a, b) => a.localeCompare(b, 'kk'));
+  sel.innerHTML = '<option value="">Барлығы</option>' + classes.map(c => `<option value="${esc(c)}"${c === cur ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  const list = subs.filter(s => !sel.value || s.cls === sel.value).sort((a, b) => (a.cls || '').localeCompare(b.cls || '', 'kk') || (a.name || '').localeCompare(b.name || '', 'kk'));
+  const n = list.length, avg = n ? list.reduce((a, s) => a + (s.score || 0), 0) / n : 0, gd = [5, 4, 3, 2].map(g => list.filter(s => s.grade === g).length), nv = list.filter(s => Array.isArray(s.viol) && s.viol.length).length;
+  $('#tStats').innerHTML = `<div class="stat"><span class="v mono">${n}</span><span class="l">Тапсырған оқушы</span></div><div class="stat"><span class="v mono">${n ? fmt(avg, 1) : '—'}</span><span class="l">Орташа балл (10-нан)</span></div><div class="stat"><span class="v mono">${gd.join(' · ')}</span><span class="l">«5» · «4» · «3» · «2» бағалар саны</span></div><div class="stat"><span class="v mono">${n ? nv : '—'}</span><span class="l">Қауіпсіздік ережесін бұзған оқушы</span></div>`;
+  $('#tBars').innerHTML = RUBRIC.map((rb, k) => { const p = n ? Math.round(100 * list.filter(s => s.crit && s.crit[k]).length / n) : 0; return `<div class="bar" title="${esc(rb.d)}"><span class="k">К${k + 1}</span><span class="track"><span class="fill${p < 50 ? ' low' : ''}" style="width:${p}%"></span></span><span class="pct">${n ? p + '%' : '—'}</span></div>`; }).join('');
+  $('#tEmpty').hidden = n > 0;
+  $('#tBody').innerHTML = list.map(s => {
+    const dots = (s.crit || []).map((c, k) => `<span class="dot${c ? ' y' : ''}" title="К${k + 1}"></span>`).join(''), E = cleanE(s.E), sf = s.safe || {}, vi = Array.isArray(s.viol) ? s.viol.filter(x => VIOL[x]) : [];
+    const safeTxt = (fin(sf.first) ? sf.first + '/5' : '—') + (vi.length ? ' · ⚠ ' + vi.length : '') + (s.pw ? ' · ток қосулы' : '');
+    const det = `<div class="det"><span>1-тапсырма: f = ${esc(E.f1 || '—')} см; F = ${esc(E.F1 || '—')} м; D = ${esc(E.D1 || '—')} дптр</span><span>2-тапсырма: d₁ = ${esc(E.d2a || '—')}, f₁ = ${esc(E.f2a || '—')}; d₂ = ${esc(E.d2b || '—')}, f₂ = ${esc(E.f2b || '—')} см; F орт = ${esc(E.F2m || '—')} м</span><span>3-тапсырма: d₃ = ${esc(E.d3 || '—')}, f₃ = ${esc(E.f3 || '—')} см; F = ${esc(E.F3 || '—')} м; D = ${esc(E.D3 || '—')} дптр</span><span>Қауіпсіздік: ${vi.length ? esc(vi.map(x => VIOL[x]).join('; ')) : 'бұзушылық жоқ'}${s.pw ? '; ток көзі өшірілмеді' : ''}</span>${(s.info || []).map((x, k) => `<span>К${k + 1}: ${esc(x)}</span>`).join('')}</div>`;
+    return `<tr data-id="${esc(s.id)}"><td><b>${esc(s.name)}</b></td><td>${esc(s.cls)}</td><td class="mono">${esc(s.variant)}</td><td class="mono"><b>${s.score}</b>/10</td><td><span class="grade g${s.grade}">${s.grade}</span></td><td><div class="dots">${dots}</div></td><td class="mono">${[s.F1, s.F2m, s.F3].map(x => fin(x) ? fmt(x, 1) : '—').join(' / ')}</td><td class="mono">${fin(s.Ft) ? fmt(s.Ft, 1) + ' см' : '—'}</td><td class="mono">${esc(safeTxt)}</td><td class="mono">${esc(fmtTime(s.at))}</td><td><button type="button" class="ghost" data-tact="det">Толығырақ</button> <button type="button" class="danger" data-tact="del">Қайта тапсыру</button></td></tr><tr class="detail" hidden><td colspan="11">${det}</td></tr>`;
+  }).join('');
+}
+function teacherClick(e){
+  const b = e.target.closest('button[data-tact]'); if (!b) return; const tr = b.closest('tr'), id = tr.dataset.id;
+  if (b.dataset.tact === 'det') { const d = tr.nextElementSibling; d.hidden = !d.hidden; b.textContent = d.hidden ? 'Толығырақ' : 'Жасыру'; }
+  else { if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = 'Нәтижені өшіру керек пе? Растау'; b._t = setTimeout(() => { delete b.dataset.armed; b.textContent = 'Қайта тапсыру'; }, 4000); return; } clearTimeout(b._t); b.disabled = true; db.doc('subs/' + id).delete().catch(() => { b.disabled = false; $('#tMsg').textContent = 'Нәтижені өшіру мүмкін болмады.'; }); }
+}
+function tableRows(sep){
+  const head = ['Аты-жөні', 'Сынып', 'Нұсқа', 'Балл', 'Баға', ...RUBRIC.map((_, k) => 'К' + (k + 1)), 'f1, см', 'F1, м', 'D1', 'd2a', 'f2a', 'd2b', 'f2b', 'F орт, м', 'd3', 'f3', 'F3, м', 'D3', 'F нақты, см', 'Тест (1-әрекет)', 'Бұзушылық', 'Тапсырылды'];
+  const q = v => { const t = String(v == null ? '' : v); return sep === ';' && /[;"\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t.replace(/\t/g, ' '); };
+  const list = subs.slice().sort((a, b) => (a.cls || '').localeCompare(b.cls || '', 'kk') || (a.name || '').localeCompare(b.name || '', 'kk'));
+  return [head, ...list.map(s => { const E = cleanE(s.E), vi = Array.isArray(s.viol) ? s.viol.filter(x => VIOL[x]) : []; return [s.name, s.cls, s.variant, s.score, s.grade, ...(s.crit || []), E.f1, E.F1, E.D1, E.d2a, E.f2a, E.d2b, E.f2b, E.F2m, E.d3, E.f3, E.F3, E.D3, fin(s.Ft) ? String(s.Ft).replace('.', ',') : '', (s.safe || {}).first, vi.map(x => VIOL[x]).join(', ') + (s.pw ? (vi.length ? ', ' : '') + 'ток көзі өшірілмеді' : ''), fmtTime(s.at)]; })].map(r => r.map(q).join(sep)).join('\n');
+}
+async function exportCsv(){ if (!dlCap) return; try { await dlCap.save({ filename: 'zerthana-8-11-natizheler.csv', data: '﻿' + tableRows(';') }); } catch (e) { if (e && e.code !== 'declined') $('#tMsg').textContent = 'Файлды жүктеу мүмкін болмады. «Кестені көшіру» батырмасын қолданыңыз.'; } }
+function verifyCode(){
+  const out = $('#codeOut'), r = readCode($('#codeIn').value); out.hidden = false;
+  if (!r) { out.className = 'vout badc'; out.textContent = 'Код танылмады. Оны толық, бос орынсыз қойыңыз.'; return; }
+  if (r.bad) { out.className = 'vout badc'; out.textContent = 'Код өзгертілген немесе толық емес: тексеру сомасы сәйкес келмейді.'; return; }
+  out.className = 'vout good'; out.innerHTML = `<b>Код дұрыс.</b> ${esc(r.n)} · ${esc(r.c)} · нұсқа <span class="mono">${esc(r.v)}</span><br>Балл: <b class="mono">${esc(r.s)}/10</b> · баға «${grade5(+r.s || 0)}» · F орт = <span class="mono">${fin(r.a) ? fmt(r.a, 1) + ' см' : '—'}</span> (нақты: <span class="mono">${fin(r.F) ? fmt(r.F, 1) + ' см' : '—'}</span>)<br>Критерийлер: <span class="mono">${esc(String(r.k).split('').map((c, i) => 'К' + (i + 1) + (c === '1' ? '✓' : '✗')).join(' '))}</span><br>Тапсырылды: ${esc(fmtTime(r.t))}`;
+}
+
+/* ================= capabilities ================= */
+async function initCaps(){
+  const cl = window.claude; if (cl && typeof cl.use === 'function') { try { [userCap, db, dlCap] = await Promise.all([cl.use('user'), cl.use('db'), cl.use('downloads')]); } catch (e) {} }
+  if (userCap) { try { uid = await userCap.id(); isOwner = await userCap.isOwner(); } catch (e) {} }
+  online = !!(db && uid); const d = loadDraft(); if (d) { applyDraft(d); V = makeVariant(S.seed || DEMO_SEED); }
+  buildQs(); initDone = true; fillInputs(); updateMode(); updateUI(); setPage(S.started ? S.page : 0, { noScroll: true });
+  if (online) { try { db.doc('subs/' + uid).onSnapshot(snap => {
+    if (snap.exists) { const x = snap.data() || {}; if (!S.result || !S.result.online) {
+      if (!S.started && x.E) { V = makeVariant(x.seed >>> 0); S = defaults(); S.started = true; S.name = x.name || ''; S.cls = x.cls || ''; S.seed = x.seed >>> 0; S.E = cleanE(x.E); S.R = cleanR(x.R); S.viol = Array.isArray(x.viol) ? x.viol.filter(v => VIOL[v]) : []; S.pw = !!x.pw; S.safe = Object.assign(S.safe, x.safe || {}, { passed: true }); buildQs(); fillInputs(); }
+      S.result = { crit: x.crit || [], info: x.info || [], score: x.score || 0, grade5: x.grade || grade5(x.score || 0), at: x.at, online: true, code: '' }; saveDraft(); updateUI(); setPage(S.page, { noScroll: true }); } }
+    else if (S.result && S.result.online) { S.result = null; saveDraft(); updateUI(); } }, () => {}); } catch (e) {} }
+  if (isOwner && db) { try { db.collection('subs').onSnapshot(snap => { subs = snap.docs.filter(x => x.exists).map(x => Object.assign({ id: x.id }, x.data())); if (!$('#teacherView').hidden) renderTeacher(); }, () => { $('#tMsg').textContent = 'Нәтижелерді жүктеу мүмкін болмады.'; }); } catch (e) {} }
+  if (location.hash === '#teacher') showTeacher(true);
+}
+
+/* ================= loop & wiring ================= */
+let lastUI = 0, lastT = 0;
+function frame(now){
+  const dt = lastT ? Math.min(0.5, (now - lastT) / 1000) : 0; lastT = now;
+  if (lampOn()) RT.heat += (1 - RT.heat) * (1 - Math.exp(-dt / 6)); else RT.heat *= Math.exp(-dt / 35);
+  if (Math.abs(RT.heat - RT.heatDrawn) > 0.03) RT.need = true;
+  if (S.page === 3){ if (RT.need){ RT.need = false; renderBench(); } renderScreen(); }
+  if (now - lastUI > 250){ lastUI = now; updateHints(); }
+  requestAnimationFrame(frame);
+}
+function boot(){
+  BV = makeView('#cvB', BW, BH); SV = makeView('#cvS', SW, SH); readColors(); buildQs(); attachPointer(); new ResizeObserver(() => drawChart()).observe($('#cvChart'));
+  $('#rubricBody').innerHTML = RUBRIC.map((r, i) => `<tr><td class="k">К${i + 1}</td><td>${r.d}</td><td class="o">${r.o}</td><td class="p">1</td></tr>`).join('') + `<tr><td></td><td><b>Барлығы</b></td><td></td><td class="p"><b>10</b></td></tr>`;
+  const mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', readColors);
+  new MutationObserver(readColors).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'class'] });
+  $('#stepper').addEventListener('click', e => { const b = e.target.closest('.step'); if (b) setPage(+b.dataset.p); });
+  document.addEventListener('click', e => {
+    const g = e.target.closest('[data-go]'); if (g) { setPage(S.page + (+g.dataset.go)); return; } const gt = e.target.closest('[data-goto]'); if (gt) { setPage(+gt.dataset.goto); return; }
+    const t2 = e.target.closest('[data-act2="task"]'); if (t2) { S.k = +t2.dataset.v; ALERT = null; lastH = ''; RT.drag = null; RT.lens = null; saveSoon(); renderSide(); return; }
+    const b = e.target.closest('[data-act]'); if (!b || b.disabled) return; const a = b.dataset.act;
+    if (a === 'zoom'){ RT.zoom = +b.dataset.v; $$('[data-act="zoom"]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); SV.key = ''; return; }
+    if (a === 'mag'){ RT.mag = !RT.mag; RT.lens = null; renderCtl(); RT.need = true; return; }
+    if (locked() || !S.safe.passed) return; act(a, b);
+  });
+  $('#pages').addEventListener('input', onInput); $('#pages').addEventListener('change', onInput);
+  $('#stCls').addEventListener('change', () => { $('#otherWrap').hidden = $('#stCls').value !== '__other'; }); $('#startForm').addEventListener('submit', startWork);
+  $('#continueBtn').addEventListener('click', () => { const st = stepDone(); const p = st.findIndex((x, i) => i > 0 && !x); setPage(p < 0 ? 6 : p); });
+  $('#safeCheck').addEventListener('click', safetyCheck); $('#safeRetry').addEventListener('click', safetyRetry);
+  $('#submitBtn').addEventListener('click', () => { $('#confirmBox').hidden = false; $('#confirmYes').focus(); }); $('#confirmNo').addEventListener('click', () => { $('#confirmBox').hidden = true; }); $('#confirmYes').addEventListener('click', doSubmit);
+  $('#teacherBtn').addEventListener('click', () => showTeacher($('#teacherView').hidden)); $('#teacherBtnReg').addEventListener('click', () => showTeacher(true)); $('#backBtn').addEventListener('click', () => showTeacher(false));
+  $('#clsFilter').addEventListener('change', renderTeacher); $('#tBody').addEventListener('click', teacherClick); $('#csvBtn').addEventListener('click', exportCsv);
+  $('#copyTblBtn').addEventListener('click', () => copyText(tableRows('\t'), $('#tMsg'), null)); $('#codeBtn').addEventListener('click', verifyCode); $('#codeIn').addEventListener('keydown', e => { if (e.key === 'Enter') verifyCode(); });
+  fillInputs(); updateUI(); setPage(0, { noScroll: true }); requestAnimationFrame(frame); initCaps();
+}
+if (typeof document !== 'undefined' && document.querySelector) { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot(); }
+window.__lab811 = { getS: () => S, getRT: () => RT, getV: () => V, grade, makeVariant, optics, cleanE, cleanR, blankE, readCode, makeCode, QS, AP, SHARP };
+})();
+</script>
+
+</body></html>

@@ -19,6 +19,7 @@ import { router as formulasRouter } from './features/formulas.js';
 import { router as gamesRouter } from './features/games.js';
 import { router as homeRouter } from './features/home.js';
 import { router as labsRouter } from './features/labs.js';
+import { router as labRunRouter } from './features/labrun.js';
 import { router as materialsRouter } from './features/materials.js';
 import { router as schoolsRouter } from './features/schools.js';
 import { router as simsRouter } from './features/sims.js';
@@ -90,6 +91,7 @@ export function createApp() {
   app.use(gamesRouter);
   app.use(simsRouter);
   app.use(labsRouter);
+  app.use(labRunRouter);
   app.use(examsRouter);
   app.use('/admin', adminRouter);
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import { dropUserSessions, hashPassword, isActiveTeacher, requireActiveTeacher, requireUser } from '../lib/auth.js';
 import { GAMES } from '../data/games.js';
+import { grade5, labByKey } from '../data/labs.js';
 import { EXAM, GRADES, ROLE_NAME } from '../data/catalog.js';
 import { many, one, q } from '../lib/db.js';
 import { html } from '../lib/html.js';
@@ -64,6 +65,7 @@ async function studentCabinet(req, res) {
     `SELECT game, max(score) AS best, count(*) AS plays FROM game_scores WHERE user_id = $1 GROUP BY game ORDER BY plays DESC`, [u.id]);
   const attempts = await many(
     `SELECT exam, mode, score, max_score, correct_count, total, created_at FROM exam_attempts WHERE user_id = $1 ORDER BY created_at DESC LIMIT 8`, [u.id]);
+  const labsDone = await many('SELECT lab_key, score, updated_at FROM lab_subs WHERE user_id = $1 ORDER BY updated_at DESC', [u.id]);
   const mats = u.class_grade ? await many(
     `SELECT * FROM materials WHERE status = 'published' AND (grade = $1 OR grade = 0) ORDER BY created_at DESC LIMIT 6`, [u.class_grade]) : [];
 
@@ -87,6 +89,14 @@ async function studentCabinet(req, res) {
           ${best.length ? html`<div class="tblwrap"><table><thead><tr><th>Ойын</th><th class="num">Ең жақсы ұпай</th><th class="num">Ойналды</th></tr></thead>
             <tbody>${best.map((b) => html`<tr><td>${gameName(b.game)}</td><td class="num">${b.best}</td><td class="num">${b.plays}</td></tr>`)}</tbody></table></div>`
             : emptyBox('Әзірге ойын жоқ', 'Формулаларды ойын арқылы жатта — нәтижең осында сақталады.')}
+        </section>
+        <section class="block">
+          <div class="block-h"><h2>Зертханалық жұмыстарым</h2><a class="more" href="/labs">Барлық зертхана</a></div>
+          ${labsDone.length ? html`<div class="tblwrap"><table><thead><tr><th>Жұмыс</th><th class="num">Балл</th><th class="num">Баға</th><th>Тапсырылды</th></tr></thead>
+            <tbody>${labsDone.map((r) => { const L = labByKey(r.lab_key); const g = grade5(r.score); return html`<tr>
+              <td class="wrap">${L ? html`<a href="/labs/${L.k}">${L.g}-сынып №${L.no}. ${L.t}</a>` : r.lab_key}</td>
+              <td class="num">${String(r.score).replace('.', ',')} / 10</td><td class="num"><span class="g5 g5-${g}">${g}</span></td><td>${fmtDateTime(r.updated_at)}</td></tr>`; })}</tbody></table></div>`
+            : emptyBox('Әзірге зертхана жоқ', 'Зертханалық жұмысты платформада орында — нәтижең осында және мұғаліміңнің журналында сақталады.')}
         </section>
         <section class="block">
           <div class="block-h"><h2>Тест нәтижелерім</h2><a class="more" href="/exams">Тест тапсыру</a></div>
