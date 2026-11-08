@@ -10,6 +10,8 @@ export const config = {
   pgSsl: env.PGSSL === '1',
   uploadDir: path.resolve(env.UPLOAD_DIR || './data/uploads'),
   maxUploadMb: Number(env.MAX_UPLOAD_MB) || 50,
+  // 'disk' — UPLOAD_DIR қалтасында (Railway томы, VPS); 'db' — дерекқорда (тегін Render: диск тұрақсыз).
+  fileStorage: (env.FILE_STORAGE || (env.RENDER ? 'db' : 'disk')) === 'db' ? 'db' : 'disk',
   siteName: env.SITE_NAME || 'Ғылым Ордасы',
   owner: {
     login: env.ADMIN_LOGIN || '',

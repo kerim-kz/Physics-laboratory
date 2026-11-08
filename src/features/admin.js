@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import express from 'express';
 import { config } from '../config.js';
 import { EXAM, EXAMS, GRADES, MATERIAL_TYPE, MATERIAL_TYPES, REGIONS, ROLE_NAME, SECTION, SECTIONS } from '../data/catalog.js';
@@ -9,6 +7,7 @@ import { chk, html, sel } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { csrfField, emptyBox, page, pager, vhead } from '../lib/layout.js';
 import { getSettings, saveSettings } from '../lib/settings.js';
+import { deleteStored } from '../lib/storage.js';
 import {
   asArray, asyncH, cleanMultiline, cleanText, fmtDate, fmtDateTime, fmtPrice, HttpError, LOGIN_RE, newTempPassword, setFlash, toCsv, toInt, validFullName,
 } from '../lib/util.js';
@@ -326,7 +325,7 @@ router.post('/materials/:id/update', asyncH(async (req, res) => {
 }));
 router.post('/materials/:id/delete', asyncH(async (req, res) => {
   const m = await one('DELETE FROM materials WHERE id = $1 RETURNING file_key', [toInt(req.params.id)]);
-  if (m && m.file_key) fs.unlink(path.join(config.uploadDir, path.basename(m.file_key)), () => {});
+  if (m && m.file_key) await deleteStored(m.file_key);
   setFlash(res, 'ok', 'Материал өшірілді.');
   res.redirect(back(req, '/admin/materials'));
 }));

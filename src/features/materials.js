@@ -1,5 +1,3 @@
-import crypto from 'node:crypto';
-import fs from 'node:fs';
 import path from 'node:path';
 import express from 'express';
 import multer from 'multer';
@@ -13,6 +11,7 @@ import { chk, html, sel } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { csrfField, emptyBox, page, pager, vhead } from '../lib/layout.js';
 import { getSettings } from '../lib/settings.js';
+import { discardUpload, multerStorage, persistUpload, sendStored } from '../lib/storage.js';
 import {
   asArray, asyncH, cleanMultiline, cleanText, contentDisposition, fmtDate, fmtPrice, fmtSize, HttpError, setFlash, toInt,
 } from '../lib/util.js';
@@ -220,20 +219,19 @@ router.get('/materials/:id/download', requireUser, asyncH(async (req, res) => {
   }
   if (m.author_id !== req.user.id) await q('UPDATE materials SET downloads = downloads + 1 WHERE id = $1', [m.id]);
   if (m.external_url) return res.redirect(m.external_url);
-  const file = path.join(config.uploadDir, path.basename(m.file_key || ''));
-  if (!m.file_key || !fs.existsSync(file)) throw new HttpError(404, 'Файл серверде табылмады. Әкімшіге хабарласыңыз.');
   res.setHeader('Content-Type', MIME[extOf(m.file_name)] || 'application/octet-stream');
   res.setHeader('Content-Disposition', contentDisposition(m.file_name));
   res.setHeader('Cache-Control', 'private, no-store');
-  fs.createReadStream(file).on('error', () => res.destroy()).pipe(res);
+  if (!(await sendStored(res, m.file_key))) {
+    res.removeHeader('Content-Disposition');
+    res.removeHeader('Content-Type');
+    throw new HttpError(404, 'Файл серверде табылмады. Әкімшіге хабарласыңыз.');
+  }
 }));
 
 // ---------------- Жүктеу (мұғалім немесе әкімші) ----------------
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => { fs.mkdirSync(config.uploadDir, { recursive: true }); cb(null, config.uploadDir); },
-    filename: (req, file, cb) => cb(null, `${crypto.randomBytes(16).toString('hex')}.${extOf(file.originalname)}`),
-  }),
+  storage: multerStorage(),
   limits: { fileSize: config.maxUploadMb * 1024 * 1024, files: 1, fields: 30 },
   fileFilter: (req, file, cb) => {
     if (ALLOWED_EXT.includes(extOf(file.originalname))) return cb(null, true);
@@ -314,16 +312,17 @@ router.post('/materials/new', requireActiveTeacher, (req, res, next) => {
   if (!type) errors.push('Материал түрін таңдаңыз.');
   if (!req.file && !url && !req.uploadError) errors.push('Файл жүктеңіз немесе сілтеме беріңіз.');
   if (errors.length) {
-    if (req.file) fs.unlink(req.file.path, () => {});
+    discardUpload(req.file);
     res.status(400);
     return uploadForm(req, res, { errors, v: b });
   }
   const admin = isAdmin(req.user);
+  const fileKey = req.file ? await persistUpload(req.file) : null;
   const m = await one(
     `INSERT INTO materials(title, description, type, grade, section, exams, price, file_key, file_name, file_size, file_mime, external_url, author_id, status)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING id`,
     [title, cleanMultiline(b.description, 3000), type, grade, section, exams, price,
-      req.file ? req.file.filename : null, req.file ? fixName(req.file.originalname).slice(0, 200) : null,
+      fileKey, req.file ? fixName(req.file.originalname).slice(0, 200) : null,
       req.file ? req.file.size : null, req.file ? req.file.mimetype : null, req.file ? null : url,
       req.user.id, admin ? 'published' : 'pending']);
   setFlash(res, 'ok', admin ? 'Материал жарияланды.' : 'Материал жүктелді. Әкімші тексергеннен кейін кітапханада шығады.');
