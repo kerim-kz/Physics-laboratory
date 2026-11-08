@@ -1,6 +1,15 @@
-# Render Blueprint: тегін веб-сервис. Дерекқор — Neon (тегін, мерзімсіз): оның қосылу жолын
-# алғашқы іске қосуда DATABASE_URL өрісіне қоясыз. Файлдар дерекқорда сақталады (FILE_STORAGE=db),
-# себебі тегін Render-дің дискі әр қайта іске қосылғанда тазаланады.
+# Render Blueprint — бір батырмамен жариялау: сайт + Postgres дерекқоры бірге жасалады.
+# Алғашқы іске қосуда тек ADMIN_LOGIN, ADMIN_PASSWORD, ADMIN_NAME сұралады.
+# Файлдар дерекқорда сақталады (FILE_STORAGE=db), себебі тегін Render-дің дискі тұрақсыз.
+# Ескерту: тегін Render Postgres 30 күннен кейін ақылы жоспарға ауыстыруды талап етеді
+# (немесе DATABASE_URL-ды тегін Neon дерекқорына ауыстыруға болады — README-ді қараңыз).
+databases:
+  - name: gylym-ordasy-db
+    plan: free
+    region: frankfurt
+    databaseName: fizika
+    user: fizika
+
 services:
   - type: web
     name: gylym-ordasy
@@ -21,7 +30,9 @@ services:
       - key: MAX_UPLOAD_MB
         value: "20"
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: gylym-ordasy-db
+          property: connectionString
       - key: ADMIN_LOGIN
         sync: false
       - key: ADMIN_PASSWORD
