@@ -118,6 +118,15 @@ describe('ашық беттер', () => {
     assert.match(ol.text, /Баллистикалық маятник/);
     assert.doesNotMatch(ol.text, /Мұзды суға|Соңғы секундтағы жол/); // 9-сынып, тек күрделі
     assert.match(ol.text, /class="katex/);
+    const olAll = await c.get('/olympiad');
+    assert.match(olAll.text, /Ресми олимпиада тапсырмалары/);
+    for (const f of ['2025-2026-audan-7-tapsyrmalar', '2025-2026-audan-7-zhauaptar', '2025-2026-audan-8-tapsyrmalar', '2025-2026-audan-8-zhauaptar']) {
+      assert.match(olAll.text, new RegExp(`/files/olympiad/${f}\\.pdf`));
+      const pdf = await c.get(`/files/olympiad/${f}.pdf`);
+      assert.equal(pdf.status, 200, f);
+      assert.match(pdf.res.headers.get('content-type'), /application\/pdf/);
+    }
+    assert.doesNotMatch((await c.get('/olympiad?grade=9')).text, /audan-7-tapsyrmalar/);
     const f = await c.get('/formulas');
     assert.match(f.text, /data-formula="kin-1"/);
     assert.match(f.text, /7-сынып/);

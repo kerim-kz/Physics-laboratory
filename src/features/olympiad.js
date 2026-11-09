@@ -1,6 +1,7 @@
 import express from 'express';
 import { FAMILIES, GRADES, SECTION } from '../data/catalog.js';
 import { OLYMPIAD } from '../data/olympiad.js';
+import { OLYMPIAD_FILES } from '../data/olympiad-files.js';
 import { SIM } from '../data/sims.js';
 import { html } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
@@ -18,6 +19,22 @@ const SOURCES = [
   ['https://cdn.bc-pf.org/olympiads/physics/national/final/2024/9/phys9-1-sol-kaz.pdf', 'Республикалық олимпиада 2024, қорытынды кезең: 9-сынып шешімдері (PDF)'],
   ['https://cdn.bc-pf.org/olympiads/physics/national/final/2024/10/phys10-1-sol-kaz.pdf', 'Республикалық олимпиада 2024, қорытынды кезең: 10-сынып шешімдері (PDF)'],
 ];
+
+// Ресми тапсырмалар (PDF) карточкасы.
+function officialCard(f) {
+  const name = (kind) => `Олимпиада ${f.year.replace('–', '-')} ${f.stage.toLowerCase()} ${f.g}-сынып ${kind}.pdf`;
+  return html`
+    <article class="ofile">
+      <div class="ofile-h"><span class="fmt olymp">PDF</span><span class="pill">${f.stage}</span><span class="mc-grade">${f.year} оқу жылы</span></div>
+      <h3>${f.g}-сынып</h3>
+      <p>${f.title}. ${f.about}.</p>
+      <div class="ofile-acts">
+        <a class="btn sm" href="${f.tasks}" target="_blank" rel="noopener">${icon('book', 14)} Тапсырмалар${f.pages ? ` (${f.pages} бет)` : ''}</a>
+        <a class="btn ghost sm" href="${f.answers}" target="_blank" rel="noopener">${icon('check', 14)} Жауаптар</a>
+        <a class="linkbtn" href="${f.tasks}" download="${name('тапсырмалар')}">${icon('download', 14)} Жүктеу</a>
+      </div>
+    </article>`;
+}
 
 function problem(o, n) {
   const sec = SECTION[o.s];
@@ -49,6 +66,7 @@ router.get('/olympiad', asyncH(async (req, res) => {
     return p.toString() ? `/olympiad?${p}` : '/olympiad';
   };
   const groups = GRADES.map((g) => ({ g, items: list.filter((o) => o.g === g) })).filter((x) => x.items.length);
+  const files = OLYMPIAD_FILES.filter((f) => !grade || f.g === grade);
 
   await page(req, res, {
     title: 'Олимпиадалық есептер', active: 'olympiad', katex: true,
@@ -67,7 +85,13 @@ router.get('/olympiad', asyncH(async (req, res) => {
             <a class="${level === 'hard' ? 'on' : ''}" href="${qs({ level: 'hard' })}">Күрделі</a>
           </div>
         </div>
-        <div class="notice small"><div><b>Қалай қолдану керек?</b> Алдымен есепті өзің шығарып көр. Қиналсаң — «Физикалық мағынасы» деген кеңесті аш, содан кейін ғана шешімді қара. Бұл есептер олимпиадалардың типтік тақырыптары бойынша құрастырылған авторлық есептер. Ресми олимпиадалардың түпнұсқа тапсырмаларын төмендегі мұрағаттардан қараңыз, ал мұғалімдер оларды «Кітапхана» бөліміне «Олимпиадалық есептер» түрімен жүктей алады.</div></div>
+        ${files.length ? html`<section class="shelf">
+          <div class="shelf-h"><h2>Ресми олимпиада тапсырмалары</h2><span class="cnt">${files.length} файл · PDF</span></div>
+          <div class="rule"></div>
+          <div class="ofgrid">${files.map(officialCard)}</div>
+          <p class="muted small">Алдымен тапсырмаларды өз бетіңше шығар, содан кейін ғана жауаптарымен салыстыр.</p>
+        </section>` : ''}
+        <div class="notice small"><div><b>Төмендегі есептерді қалай қолдану керек?</b> Алдымен есепті өзің шығарып көр. Қиналсаң — «Физикалық мағынасы» деген кеңесті аш, содан кейін ғана шешімді қара. Бұл бөлімдегі есептер олимпиадалардың типтік тақырыптары бойынша құрастырылған авторлық есептер; ресми тапсырмалар жоғарыда және беттің соңындағы мұрағаттарда.</div></div>
         ${groups.length ? groups.map(({ g, items }) => html`
           <section class="shelf">
             <div class="shelf-h"><h2>${g}-сынып</h2><span class="cnt">${items.length} есеп</span></div>
