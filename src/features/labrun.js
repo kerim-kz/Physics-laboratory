@@ -13,6 +13,7 @@ import { grade5, labByKey } from '../data/labs.js';
 import { SECTION } from '../data/catalog.js';
 import { isActiveTeacher, isAdmin } from '../lib/auth.js';
 import { many, one, q, tx } from '../lib/db.js';
+import { asset } from '../lib/assets.js';
 import { html } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { page } from '../lib/layout.js';
@@ -109,7 +110,7 @@ router.get('/labs/:key/app', asyncH(async (req, res) => {
     cls: u && u.role === 'student' ? classLabel(u.class_grade, u.class_letter) : '',
     csrf: req.csrfToken,
   };
-  const inject = `<script type="application/json" id="labRuntimeConfig">${JSON.stringify(cfg).replace(/</g, '\\u003c')}</script><script src="/js/lab-runtime.js"></script>`;
+  const inject = `<script type="application/json" id="labRuntimeConfig">${JSON.stringify(cfg).replace(/</g, '\\u003c')}</script><script src="${asset('/js/lab-runtime.js')}"></script>`;
   const body = lab.src.slice(0, lab.insertAt) + inject + lab.src.slice(lab.insertAt);
   res.setHeader('Content-Security-Policy', [
     "default-src 'self'",
