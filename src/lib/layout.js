@@ -82,6 +82,7 @@ export async function page(req, res, opts) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title ? `${title} · ${siteName}` : siteName}</title>
 <meta name="description" content="${description || 'Физика пәнінің оқу платформасы: материалдар, формулалар, ойындар, симуляциялар, зертханалар, PISA, ББЖМ, ҰБТ.'}">
+<meta name="author" content="Әбілқасым Керім Шәмшитұлы, №54 орта мектептің физика пәні мұғалімі">
 <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/vendor/fonts/sans/400.css">
 <link rel="stylesheet" href="/vendor/fonts/sans/500.css">
@@ -125,6 +126,7 @@ ${body}
   <a href="/formulas">Формулалар</a>
   <a href="/olympiad">Олимпиада</a>
   <a href="/schools">Мектептер</a>
+  <p class="credit">Құрастырушы: <b>Әбілқасым Керім Шәмшитұлы</b>, №54 орта мектептің физика пәні мұғалімі</p>
 </footer>
 <script src="/js/app.js" defer></script>
 ${scripts.map((s) => raw(`<script src="${s}" defer></script>`))}
