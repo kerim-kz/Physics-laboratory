@@ -104,7 +104,8 @@ describe('ашық беттер', () => {
     assert.match(home.text, /id="drawer"/);
     assert.match(home.text, /id="heroSim"/);
     assert.match(home.text, /data-game="scientist"/);
-    assert.match(home.text, /\/js\/hero\.js/);
+    assert.match(home.text, /\/js\/hero\.js\?v=[0-9a-f]{10}/);
+    assert.match(home.text, /\/css\/app\.css\?v=[0-9a-f]{10}/); // нұсқасы бар сілтеме: ескі стиль кэштен алынбайды
     const { SIMS } = await import('../src/data/sims.js');
     assert.ok(SIMS.length >= 38);
     for (const s of SIMS) assert.equal((await c.get(`/sims/${s.k}`)).status, 200, s.k);
@@ -370,7 +371,7 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal(guest.status, 200);
     assert.match(guest.res.headers.get('content-security-policy'), /script-src 'self' 'sha256-[A-Za-z0-9+/=]+'/);
     assert.match(guest.text, /"uid":null/);
-    assert.match(guest.text, /<script src="\/js\/lab-runtime\.js"><\/script><script>/);
+    assert.match(guest.text, /<script src="\/js\/lab-runtime\.js\?v=[0-9a-f]{10}"><\/script><script>/);
     assert.equal((await new Client().get('/labs/nope')).status, 404);
 
     const app = await student.get('/labs/om/app');
