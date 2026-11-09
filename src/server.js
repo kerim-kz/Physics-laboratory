@@ -58,10 +58,8 @@ export function createApp() {
   const staticOpts = {
     maxAge: 0,
     fallthrough: true,
-    setHeaders: (res, filePath) => {
+    setHeaders: (res) => {
       if (config.isProd && res.req && res.req.query && res.req.query.v) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-      // PDF-ті браузердің ішкі қарау құралы ашуы үшін бет CSP-ін (object-src 'none') алып тастаймыз.
-      if (filePath.endsWith('.pdf')) res.removeHeader('Content-Security-Policy');
     },
   };
   const vendorOpts = { maxAge: config.isProd ? '7d' : 0, fallthrough: true };

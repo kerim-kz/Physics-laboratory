@@ -119,14 +119,10 @@ describe('ашық беттер', () => {
     assert.doesNotMatch(ol.text, /Мұзды суға|Соңғы секундтағы жол/); // 9-сынып, тек күрделі
     assert.match(ol.text, /class="katex/);
     const olAll = await c.get('/olympiad');
-    assert.match(olAll.text, /Ресми олимпиада тапсырмалары/);
-    for (const f of ['2025-2026-audan-7-tapsyrmalar', '2025-2026-audan-7-zhauaptar', '2025-2026-audan-8-tapsyrmalar', '2025-2026-audan-8-zhauaptar']) {
-      assert.match(olAll.text, new RegExp(`/files/olympiad/${f}\\.pdf`));
-      const pdf = await c.get(`/files/olympiad/${f}.pdf`);
-      assert.equal(pdf.status, 200, f);
-      assert.match(pdf.res.headers.get('content-type'), /application\/pdf/);
-    }
-    assert.doesNotMatch((await c.get('/olympiad?grade=9')).text, /audan-7-tapsyrmalar/);
+    assert.match(olAll.text, /Ресми олимпиада тапсырмалары: онлайн тест/);
+    assert.match(olAll.text, /href="\/olympiad\/test\/2025-audan-7"/);
+    assert.doesNotMatch((await c.get('/olympiad?grade=9')).text, /olympiad\/test\/2025-audan-7/);
+    assert.equal((await c.get('/files/olympiad/2025-2026-audan-7-tapsyrmalar.pdf')).status, 404); // PDF жүктеуге берілмейді
     const f = await c.get('/formulas');
     assert.match(f.text, /data-formula="kin-1"/);
     assert.match(f.text, /7-сынып/);
@@ -141,6 +137,30 @@ describe('ашық беттер', () => {
     const ubt = await c.get('/exams/ubt');
     assert.match(ubt.text, /толық нұсқа/);
     assert.equal((await c.get('/exams/ubt/test?mode=exam&n=40')).status, 200);
+  });
+
+  test('ресми олимпиада онлайн тесті: суреттер, бағалау, жауаптар тек тексергеннен кейін', async () => {
+    const { OLYMPIAD_TESTS } = await import('../src/data/olympiad-tests.js');
+    const c = new Client();
+    for (const t of OLYMPIAD_TESTS) {
+      const r = await c.get(`/olympiad/test/${t.k}`);
+      assert.equal(r.status, 200, t.k);
+      assert.equal((r.text.match(/class="otq-img"/g) || []).length, 30);
+      assert.doesNotMatch(r.text, new RegExp(t.key)); // кілт бетке шықпайды
+      for (const qq of t.questions.slice(0, 3)) assert.equal((await c.get(`${t.dir}/${qq.img}`)).status, 200);
+      // бәрі дұрыс → 50 ұпай
+      const all = Object.fromEntries(t.questions.map((qq, i) => [`q${qq.n}`, t.key[i]]));
+      const good = await c.post(`/olympiad/test/${t.k}`, all, `/olympiad/test/${t.k}`);
+      assert.equal(good.status, 200);
+      assert.match(good.text, /<b>50<\/b><span>\/ 50 ұпай/);
+      // тек 1 және 16-тапсырма дұрыс → 1 + 2 = 3 ұпай, жарамсыз жауап есепке алынбайды
+      const part = await c.post(`/olympiad/test/${t.k}`, { q1: t.key[0], q16: t.key[15], q2: 'Z' }, `/olympiad/test/${t.k}`);
+      assert.match(part.text, /<b>3<\/b><span>\/ 50 ұпай/);
+      assert.match(part.text, /Жауап берілмеді, дұрысы/);
+    }
+    assert.equal((await c.get('/olympiad/test/nope')).status, 404);
+    const noCsrf = await c.req('POST', '/olympiad/test/2025-audan-7', { form: { q1: 'A' } });
+    assert.equal(noCsrf.status, 403);
   });
 
   test('әр формулада анықтама бар, симуляциялардың формулалары мен файлдары бар', async () => {
