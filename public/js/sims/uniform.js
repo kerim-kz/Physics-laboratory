@@ -8,6 +8,8 @@
     return t > 0 && t <= TMAX ? t : null;
   }
   Sim.create({
+    tools: ['ruler', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.66,
     hint: 'Графиктердің қиылысқан нүктесі — кездесу.',
     controls: [
@@ -33,6 +35,7 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var xmin = -100, xmax = 500, roadY = 70;
       var X = function (x) { return 30 + (x - xmin) / (xmax - xmin) * (W - 60); };
+      api._sc = { px: (W - 60) / (xmax - xmin), unit: 'м' };
       // жол
       ctx.fillStyle = C.bg2; ctx.fillRect(20, roadY - 24, W - 40, 48);
       D.line(ctx, 20, roadY, W - 20, roadY, C.line, 1, [10, 10]);

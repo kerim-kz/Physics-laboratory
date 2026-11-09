@@ -3,6 +3,7 @@
   var L = 4, N = 121, MARK = 30;
 
   Sim.create({
+    tools: ['stopwatch'],
     aspect: 0.5,
     autoplay: true,
     controls: [

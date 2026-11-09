@@ -11,6 +11,8 @@
   };
   function ydd(T, x) { if (T.dd) return T.dd(x); var h = 1e-3; return (T.d(x + h) - T.d(x - h)) / (2 * h); }
   Sim.create({
+    tools: ['ruler', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.62, substeps: 30,
     hint: 'Энергия бағаналарын бақыла: E = Eк + Eп + Q тұрақты.',
     controls: [
@@ -49,6 +51,7 @@
       var S = api.S, P = api.P, C = api.C, D = api.D, T = TRACKS[P.track];
       var w = W * 0.7, X = function (x) { return 20 + (x + 6.5) / 13 * (w - 30); }, k = (w - 30) / 13;
       var Y = function (y) { return H - 40 - y * k; };
+      api._sc = { px: k, unit: 'м' };
       // жол
       ctx.save(); ctx.strokeStyle = C.ink; ctx.lineWidth = 4; ctx.beginPath();
       for (var x = -6.3; x <= 6.3; x += 0.05) { if (x === -6.3) ctx.moveTo(X(x), Y(T.y(x))); else ctx.lineTo(X(x), Y(T.y(x))); }

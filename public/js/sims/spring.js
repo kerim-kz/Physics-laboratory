@@ -13,6 +13,8 @@
   }
 
   Sim.create({
+    tools: ['ruler', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.66,
     controls: [
       { type: 'range', key: 'm', label: 'Жүк массасы m', min: 0.1, max: 5, step: 0.1, value: 1, unit: 'кг', digits: 1 },
@@ -52,6 +54,7 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var y = 70, wall = 30, eq = W * 0.42, k = (W * 0.42 - 90) / 0.2 * 0.8;
+      api._sc = { px: k, unit: 'м' };
       var bx = eq + S.x * k, side = 30 + Math.sqrt(P.m) * 14;
       // қабырға мен бет
       ctx.fillStyle = C.line; ctx.fillRect(wall - 12, y - 45, 12, 90);

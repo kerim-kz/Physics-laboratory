@@ -13,6 +13,8 @@
   }
 
   Sim.create({
+    tools: ['ruler'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.62,
     autoplay: true,
     keepRunning: true,
@@ -55,6 +57,7 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, e = S.e, P = api.P, C = api.C, D = api.D;
       var H0 = 0.16, k = (H - 100) / 0.24;
+      api._sc = { px: k, unit: 'м' };
       var bw = Math.min(W * 0.55, 0.3 * k), bx = (W - bw) / 2 - 60, surf = 70, bottom = surf + H0 * k;
       // ыдыс және сұйық
       ctx.fillStyle = P.liq === 'merc' ? 'rgba(160,170,180,.55)' : P.liq === 'kero' || P.liq === 'oil' ? 'rgba(214,170,60,.30)' : 'rgba(70,140,220,.28)';

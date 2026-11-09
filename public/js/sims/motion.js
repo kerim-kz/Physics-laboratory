@@ -5,6 +5,8 @@
   function vel(P, t) { return P.v0 + P.a * t; }
 
   Sim.create({
+    tools: ['ruler', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.72,
     hint: 'Алдымен графиктерді болжап көр, содан кейін «Бастау» бас.',
     controls: [
@@ -50,6 +52,7 @@
       // ---- жол ----
       var top = 24, trackY = 92, left = 30, right = W - 30;
       var X = function (x) { return left + (x - S.xmin) / (S.xmax - S.xmin) * (right - left); };
+      api._sc = { px: (right - left) / (S.xmax - S.xmin), unit: 'м' };
       D.line(ctx, left, trackY, right, trackY, C.line, 3);
       var step = Math.pow(10, Math.floor(Math.log10((S.xmax - S.xmin) / 4)));
       if ((S.xmax - S.xmin) / step > 12) step *= 5; else if ((S.xmax - S.xmin) / step > 6) step *= 2;

@@ -14,6 +14,8 @@
     ctx.lineTo(x, y2); ctx.stroke(); ctx.restore();
   }
   Sim.create({
+    tools: ['ruler'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.62, static: true, resetLabel: false,
     hint: 'Сызғыш бойынша ұзаруды өлше.',
     controls: [
@@ -39,6 +41,7 @@
       var P = api.P, C = api.C, D = api.D;
       var top = 30;
       var cm = (H - 120) / 30; // 30 см сызғыш
+      api._sc = { px: cm, unit: 'см' };
       var F = P.m * g;
       var L0 = 8 * cm; // серіппенің бастапқы ұзындығы 8 см
       var cx = W * 0.3;

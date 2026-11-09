@@ -11,6 +11,7 @@
   }
 
   Sim.create({
+    tools: ['angle'],
     static: true,
     resetLabel: false,
     aspect: 0.7,

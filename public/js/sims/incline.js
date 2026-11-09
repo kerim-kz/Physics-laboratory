@@ -10,6 +10,7 @@
   }
 
   Sim.create({
+    tools: ['angle', 'stopwatch'],
     aspect: 0.62,
     hint: 'Тыныштық үйкеліс коэффициенті сырғанау коэффициентіне тең деп алынған.',
     controls: [

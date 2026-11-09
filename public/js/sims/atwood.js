@@ -4,6 +4,8 @@
   var LIM = 1.2; // жүктің ең үлкен жылжуы, м
   function acc(P) { return (P.m1 - P.m2) * G[P.planet] / (P.m1 + P.m2); }
   Sim.create({
+    tools: ['ruler', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.64,
     hint: 'Жүйе тыныштықтан босатылады.',
     controls: [
@@ -33,6 +35,7 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var cx = W * 0.38, py = 50, R = 34, k = (H - 170) / (2 * LIM);
+      api._sc = { px: k, unit: 'м' };
       ctx.fillStyle = C.line; ctx.fillRect(cx - 70, 10, 140, 8);
       D.line(ctx, cx, 18, cx, py, C.ink, 2);
       D.circle(ctx, cx, py, R, C.bg2, C.ink, 2); D.circle(ctx, cx, py, 4, C.ink);

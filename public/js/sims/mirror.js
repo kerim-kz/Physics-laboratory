@@ -1,6 +1,8 @@
 /* Жазық айна: кескін айнаға симметриялы, шағылу бұрышы түсу бұрышына тең. Зат пен көзді тінтуірмен жылжыт. */
 (function () {
   Sim.create({
+    tools: ['ruler', 'angle'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.62, static: true, resetLabel: false,
     hint: 'Шамды (затты) немесе көзді тартып жылжыт.',
     controls: [
@@ -43,6 +45,7 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var mx = W / 2, ox = S.ox * W, oy = S.oy * H, ex = S.ex * W, ey = S.ey * H, ix = 2 * mx - ox;
+      api._sc = { px: (W / 2) / 100, unit: 'см' };
       // айна
       ctx.fillStyle = C.bg2; ctx.fillRect(mx, 20, 10, H - 40);
       for (var y = 24; y < H - 20; y += 10) D.line(ctx, mx + 10, y, mx + 18, y - 8, C.muted, 1);

@@ -61,6 +61,8 @@ router.get('/sims/:k', asyncH(async (req, res) => {
             <div class="simbar">
               <button class="btn" type="button" id="simPlay">${icon('play', 15)} <span>Бастау</span></button>
               <button class="btn ghost" type="button" id="simReset">${icon('reset', 15)} Қайта бастау</button>
+              <button class="btn ghost" type="button" id="simFull">${icon('expand', 15)} <span>Толық экран</span></button>
+              <button class="btn ghost" type="button" id="simShot">${icon('download', 15)} Сурет</button>
               <span class="grow"></span>
               <span class="muted small" id="simHint"></span>
             </div>
@@ -70,8 +72,10 @@ router.get('/sims/:k', asyncH(async (req, res) => {
             <div id="simControls" class="simcontrols"></div>
             <h2>Өлшеулер</h2>
             <div id="simReadouts" class="readouts" aria-live="polite"></div>
+            <div id="simTools" class="simtools" hidden><h2>Өлшеу құралдары</h2></div>
           </aside>
         </div>
+        <section class="panel simdata" id="simData" hidden></section>
         <div class="detail">
           <section class="stack">
             <div class="block-h"><h2>Теория</h2></div>

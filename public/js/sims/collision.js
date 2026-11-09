@@ -4,6 +4,8 @@
   var width = function (m) { return 0.45 + 0.12 * m; };
 
   Sim.create({
+    tools: ['ruler', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.5,
     hint: 'Оңға қарай қозғалыс — оң, солға — теріс таңбамен.',
     controls: [
@@ -60,6 +62,7 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var left = 30, right = W - 30, k = (right - left) / TRACK, y = H * 0.55;
       var X = function (x) { return left + x * k; };
+      api._sc = { px: k, unit: 'м' };
       D.line(ctx, left, y, right, y, C.muted, 3);
       for (var i = 0; i <= TRACK; i++) { D.line(ctx, X(i), y, X(i), y + 6, C.muted, 1); D.text(ctx, String(i), X(i), y + 18, { size: 10, align: 'center', color: C.muted, mono: true }); }
       D.text(ctx, 'x, м', right, y + 32, { size: 11, align: 'right', color: C.muted });
