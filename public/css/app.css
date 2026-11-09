@@ -605,3 +605,13 @@ body.noscroll{overflow:hidden}
 .op-cond,.op-d > div,.op-steps{overflow-x:auto;overflow-y:hidden}
 .op-f .btn,.fd-acts .btn,.pager .btn{white-space:normal;text-align:left;max-width:100%}
 .pager{flex-wrap:wrap}
+
+/* ---- official olympiad PDFs ---- */
+.ofgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.ofile{display:grid;gap:8px;align-content:start;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--brass);border-radius:var(--r);padding:15px 16px;box-shadow:var(--shadow);min-width:0}
+.ofile-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ofile-h .mc-grade{margin-left:auto}
+.ofile h3{font-family:var(--fd);font-size:20px;font-weight:600}
+.ofile p{font-size:13.5px;color:var(--muted)}
+.ofile-acts{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+@media (max-width:600px){ .ofgrid{grid-template-columns:1fr} }
