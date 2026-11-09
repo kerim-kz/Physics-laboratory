@@ -13,6 +13,8 @@
   }
 
   Sim.create({
+    tools: ['ruler', 'angle', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.62,
     hint: 'Секундомер: тербеліс саны N мен уақыт t бойынша T = t/N.',
     controls: [
@@ -58,6 +60,7 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var g = PLANETS[P.planet];
       var px0 = W * 0.38, py0 = 30, k = (H - 80) / 2.6;
+      api._sc = { px: k, unit: 'м' };
       var bx = px0 + Math.sin(S.th) * P.l * k, by = py0 + Math.cos(S.th) * P.l * k;
       // тірек
       ctx.fillStyle = C.line; ctx.fillRect(px0 - 60, py0 - 10, 120, 8);

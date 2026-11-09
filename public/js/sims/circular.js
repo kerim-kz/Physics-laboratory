@@ -1,6 +1,8 @@
 /* Шеңбер бойымен бірқалыпты қозғалыс: v = 2πR/T, ω = 2π/T, a = v²/R. */
 (function () {
   Sim.create({
+    tools: ['ruler', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.62, autoplay: true,
     hint: 'Көк көрсеткі — жылдамдық, қызыл — центрге тартқыш үдеу.',
     controls: [
@@ -26,6 +28,7 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var cx = W * 0.4, cy = H / 2, k = (H / 2 - 40) / 3, r = P.R * k;
+      api._sc = { px: k, unit: 'м' };
       ctx.save(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
       var phi = S.phi % (2 * Math.PI);

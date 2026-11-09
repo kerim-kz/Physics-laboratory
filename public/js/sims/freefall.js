@@ -6,6 +6,8 @@
     { name: 'Қағаз шар', m: 0.005, k: 0.0004, r: 10 },
   ];
   Sim.create({
+    tools: ['ruler', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.66,
     hint: 'Екі дене бір мезгілде құлатылады.',
     controls: [
@@ -47,6 +49,7 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var top = 30, bot = H - 40, X0 = 70, k = (bot - top) / P.h;
+      api._sc = { px: k, unit: 'м' };
       ctx.fillStyle = C.bg2; ctx.fillRect(40, bot, W * 0.45 - 30, 16);
       var step = P.h > 50 ? 10 : 5;
       for (var m = 0; m <= P.h; m += step) {

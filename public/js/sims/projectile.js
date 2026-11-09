@@ -12,6 +12,8 @@
   }
 
   Sim.create({
+    tools: ['ruler', 'angle', 'stopwatch'],
+    scale: function (api) { return api._sc || null; },
     aspect: 0.6,
     hint: 'Бірнеше траектория сақталады — салыстыр.',
     controls: [
@@ -61,6 +63,7 @@
       var k = Math.min((W - padL - padR) / (maxX * 1.08), (H - padB - padT) / (maxY * 1.12));
       var X = function (x) { return padL + x * k; };
       var Y = function (y) { return H - padB - y * k; };
+      api._sc = { px: k, unit: 'м' };
       // жер және шкала
       ctx.fillStyle = C.bg2; ctx.fillRect(0, Y(0), W, padB);
       D.line(ctx, 0, Y(0), W, Y(0), C.muted, 2);

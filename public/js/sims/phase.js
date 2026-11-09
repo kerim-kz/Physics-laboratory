@@ -23,6 +23,7 @@
     return { T: TEND, i: 4, f: 1, name: 'буды қыздыру', end: true };
   }
   Sim.create({
+    tools: ['stopwatch'],
     aspect: 0.6, substeps: 2,
     hint: 'Уақыт 100 есе жылдамдатылған. Жылу шығыны ескерілмейді.',
     controls: [

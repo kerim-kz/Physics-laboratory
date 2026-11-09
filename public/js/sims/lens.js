@@ -8,6 +8,8 @@
   }
 
   Sim.create({
+    tools: ['ruler', 'angle'],
+    scale: function (api) { return api._sc || null; },
     static: true,
     resetLabel: false,
     aspect: 0.58,
@@ -38,6 +40,7 @@
       var half = Math.max(c.d, 2 * Math.abs(c.F), c.inf ? 0 : Math.min(60, Math.abs(c.f))) * 1.15;
       var cx = W / 2, cy = H * 0.55, k = Math.min((W / 2 - 20) / half, (H * 0.42) / Math.max(c.h, c.inf ? c.h : Math.min(30, Math.abs(c.H || 0))) );
       var X = function (x) { return cx + x * k; }, Y = function (y) { return cy - y * k; };
+      api._sc = { px: k, unit: 'см' };
       D.line(ctx, 0, cy, W, cy, C.muted, 1.2);
       // линза
       var lh = Math.min(H * 0.42, 12 * k);
