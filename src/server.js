@@ -53,12 +53,21 @@ export function createApp() {
   }));
   app.use(compression());
 
-  const staticOpts = { maxAge: config.isProd ? '7d' : 0, fallthrough: true };
+  // Нұсқасы бар сілтемелер (?v=хэш) ұзақ сақталады; нұсқасыз сұраныстар әр жолы серверден тексеріледі (ETag),
+  // сондықтан сайт жаңарғанда браузер ескі стиль мен скриптті қолданбайды.
+  const staticOpts = {
+    maxAge: 0,
+    fallthrough: true,
+    setHeaders: (res) => {
+      if (config.isProd && res.req && res.req.query && res.req.query.v) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    },
+  };
+  const vendorOpts = { maxAge: config.isProd ? '7d' : 0, fallthrough: true };
   app.use(express.static(path.join(root, 'public'), staticOpts));
-  app.use('/vendor/katex', express.static(nm('katex/dist'), staticOpts));
-  app.use('/vendor/fonts/sans', express.static(nm('@fontsource/ibm-plex-sans'), staticOpts));
-  app.use('/vendor/fonts/serif', express.static(nm('@fontsource/ibm-plex-serif'), staticOpts));
-  app.use('/vendor/fonts/mono', express.static(nm('@fontsource/ibm-plex-mono'), staticOpts));
+  app.use('/vendor/katex', express.static(nm('katex/dist'), vendorOpts));
+  app.use('/vendor/fonts/sans', express.static(nm('@fontsource/ibm-plex-sans'), vendorOpts));
+  app.use('/vendor/fonts/serif', express.static(nm('@fontsource/ibm-plex-serif'), vendorOpts));
+  app.use('/vendor/fonts/mono', express.static(nm('@fontsource/ibm-plex-mono'), vendorOpts));
 
   app.get('/healthz', async (req, res) => {
     try {

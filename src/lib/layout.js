@@ -1,6 +1,7 @@
 import { config } from '../config.js';
 import { ROLE_NAME } from '../data/catalog.js';
 import { html, raw } from './html.js';
+import { asset } from './assets.js';
 import { icon } from './icons.js';
 import { getSettings } from './settings.js';
 import { takeFlash } from './util.js';
@@ -91,9 +92,9 @@ export async function page(req, res, opts) {
 <link rel="stylesheet" href="/vendor/fonts/mono/400.css">
 <link rel="stylesheet" href="/vendor/fonts/mono/600.css">
 ${katex ? raw('<link rel="stylesheet" href="/vendor/katex/katex.min.css">') : ''}
-<link rel="stylesheet" href="/css/app.css">
-${styles.map((s) => raw(`<link rel="stylesheet" href="${s}">`))}
-<script src="/js/theme.js"></script>
+<link rel="stylesheet" href="${asset('/css/app.css')}">
+${styles.map((s) => raw(`<link rel="stylesheet" href="${asset(s)}">`))}
+<script src="${asset('/js/theme.js')}"></script>
 </head>
 <body>
 <a class="skip" href="#main">Негізгі мазмұнға өту</a>
@@ -128,8 +129,8 @@ ${body}
   <a href="/schools">Мектептер</a>
   <p class="credit">Құрастырушы: <b>Әбілқасым Керім Шәмшитұлы</b>, №54 орта мектептің физика пәні мұғалімі</p>
 </footer>
-<script src="/js/app.js" defer></script>
-${scripts.map((s) => raw(`<script src="${s}" defer></script>`))}
+<script src="${asset('/js/app.js')}" defer></script>
+${scripts.map((s) => raw(`<script src="${asset(s)}" defer></script>`))}
 </body>
 </html>`;
   res.type('html').send(doc.toString());
