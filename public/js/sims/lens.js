@@ -1,5 +1,6 @@
 /* Жұқа линза: 1/F = 1/d + 1/f, Γ = |f|/d. F < 0 — шашыратқыш линза. Ұзындықтар — см. */
 (function () {
+  var R = window.Real;
   function calc(P) {
     var F = P.type === 'conv' ? P.F : -P.F, d = P.d, h = P.h;
     if (Math.abs(d - F) < 1e-6) return { F: F, d: d, h: h, inf: true };
@@ -8,6 +9,7 @@
   }
 
   Sim.create({
+    grid: false,
     tools: ['ruler', 'angle'],
     scale: function (api) { return api._sc || null; },
     static: true,
@@ -42,15 +44,20 @@
       var X = function (x) { return cx + x * k; }, Y = function (y) { return cy - y * k; };
       api._sc = { px: k, unit: 'см' };
       D.line(ctx, 0, cy, W, cy, C.muted, 1.2);
-      // линза
-      var lh = Math.min(H * 0.42, 12 * k);
-      D.line(ctx, cx, cy - lh, cx, cy + lh, C.accent, 3);
-      // Жинағыш линзада ұштардағы бағыттауыштар сыртқа, шашыратқышта ішке қарайды.
-      var out = P.type === 'conv' ? 1 : -1;
-      [[cy - lh, 1], [cy + lh, -1]].forEach(function (e) {
-        var yy = e[0], back = e[1] * out * 10;
-        D.line(ctx, cx, yy, cx - 9, yy + back, C.accent, 3); D.line(ctx, cx, yy, cx + 9, yy + back, C.accent, 3);
-      });
+      // оптикалық орындық (рельс) және шыны линза
+      ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+      var rg = ctx.createLinearGradient(0, H - 26, 0, H - 8); rg.addColorStop(0, '#d5dade'); rg.addColorStop(1, '#5c646b');
+      ctx.fillStyle = rg; ctx.fillRect(10, H - 26, W - 20, 14);
+      D.line(ctx, 0, cy, W, cy, C.muted, 1.2);
+      var lh = Math.min(H * 0.42, 12 * k), lw = 12;
+      ctx.save();
+      var lg = ctx.createLinearGradient(cx - lw, 0, cx + lw, 0); lg.addColorStop(0, 'rgba(150,205,235,.55)'); lg.addColorStop(0.45, 'rgba(235,248,255,.85)'); lg.addColorStop(1, 'rgba(120,180,215,.55)');
+      ctx.fillStyle = lg; ctx.strokeStyle = 'rgba(60,110,140,.85)'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      if (P.type === 'conv') ctx.ellipse(cx, cy, lw, lh, 0, 0, 7);
+      else { ctx.moveTo(cx - lw, cy - lh); ctx.lineTo(cx + lw, cy - lh); ctx.quadraticCurveTo(cx + 2, cy, cx + lw, cy + lh); ctx.lineTo(cx - lw, cy + lh); ctx.quadraticCurveTo(cx - 2, cy, cx - lw, cy - lh); }
+      ctx.fill(); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = '#4b5258'; ctx.fillRect(cx - 4, cy + lh, 8, H - 26 - cy - lh);
       // фокустар
       [-2, -1, 1, 2].forEach(function (m) {
         var x = X(m * P.F);

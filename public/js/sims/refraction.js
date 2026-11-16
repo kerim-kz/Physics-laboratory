@@ -1,5 +1,6 @@
 /* Жарықтың шағылуы мен сынуы: sin α / sin β = n₂ / n₁, толық ішкі шағылу. */
 (function () {
+  var R = window.Real;
   var MED = { air: [1.0, 'Ауа'], water: [1.33, 'Су'], ice: [1.31, 'Мұз'], glyc: [1.47, 'Глицерин'], glass: [1.5, 'Шыны'], diamond: [2.42, 'Алмаз'] };
   var OPTS = Object.keys(MED).map(function (k) { return [k, MED[k][1] + ' (n = ' + String(MED[k][0]).replace('.', ',') + ')']; });
   var deg = function (r) { return r * 180 / Math.PI; };
@@ -11,6 +12,7 @@
   }
 
   Sim.create({
+    grid: false,
     tools: ['angle'],
     static: true,
     resetLabel: false,
@@ -53,13 +55,16 @@
     draw: function (api, ctx, W, H) {
       var P = api.P, C = api.C, D = api.D, c = calc(P);
       var cx = W / 2, cy = H / 2, L = Math.min(W, H) * 0.46;
-      var tint = function (n) { return 'rgba(70,140,220,' + Math.min(0.42, (n - 1) * 0.28) + ')'; };
-      ctx.fillStyle = tint(c.n1); ctx.fillRect(0, 0, W, cy);
-      ctx.fillStyle = tint(c.n2); ctx.fillRect(0, cy, W, H - cy);
-      D.line(ctx, 0, cy, W, cy, C.muted, 2);
-      D.line(ctx, cx, 10, cx, H - 10, C.muted, 1, [5, 5]);
-      D.text(ctx, MED[P.m1][1] + ', n₁ = ' + api.fmt(c.n1, 2), 14, 22, { size: 13, weight: '600' });
-      D.text(ctx, MED[P.m2][1] + ', n₂ = ' + api.fmt(c.n2, 2), 14, H - 14, { size: 13, weight: '600' });
+      // қараңғы бөлме: ортаның оптикалық тығыздығы неғұрлым үлкен болса, соғұрлым қоюрақ
+      ctx.fillStyle = '#0e1420'; ctx.fillRect(0, 0, W, H);
+      var tint = function (n, y, h) { var g = ctx.createLinearGradient(0, y, 0, y + h); var a = Math.min(0.55, (n - 1) * 0.36); g.addColorStop(0, 'rgba(120,190,235,' + (a * 0.8) + ')'); g.addColorStop(1, 'rgba(70,140,220,' + a + ')'); return g; };
+      ctx.fillStyle = tint(c.n1, 0, cy); ctx.fillRect(0, 0, W, cy);
+      ctx.fillStyle = tint(c.n2, cy, H - cy); ctx.fillRect(0, cy, W, H - cy);
+      ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(0, cy - 1, W, 2);
+      ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(cx, 10); ctx.lineTo(cx, H - 10); ctx.stroke(); ctx.restore();
+      R.tag(ctx, MED[P.m1][1] + ', n₁ = ' + api.fmt(c.n1, 2), 110, 22, { size: 12, bg: 'rgba(20,30,50,.8)', color: '#e6eef8', border: 'rgba(255,255,255,.2)' });
+      R.tag(ctx, MED[P.m2][1] + ', n₂ = ' + api.fmt(c.n2, 2), 110, H - 20, { size: 12, bg: 'rgba(20,30,50,.8)', color: '#e6eef8', border: 'rgba(255,255,255,.2)' });
+      C = Object.create(C); C.orange = '#ff4a3a'; C.red = '#ff4a3a'; C.ink = '#e6eef8'; C.muted = '#9fb3c8'; C.bad = '#ff8a6a';
       // түсетін сәуле
       var sx = cx - L * Math.sin(c.a), sy = cy - L * Math.cos(c.a);
       ctx.save(); ctx.shadowColor = C.orange; ctx.shadowBlur = 6;

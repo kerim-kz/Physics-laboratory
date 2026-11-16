@@ -1,10 +1,16 @@
 /* Ом заңы: I = U/R. Резистордың вольт-амперлік сипаттамасы — түзу, қыздыру шамынікі — иілген (қызған сайын кедергісі артады). */
 (function () {
+  var R = window.Real;
   function current(P, U) {
     if (P.el === 'lamp') { var R = 5 + 35 * (1 - Math.exp(-U / 4)); return U / R; }
     return U / P.R;
   }
+  // Стрелкалы электр өлшеуіш (шынайы корпус)
   function gauge(ctx, api, x, y, r, val, max, unit, label) {
+    R.meter(ctx, x, y - r * 0.2, r * 0.8, val, max, { letter: label, step: max / 5 });
+    R.tag(ctx, api.fmt(val, 2) + ' ' + unit, x, y + r * 0.95, { size: 10.5, mono: true, color: '#0b6b78' });
+  }
+  function gaugeOld(ctx, api, x, y, r, val, max, unit, label) {
     var C = api.C, D = api.D;
     ctx.save();
     ctx.fillStyle = C.bg; ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
@@ -22,6 +28,7 @@
     ctx.restore();
   }
   Sim.create({
+    grid: false,
     aspect: 0.62, static: true, resetLabel: false,
     hint: 'Кернеуді өзгертіп, «Өлшеуді жазу» арқылы I(U) кестесін толтыр.',
     controls: [
@@ -44,21 +51,14 @@
     draw: function (api, ctx, W, H) {
       var P = api.P, C = api.C, D = api.D, I = current(P, P.U), lamp = P.el === 'lamp';
       // схема
-      var L = 40, Rr = W * 0.5, T = 50, B = H * 0.55;
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(L, T, Rr - L, B - T);
-      ctx.fillStyle = C.bg; ctx.fillRect(L - 14, (T + B) / 2 - 14, 28, 28);
-      D.line(ctx, L - 13, (T + B) / 2 - 5, L + 13, (T + B) / 2 - 5, C.ink, 3); D.line(ctx, L - 7, (T + B) / 2 + 5, L + 7, (T + B) / 2 + 5, C.ink, 3);
-      D.text(ctx, api.fmt(P.U, 1) + ' В', L + 18, (T + B) / 2 + 4, { size: 11, mono: true });
+      var L = 40, Rr = W * 0.5, T = 60, B = H * 0.55;
+      R.tableTop(ctx, 0, 0, W, H, '#a87a4c');
+      R.wire(ctx, [[L, (T + B) / 2 - 46], [L, T], [Rr, T], [Rr, B], [L, B], [L, (T + B) / 2 + 46]], { color: '#c0392b' });
+      ctx.save(); ctx.translate(L, (T + B) / 2); ctx.rotate(-Math.PI / 2); R.battery(ctx, -48, -14, 96, 28, { label: api.fmt(P.U, 1) + ' В' }); ctx.restore();
       var ex = (L + Rr) / 2;
-      if (lamp) {
-        var glow = Math.min(1, P.U * I / 4);
-        if (glow > 0.02) { var gr = ctx.createRadialGradient(ex, T, 2, ex, T, 50); gr.addColorStop(0, 'rgba(255,220,120,' + glow + ')'); gr.addColorStop(1, 'rgba(255,220,120,0)'); ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(ex, T, 50, 0, Math.PI * 2); ctx.fill(); }
-        D.circle(ctx, ex, T, 16, C.bg, C.ink, 2, true);
-        D.line(ctx, ex - 11, T - 11, ex + 11, T + 11, C.ink, 1.5); D.line(ctx, ex - 11, T + 11, ex + 11, T - 11, C.ink, 1.5);
-      } else {
-        ctx.fillStyle = C.bg; ctx.fillRect(ex - 34, T - 11, 68, 22); ctx.strokeRect(ex - 34, T - 11, 68, 22);
-        D.text(ctx, P.R + ' Ом', ex, T - 18, { size: 11, align: 'center', weight: '600' });
-      }
+      if (lamp) R.bulb(ctx, ex, T - 32, 16, Math.min(1, P.U * I / 4));
+      else { R.resistor(ctx, ex, T, 90, {}); R.tag(ctx, P.R + ' Ом', ex, T - 22, { size: 11 }); }
+      ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.9)'; R.rr(ctx, W * 0.62 - 44, 16, W * 0.34 + 54, H - 50, 10); ctx.fill(); ctx.restore();
       gauge(ctx, api, Rr, (T + B) / 2 + 30, 46, I, lamp ? 0.5 : Math.max(0.5, Math.ceil(12 / P.R * 2) / 2), 'А', 'A');
       gauge(ctx, api, ex, B + 70, 46, P.U, 12, 'В', 'V');
       D.line(ctx, ex - 40, B, ex - 40, B + 40, C.muted, 1, [3, 3]); D.line(ctx, ex + 40, B, ex + 40, B + 40, C.muted, 1, [3, 3]);

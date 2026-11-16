@@ -1,5 +1,6 @@
 /* Бірқалыпты қозғалыс: екі көлік, x = x₀ + vt. Кездесу — x(t) графиктерінің қиылысуы. */
 (function () {
+  var R = window.Real;
   var TMAX = 30;
   function meet(P) {
     var dv = P.va - P.vb;
@@ -8,6 +9,7 @@
     return t > 0 && t <= TMAX ? t : null;
   }
   Sim.create({
+    grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.66,
@@ -36,20 +38,19 @@
       var xmin = -100, xmax = 500, roadY = 70;
       var X = function (x) { return 30 + (x - xmin) / (xmax - xmin) * (W - 60); };
       api._sc = { px: (W - 60) / (xmax - xmin), unit: 'м' };
-      // жол
-      ctx.fillStyle = C.bg2; ctx.fillRect(20, roadY - 24, W - 40, 48);
-      D.line(ctx, 20, roadY, W - 20, roadY, C.line, 1, [10, 10]);
+      // жол (аспан, шөп, асфальт)
+      R.scene(ctx, W, roadY + 60, 'outdoor', { ground: roadY - 30, clouds: false, sun: false });
+      ctx.fillStyle = '#4a4e54'; ctx.fillRect(0, roadY - 24, W, 48);
+      ctx.fillStyle = '#e9e6dc'; for (var dx = 10; dx < W; dx += 40) ctx.fillRect(dx, roadY - 1.5, 22, 3);
+      ctx.fillStyle = C.bg; ctx.fillRect(0, roadY + 60, W, H - roadY - 60);
       for (var m = -100; m <= 500; m += 100) {
         D.line(ctx, X(m), roadY + 24, X(m), roadY + 30, C.muted, 1);
-        D.text(ctx, m + ' м', X(m), roadY + 44, { size: 10, align: 'center', color: C.muted, mono: true });
+        R.txt(ctx, m + ' м', X(m), roadY + 40, { size: 9.5, color: '#fff', mono: true });
       }
       function car(x, color, dir) {
         var px = X(x);
         if (px < 10 || px > W - 10) return;
-        ctx.fillStyle = color;
-        ctx.fillRect(px - 16, roadY - 16, 32, 14);
-        ctx.fillRect(px - 9 + dir * 3, roadY - 24, 16, 9);
-        D.circle(ctx, px - 9, roadY, 4, C.ink); D.circle(ctx, px + 9, roadY, 4, C.ink);
+        R.car(ctx, px, roadY + (color === C.blue ? 18 : -2), 46, color === C.blue ? '#2f6fd1' : '#d2382b', x * 4, { flip: dir < 0 });
       }
       car(P.va * S.t, C.blue, P.va >= 0 ? 1 : -1);
       car(P.xb + P.vb * S.t, C.red, P.vb >= 0 ? 1 : -1);

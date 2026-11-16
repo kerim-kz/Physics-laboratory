@@ -1,5 +1,6 @@
 /* Үйкеліс күші: динамометрмен тартылған білікше. Тыныштық үйкелісі F_тын ≤ μ_т·N, сырғанау үйкелісі F = μ·N. */
 (function () {
+  var R = window.Real;
   var g = 9.8;
   var SURF = {
     wood: ['Ағаш — ағаш', 0.3, 0.4, '#c89a62'],
@@ -8,6 +9,7 @@
     ice: ['Болат — мұз', 0.02, 0.03, '#cfe9f5'],
   };
   Sim.create({
+    grid: false,
     aspect: 0.6, substeps: 6, autoplay: true, keepRunning: true,
     tools: ['stopwatch'],
     hint: 'Тарту күшін біртіндеп арттыр: білікше қай кезде қозғала бастайды?',
@@ -43,34 +45,28 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, sf = SURF[P.surf], N = P.m * g, ftr = friction(api);
       var top = H * 0.42, x0 = 60, w = W * 0.62;
-      // үстел беті
-      var gr = ctx.createLinearGradient(0, top, 0, top + 26);
-      gr.addColorStop(0, sf[3]); gr.addColorStop(1, shade(sf[3]));
+      R.scene(ctx, W, top + 26, 'wall');
+      ctx.fillStyle = C.bg; ctx.fillRect(0, top + 26, W, H - top - 26);
+      // беттің материалы
+      ctx.save(); ctx.beginPath(); ctx.rect(20, top, w + 40, 26); ctx.clip();
+      var surfMat = /мұз|ice/i.test(sf[0]) ? 'ice' : /резеңке|rubber/i.test(sf[0]) ? 'rubber' : /металл|болат|steel/i.test(sf[0]) ? 'steel' : /тас|бетон|асфальт/i.test(sf[0]) ? 'concrete' : null;
+      if (surfMat) R.paintFace(ctx, 20, top, w + 40, 26, surfMat, 0); else { ctx.fillStyle = sf[3]; ctx.fillRect(20, top, w + 40, 26); R.paintFace(ctx, 20, top, w + 40, 26, { c: sf[3], t: 'noise' }, 0); }
+      ctx.restore();
+      var gr = ctx.createLinearGradient(0, top, 0, top + 26); gr.addColorStop(0, 'rgba(255,255,255,.2)'); gr.addColorStop(1, 'rgba(0,0,0,.25)');
       ctx.fillStyle = gr; ctx.fillRect(20, top, w + 40, 26);
-      ctx.strokeStyle = C.line; ctx.strokeRect(20.5, top + 0.5, w + 39, 25);
-      // білікше
+      // ағаш білікше (брусок)
       var bw = 60 + P.m * 8, bh = 36 + P.m * 4, bx = x0 + S.x / 1.6 * (w - bw - 120);
-      var gb = ctx.createLinearGradient(bx, top - bh, bx, top);
-      gb.addColorStop(0, '#d49a5a'); gb.addColorStop(1, '#9a6430');
-      ctx.fillStyle = gb; ctx.fillRect(bx, top - bh, bw, bh);
-      ctx.strokeStyle = '#6b4320'; ctx.lineWidth = 1.5; ctx.strokeRect(bx + 0.5, top - bh + 0.5, bw - 1, bh - 1);
-      D.text(ctx, api.fmt(P.m, 1) + ' кг', bx + bw / 2, top - bh / 2 + 4, { size: 12, align: 'center', color: '#fff', weight: '700' });
-      // динамометр
-      var dx = bx + bw, dy = top - bh / 2, stretch = 20 + P.F * 3;
-      D.line(ctx, dx, dy, dx + 14, dy, C.ink, 2);
-      ctx.fillStyle = C.bg2; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5;
-      ctx.fillRect(dx + 14, dy - 11, 90 + stretch, 22); ctx.strokeRect(dx + 14.5, dy - 10.5, 89 + stretch, 21);
-      ctx.save(); ctx.strokeStyle = C.blue; ctx.lineWidth = 1.6; ctx.beginPath();
-      for (var i = 0; i <= 14; i++) ctx.lineTo(dx + 20 + i * stretch / 14, dy + (i % 2 ? -6 : 6));
-      ctx.stroke(); ctx.restore();
-      D.text(ctx, api.fmt(P.F, 1) + ' Н', dx + 60 + stretch, dy + 4, { size: 12, mono: true, weight: '600', align: 'center' });
-      D.line(ctx, dx + 104 + stretch, dy, dx + 124 + stretch, dy, C.ink, 2);
+      R.block(ctx, bx, top - bh, bw, bh, 'oak', { depth: 10, label: api.fmt(P.m, 1) + ' кг' });
+      // динамометр (көлденең)
+      ctx.save(); ctx.translate(bx + bw + 4, top - bh / 2); ctx.rotate(-Math.PI / 2);
+      R.dynamometer(ctx, 0, -6, 140, P.F, 40, { div: 1, big: 10, w: 28 });
+      ctx.restore();
       // күштер
       var fk = 3;
-      D.arrow(ctx, bx + bw, top - bh - 6, bx + bw + P.F * fk, top - bh - 6, C.red, 2.5, 'F');
-      D.arrow(ctx, bx, top - 6, bx - ftr * fk, top - 6, C.orange, 2.5, 'Fүйк');
-      D.arrow(ctx, bx + bw / 2, top - bh / 2, bx + bw / 2, top - bh / 2 + Math.min(70, N * 1.5), C.purple, 2, 'mg');
-      D.arrow(ctx, bx + bw / 2, top - bh, bx + bw / 2, top - bh - Math.min(70, N * 1.5), C.good, 2, 'N');
+      R.force(ctx, bx + bw, top - bh - 14, bx + bw + P.F * fk, top - bh - 14, '#d2382b', 'F');
+      R.force(ctx, bx, top - 6, bx - ftr * fk, top - 6, '#e0761f', 'Fүйк');
+      R.force(ctx, bx + bw / 2, top - bh / 2, bx + bw / 2, top - bh / 2 + Math.min(70, N * 1.5), '#7a3fc0', 'mg');
+      R.force(ctx, bx + bw / 2, top - bh, bx + bw / 2, top - bh - Math.min(70, N * 1.5), '#1d7a45', 'N');
       // Fүйк(F) графигі
       var fmax = sf[2] * N, Fmax = 40;
       var curve = [[0, 0], [fmax, fmax], [fmax + 0.001, sf[1] * N], [Fmax, sf[1] * N]];
@@ -83,6 +79,7 @@
         D.text(ctx, 'сырғанау үйкелісі', gx.X(Math.min(Fmax * 0.8, fmax + 10)), gx.Y(sf[1] * N) - 8, { size: 10, color: C.muted, align: 'center' });
       }
     },
+
   });
   function friction(api) {
     var S = api.S, P = api.P, sf = SURF[P.surf], N = P.m * g;

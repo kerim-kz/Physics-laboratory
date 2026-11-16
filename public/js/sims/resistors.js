@@ -1,5 +1,6 @@
 /* Резисторларды тізбектей және параллель жалғау. Электрондардың жылжу жылдамдығы ток күшіне пропорционал. */
 (function () {
+  var R = window.Real;
   function calc(P) {
     if (P.mode === 'series') {
       var R = P.R1 + P.R2, I = P.U / R;
@@ -8,15 +9,18 @@
     var Rp = P.R1 * P.R2 / (P.R1 + P.R2);
     return { R: Rp, I: P.U / Rp, I1: P.U / P.R1, I2: P.U / P.R2, U1: P.U, U2: P.U };
   }
+  // Керамикалық резистор (түсті белдеулерімен)
   function resistor(ctx, x, y, w, h, label, C, D, vertical) {
-    ctx.fillStyle = C.bg; ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
-    if (vertical) { ctx.fillRect(x - h / 2, y - w / 2, h, w); ctx.strokeRect(x - h / 2, y - w / 2, h, w); D.text(ctx, label, x + h / 2 + 6, y + 4, { size: 12, weight: '600' }); }
-    else { ctx.fillRect(x - w / 2, y - h / 2, w, h); ctx.strokeRect(x - w / 2, y - h / 2, w, h); D.text(ctx, label, x, y - h / 2 - 6, { size: 12, align: 'center', weight: '600' }); }
+    ctx.save(); ctx.translate(x, y); if (vertical) ctx.rotate(Math.PI / 2);
+    R.resistor(ctx, 0, 0, w + 20, {});
+    ctx.restore();
+    R.tag(ctx, label, vertical ? x + 62 : x, vertical ? y : y - 22, { size: 11 });
   }
+  // Стрелкалы амперметр/вольтметр, шкаласы көрсетуіне сай таңдалады
   function meter(ctx, x, y, letter, val, unit, C, D, api) {
-    D.circle(ctx, x, y, 15, C.bg, C.ink, 2);
-    D.text(ctx, letter, x, y + 5, { size: 14, align: 'center', weight: '600' });
-    D.text(ctx, api.fmt(val, 2) + ' ' + unit, x, y + 32, { size: 11, align: 'center', mono: true, color: C.accent, weight: '600', bg: C.bg });
+    var scales = [0.5, 1, 2, 5, 10, 20, 50, 100], max = scales.filter(function (m) { return m >= val * 1.15; })[0] || 100;
+    R.meter(ctx, x, y - 4, 24, val, max, { letter: letter, step: max / 5 });
+    R.tag(ctx, api.fmt(val, 2) + ' ' + unit, x, y + 34, { size: 10.5, mono: true, color: '#0b6b78' });
   }
   function pointAt(pts, d) {
     for (var i = 1; i < pts.length; i++) {
@@ -28,6 +32,7 @@
   }
   function plen(pts) { var s = 0; for (var i = 1; i < pts.length; i++) s += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); return s; }
   Sim.create({
+    grid: false,
     aspect: 0.6, autoplay: true,
     hint: 'Нүктелер — электрондар емес, токтың шартты бағыты (+ → −).',
     controls: [
@@ -50,14 +55,12 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, c = calc(P);
       var L = W * 0.12, Rr = W * 0.88, T = H * 0.18, B = H * 0.82, mid = W * 0.5;
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(L, B); ctx.lineTo(L, T); ctx.lineTo(Rr, T); ctx.lineTo(Rr, B); ctx.lineTo(L, B); ctx.stroke();
-      if (P.mode === 'parallel') { ctx.beginPath(); ctx.moveTo(mid, T); ctx.lineTo(mid, B); ctx.stroke(); }
-      // ток көзі (сол жақ)
-      ctx.fillStyle = C.bg; ctx.fillRect(L - 14, H / 2 - 16, 28, 32);
-      D.line(ctx, L - 14, H / 2 - 6, L + 14, H / 2 - 6, C.ink, 3); D.line(ctx, L - 7, H / 2 + 6, L + 7, H / 2 + 6, C.ink, 3);
-      D.text(ctx, '+', L + 18, H / 2 - 6, { size: 12, weight: '600' }); D.text(ctx, '−', L + 18, H / 2 + 12, { size: 12, weight: '600' });
-      D.text(ctx, P.U + ' В', L - 20, H / 2 + 4, { size: 12, align: 'right', mono: true, weight: '600' });
+      // монтаж тақтасы
+      R.tableTop(ctx, 0, 0, W, H, '#a87a4c');
+      R.wire(ctx, [[L, H / 2 - 40], [L, T], [Rr, T], [Rr, B], [L, B], [L, H / 2 + 40]], { color: '#c0392b' });
+      if (P.mode === 'parallel') R.wire(ctx, [[mid, T], [mid, B]], { color: '#c0392b' });
+      // ток көзі (сол жақ, тік)
+      ctx.save(); ctx.translate(L, H / 2); ctx.rotate(-Math.PI / 2); R.battery(ctx, -45, -14, 90, 28, { label: P.U + ' В' }); ctx.restore();
       // резисторлар
       if (P.mode === 'series') {
         resistor(ctx, W * 0.4, T, 70, 22, 'R₁ = ' + P.R1 + ' Ом', C, D);
@@ -78,7 +81,7 @@
       var list = P.mode === 'series' ? [[[[L, H / 2], [L, T], [Rr, T], [Rr, B], [L, B], [L, H / 2]], c.I]] : [[[[L, H / 2], [L, T], [mid, T], [mid, B], [L, B], [L, H / 2]], c.I1], [[[mid, T], [Rr, T], [Rr, B], [mid, B]], c.I2]];
       list.forEach(function (f) {
         var pts = f[0], len = plen(pts), sp = Math.min(220, 18 * f[1]), gap = 34;
-        for (var d = (S.ph * sp) % gap; d < len; d += gap) { var p = pointAt(pts, d); D.circle(ctx, p[0], p[1], 3.5, C.orange); }
+        for (var d = (S.ph * sp) % gap; d < len; d += gap) { var p = pointAt(pts, d); ctx.fillStyle = 'rgba(255,230,90,.95)'; ctx.beginPath(); ctx.arc(p[0], p[1], 2.6, 0, 7); ctx.fill(); }
       });
     },
   });

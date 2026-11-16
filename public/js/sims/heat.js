@@ -1,9 +1,11 @@
 /* Жылу балансы: c₁m₁(t − t₁) + c₂m₂(t − t₂) = 0. Температуралар экспоненциалды түрде теңеседі. */
 (function () {
+  var R = window.Real;
   var MAT = { water: ['Су', 4200, '#5aa0e0'], al: ['Алюминий', 920, '#b9c2cc'], fe: ['Темір', 460, '#7b8590'], cu: ['Мыс', 400, '#c8774a'], pb: ['Қорғасын', 140, '#6a7080'] };
   function teq(P) { var c2 = MAT[P.mat][1], a = 4200 * P.m1, b = c2 * P.m2; return (a * P.t1 + b * P.t2) / (a + b); }
   function color(t) { var k = Math.max(0, Math.min(1, t / 100)); return 'rgb(' + Math.round(60 + 190 * k) + ',' + Math.round(120 - 40 * k) + ',' + Math.round(220 - 170 * k) + ')'; }
   Sim.create({
+    grid: false,
     aspect: 0.6, substeps: 4,
     hint: 'Калориметрдің жылу сыйымдылығы мен жылу шығыны ескерілмейді.',
     controls: [
@@ -35,24 +37,21 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, M = MAT[P.mat];
       var cx = W * 0.2, top = 60, bw = 140, bh = H - 130;
-      // калориметр
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(cx - bw / 2 - 8, top - 8, bw + 16, bh + 16);
-      ctx.fillStyle = C.bg2; ctx.fillRect(cx - bw / 2 - 6, top - 6, bw + 12, bh + 12);
+      R.scene(ctx, W, H, 'lab', { table: top + bh + 14 });
+      // калориметр: сыртқы алюминий стақан, ішкі шыны ыдыс
+      R.cylinder(ctx, cx - bw / 2 - 16, top - 14, bw + 32, bh + 26, 'aluminum', {});
+      ctx.fillStyle = 'rgba(235,242,246,.92)'; ctx.fillRect(cx - bw / 2 - 4, top - 4, bw + 8, bh + 8);
       var lvl = bh * (0.35 + 0.3 * P.m1 / 2);
       ctx.fillStyle = color(S.a); ctx.globalAlpha = 0.55; ctx.fillRect(cx - bw / 2, top + bh - lvl, bw, lvl); ctx.globalAlpha = 1;
       var s = 26 + P.m2 * 20;
       if (P.mat === 'water') { ctx.fillStyle = color(S.b); ctx.globalAlpha = 0.7; ctx.fillRect(cx - bw / 2, top + bh - lvl - s * 0.6, bw, s * 0.6); ctx.globalAlpha = 1; D.text(ctx, 'ыстық су', cx, top + bh - lvl - s * 0.25, { size: 11, align: 'center', color: '#fff', weight: '600' }); }
       else { ctx.fillStyle = M[2]; ctx.fillRect(cx - s / 2, top + bh - s - 6, s, s); ctx.strokeStyle = color(S.b); ctx.lineWidth = 3; ctx.strokeRect(cx - s / 2, top + bh - s - 6, s, s); }
       // термометр
-      var tx = cx + bw / 2 + 34;
-      ctx.fillStyle = C.bg2; ctx.fillRect(tx - 5, top, 10, bh); ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.strokeRect(tx - 5, top, 10, bh);
-      var ty = top + bh - S.a / 100 * bh;
-      ctx.fillStyle = C.red; ctx.fillRect(tx - 3, ty, 6, top + bh - ty);
-      D.circle(ctx, tx, top + bh + 6, 8, C.red);
-      for (var v = 0; v <= 100; v += 20) D.text(ctx, v + '°', tx + 10, top + bh - v / 100 * bh + 4, { size: 9, color: C.muted, mono: true });
-      D.text(ctx, 'Калориметр', cx, H - 22, { size: 12, align: 'center', color: C.muted });
+      R.thermometer(ctx, cx + bw / 2 + 50, top - 6, bh + 10, S.a, 0, 100, { step: 20 });
+      R.tag(ctx, 'Калориметр', cx, H - 16, { size: 11 });
       // график
       var te = teq(P);
+      ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.9)'; R.rr(ctx, W * 0.5 - 44, 16, W * 0.46 + 54, H - 50, 10); ctx.fill(); ctx.restore();
       D.plot(ctx, { x: W * 0.5, y: 40, w: W * 0.46, h: H - 100 }, {
         xmin: 0, xmax: Math.max(10, S.t), ymin: 0, ymax: 100, xlabel: 't, мин', ylabel: 't, °C',
         series: [{ pts: S.ha, color: C.blue }, { pts: S.hb, color: C.red }, { pts: [[0, te], [Math.max(10, S.t), te]], color: C.good, dash: [5, 4], width: 1.2 }],

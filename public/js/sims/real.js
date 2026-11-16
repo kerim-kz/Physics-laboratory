@@ -456,7 +456,11 @@
       if (pxPerCm < 18 && !isCm && !half) continue;
       ctx.lineWidth = isCm ? 1 : 0.6;
       ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, isCm ? th * 0.45 : half ? th * 0.32 : th * 0.2); ctx.stroke();
-      if (isCm) txt(ctx, String((o.from || 0) + i / 10), px, th * 0.72, { size: 8.5, mono: true, color: '#2a2016', weight: '500' });
+      var every = pxPerCm < 9 ? 10 : pxPerCm < 16 ? 5 : 1; // ұсақ масштабта әр 5 (10) см сайын жазамыз
+      if (isCm && (i / 10) % every === 0) {
+        if (o.vertical) { ctx.save(); ctx.translate(px, th * 0.72); ctx.rotate(-Math.PI / 2); txt(ctx, String((o.from || 0) + i / 10), 0, 0, { size: 8.5, mono: true, color: '#2a2016', weight: '500' }); ctx.restore(); }
+        else txt(ctx, String((o.from || 0) + i / 10), px, th * 0.72, { size: 8.5, mono: true, color: '#2a2016', weight: '500' });
+      }
     }
     ctx.restore();
   }

@@ -1,5 +1,6 @@
 /* Мұзды қыздыру: −20 °C мұз → балқу (0 °C) → су → қайнау (100 °C) → бу. Қыздырғыш қуаты тұрақты. */
 (function () {
+  var R = window.Real;
   var CI = 2100, LAM = 3.4e5, CW = 4200, LV = 2.3e6, CS = 2000, T0 = -20, TEND = 120;
   function stages(m) {
     return [
@@ -23,6 +24,7 @@
     return { T: TEND, i: 4, f: 1, name: 'буды қыздыру', end: true };
   }
   Sim.create({
+    grid: false,
     tools: ['stopwatch'],
     aspect: 0.6, substeps: 2,
     hint: 'Уақыт 100 есе жылдамдатылған. Жылу шығыны ескерілмейді.',
@@ -55,25 +57,26 @@
       var total = stages(P.m).reduce(function (a, x) { return a + x.q; }, 0) / P.P / 60;
       // ыдыс
       var cx = W * 0.15, top = 70, bw = 110, bh = H - 160;
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(cx - bw / 2, top); ctx.lineTo(cx - bw / 2, top + bh); ctx.lineTo(cx + bw / 2, top + bh); ctx.lineTo(cx + bw / 2, top); ctx.stroke();
+      R.scene(ctx, W, H, 'lab', { table: top + bh + 30 });
+      R.vessel(ctx, cx - bw / 2, top, bw, bh, 0, {});
       var water = s.i === 0 ? 0 : s.i === 1 ? s.f : s.i === 4 ? 0 : s.i === 3 ? 1 - s.f : 1;
       var ice = s.i === 0 ? 1 : s.i === 1 ? 1 - s.f : 0;
       var lvl = bh * 0.55;
-      if (water > 0) { ctx.fillStyle = 'rgba(80,150,220,.4)'; ctx.fillRect(cx - bw / 2 + 2, top + bh - lvl * water, bw - 4, lvl * water); }
+      if (water > 0) R.liquid(ctx, cx - bw / 2 + 2, top + bh - lvl * water, bw - 4, lvl * water - 2, 'water', s.i === 3 ? S.t * 0.3 : undefined);
       for (var i = 0; i < Math.round(ice * 6); i++) {
-        ctx.fillStyle = '#e3f3fb'; ctx.strokeStyle = '#8fc6dc'; ctx.lineWidth = 1;
-        var x = cx - bw / 2 + 10 + (i % 3) * 32, y = top + bh - 30 - Math.floor(i / 3) * 30 - (water > 0 ? lvl * water * 0.5 : 0);
-        ctx.fillRect(x, y, 26, 26); ctx.strokeRect(x, y, 26, 26);
+        var x = cx - bw / 2 + 8 + (i % 3) * 32, y = top + bh - 30 - Math.floor(i / 3) * 30 - (water > 0 ? lvl * water * 0.5 : 0);
+        R.block(ctx, x, y + 4, 24, 24, 'ice', { depth: 5, shadow: false });
       }
       if (s.i === 3) for (var b = 0; b < 10; b++) D.circle(ctx, cx - bw / 2 + 10 + Math.random() * (bw - 20), top + bh - Math.random() * lvl * water, 3, null, C.muted, 1);
       if (s.i >= 3) { ctx.fillStyle = 'rgba(180,180,190,.25)'; ctx.fillRect(cx - bw / 2 + 2, top, bw - 4, bh - lvl * water); }
       // қыздырғыш
-      ctx.fillStyle = C.red; ctx.fillRect(cx - bw / 2, top + bh + 6, bw, 10);
-      D.text(ctx, P.P + ' Вт', cx, top + bh + 34, { size: 11, align: 'center', color: C.muted, mono: true });
-      D.text(ctx, api.fmt(s.T, 1) + ' °C', cx, top - 16, { size: 16, align: 'center', mono: true, weight: '600', color: C.red });
+      R.block(ctx, cx - bw / 2 - 10, top + bh + 2, bw + 20, 24, 'steel', { depth: 8, shadow: false });
+      ctx.strokeStyle = '#ff6a2a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(cx, top + bh + 6, bw * 0.38, 3, 0, 0, 7); ctx.stroke();
+      R.tag(ctx, P.P + ' Вт', cx, top + bh + 40, { size: 10.5 });
+      R.tag(ctx, api.fmt(s.T, 1) + ' °C', cx, top - 22, { size: 14, mono: true, color: '#b4342a' });
       // T(t) графигі
       var r = { x: W * 0.36, y: 40, w: W * 0.6, h: H - 100 };
+      ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.9)'; R.rr(ctx, r.x - 44, r.y - 24, r.w + 54, r.h + 60, 10); ctx.fill(); ctx.restore();
       D.plot(ctx, r, { xmin: 0, xmax: Math.max(1, total), ymin: -30, ymax: 130, xlabel: 't, мин', ylabel: 'T, °C', series: [{ pts: S.h.concat([[S.t / 60, s.T]]), color: C.accent, width: 2.5 }] });
       var X = function (v) { return r.x + v / Math.max(1, total) * r.w; };
       var acc = 0;
