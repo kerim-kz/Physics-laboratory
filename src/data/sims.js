@@ -2,7 +2,9 @@
 // f — «Теория» блогында көрсетілетін формулалардың атаулары (data/formulas.js-тен).
 // tasks — оқушыға арналған зерттеу тапсырмалары, tip — мұғалімге әдістемелік кеңес.
 
-export const SIMS = [
+import { SIMS_BOOK } from './sims-book.js';
+
+const BASE = [
   {
     k: 'motion', s: 'kin', g: 9, t: 'Бірқалыпты үдемелі қозғалыс',
     d: 'Арбашаның бастапқы координатасын, жылдамдығын және үдеуін өзгертіп, x(t) және v(t) графиктерінің қалай тұрғызылатынын бақыла.',
@@ -569,4 +571,6 @@ export const SIMS = [
   },
 ];
 
+// 7–8-сынып оқулықтарының параграфтары бойынша қосылған симуляциялар (data/sims-book.js).
+export const SIMS = [...BASE, ...SIMS_BOOK];
 export const SIM = Object.fromEntries(SIMS.map((x) => [x.k, x]));

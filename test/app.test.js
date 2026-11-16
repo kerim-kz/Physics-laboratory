@@ -184,6 +184,28 @@ describe('ашық беттер', () => {
     for (const s of SCIENTISTS) { assert.ok(s.q.length, s.k); if (s.sim) assert.ok(simKeys.has(s.sim), s.k); }
   });
 
+  test('7–8-сынып оқулық құрылымы: формулалар тарауларға бөлінген, симуляциялар бар', async () => {
+    const fs = await import('node:fs');
+    const { FORMULAS } = await import('../src/data/formulas.js');
+    const { SIM } = await import('../src/data/sims.js');
+    const { TEXTBOOK, FORMULA_CHAPTER } = await import('../src/data/textbook.js');
+    const byName = new Map(FORMULAS.map((f) => [f.name, f]));
+    for (const g of [7, 8]) {
+      for (const ch of TEXTBOOK[g]) for (const n of ch.f) { assert.ok(byName.has(n), n); assert.equal(byName.get(n).g, g, n); }
+      for (const f of FORMULAS.filter((x) => x.g === g)) assert.ok(FORMULA_CHAPTER.has(f.name), `тарауы жоқ: ${f.name}`);
+    }
+    for (const ch of TEXTBOOK[7]) for (const [, , keys] of ch.p) for (const k of keys) assert.ok(SIM[k], `7-сынып симуляциясы жоқ: ${k}`);
+    for (const k of Object.keys(SIM)) assert.ok(fs.existsSync(new URL(`../public/js/sims/${k}.js`, import.meta.url)), k);
+    const c = new Client();
+    const f7 = await c.get('/formulas?grade=7');
+    assert.match(f7.text, /7-сынып · VI тарау\. Қысым/);
+    const b8 = await c.get('/sims?book=8');
+    assert.match(b8.text, /§24/);
+    const sim = await c.get('/sims/torricelli');
+    assert.match(sim.text, /real\.js\?v=/);
+    assert.match(sim.text, /7-сынып · §26/);
+  });
+
   test('CSRF белгісіз POST қабылданбайды', async () => {
     const c = new Client();
     await c.get('/login');
