@@ -6,17 +6,16 @@
     if (P.mode === 'series') return P.k1 * P.k2 / (P.k1 + P.k2);
     return P.k1 + P.k2;
   }
+  var R = window.Real;
+  // Металл серіппе (шынайы көрініс): көк — бірінші, күлгін реңк — екінші серіппе
   function spring(ctx, x, y1, y2, color, coils) {
-    var n = coils || 12, w = 10, L = y2 - y1;
-    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y1);
-    ctx.lineTo(x, y1 + 6);
-    for (var i = 0; i <= n; i++) ctx.lineTo(x + (i % 2 ? w : -w) * (i === 0 || i === n ? 0 : 1), y1 + 6 + (L - 12) * i / n);
-    ctx.lineTo(x, y2); ctx.stroke(); ctx.restore();
+    R.spring(ctx, x, y1, x, y2, { coils: coils || 12, r: 10, wire: 2.2, color: color === api0.C.purple ? '#a99bc4' : '#9fb2c4' });
   }
+  var api0 = { C: Sim.C };
   Sim.create({
     tools: ['ruler'],
     scale: function (api) { return api._sc || null; },
-    aspect: 0.62, static: true, resetLabel: false,
+    aspect: 0.62, static: true, resetLabel: false, grid: false,
     hint: 'Сызғыш бойынша ұзаруды өлше.',
     controls: [
       { type: 'select', key: 'mode', label: 'Жалғау түрі', value: 'one', options: [['one', 'Бір серіппе (k₁)'], ['series', 'Тізбектей'], ['parallel', 'Параллель']] },
@@ -45,7 +44,8 @@
       var F = P.m * g;
       var L0 = 8 * cm; // серіппенің бастапқы ұзындығы 8 см
       var cx = W * 0.3;
-      ctx.fillStyle = C.line; ctx.fillRect(cx - 90, top - 10, 180, 10);
+      R.scene(ctx, W, H, 'lab', { table: H - 20 });
+      R.block(ctx, cx - 90, top - 14, 180, 12, 'iron', { depth: 6, shadow: false });
       var bottom;
       var avail = H - 70 - top - (P.mode === 'series' ? 2 * L0 / 1.3 : L0) - (26 + P.m * 16);
       var need = (P.mode === 'series' ? F / P.k1 + F / P.k2 : F / keq(P)) * 100 * cm;
@@ -55,12 +55,12 @@
         var d = F / keq(P) * 100 * cm * f;
         spring(ctx, cx - 28, top, top + L0 + d, C.blue);
         spring(ctx, cx + 28, top, top + L0 + d, C.purple);
-        D.line(ctx, cx - 40, top + L0 + d, cx + 40, top + L0 + d, C.ink, 3);
+        R.block(ctx, cx - 40, top + L0 + d - 3, 80, 6, 'steel', { depth: 3, shadow: false });
         bottom = top + L0 + d;
       } else if (P.mode === 'series') {
         var d1 = F / P.k1 * 100 * cm * f, d2 = F / P.k2 * 100 * cm * f;
         spring(ctx, cx, top, top + L0 / 1.3 + d1, C.blue, 9);
-        D.circle(ctx, cx, top + L0 / 1.3 + d1, 4, C.ink);
+        R.sphere(ctx, cx, top + L0 / 1.3 + d1, 4, '#8f99a3');
         spring(ctx, cx, top + L0 / 1.3 + d1, top + 2 * L0 / 1.3 + d1 + d2, C.purple, 9);
         bottom = top + 2 * L0 / 1.3 + d1 + d2;
       } else {
@@ -71,21 +71,16 @@
       var base = P.mode === 'series' ? top + 2 * L0 / 1.3 : top + L0;
       // жүк
       var bw = 34 + P.m * 30;
-      ctx.fillStyle = C.brass; ctx.fillRect(cx - bw / 2, bottom, bw, 26 + P.m * 16);
-      D.text(ctx, api.fmt(P.m, 2) + ' кг', cx, bottom + 18, { size: 11, align: 'center', color: '#fff', weight: '600' });
+      R.cylinder(ctx, cx - bw / 2, bottom, bw, 26 + P.m * 16, 'brass', { shadow: false, ry: 4, label: api.fmt(P.m, 2) + ' кг', labelSize: 11 });
       // сызғыш
       var rx = cx + 80;
-      ctx.fillStyle = C.bg2; ctx.fillRect(rx, top, 30, 30 * cm);
-      for (var i = 0; i <= 30; i++) {
-        var y = top + i * cm;
-        D.line(ctx, rx, y, rx + (i % 5 ? 7 : 14), y, C.ink, 1);
-        if (i % 5 === 0) D.text(ctx, String(i), rx + 16, y + 4, { size: 10, mono: true, color: C.muted });
-      }
+      R.ruler(ctx, rx + 30, top - 4, 30 * cm + 8, cm, { vertical: true, width: 30 });
       D.line(ctx, cx + 20, base, rx, base, C.muted, 1, [3, 3]);
       D.line(ctx, cx + 20, bottom, rx, bottom, C.accent, 1.5, [3, 3]);
       // F(Δl) графигі
       var kq = keq(P), dmax = 0.4;
       var r = { x: W * 0.58, y: 40, w: W * 0.38, h: H - 110 };
+      ctx.save(); ctx.fillStyle = 'rgba(255,255,255,.9)'; R.rr(ctx, r.x - 44, r.y - 24, r.w + 58, r.h + 60, 10); ctx.fill(); ctx.restore();
       var g1 = D.plot(ctx, r, { xmin: 0, xmax: dmax * 100, ymin: 0, ymax: 10, xlabel: 'Δl, см', ylabel: 'F, Н',
         series: [{ pts: [[0, 0], [Math.min(dmax, 10 / kq) * 100, Math.min(10, kq * dmax)]], color: C.accent }] });
       var dlc = F / kq * 100;

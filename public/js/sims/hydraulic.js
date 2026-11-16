@@ -1,6 +1,8 @@
 /* Гидравликалық пресс: p = F₁/S₁ = F₂/S₂; көлем сақталады: S₁h₁ = S₂h₂, сондықтан A₁ = A₂. */
 (function () {
+  var R = window.Real;
   Sim.create({
+    grid: false,
     aspect: 0.6, static: true, resetLabel: false,
     hint: 'Күштен неше есе ұтсақ, жолдан сонша есе ұтыламыз.',
     controls: [
@@ -24,35 +26,38 @@
       return { p: p / 1000, F2: F2, k: P.S2 / P.S1, h2: h2 * 10, A1: P.F1 * P.h1 / 100, A2: F2 * h2 / 100 };
     },
     draw: function (api, ctx, W, H) {
-      var P = api.P, C = api.C, D = api.D;
+      var P = api.P;
       var w1 = 14 + Math.sqrt(P.S1) * 6, w2 = 30 + Math.sqrt(P.S2) * 7;
       var x1 = W * 0.22, x2 = W * 0.62, base = H - 50, lvl = H * 0.42, pxPerCm = 4;
       var d1 = P.h1 * pxPerCm, d2 = P.h1 * P.S1 / P.S2 * pxPerCm;
-      var water = 'rgba(80,150,220,.35)';
-      ctx.fillStyle = water;
+      R.scene(ctx, W, H, 'lab', { table: base + 6 });
+      // корпус: металл цилиндрлер және жалғағыш түтік
+      var steel = function (x, y, w, h) { var g = ctx.createLinearGradient(x, 0, x + w, 0); g.addColorStop(0, '#5c646b'); g.addColorStop(0.35, '#d5dade'); g.addColorStop(1, '#4b5258'); ctx.fillStyle = g; ctx.fillRect(x, y, w, h); };
+      steel(x1 - w1 / 2 - 6, lvl - 90, w1 + 12, base - lvl + 90);
+      steel(x2 - w2 / 2 - 6, lvl - 90, w2 + 12, base - lvl + 90);
+      steel(x1, base - 30, x2 - x1, 30);
+      // ішіндегі май (кесінді көрініс)
+      var oil = 'rgba(214,160,40,.85)';
+      ctx.fillStyle = 'rgba(40,40,40,.55)'; ctx.fillRect(x1 - w1 / 2, lvl - 90, w1, base - lvl + 90); ctx.fillRect(x2 - w2 / 2, lvl - 90, w2, base - lvl + 90); ctx.fillRect(x1, base - 24, x2 - x1, 18);
+      ctx.fillStyle = oil;
       ctx.fillRect(x1 - w1 / 2, lvl + d1, w1, base - lvl - d1);
       ctx.fillRect(x2 - w2 / 2, lvl - d2, w2, base - lvl + d2);
-      ctx.fillRect(x1 - w1 / 2, base - 24, x2 - x1 + w1 / 2 - w2 / 2 + w2, 24);
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x1 - w1 / 2, lvl - 90); ctx.lineTo(x1 - w1 / 2, base); ctx.lineTo(x2 + w2 / 2, base); ctx.lineTo(x2 + w2 / 2, lvl - 90);
-      ctx.moveTo(x1 + w1 / 2, lvl - 90); ctx.lineTo(x1 + w1 / 2, base - 24); ctx.lineTo(x2 - w2 / 2, base - 24); ctx.lineTo(x2 - w2 / 2, lvl - 90);
-      ctx.stroke();
+      ctx.fillRect(x1, base - 24, x2 - x1, 18);
       // поршеньдер
-      ctx.fillStyle = C.muted;
-      ctx.fillRect(x1 - w1 / 2 + 2, lvl + d1 - 12, w1 - 4, 12);
-      ctx.fillRect(x2 - w2 / 2 + 2, lvl - d2 - 14, w2 - 4, 14);
-      D.line(ctx, x1, lvl + d1 - 12, x1, lvl + d1 - 50, C.ink, 3);
+      R.block(ctx, x1 - w1 / 2 + 1, lvl + d1 - 12, w1 - 2, 12, 'steel', { depth: 0, shadow: false });
+      R.block(ctx, x2 - w2 / 2 + 1, lvl - d2 - 16, w2 - 2, 16, 'steel', { depth: 0, shadow: false });
+      ctx.fillStyle = '#9aa3ab'; ctx.fillRect(x1 - 3, lvl + d1 - 52, 6, 40);
+      // үлкен поршеньдегі жүк (машина)
       var p = P.F1 / P.S1, F2 = p * P.S2;
-      D.arrow(ctx, x1, lvl + d1 - 110, x1, lvl + d1 - 54, C.red, 3, 'F₁');
-      D.arrow(ctx, x2, lvl - d2 - 16, x2, lvl - d2 - 16 - Math.min(150, 30 + F2 / 30), C.good, 3, 'F₂');
-      // бастапқы деңгей
-      D.line(ctx, x1 - w1, lvl, x2 + w2, lvl, C.brass, 1, [5, 4]);
-      D.text(ctx, 'бастапқы деңгей', x2 + w2 / 2 + 6, lvl + 4, { size: 10, color: C.brass });
-      D.text(ctx, 'S₁', x1, base + 18, { size: 12, align: 'center', weight: '600' });
-      D.text(ctx, 'S₂', x2, base + 18, { size: 12, align: 'center', weight: '600' });
-      D.text(ctx, 'p = F₁/S₁ = F₂/S₂', W * 0.04, 26, { size: 13, mono: true, weight: '600' });
-      D.text(ctx, 'F₂/F₁ = S₂/S₁ = ' + api.fmt(P.S2 / P.S1, 1), W * 0.04, 46, { size: 13, mono: true, color: C.accent, weight: '600' });
+      R.car(ctx, x2, lvl - d2 - 16, Math.min(w2 * 1.6, 140), '#2f6fd1', 0);
+      R.force(ctx, x1, lvl + d1 - 116, x1, lvl + d1 - 56, '#d2382b', 'F₁');
+      R.force(ctx, x2 + w2 / 2 + 20, lvl - d2 - 10, x2 + w2 / 2 + 20, lvl - d2 - 10 - Math.min(150, 30 + F2 / 30), '#1d7a45', 'F₂');
+      ctx.save(); ctx.strokeStyle = '#8d5a16'; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(x1 - w1, lvl); ctx.lineTo(x2 + w2, lvl); ctx.stroke(); ctx.restore();
+      R.tag(ctx, 'бастапқы деңгей', x2 + w2 / 2 + 70, lvl, { size: 10 });
+      R.tag(ctx, 'S₁', x1, base + 14, { size: 11 }); R.tag(ctx, 'S₂', x2, base + 14, { size: 11 });
+      R.tag(ctx, 'p = F₁/S₁ = F₂/S₂', W * 0.16, 22, { size: 12, mono: true });
+      R.tag(ctx, 'F₂/F₁ = S₂/S₁ = ' + api.fmt(P.S2 / P.S1, 1), W * 0.16, 48, { size: 12, mono: true, color: '#0b6b78' });
     },
+
   });
 })();

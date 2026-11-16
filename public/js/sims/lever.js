@@ -2,6 +2,7 @@
 (function () {
   var g = 9.8;
   Sim.create({
+    grid: false,
     aspect: 0.56, static: true, resetLabel: false,
     hint: 'Бір бөлік — 10 см.',
     controls: [
@@ -27,30 +28,38 @@
       var M1 = P.m1 * P.d1, M2 = P.m2 * P.d2, diff = M1 - M2;
       var ang = Math.abs(diff) < 1e-9 ? 0 : Math.max(-0.2, Math.min(0.2, -diff * 0.05));
       var cx = W / 2, cy = H * 0.42, L = Math.min(W * 0.42, 320), u = L / 6;
-      // тірек
-      ctx.fillStyle = C.line; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx - 26, cy + 60); ctx.lineTo(cx + 26, cy + 60); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = C.bg2; ctx.fillRect(cx - 120, cy + 60, 240, 8);
+      var Rl = window.Real;
+      var tb = H * 0.93;
+      Rl.scene(ctx, W, H, 'lab', { table: tb });
+      // тірек (штатив): табан үстелде, тік бағана, үстінде призма
+      Rl.block(ctx, cx - 90, tb - 14, 180, 14, 'iron', { depth: 8 });
+      var cg = ctx.createLinearGradient(cx - 6, 0, cx + 6, 0); cg.addColorStop(0, '#5c646b'); cg.addColorStop(0.45, '#d5dade'); cg.addColorStop(1, '#4b5258');
+      ctx.fillStyle = cg; ctx.fillRect(cx - 6, cy + 56, 12, tb - 14 - cy - 56);
+      var sg = ctx.createLinearGradient(cx - 26, 0, cx + 26, 0); sg.addColorStop(0, '#5c646b'); sg.addColorStop(0.45, '#c9cfd4'); sg.addColorStop(1, '#4b5258');
+      ctx.fillStyle = sg; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx - 22, cy + 56); ctx.lineTo(cx + 22, cy + 56); ctx.closePath(); ctx.fill();
       ctx.save(); ctx.translate(cx, cy); ctx.rotate(ang);
-      ctx.fillStyle = C.brass; ctx.fillRect(-L - 8, -6, 2 * L + 16, 12);
+      // ағаш иінтірек (сызғыш тәрізді, бөліктері бар)
+      ctx.save(); Rl.rr(ctx, -L - 8, -7, 2 * L + 16, 14, 3); ctx.clip(); Rl.paintFace(ctx, -L - 8, -7, 2 * L + 16, 14, 'pine', 0); ctx.restore();
+      ctx.strokeStyle = 'rgba(80,50,20,.6)'; ctx.lineWidth = 1; Rl.rr(ctx, -L - 8, -7, 2 * L + 16, 14, 3); ctx.stroke();
       for (var i = -6; i <= 6; i++) {
-        D.line(ctx, i * u, -6, i * u, 6, '#ffffff', 1);
-        if (i) D.text(ctx, String(Math.abs(i)), i * u, -10, { size: 10, align: 'center', color: C.muted, mono: true });
+        D.line(ctx, i * u, -7, i * u, 1, '#3a2814', 1.2);
+        ctx.fillStyle = '#3a2814'; ctx.beginPath(); ctx.arc(i * u, 3, 1.8, 0, 7); ctx.fill();
+        if (i) D.text(ctx, String(Math.abs(i)), i * u, -11, { size: 10, align: 'center', color: '#3a2814', mono: true });
       }
-      D.circle(ctx, 0, 0, 5, C.ink);
-      function weight(pos, m, color) {
-        var x = pos * u, s = 20 + m * 9;
-        ctx.save(); ctx.translate(x, 6); ctx.rotate(-ang);
-        D.line(ctx, 0, 0, 0, 34, C.ink, 1.5);
-        ctx.fillStyle = color; ctx.fillRect(-s / 2, 34, s, s);
-        D.text(ctx, api.fmt(m, 1) + ' кг', 0, 34 + s + 14, { size: 11, align: 'center', color: C.muted });
-        D.arrow(ctx, 0, 34 + s / 2, 0, 34 + s / 2 + m * 16, C.red, 2);
+      Rl.sphere(ctx, 0, 0, 6, '#9aa3ab');
+      function weight(pos, m) {
+        var x = pos * u;
+        ctx.save(); ctx.translate(x, 3); ctx.rotate(-ang);
+        D.line(ctx, 0, 0, 0, 18, '#555', 1.2);
+        var hh = Rl.weight(ctx, 0, 14, Math.round(m * 1000) * 0.2 + 60, { label: api.fmt(m, 1) + ' кг' });
+        Rl.force(ctx, 26, 14 + hh * 0.6, 26, 14 + hh * 0.6 + m * 16, '#d2382b');
         ctx.restore();
       }
-      weight(-P.d1, P.m1, C.blue);
-      weight(P.d2, P.m2, C.orange);
+      weight(-P.d1, P.m1);
+      weight(P.d2, P.m2);
       ctx.restore();
       var ok = Math.abs(diff) < 1e-9;
-      D.text(ctx, ok ? 'M₁ = M₂ — иінтірек тепе-теңдікте' : (diff > 0 ? 'M₁ > M₂' : 'M₁ < M₂'), cx, H - 18, { size: 14, align: 'center', weight: '600', color: ok ? C.good : C.bad });
+      window.Real.tag(ctx, ok ? 'M₁ = M₂ — иінтірек тепе-теңдікте' : (diff > 0 ? 'M₁ > M₂' : 'M₁ < M₂'), cx, 24, { size: 13, color: ok ? '#1d7a45' : '#b4342a' });
     },
   });
 })();

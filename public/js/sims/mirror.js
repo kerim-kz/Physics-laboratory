@@ -1,6 +1,8 @@
 /* Жазық айна: кескін айнаға симметриялы, шағылу бұрышы түсу бұрышына тең. Зат пен көзді тінтуірмен жылжыт. */
 (function () {
+  var R = window.Real;
   Sim.create({
+    grid: false,
     tools: ['ruler', 'angle'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.62, static: true, resetLabel: false,
@@ -47,9 +49,10 @@
       var mx = W / 2, ox = S.ox * W, oy = S.oy * H, ex = S.ex * W, ey = S.ey * H, ix = 2 * mx - ox;
       api._sc = { px: (W / 2) / 100, unit: 'см' };
       // айна
-      ctx.fillStyle = C.bg2; ctx.fillRect(mx, 20, 10, H - 40);
-      for (var y = 24; y < H - 20; y += 10) D.line(ctx, mx + 10, y, mx + 18, y - 8, C.muted, 1);
-      D.line(ctx, mx, 20, mx, H - 20, C.accent, 3);
+      R.scene(ctx, W, H, 'wall');
+      ctx.save(); R.paintFace(ctx, mx - 2, 12, 22, H - 24, 'oak', 0); ctx.restore();
+      var mg = ctx.createLinearGradient(mx, 0, mx + 8, 0); mg.addColorStop(0, '#f4f8fb'); mg.addColorStop(0.5, '#b9c6d0'); mg.addColorStop(1, '#8a99a6');
+      ctx.fillStyle = mg; ctx.fillRect(mx, 20, 8, H - 40);
       function ray(ty) {
         var t = (mx - ex) / (ix - ex), hy = ey + (oy - ey) * t;
         if (ty !== undefined) hy = ty;
@@ -72,10 +75,11 @@
       ray();
       // зат (шам) және кескін
       function candle(x, y, ghost) {
-        ctx.globalAlpha = ghost ? 0.4 : 1;
-        ctx.fillStyle = C.brass; ctx.fillRect(x - 6, y, 12, 34);
-        ctx.fillStyle = C.orange; ctx.beginPath(); ctx.ellipse(x, y - 8, 6, 10, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.globalAlpha = 1;
+        ctx.save(); ctx.globalAlpha = ghost ? 0.45 : 1;
+        var cg = ctx.createLinearGradient(x - 6, 0, x + 6, 0); cg.addColorStop(0, '#d9c9a0'); cg.addColorStop(0.4, '#fbf3dc'); cg.addColorStop(1, '#c9b78a');
+        ctx.fillStyle = cg; ctx.fillRect(x - 6, y, 12, 34);
+        R.flame(ctx, x, y, 22, api.S.t || 0);
+        ctx.restore();
       }
       candle(ox, oy, false); candle(ix, oy, true);
       D.text(ctx, 'зат', ox, oy + 52, { size: 11, align: 'center', color: C.muted });

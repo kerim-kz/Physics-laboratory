@@ -1,5 +1,6 @@
 /* Броун қозғалысы және диффузия: молекулалар жылдамдығы √T-ға пропорционал, соқтығысулар серпімді. */
 (function () {
+  var R = window.Real;
   var N = 160, rS = 3, rB = 16, mS = 1, mB = 40;
   function speed(T) { return 26 * Math.sqrt(T / 100); }
   function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-12)) * Math.cos(2 * Math.PI * Math.random()); }
@@ -16,6 +17,7 @@
   }
 
   Sim.create({
+    grid: false,
     aspect: 0.62, autoplay: true, substeps: 4,
     hint: 'Температураны өзгертіп көр.',
     controls: [
@@ -80,6 +82,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
+      ctx.fillStyle = P.mode === 'brown' ? '#e9f2f6' : C.bg; ctx.fillRect(0, 0, W, H);
       if (P.mode === 'brown' && S.B.trail.length > 1) {
         ctx.save(); ctx.strokeStyle = C.brass; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.7; ctx.beginPath();
         S.B.trail.forEach(function (p, i) { if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
@@ -91,6 +94,11 @@
       });
       if (P.mode === 'brown') D.circle(ctx, S.B.x, S.B.y, rB, C.orange, C.ink, 1.5);
       if (P.mode === 'diff' && S.wall > 0) D.line(ctx, W / 2, 0, W / 2, H, C.ink, 3);
+      if (P.mode === 'brown') { // микроскоп окулярының дөңгелек көру өрісі
+        ctx.save(); ctx.fillStyle = '#0b0f14'; var rr0 = Math.min(W, H) * 0.48; ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.moveTo(W / 2 + rr0, H / 2); ctx.arc(W / 2, H / 2, rr0, 0, Math.PI * 2); ctx.fill('evenodd');
+        var vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.min(W, H) * 0.48); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.45)');
+        ctx.fillStyle = vg; ctx.beginPath(); ctx.arc(W / 2, H / 2, Math.min(W, H) * 0.48, 0, 7); ctx.fill(); ctx.restore();
+      }
       D.text(ctx, P.mode === 'brown' ? 'Үлкен бөлшекті молекулалар жан-жақтан соғып, ретсіз қозғалтады' : 'Қалқа алынғаннан кейін газдар өздігінен араласады',
         10, 18, { size: 12, bg: C.bg, color: C.ink, weight: '600' });
     },

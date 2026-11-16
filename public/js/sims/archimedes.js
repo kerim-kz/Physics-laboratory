@@ -1,5 +1,6 @@
 /* Архимед күші: F_A = ρ_с·g·V_б. Дене қалқиды, жүзеді немесе батады. */
 (function () {
+  var R = window.Real;
   var g = 9.8;
   var LIQ = { water: [1000, 'Су'], salt: [1030, 'Теңіз суы'], oil: [930, 'Күнбағыс майы'], kero: [800, 'Керосин'], merc: [13600, 'Сынап'] };
   var MAT = { cork: 240, pine: 500, ice: 900, paraffin: 900, brick: 1800, al: 2700, iron: 7800, lead: 11300 };
@@ -13,6 +14,7 @@
   }
 
   Sim.create({
+    grid: false,
     tools: ['ruler'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.62,
@@ -55,34 +57,32 @@
       return { state: e.state, m: e.m, mg: e.m * g, fa: fa, frac: sub * 100, p: e.bottom ? Math.max(0, e.m * g - rl * g * P.V * 1e-6) : 0 };
     },
     draw: function (api, ctx, W, H) {
-      var S = api.S, e = S.e, P = api.P, C = api.C, D = api.D;
+      var S = api.S, e = S.e, P = api.P;
       var H0 = 0.16, k = (H - 100) / 0.24;
       api._sc = { px: k, unit: 'м' };
       var bw = Math.min(W * 0.55, 0.3 * k), bx = (W - bw) / 2 - 60, surf = 70, bottom = surf + H0 * k;
-      // ыдыс және сұйық
-      ctx.fillStyle = P.liq === 'merc' ? 'rgba(160,170,180,.55)' : P.liq === 'kero' || P.liq === 'oil' ? 'rgba(214,170,60,.30)' : 'rgba(70,140,220,.28)';
-      ctx.fillRect(bx, surf, bw, H0 * k);
-      ctx.strokeStyle = C.muted; ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.moveTo(bx, surf - 40); ctx.lineTo(bx, bottom); ctx.lineTo(bx + bw, bottom); ctx.lineTo(bx + bw, surf - 40); ctx.stroke();
-      D.text(ctx, LIQ[P.liq][1], bx + 8, bottom - 8, { size: 12, color: C.muted, weight: '600' });
-      // дене (текше)
+      R.scene(ctx, W, H, 'lab', { table: bottom + 2 });
+      var liq = P.liq === 'merc' ? 'mercury' : P.liq === 'kero' ? 'kerosene' : P.liq === 'oil' ? 'oil' : P.liq === 'salt' ? 'saltwater' : 'water';
+      R.vessel(ctx, bx, surf - 40, bw, H0 * k + 40, H0 * k, { liquid: liq });
+      R.tag(ctx, LIQ[P.liq][1], bx + 60, bottom - 16, { size: 11 });
+      // дене (текше): тығыздығына қарай материал
       var side = e.a * k, cx = bx + bw / 2;
       var topY = surf + S.depth * k - side;
-      ctx.fillStyle = P.rho > 2500 ? C.muted : C.orange;
-      ctx.fillRect(cx - side / 2, topY, side, side);
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 1; ctx.strokeRect(cx - side / 2, topY, side, side);
+      var mat = P.rho > 7000 ? 'steel' : P.rho > 2500 ? 'aluminum' : P.rho > 1000 ? 'brick' : P.rho > 850 ? 'ice' : 'pine';
+      R.block(ctx, cx - side / 2, topY, side, side, mat, { depth: Math.min(14, side * 0.25), shadow: false });
       // күштер
       var sub = Math.max(0, Math.min(1, S.depth / e.a));
       var rl = LIQ[P.liq][0];
       var mg = e.m * g, fa = rl * g * P.V * 1e-6 * sub, N = e.bottom && S.depth > H0 - 0.002 ? Math.max(0, mg - fa) : 0;
       var fs = 110 / Math.max(mg, rl * g * P.V * 1e-6);
       var cy = topY + side / 2;
-      D.arrow(ctx, cx - 10, cy, cx - 10, cy + mg * fs, C.purple, 2.5, 'mg');
-      if (fa > 0.001) D.arrow(ctx, cx + 10, cy, cx + 10, cy - fa * fs, C.accent, 2.5, 'F_A');
-      if (N > 0.001) D.arrow(ctx, cx + 24, topY + side, cx + 24, topY + side - N * fs, C.good, 2, 'N');
-      D.text(ctx, e.state, W - 20, 30, { size: 14, align: 'right', weight: '600', color: e.bottom ? C.bad : C.good });
-      D.text(ctx, 'ρ дене = ' + P.rho + ' кг/м³', W - 20, 52, { size: 12, align: 'right', color: C.muted, mono: true });
-      D.text(ctx, 'ρ сұйық = ' + rl + ' кг/м³', W - 20, 70, { size: 12, align: 'right', color: C.muted, mono: true });
+      R.force(ctx, cx - 10, cy, cx - 10, cy + mg * fs, '#7a3fc0', 'mg');
+      if (fa > 0.001) R.force(ctx, cx + 10, cy, cx + 10, cy - fa * fs, '#0b6b78', 'F_A');
+      if (N > 0.001) R.force(ctx, cx + 26, topY + side, cx + 26, topY + side - N * fs, '#1d7a45', 'N');
+      R.tag(ctx, e.state, W - 110, 26, { size: 12.5, color: e.bottom ? '#b4342a' : '#1d7a45' });
+      R.tag(ctx, 'ρ дене = ' + P.rho + ' кг/м³', W - 110, 54, { size: 11, mono: true });
+      R.tag(ctx, 'ρ сұйық = ' + rl + ' кг/м³', W - 110, 80, { size: 11, mono: true });
     },
+
   });
 })();
