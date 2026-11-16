@@ -1,3 +1,4 @@
+import { unreadCount } from './notify.js';
 import { config } from '../config.js';
 import { ROLE_NAME } from '../data/catalog.js';
 import { html, raw } from './html.js';
@@ -35,7 +36,7 @@ function navLink([href, label, key, ic], active) {
 export const initials = (name) =>
   String(name || '?').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 
-function userSlot(user, csrf) {
+function userSlot(user, csrf, unread = 0) {
   if (!user) {
     return html`<a class="btn ghost sm" href="/login">Кіру</a><a class="btn sm" href="/register">Тіркелу</a>`;
   }
@@ -43,6 +44,7 @@ function userSlot(user, csrf) {
     ? `${user.class_grade}${user.class_letter || ''} сынып`
     : ROLE_NAME[user.role];
   return html`
+    <a class="iconbtn bell" href="/notifications" title="Хабарламалар" aria-label="Хабарламалар${unread ? `: ${unread} жаңа` : ''}">${icon('bell')}${unread ? html`<span class="badge">${unread > 99 ? '99+' : unread}</span>` : ''}</a>
     <a class="who" href="${user.role === 'admin' ? '/admin' : '/cabinet'}" title="Жеке кабинет">
       <span class="ava">${initials(user.full_name)}</span>
       <span><b>${user.full_name}</b><i>${sub}</i></span>
@@ -107,7 +109,7 @@ ${styles.map((s) => raw(`<link rel="stylesheet" href="${asset(s)}">`))}
     </a>
     <div class="bar-act">
       <button class="iconbtn" id="themeBtn" type="button" title="Жарық / қараңғы тақырып" aria-label="Тақырыпты ауыстыру">${icon('sun')}</button>
-      ${userSlot(user, req.csrfToken)}
+      ${userSlot(user, req.csrfToken, user ? await unreadCount(user.id) : 0)}
     </div>
   </div>
 </header>

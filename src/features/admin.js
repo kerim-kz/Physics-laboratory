@@ -1,13 +1,15 @@
 import express from 'express';
+import multer from 'multer';
 import { config } from '../config.js';
-import { EXAM, EXAMS, GRADES, MATERIAL_TYPE, MATERIAL_TYPES, REGIONS, ROLE_NAME, SECTION, SECTIONS } from '../data/catalog.js';
-import { dropUserSessions, hashPassword, requireAdmin, requireOwner } from '../lib/auth.js';
+import { DOMAIN, DOMAINS, EXAM, EXAMS, GRADES, hasDomains, MATERIAL_TYPE, MATERIAL_TYPES, REGIONS, ROLE_NAME, SECTION, SECTIONS } from '../data/catalog.js';
+import { csrfAfterUpload, dropUserSessions, hashPassword, requireAdmin, requireOwner } from '../lib/auth.js';
 import { many, one, q, tx } from '../lib/db.js';
 import { chk, html, sel } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { csrfField, emptyBox, page, pager, vhead } from '../lib/layout.js';
 import { getSettings, saveSettings } from '../lib/settings.js';
-import { deleteStored } from '../lib/storage.js';
+import { deleteStored, discardUpload, multerStorage, persistUpload } from '../lib/storage.js';
+import { parseNumber } from '../lib/examcore.js';
 import {
   asArray, asyncH, cleanMultiline, cleanText, fmtDate, fmtDateTime, fmtPrice, HttpError, LOGIN_RE, newTempPassword, setFlash, toCsv, toInt, validFullName,
 } from '../lib/util.js';
@@ -29,10 +31,10 @@ async function pendingCounts() {
     (SELECT count(*) FROM orders WHERE status = 'pending') AS orders`);
 }
 
-async function adminPage(req, res, tab, title, body) {
+async function adminPage(req, res, tab, title, body, { scripts = [] } = {}) {
   const n = await pendingCounts();
   await page(req, res, {
-    title: `Әкімші: ${title}`, active: 'admin',
+    title: `Әкімші: ${title}`, active: 'admin', scripts,
     body: html`
       <div class="view">
         ${vhead('Әкімші панелі', 'Мұғалімдерді растау, мектептер, материалдар, төлемдер, тест банкі және платформа баптаулары.',
@@ -359,62 +361,155 @@ for (const [action, status] of [['approve', 'approved'], ['reject', 'rejected']]
 }
 
 // ---------------- Тест банкі ----------------
+const IMG_EXT = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
+const imgUpload = multer({
+  storage: multerStorage(),
+  limits: { fileSize: 4 * 1024 * 1024, files: 1, fields: 40 },
+  fileFilter: (req, file, cb) => {
+    if (IMG_EXT.includes(String(file.originalname).split('.').pop().toLowerCase())) return cb(null, true);
+    const err = new Error('Сурет тек PNG, JPG, WEBP немесе GIF болуы керек.');
+    err.code = 'BAD_EXT';
+    cb(err);
+  },
+});
+const KINDS = [
+  ['choice', 'Жауап таңдау (бір немесе бірнеше дұрыс)'],
+  ['matrix', 'Кесте: әр тұжырымға «Иә / Жоқ» сияқты жауап'],
+  ['number', 'Сан жазу (жауабы сан)'],
+  ['open', 'Ашық жауап (мұғалім бағалайды)'],
+];
+const KIND_NAME = { single: 'таңдау', multi: 'бірнеше дұрыс', matrix: 'кесте', number: 'сан', open: 'ашық жауап' };
+
 router.get('/questions', asyncH(async (req, res) => {
   const exam = EXAM[req.query.exam] ? req.query.exam : 'ubt';
+  const domains = hasDomains(exam);
+  const domain = domains && DOMAIN[req.query.domain] ? req.query.domain : '';
+  const params = [exam];
+  if (domain) params.push(domain);
   const units = await many(`SELECT u.*, (SELECT json_agg(json_build_object('stem', q.stem, 'kind', q.kind) ORDER BY q.ord) FROM exam_questions q WHERE q.unit_id = u.id) AS qs
-      FROM exam_units u WHERE u.exam = $1 ORDER BY u.section, u.id`, [exam]);
+      FROM exam_units u WHERE u.exam = $1${domain ? ' AND u.domain = $2' : ''} ORDER BY u.domain, u.section, u.id`, params);
+  const unitName = (u) => u.title || (u.qs && u.qs[0] ? u.qs[0].stem.split('\n').pop().slice(0, 90) : `№${u.id}`);
   await adminPage(req, res, 'questions', 'Тест банкі', html`
     <div class="seg">${EXAMS.map((e) => html`<a href="/admin/questions?exam=${e.k}" class="${e.k === exam ? 'on' : ''}">${e.name}</a>`)}</div>
-    <form class="panel form" method="post" action="/admin/questions">
+    ${domains ? html`<div class="seg"><a href="/admin/questions?exam=${exam}" class="${domain ? '' : 'on'}">Барлық бағыт</a>${DOMAINS.map((d) => html`<a href="/admin/questions?exam=${exam}&domain=${d.k}" class="${d.k === domain ? 'on' : ''}">${d.name}</a>`)}</div>` : ''}
+    <form class="panel form" method="post" action="/admin/questions" enctype="multipart/form-data" id="qForm">
       ${csrfField(req)}
-      <h2>Тапсырма қосу</h2>
+      <input type="hidden" name="exam" value="${exam}">
+      <h2>${EXAM[exam].name}: тапсырма қосу</h2>
+      <p class="muted small">Мәтінде кесте жасау үшін жолды «|» белгісімен бастаңыз: <span class="mono">| Аялдама | Уақыт |</span> (бірінші жол — тақырып). Тізім үшін жолды «• » белгісімен бастаңыз.</p>
       <div class="row3">
-        <label class="fl">Емтихан<select name="exam">${EXAMS.map((e) => html`<option value="${e.k}"${sel(e.k === exam)}>${e.name}</option>`)}</select></label>
-        <label class="fl">Бөлім<select name="section">${SECTIONS.map((s) => html`<option value="${s.k}">${s.name}</option>`)}</select></label>
-        <label class="fl">Сынып<select name="grade">${GRADES.map((g) => html`<option value="${g}">${g}</option>`)}</select></label>
+        ${domains ? html`<label class="fl"><span class="req">Бағыт</span><select name="domain">${DOMAINS.map((d) => html`<option value="${d.k}"${sel(d.k === (domain || 'science'))}>${d.name}</option>`)}</select></label>` : ''}
+        <label class="fl">Физика бөлімі<select name="section"><option value="">—</option>${SECTIONS.map((s) => html`<option value="${s.k}">${s.name}</option>`)}</select></label>
+        <label class="fl">Сынып<select name="grade"><option value="0">—</option>${GRADES.map((g) => html`<option value="${g}">${g}</option>`)}</select></label>
       </div>
-      <label class="fl">Контекст (міндетті емес: мәтін, кесте сипаттамасы)<textarea name="context" rows="2" maxlength="2000"></textarea></label>
-      <label class="fl">Сұрақ<textarea name="stem" rows="2" maxlength="1000" required></textarea></label>
-      <label class="fl">Жауап нұсқалары (әрқайсысы жаңа жолдан, 2–6 нұсқа)<textarea name="options" rows="5" maxlength="2000" required></textarea></label>
-      <div class="row2">
-        <label class="fl">Дұрыс жауаптың нөмірі (бірнеше болса — үтірмен: 2, 4)<input type="text" name="correct" maxlength="20" required placeholder="1"></label>
-        <label class="fl">Түсіндірме<input type="text" name="explanation" maxlength="1000"></label>
-      </div>
+      <label class="fl">Қай блокқа қосу<select name="unit_id"><option value="">Жаңа блок (жаңа мәтін немесе жағдаят)</option>${units.map((u) => html`<option value="${u.id}">Бар блокқа: ${unitName(u)}${domains && DOMAIN[u.domain] ? ` · ${DOMAIN[u.domain].name}` : ''}</option>`)}</select></label>
+      <fieldset class="qf" data-for="new">
+        <legend>Жаңа блок (бар блокқа қоссаңыз, бұл бөлім ескерілмейді)</legend>
+        <label class="fl">Блоктың атауы<input type="text" name="title" maxlength="160" placeholder="Мысалы: Мұхит ағыстары"></label>
+        <label class="fl">Мәтін, жағдаят (контекст)<textarea name="context" rows="5" maxlength="6000"></textarea></label>
+      </fieldset>
+      <label class="fl">Сурет (міндетті емес; PNG, JPG, ең көбі 4 МБ). Жаңа блокта — блоктың суреті, бар блокта — сұрақтың суреті.<input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.gif"></label>
+      <label class="fl"><span class="req">Сұрақтың түрі</span><select name="kind" id="qKind">${KINDS.map(([k, n]) => html`<option value="${k}">${n}</option>`)}</select></label>
+      <label class="fl"><span class="req">Сұрақ</span><textarea name="stem" rows="3" maxlength="2000" required></textarea></label>
+      <fieldset class="qf" data-for="choice"><legend>Жауап таңдау</legend>
+        <label class="fl">Жауап нұсқалары (әрқайсысы жаңа жолдан, 2–6 нұсқа)<textarea name="options" rows="5" maxlength="2000"></textarea></label>
+        <label class="fl">Дұрыс жауаптың нөмірі (бірнеше болса — үтірмен: 2, 4)<input type="text" name="correct" maxlength="20" placeholder="1"></label>
+      </fieldset>
+      <fieldset class="qf" data-for="matrix" hidden><legend>Кесте</legend>
+        <label class="fl">Тұжырымдар (әрқайсысы жаңа жолдан)<textarea name="rows" rows="5" maxlength="3000"></textarea></label>
+        <label class="fl">Бағандар (үтірмен)<input type="text" name="cols" maxlength="200" value="Иә, Жоқ"></label>
+        <label class="fl">Әр тұжырымның дұрыс бағаны, ретімен (мысалы: 1, 2, 1 — бірінші жол «Иә», екіншісі «Жоқ», ...)<input type="text" name="matrix_correct" maxlength="100" placeholder="1, 2, 1"></label>
+      </fieldset>
+      <fieldset class="qf" data-for="number" hidden><legend>Сан жауап</legend>
+        <div class="row3">
+          <label class="fl">Дұрыс жауап (бірнеше болса — «;» арқылы)<input type="text" name="value" maxlength="60" placeholder="22,95"></label>
+          <label class="fl">Рұқсат етілген ауытқу<input type="text" name="tol" maxlength="20" placeholder="0"></label>
+          <label class="fl">Өлшем бірлігі<input type="text" name="unit" maxlength="20" placeholder="км"></label>
+        </div>
+      </fieldset>
+      <fieldset class="qf" data-for="open" hidden><legend>Ашық жауап</legend>
+        <label class="fl">Бағалау критерийі және үлгі жауап (мұғалімге көрінеді)<textarea name="rubric" rows="3" maxlength="2000"></textarea></label>
+        <label class="fl">Ең көп балл<select name="points"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
+      </fieldset>
+      <label class="fl">Түсіндірме (жауап тексерілгеннен кейін көрінеді)<textarea name="explanation" rows="2" maxlength="1500"></textarea></label>
       <div class="formfoot"><button class="btn" type="submit">Қосу</button></div>
     </form>
     <div class="resline">${units.length} блок · ${units.reduce((a, u) => a + (u.qs ? u.qs.length : 0), 0)} тапсырма</div>
     <div class="list">${units.map((u) => html`
       <div class="row">
-        <div class="grow"><b>${u.title || (u.qs && u.qs[0] ? u.qs[0].stem.slice(0, 120) : '—')}</b>
-          <span>${SECTION[u.section] ? SECTION[u.section].name : ''} · ${u.grade || '—'}-сынып · ${u.qs ? u.qs.length : 0} сұрақ${u.qs && u.qs.some((x) => x.kind === 'multi') ? ' · бірнеше дұрыс жауапты' : ''}${u.seed_key ? ' · бастапқы банк' : ''}</span></div>
+        <div class="grow"><b>${unitName(u)}</b>
+          <span>${domains && DOMAIN[u.domain] ? `${DOMAIN[u.domain].name} · ` : ''}${SECTION[u.section] ? `${SECTION[u.section].name} · ` : ''}${u.grade ? `${u.grade}-сынып · ` : ''}${u.qs ? u.qs.length : 0} сұрақ (${[...new Set((u.qs || []).map((x) => KIND_NAME[x.kind] || x.kind))].join(', ')})${u.image ? ' · суреті бар' : ''}${u.seed_key ? ' · бастапқы банк' : ''}</span></div>
         <form method="post" action="/admin/questions/${u.id}/delete" data-confirm="Блок өшірілсін бе?">${csrfField(req)}<button class="btn warn sm" type="submit">Өшіру</button></form>
-      </div>`)}</div>`);
+      </div>`)}</div>`, { scripts: ['/js/admin-q.js'] });
 }));
 
-router.post('/questions', asyncH(async (req, res) => {
+const numList = (s) => String(s || '').split(/[;\s]+/).map((x) => parseNumber(x)).filter(Number.isFinite);
+
+router.post('/questions', (req, res, next) => {
+  imgUpload.single('image')(req, res, (err) => {
+    if (err && (err.code === 'BAD_EXT' || err.code === 'LIMIT_FILE_SIZE')) {
+      req.uploadError = err.code === 'BAD_EXT' ? err.message : 'Сурет тым үлкен (ең көбі 4 МБ).';
+      return next();
+    }
+    next(err);
+  });
+}, csrfAfterUpload, asyncH(async (req, res) => {
   const b = req.body;
   const exam = EXAM[b.exam] ? b.exam : null;
-  const options = String(b.options || '').split('\n').map((s) => cleanText(s, 300)).filter(Boolean);
-  const correct = [...new Set(String(b.correct || '').split(/[,\s;]+/).map((s) => toInt(s) - 1).filter((n) => n >= 0 && n < options.length))];
-  const stem = cleanMultiline(b.stem, 1000);
-  if (!exam || stem.length < 5 || options.length < 2 || options.length > 6 || !correct.length) {
-    setFlash(res, 'error', 'Сұрақты, 2–6 жауап нұсқасын және дұрыс жауаптың нөмірін толтырыңыз.');
-    return res.redirect(`/admin/questions?exam=${exam || 'ubt'}`);
+  const domain = exam && hasDomains(exam) ? (DOMAIN[b.domain] ? b.domain : 'science') : '';
+  const back = `/admin/questions?exam=${exam || 'ubt'}${domain ? `&domain=${domain}` : ''}`;
+  const fail = (text) => { discardUpload(req.file); setFlash(res, 'error', text); res.redirect(back); };
+  if (req.uploadError) return fail(req.uploadError);
+  if (!exam) return fail('Емтихан белгісіз.');
+  const stem = cleanMultiline(b.stem, 2000);
+  if (stem.length < 3) return fail('Сұрақтың мәтінін жазыңыз.');
+
+  let kind, options, correct, points = 1, rubric = '';
+  if (b.kind === 'matrix') {
+    const rows = String(b.rows || '').split('\n').map((s) => cleanText(s, 400)).filter(Boolean);
+    const cols = String(b.cols || '').split(',').map((s) => cleanText(s, 40)).filter(Boolean);
+    correct = String(b.matrix_correct || '').split(/[,\s;]+/).filter(Boolean).map((s) => toInt(s) - 1);
+    if (rows.length < 1 || rows.length > 10 || cols.length < 2 || cols.length > 4 || correct.length !== rows.length || correct.some((c) => c < 0 || c >= cols.length)) {
+      return fail('Кестеде 1–10 тұжырым, 2–4 баған болуы керек, және әр тұжырымға дұрыс бағанның нөмірін жазыңыз.');
+    }
+    kind = 'matrix'; options = { rows, cols };
+  } else if (b.kind === 'number') {
+    correct = numList(b.value);
+    if (!correct.length) return fail('Дұрыс жауапты сан түрінде жазыңыз.');
+    const tol = Math.abs(parseNumber(b.tol)) || 0;
+    kind = 'number'; options = { unit: cleanText(b.unit, 20), tol };
+  } else if (b.kind === 'open') {
+    rubric = cleanMultiline(b.rubric, 2000);
+    if (rubric.length < 3) return fail('Ашық жауапқа бағалау критерийін жазыңыз.');
+    kind = 'open'; options = {}; correct = []; points = Math.min(3, Math.max(1, toInt(b.points, 1)));
+  } else {
+    options = String(b.options || '').split('\n').map((s) => cleanText(s, 300)).filter(Boolean);
+    correct = [...new Set(String(b.correct || '').split(/[,\s;]+/).map((s) => toInt(s) - 1).filter((n) => n >= 0 && n < options.length))].sort();
+    if (options.length < 2 || options.length > 6 || !correct.length) return fail('2–6 жауап нұсқасын және дұрыс жауаптың нөмірін толтырыңыз.');
+    kind = correct.length > 1 ? 'multi' : 'single'; points = kind === 'multi' ? 2 : 1;
   }
-  const kind = correct.length > 1 ? 'multi' : 'single';
+
+  let unitId = toInt(b.unit_id);
+  if (unitId && !(await one('SELECT 1 AS x FROM exam_units WHERE id = $1 AND exam = $2', [unitId, exam]))) return fail('Блок табылмады.');
+  const image = req.file ? await persistUpload(req.file) : '';
   await tx(async (c) => {
-    const u = await c.query(`INSERT INTO exam_units(exam, grade, section, context, author_id) VALUES ($1,$2,$3,$4,$5) RETURNING id`,
-      [exam, GRADES.includes(toInt(b.grade)) ? toInt(b.grade) : 0, SECTION[b.section] ? b.section : '', cleanMultiline(b.context, 2000), req.user.id]);
-    await c.query(`INSERT INTO exam_questions(unit_id, ord, kind, stem, options, correct, explanation, points) VALUES ($1,0,$2,$3,$4,$5,$6,$7)`,
-      [u.rows[0].id, kind, stem, JSON.stringify(options), JSON.stringify(correct.sort()), cleanText(b.explanation, 1000), kind === 'multi' ? 2 : 1]);
+    if (!unitId) {
+      const u = await c.query(`INSERT INTO exam_units(exam, domain, grade, section, title, context, image, author_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+        [exam, domain, GRADES.includes(toInt(b.grade)) ? toInt(b.grade) : 0, SECTION[b.section] ? b.section : '', cleanText(b.title, 160), cleanMultiline(b.context, 6000), image, req.user.id]);
+      unitId = u.rows[0].id;
+    }
+    const ord = (await c.query('SELECT coalesce(max(ord), -1) + 1 AS o FROM exam_questions WHERE unit_id = $1', [unitId])).rows[0].o;
+    await c.query(`INSERT INTO exam_questions(unit_id, ord, kind, stem, options, correct, explanation, points, image, rubric) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+      [unitId, ord, kind, stem, JSON.stringify(options), JSON.stringify(correct), cleanMultiline(b.explanation, 1500), points, toInt(b.unit_id) ? image : '', rubric]);
   });
   setFlash(res, 'ok', 'Тапсырма қосылды.');
-  res.redirect(`/admin/questions?exam=${exam}`);
+  res.redirect(back);
 }));
 router.post('/questions/:id/delete', asyncH(async (req, res) => {
-  const u = await one('DELETE FROM exam_units WHERE id = $1 RETURNING exam', [toInt(req.params.id)]);
+  const u = await one('DELETE FROM exam_units WHERE id = $1 RETURNING exam, domain, image', [toInt(req.params.id)]);
+  if (u && u.image && !u.image.startsWith('/')) await deleteStored(u.image);
   setFlash(res, 'ok', 'Блок өшірілді.');
-  res.redirect(`/admin/questions?exam=${u ? u.exam : 'ubt'}`);
+  res.redirect(`/admin/questions?exam=${u ? u.exam : 'ubt'}${u && u.domain ? `&domain=${u.domain}` : ''}`);
 }));
 
 // ---------------- Әкімшілер ----------------

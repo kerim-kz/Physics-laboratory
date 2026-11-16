@@ -242,7 +242,8 @@ th,td{border-bottom:1px solid var(--line-soft);padding:8px 10px;text-align:left;
 th{background:var(--surface-2);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);position:sticky;top:0}
 tbody tr:hover{background:var(--surface-2)}
 td.num,th.num{text-align:center;font-family:var(--fm);font-variant-numeric:tabular-nums}
-td.wrap{white-space:normal;min-width:180px}
+td.wrap{white-space:normal;min-width:180px;max-width:none;padding:8px 10px;margin:0}
+.qmatrix td.wrap{min-width:150px}
 .g5{display:inline-block;min-width:22px;text-align:center;border-radius:5px;padding:1px 5px;font-family:var(--fm);font-weight:600;font-size:12px}
 .g5-5{background:var(--accent-soft);color:var(--accent-ink)}
 .g5-4{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
@@ -661,3 +662,49 @@ body.noscroll{overflow:hidden}
 .simstage:fullscreen{background:var(--bg);padding:16px;display:flex;flex-direction:column;justify-content:center;overflow:auto}
 .simstage:fullscreen .simcanvas{max-width:none}
 @media (max-width:700px){ .dplot{grid-template-columns:1fr} }
+
+/* ---- PISA / ББЖМ бағыттары, жаңа сұрақ түрлері, тағайындау, хабарламалар ---- */
+.domgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.domcard{--dc:var(--accent);display:grid;gap:8px;align-content:start;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--dc);border-radius:var(--r);padding:15px 16px;box-shadow:var(--shadow);min-width:0}
+.domcard h3{font-family:var(--fd);font-size:19px;font-weight:600}
+.domcard p{font-size:13.5px;color:var(--muted)}
+.domcard .glyph{background:color-mix(in srgb,var(--dc) 14%,var(--surface));color:var(--dc)}
+.dom-reading{--dc:#8a4fb3} .dom-math{--dc:var(--brass)} .dom-science{--dc:var(--good)}
+.dom-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.q-stem{white-space:normal;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.q-stem .q-no{margin-right:0;flex:none}
+.q-text{flex:1;min-width:min(100%,220px);display:grid;gap:6px}
+.q-stem .pill{align-self:flex-start;white-space:normal}
+.context{white-space:normal;display:grid;gap:8px;font-size:14.5px;line-height:1.55}
+.context p,.q-text p{margin:0}
+.rt-h{font-family:var(--fd);font-size:16px;font-weight:600;margin:4px 0 0}
+.rt-list{margin:0;padding-left:20px;display:grid;gap:3px}
+.rt-tbl{margin:2px 0}
+.rt-tbl table{font-size:13.5px;background:var(--surface)}
+.q-fig{display:block;justify-self:start;max-width:100%;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.q-fig img{display:block;max-width:100%;max-height:420px;height:auto;width:auto}
+.qmatrix{font-size:14px}
+.qmatrix th.num,.qmatrix td.num{text-align:center;width:84px}
+.qmatrix td.num input{width:18px;height:18px;cursor:pointer;accent-color:var(--accent)}
+.qmatrix td.right{background:var(--good-soft)}
+.qmatrix td.wrong{background:var(--bad-soft)}
+.q-num{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.q-num input{width:160px;font-family:var(--fm)}
+.q-num span{font-size:14px;color:var(--muted)}
+.question textarea{resize:vertical;min-height:90px;font-size:14.5px}
+.q-open{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;white-space:pre-wrap;font-size:14.5px;overflow-wrap:anywhere}
+.q-wait .q-fb{background:var(--brass-soft)}
+.gradeq{border:1px solid var(--line);border-radius:12px;padding:10px 14px 14px;margin:0;display:grid;gap:9px;min-width:0}
+.gradeq legend{font-weight:600;font-size:14px;padding:0 6px;max-width:100%;white-space:normal}
+.gradeq .chip input{margin:0;accent-color:var(--accent)}
+.iconbtn.bell{position:relative;color:var(--ink);text-decoration:none}
+.iconbtn.bell .badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--bad);color:#fff;font:700 10.5px/18px var(--fm);text-align:center;border:2px solid var(--surface)}
+.row.ntf{align-items:flex-start}
+.row.ntf-new{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.row.ntf .grow b{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+@media (max-width:900px){.domgrid{grid-template-columns:1fr}}
+@media (max-width:560px){.qmatrix th.num,.qmatrix td.num{width:56px}.q-num input{width:120px}}
+#exProgress,#exTimer{white-space:nowrap;flex:none}
+@media (max-width:560px){.exam-bar{top:58px;font-size:13px;gap:8px;padding:8px 12px}.exam-bar b{min-width:0;flex:1}.exam-bar .grow{display:none}}
+fieldset.qf{border:1px solid var(--line);border-radius:10px;padding:9px 14px 14px;margin:0;display:grid;gap:10px;min-width:0}
+fieldset.qf legend{font-size:12px;color:var(--muted);padding:0 4px}
