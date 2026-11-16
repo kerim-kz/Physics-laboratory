@@ -194,7 +194,7 @@ describe('ашық беттер', () => {
       for (const ch of TEXTBOOK[g]) for (const n of ch.f) { assert.ok(byName.has(n), n); assert.equal(byName.get(n).g, g, n); }
       for (const f of FORMULAS.filter((x) => x.g === g)) assert.ok(FORMULA_CHAPTER.has(f.name), `тарауы жоқ: ${f.name}`);
     }
-    for (const ch of TEXTBOOK[7]) for (const [, , keys] of ch.p) for (const k of keys) assert.ok(SIM[k], `7-сынып симуляциясы жоқ: ${k}`);
+    for (const g of [7, 8]) for (const ch of TEXTBOOK[g]) for (const [, , keys] of [...ch.p, ...(ch.labs || [])]) for (const k of keys) assert.ok(SIM[k], `${g}-сынып симуляциясы жоқ: ${k}`);
     for (const k of Object.keys(SIM)) assert.ok(fs.existsSync(new URL(`../public/js/sims/${k}.js`, import.meta.url)), k);
     const c = new Client();
     const f7 = await c.get('/formulas?grade=7');
