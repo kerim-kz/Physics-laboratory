@@ -315,6 +315,149 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.match(cab.text, /Сынақ/);
   });
 
+  test('PISA үш бағытқа бөлінген, жаңа сұрақ түрлері көрсетіледі', async () => {
+    const c = new Client();
+    const pisa = await c.get('/exams/pisa');
+    assert.match(pisa.text, /Оқу сауаттылығы/);
+    assert.match(pisa.text, /Математикалық сауаттылық/);
+    assert.match(pisa.text, /Жаратылыстану сауаттылығы/);
+    const bb = await c.get('/exams/bbzhm');
+    assert.match(bb.text, /Математикалық сауаттылық/);
+    const read = await c.get('/exams/pisa/test?domain=reading&mode=practice&n=0');
+    assert.equal(read.status, 200);
+    assert.match(read.text, /data-kind="matrix"/);
+    assert.match(read.text, /data-kind="open"/);
+    assert.match(read.text, /Автобус кестесі/);
+    const math = await c.get('/exams/pisa/test?domain=math&mode=exam&n=0');
+    assert.match(math.text, /data-kind="number"/);
+    assert.match(math.text, /\/img\/pisa\/[a-z-]+\.(jpg|png)\?v=/);
+    assert.doesNotMatch(math.text, /Мұнайдың төгілуі/, 'математика бағытында жаратылыстану тапсырмасы болмауы керек');
+    assert.equal((await c.get('/exams/pisa/test?domain=xxx&mode=practice')).status, 404);
+  });
+
+  test('мұғалім тест тағайындайды, оқушыға хабарлама барады, мұғалім ашық жауапты бағалайды', async () => {
+    const cab = await teacher.get('/cabinet');
+    const classId = cab.text.match(/\/teacher\/classes\/(\d+)"/)[1];
+    const cls = await teacher.get(`/teacher/classes/${classId}`);
+    assert.match(cls.text, /Тест тағайындау/);
+    const form = await teacher.get(`/teacher/assignments/new?class=${classId}`);
+    assert.equal(form.status, 200);
+    const sid = form.text.match(/name="students" value="(\d+)"/)[1];
+    assert.equal((await student.get(`/teacher/assignments/new?class=${classId}`)).status, 403);
+
+    const r = await teacher.post('/teacher/assignments', { class_id: classId, target: 'pisa:reading', n: '0', title: 'PISA дайындық', students: sid }, `/teacher/assignments/new?class=${classId}`);
+    assert.equal(r.status, 302);
+    const aid = r.location.match(/\/teacher\/assignments\/(\d+)$/)[1];
+    const res0 = await teacher.get(`/teacher/assignments/${aid}`);
+    assert.match(res0.text, /тапсырмады/);
+    assert.match(res0.text, /Сейітов Нұрлан/);
+
+    // Оқушыға хат (сайт ішіндегі хабарлама)
+    const home = await student.get('/exams');
+    assert.match(home.text, /class="badge">1</);
+    assert.match(home.text, /PISA дайындық/);
+    const ntf = await student.get('/notifications');
+    assert.match(ntf.text, /Сізді тестке қосты/);
+    assert.match(ntf.text, new RegExp(`/exams/assigned/${aid}`));
+    assert.doesNotMatch((await student.get('/exams')).text, /class="badge"/, 'оқылған хабарлама саналмауы керек');
+
+    // Бөтен оқушы тағайындалған тестті аша алмайды
+    const other = new Client();
+    const reg = await other.post('/register/student', { code: joinCode, full_name: 'Басқа Оқушы', login: 'other.s', password: '123456', password2: '123456' }, `/register/student?code=${joinCode}`);
+    assert.equal(reg.status, 302);
+    assert.equal((await other.get(`/exams/assigned/${aid}`)).status, 404);
+
+    // Оқушы тапсырады
+    const pageT = await student.get(`/exams/assigned/${aid}`);
+    assert.equal(pageT.status, 200);
+    const ids = [...pageT.text.matchAll(/data-id="(\d+)" data-kind="(\w+)"/g)].map((m) => [+m[1], m[2]]);
+    assert.ok(ids.length >= 5);
+    const pool = new pg.Pool({ connectionString: DB });
+    const { rows } = await pool.query('SELECT id, kind, correct, points FROM exam_questions WHERE id = ANY($1)', [ids.map((x) => x[0])]);
+    const answers = {};
+    let openMax = 0;
+    for (const qq of rows) {
+      if (qq.kind === 'open') { answers[qq.id] = 'Менің жауабым'; openMax += qq.points; } else if (qq.kind === 'number') answers[qq.id] = String(qq.correct[0]).replace('.', ',');
+      else answers[qq.id] = qq.correct;
+    }
+    const sub = await student.api('/api/exams/submit', { exam: 'pisa', mode: 'assigned', domain: 'reading', assignment: aid, answers, duration: 300 });
+    assert.equal(sub.status, 200);
+    assert.ok(sub.body.pending > 0);
+    assert.equal(sub.body.score, sub.body.max - openMax);
+    const again = await student.api('/api/exams/submit', { exam: 'pisa', mode: 'assigned', domain: 'reading', assignment: aid, answers, duration: 300 });
+    assert.equal(again.status, 409);
+    assert.ok(Object.values(sub.body.results).every((x) => x.correct === undefined), 'тағайындалған тестте дұрыс жауап оқушыға жіберілмеуі керек');
+    const attemptId = sub.body.attemptId;
+    assert.equal((await other.get(`/exams/attempts/${attemptId}`)).status, 404);
+    const own = await student.get(`/exams/attempts/${attemptId}`);
+    assert.match(own.text, /мұғалімнің тексеруін күтуде/);
+    assert.doesNotMatch(own.text, /Ашық жауаптарды бағалау/);
+    assert.doesNotMatch(own.text, /qopt right/, 'оқушы тағайындалған тесттің кілтін көрмеуі керек');
+    assert.equal((await student.post(`/teacher/attempts/${attemptId}/grade`, {}, `/exams/attempts/${attemptId}`)).status, 403);
+
+    // Мұғалім нәтижені көреді және бағалайды
+    const res1 = await teacher.get(`/teacher/assignments/${aid}`);
+    assert.match(res1.text, /тексеруді күтеді/);
+    const csv = await teacher.get(`/teacher/assignments/${aid}/export.csv`);
+    assert.match(csv.text, /Сейітов Нұрлан/);
+    const rev = await teacher.get(`/exams/attempts/${attemptId}`);
+    assert.match(rev.text, /Ашық жауаптарды бағалау/);
+    assert.match(rev.text, /Менің жауабым/);
+    assert.match(rev.text, /qopt right|td class="num right"/);
+    const grades = {};
+    for (const qq of rows) if (qq.kind === 'open') grades[`g${qq.id}`] = String(qq.points);
+    const g = await teacher.post(`/teacher/attempts/${attemptId}/grade`, grades, `/exams/attempts/${attemptId}`);
+    assert.equal(g.status, 302);
+    const { rows: [att] } = await pool.query('SELECT score, max_score, pending FROM exam_attempts WHERE id = $1', [attemptId]);
+    await pool.end();
+    assert.equal(att.pending, 0);
+    assert.equal(att.score, att.max_score);
+    assert.match((await student.get('/notifications')).text, /Мұғалім жауаптарыңды тексерді/);
+    assert.match((await student.get('/cabinet')).text, /Мұғалім тағайындаған тесттер/);
+  });
+
+  test('әкімші бағыт, сурет және жаңа сұрақ түрлерімен тапсырма қосады', async () => {
+    const form = await owner.get('/admin/questions?exam=bbzhm&domain=math');
+    assert.equal(form.status, 200);
+    assert.match(form.text, /Математикалық сауаттылық/);
+    const token = form.text.match(/name="_csrf" value="([^"]+)"/)[1];
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+    const fd = new FormData();
+    for (const [k, v] of Object.entries({ _csrf: token, exam: 'bbzhm', domain: 'math', unit_id: '', title: 'Дүкендегі жеңілдік', context: '| Тауар | Бағасы |\n| Дәптер | 200 ₸ |',
+      kind: 'matrix', stem: 'Тұжырымдар дұрыс па?', rows: 'Дәптер 200 ₸ тұрады\nДәптер тегін', cols: 'Иә, Жоқ', matrix_correct: '1, 2' })) fd.append(k, v);
+    fd.append('image', new Blob([png], { type: 'image/png' }), 'shop.png');
+    const r = await owner.req('POST', '/admin/questions', { multipart: fd });
+    assert.equal(r.status, 302);
+    assert.match(r.location, /domain=math/);
+    const pool = new pg.Pool({ connectionString: DB });
+    const { rows: [u] } = await pool.query(`SELECT id, image, domain FROM exam_units WHERE title = 'Дүкендегі жеңілдік'`);
+    assert.equal(u.domain, 'math');
+    assert.match(u.image, /^[a-f0-9]{32}\.png$/);
+    const img = await new Client().get(`/exams/img/${u.image}`);
+    assert.equal(img.status, 200);
+    // Бар блокқа сан жауапты сұрақ
+    const fd2 = new FormData();
+    for (const [k, v] of Object.entries({ _csrf: token, exam: 'bbzhm', domain: 'math', unit_id: String(u.id), kind: 'number', stem: '3 дәптер қанша тұрады?', value: '600', tol: '0', unit: '₸' })) fd2.append(k, v);
+    assert.equal((await owner.req('POST', '/admin/questions', { multipart: fd2 })).status, 302);
+    const { rows: qs } = await pool.query('SELECT kind, correct, options FROM exam_questions WHERE unit_id = $1 ORDER BY ord', [u.id]);
+    await pool.end();
+    assert.deepEqual(qs.map((x) => x.kind), ['matrix', 'number']);
+    assert.deepEqual(qs[0].correct, [0, 1]);
+    assert.deepEqual(qs[1].correct, [600]);
+    const page = await new Client().get('/exams/bbzhm/test?domain=math&mode=practice&n=0');
+    assert.match(page.text, /Дүкендегі жеңілдік/);
+    assert.match(page.text, /<table>/);
+    // Қате кесте қабылданбайды; CSRF-сіз жүктеу тыйым салынған
+    const fd3 = new FormData();
+    for (const [k, v] of Object.entries({ _csrf: token, exam: 'bbzhm', kind: 'matrix', stem: 'Қате кесте', rows: 'a\nb', cols: 'Иә, Жоқ', matrix_correct: '1' })) fd3.append(k, v);
+    const bad = await owner.req('POST', '/admin/questions', { multipart: fd3 });
+    assert.equal(bad.status, 302);
+    assert.match((await owner.get(bad.location)).text, /әр тұжырымға дұрыс бағанның/);
+    const fd4 = new FormData();
+    fd4.append('exam', 'bbzhm'); fd4.append('stem', 'xxx');
+    assert.equal((await owner.req('POST', '/admin/questions', { multipart: fd4 })).status, 403);
+  });
+
   test('зертхана коды тексеріліп, журналға жазылады', async () => {
     const code = labs.makeCode('om', { n: 'Сейітов Нұрлан', c: '8А', v: '2', s: 9, k: '1111111110', t: '08.11.2026 10:15' });
     const fake = code.slice(0, -1) + (code.endsWith('a') ? 'b' : 'a');
@@ -452,6 +595,23 @@ describe('бағалау және код ережелері', () => {
     assert.equal(exams.gradeAnswer(s, [2]).points, 1);
     assert.equal(exams.gradeAnswer(s, [2, 1]).points, 0);
     assert.equal(exams.gradeAnswer(s, ['x']).points, 0);
+  });
+
+  test('жаңа сұрақ түрлері: кесте, сан, ашық жауап', () => {
+    const m = { kind: 'matrix', options: { rows: ['a', 'b', 'c'], cols: ['Иә', 'Жоқ'] }, correct: [0, 1, 0] };
+    assert.equal(exams.gradeAnswer(m, [0, 1, 0]).points, 1);
+    assert.equal(exams.gradeAnswer(m, [0, 1, 1]).points, 0);
+    assert.equal(exams.gradeAnswer(m, [0, 1]).points, 0);
+    const n = { kind: 'number', options: { tol: 0.06 }, correct: [22.95] };
+    assert.equal(exams.gradeAnswer(n, '22,95 км').points, 1);
+    assert.equal(exams.gradeAnswer(n, '23').points, 1);
+    assert.equal(exams.gradeAnswer(n, '23.1').points, 0);
+    assert.equal(exams.gradeAnswer(n, 'білмеймін').points, 0);
+    assert.equal(exams.gradeAnswer({ kind: 'number', options: {}, correct: [0.25] }, '1/4').points, 1);
+    const o = exams.gradeAnswer({ kind: 'open', points: 2 }, ' жауап ');
+    assert.equal(o.open, true);
+    assert.equal(o.max, 2);
+    assert.equal(o.text, 'жауап');
   });
 
   test('зертхана кодының құрылымы тексеріледі', () => {

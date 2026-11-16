@@ -43,16 +43,20 @@ export async function seedQuestions() {
   for (const u of SEED_UNITS) {
     if (existing.has(u.key)) continue;
     await tx(async (c) => {
+      // Бағыт: PISA мен ББЖМ-де көрсетілмесе — жаратылыстану (бұрынғы физика тапсырмалары).
+      const domain = u.domain || (u.exam === 'ubt' ? '' : 'science');
       const unit = await c.query(
-        `INSERT INTO exam_units(exam, title, grade, section, context, seed_key) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
-        [u.exam, u.title || '', u.grade || 0, u.section || '', u.context || '', u.key]);
+        `INSERT INTO exam_units(exam, title, grade, section, context, seed_key, domain, image, source)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
+        [u.exam, u.title || '', u.grade || 0, u.section || '', u.context || '', u.key, domain, u.image || '', u.source || '']);
       let ord = 0;
       for (const qn of u.questions) {
-        const kind = qn.correct.length > 1 ? 'multi' : 'single';
+        const kind = qn.kind || (qn.correct.length > 1 ? 'multi' : 'single');
         await c.query(
-          `INSERT INTO exam_questions(unit_id, ord, kind, stem, options, correct, explanation, points)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-          [unit.rows[0].id, ord++, kind, qn.stem, JSON.stringify(qn.options), JSON.stringify(qn.correct), qn.explain || '', kind === 'multi' ? 2 : 1]);
+          `INSERT INTO exam_questions(unit_id, ord, kind, stem, options, correct, explanation, points, image, rubric)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+          [unit.rows[0].id, ord++, kind, qn.stem, JSON.stringify(qn.options), JSON.stringify(qn.correct), qn.explain || '',
+            qn.points || (kind === 'multi' ? 2 : 1), qn.image || '', qn.rubric || '']);
       }
     });
     added++;

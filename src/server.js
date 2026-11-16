@@ -12,6 +12,7 @@ import { page } from './lib/layout.js';
 import { parseCookies } from './lib/util.js';
 import { bootstrap } from './seed.js';
 import { router as adminRouter } from './features/admin.js';
+import { router as assignRouter } from './features/assign.js';
 import { router as authRouter } from './features/auth.js';
 import { router as cabinetRouter } from './features/cabinet.js';
 import { router as examsRouter } from './features/exams.js';
@@ -104,6 +105,7 @@ export function createApp() {
   app.use(labsRouter);
   app.use(labRunRouter);
   app.use(examsRouter);
+  app.use(assignRouter);
   app.use(olympiadRouter);
   app.use(scientistsRouter);
   app.use('/admin', adminRouter);

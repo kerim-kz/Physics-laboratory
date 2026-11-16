@@ -2,7 +2,7 @@ import express from 'express';
 import { dropUserSessions, hashPassword, isActiveTeacher, requireActiveTeacher, requireUser } from '../lib/auth.js';
 import { GAMES } from '../data/games.js';
 import { grade5, labByKey } from '../data/labs.js';
-import { EXAM, GRADES, ROLE_NAME } from '../data/catalog.js';
+import { GRADES, ROLE_NAME } from '../data/catalog.js';
 import { many, one, q } from '../lib/db.js';
 import { html } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
@@ -11,6 +11,7 @@ import {
   asyncH, cleanText, fmtDate, fmtDateTime, fmtPrice, HttpError, newJoinCode, newTempPassword, setFlash, toCsv, toInt,
 } from '../lib/util.js';
 import { materialCard } from './materials.js';
+import { assignedBlock, assignedFor, attemptsTable } from './exams.js';
 
 export const router = express.Router();
 
@@ -64,7 +65,9 @@ async function studentCabinet(req, res) {
   const best = await many(
     `SELECT game, max(score) AS best, count(*) AS plays FROM game_scores WHERE user_id = $1 GROUP BY game ORDER BY plays DESC`, [u.id]);
   const attempts = await many(
-    `SELECT exam, mode, score, max_score, correct_count, total, created_at FROM exam_attempts WHERE user_id = $1 ORDER BY created_at DESC LIMIT 8`, [u.id]);
+    `SELECT id, exam, domain, mode, section, score, max_score, pending, assignment_id, created_at, answers IS NOT NULL AS has_answers
+       FROM exam_attempts WHERE user_id = $1 ORDER BY created_at DESC LIMIT 10`, [u.id]);
+  const assigned = await assignedFor(u.id);
   const labsDone = await many('SELECT lab_key, score, updated_at FROM lab_subs WHERE user_id = $1 ORDER BY updated_at DESC', [u.id]);
   const mats = u.class_grade ? await many(
     `SELECT * FROM materials WHERE status = 'published' AND (grade = $1 OR grade = 0) ORDER BY created_at DESC LIMIT 6`, [u.class_grade]) : [];
@@ -84,6 +87,7 @@ async function studentCabinet(req, res) {
               <button class="btn" type="submit">Қосылу</button>
             </form>
           </section>` : html`<div class="notice"><div>Сенің физика мұғалімің: <b>${teacher ? teacher.full_name : '—'}</b>. Зертханалық жұмыстың нәтиже кодын мұғаліміңе бер.</div></div>`}
+        ${assignedBlock(assigned)}
         <section class="block">
           <div class="block-h"><h2>Ойындардағы нәтижелерім</h2><a class="more" href="/games">Ойнау</a></div>
           ${best.length ? html`<div class="tblwrap"><table><thead><tr><th>Ойын</th><th class="num">Ең жақсы ұпай</th><th class="num">Ойналды</th></tr></thead>
@@ -100,9 +104,7 @@ async function studentCabinet(req, res) {
         </section>
         <section class="block">
           <div class="block-h"><h2>Тест нәтижелерім</h2><a class="more" href="/exams">Тест тапсыру</a></div>
-          ${attempts.length ? html`<div class="tblwrap"><table><thead><tr><th>Емтихан</th><th>Режим</th><th class="num">Балл</th><th class="num">Дұрыс</th><th>Күні</th></tr></thead>
-            <tbody>${attempts.map((a) => html`<tr><td>${EXAM[a.exam]?.name || a.exam}</td><td>${a.mode === 'exam' ? 'Сынақ' : 'Жаттығу'}</td>
-              <td class="num">${a.score} / ${a.max_score}</td><td class="num">${a.correct_count} / ${a.total}</td><td>${fmtDateTime(a.created_at)}</td></tr>`)}</tbody></table></div>`
+          ${attempts.length ? attemptsTable(attempts)
             : emptyBox('Әзірге тест жоқ', 'PISA, ББЖМ немесе ҰБТ форматындағы тестті тапсырып көр.')}
         </section>
         ${mats.length ? html`<section class="block"><div class="block-h"><h2>Менің сыныбыма арналған материалдар</h2><a class="more" href="/library?grade=${u.class_grade}">Барлығы</a></div>
@@ -137,6 +139,9 @@ async function teacherCabinet(req, res) {
   const mats = await many(
     `SELECT id, title, status, price, reject_reason, created_at, downloads FROM materials WHERE author_id = $1 ORDER BY created_at DESC`, [u.id]);
   const labsCount = await one('SELECT count(*) AS n FROM lab_results WHERE teacher_id = $1', [u.id]);
+  const asg = await one(
+    `SELECT count(DISTINCT a.id)::int AS n, coalesce(sum(t.pending), 0)::int AS pending
+       FROM exam_assignments a LEFT JOIN exam_attempts t ON t.assignment_id = a.id WHERE a.teacher_id = $1`, [u.id]);
 
   await page(req, res, {
     title: 'Мұғалім кабинеті', active: 'cabinet',
@@ -167,7 +172,7 @@ async function teacherCabinet(req, res) {
           <section class="feat">
             <a class="fcard" href="/teacher/labs"><span class="glyph">${icon('lab')}</span><b>Зертхана нәтижелері</b><p>Оқушы әкелген нәтиже кодын тексеріп, журналға жазу. Журналда ${labsCount.n} жазба.</p></a>
             <a class="fcard" href="/materials/new"><span class="glyph brass">${icon('upload')}</span><b>Материал жүктеу</b><p>PowerPoint презентация, Word ҚМЖ, PDF оқу құралы немесе тест. Әкімші тексеріп жариялайды.</p></a>
-            <a class="fcard" href="/exams"><span class="glyph">${icon('exam')}</span><b>Емтиханға дайындық</b><p>PISA, ББЖМ, ҰБТ тестері. Оқушылардың нәтижесі сынып бетінде көрінеді.</p></a>
+            <a class="fcard" href="/teacher/assignments"><span class="glyph">${icon('exam')}</span><b>Оқушыларға тест беру</b><p>PISA, ББЖМ, ҰБТ тестін сынып оқушыларына тағайындап, кім тапсырғанын және балын көру. Берілген тест: ${asg.n}.${asg.pending ? ` Тексеруді күтетін ашық жауап: ${asg.pending}.` : ''}</p></a>
           </section>` : ''}
         <section class="block">
           <div class="block-h"><h2>Менің материалдарым</h2><span class="cnt">${mats.length}</span></div>
@@ -245,6 +250,11 @@ async function classStudents(classId) {
 router.get('/teacher/classes/:id', requireActiveTeacher, asyncH(async (req, res) => {
   const c = await ownClass(req);
   const students = await classStudents(c.id);
+  const attempts = await many(
+    `SELECT a.id, a.exam, a.domain, a.mode, a.section, a.score, a.max_score, a.pending, a.assignment_id, a.created_at,
+            a.answers IS NOT NULL AS has_answers, u.full_name
+       FROM exam_attempts a JOIN users u ON u.id = a.user_id
+      WHERE u.class_id = $1 AND u.role = 'student' ORDER BY a.created_at DESC LIMIT 30`, [c.id]);
   await page(req, res, {
     title: `${c.grade}${c.letter} сынып`, active: 'cabinet',
     body: html`
@@ -254,6 +264,7 @@ router.get('/teacher/classes/:id', requireActiveTeacher, asyncH(async (req, res)
           <div><h1>${c.grade}${c.letter} сынып</h1><p>${students.length} оқушы. Тіркелу коды: <span class="code-big">${c.join_code}</span> ${c.is_open ? '(ашық)' : '(жабық)'}</p></div>
           <div class="vhead-act">
             <form method="post" action="/teacher/classes/${c.id}/toggle">${csrfField(req)}<button class="btn ghost" type="submit">${c.is_open ? 'Тіркеуді жабу' : 'Тіркеуді ашу'}</button></form>
+            <a class="btn" href="/teacher/assignments/new?class=${c.id}">${icon('exam', 15)} Тест тағайындау</a>
             <a class="btn ghost" href="/teacher/classes/${c.id}/export.csv">${icon('download', 15)} Excel (CSV)</a>
           </div>
         </div>
@@ -269,6 +280,10 @@ router.get('/teacher/classes/:id', requireActiveTeacher, asyncH(async (req, res)
             </div></td></tr>`)}</tbody></table></div>`
           : html`${emptyBox('Сыныпта әзірге оқушы жоқ', `Оқушыларға ${c.join_code} кодын беріңіз: олар «Тіркелу → Мен оқушымын» бетінде енгізеді.`)}
             <form method="post" action="/teacher/classes/${c.id}/delete" data-confirm="Сынып өшірілсін бе?">${csrfField(req)}<button class="btn warn sm" type="submit">Сыныпты өшіру</button></form>`}
+        ${attempts.length ? html`<section class="block">
+          <div class="block-h"><h2>Оқушылардың соңғы тест нәтижелері</h2><a class="more" href="/teacher/assignments">Тағайындалған тесттер</a></div>
+          ${attemptsTable(attempts, { withStudent: true })}
+        </section>` : ''}
       </div>`,
   });
 }));
