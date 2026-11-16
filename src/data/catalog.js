@@ -10,21 +10,22 @@ export const FAMILIES = {
 };
 
 export const SECTIONS = [
-  { k: 'kin', no: 1, sym: 'Кн', name: 'Кинематика', fam: 'mech', grades: '7–10' },
-  { k: 'dyn', no: 2, sym: 'Дн', name: 'Динамика', fam: 'mech', grades: '7–10' },
-  { k: 'cons', no: 3, sym: 'Сз', name: 'Сақталу заңдары', fam: 'mech', grades: '7–10' },
-  { k: 'stat', no: 4, sym: 'Ст', name: 'Статика және гидростатика', fam: 'mech', grades: '7–10' },
-  { k: 'mkt', no: 5, sym: 'Мк', name: 'Молекулалық физика', fam: 'therm', grades: '8–10' },
-  { k: 'thermo', no: 6, sym: 'Тд', name: 'Термодинамика', fam: 'therm', grades: '8–10' },
-  { k: 'estat', no: 7, sym: 'Эс', name: 'Электростатика', fam: 'em', grades: '8–10' },
-  { k: 'dc', no: 8, sym: 'Тт', name: 'Тұрақты ток', fam: 'em', grades: '8–10' },
-  { k: 'mag', no: 9, sym: 'Мг', name: 'Магнит өрісі', fam: 'em', grades: '8–11' },
-  { k: 'emi', no: 10, sym: 'Эи', name: 'Индукция және айнымалы ток', fam: 'em', grades: '11' },
-  { k: 'osc', no: 11, sym: 'Тб', name: 'Тербелістер мен толқындар', fam: 'wave', grades: '9–11' },
-  { k: 'opt', no: 12, sym: 'Оп', name: 'Оптика', fam: 'wave', grades: '8–11' },
-  { k: 'quant', no: 13, sym: 'Кв', name: 'Кванттық физика және салыстырмалылық', fam: 'modern', grades: '11' },
-  { k: 'nuc', no: 14, sym: 'Яд', name: 'Атом және ядро физикасы', fam: 'modern', grades: '9–11' },
-  { k: 'astro', no: 15, sym: 'Ас', name: 'Астрономия', fam: 'astro', grades: '9–11' },
+  { k: 'meas', no: 1, sym: 'Өл', name: 'Физикалық шамалар және өлшеулер', fam: 'mech', grades: '7' },
+  { k: 'kin', no: 2, sym: 'Кн', name: 'Кинематика', fam: 'mech', grades: '7–10' },
+  { k: 'dyn', no: 3, sym: 'Дн', name: 'Динамика', fam: 'mech', grades: '7–10' },
+  { k: 'cons', no: 4, sym: 'Сз', name: 'Сақталу заңдары', fam: 'mech', grades: '7–10' },
+  { k: 'stat', no: 5, sym: 'Ст', name: 'Статика және гидростатика', fam: 'mech', grades: '7–10' },
+  { k: 'mkt', no: 6, sym: 'Мк', name: 'Молекулалық физика', fam: 'therm', grades: '8–10' },
+  { k: 'thermo', no: 7, sym: 'Тд', name: 'Термодинамика', fam: 'therm', grades: '8–10' },
+  { k: 'estat', no: 8, sym: 'Эс', name: 'Электростатика', fam: 'em', grades: '8–10' },
+  { k: 'dc', no: 9, sym: 'Тт', name: 'Тұрақты ток', fam: 'em', grades: '8–10' },
+  { k: 'mag', no: 10, sym: 'Мг', name: 'Магнит өрісі', fam: 'em', grades: '8–11' },
+  { k: 'emi', no: 11, sym: 'Эи', name: 'Индукция және айнымалы ток', fam: 'em', grades: '11' },
+  { k: 'osc', no: 12, sym: 'Тб', name: 'Тербелістер мен толқындар', fam: 'wave', grades: '9–11' },
+  { k: 'opt', no: 13, sym: 'Оп', name: 'Оптика', fam: 'wave', grades: '8–11' },
+  { k: 'quant', no: 14, sym: 'Кв', name: 'Кванттық физика және салыстырмалылық', fam: 'modern', grades: '11' },
+  { k: 'nuc', no: 15, sym: 'Яд', name: 'Атом және ядро физикасы', fam: 'modern', grades: '9–11' },
+  { k: 'astro', no: 16, sym: 'Ас', name: 'Астрономия', fam: 'astro', grades: '7–11' },
 ];
 export const SECTION = Object.fromEntries(SECTIONS.map((s) => [s.k, s]));
 export const sectionName = (k) => (SECTION[k] ? SECTION[k].name : '');

@@ -1,5 +1,6 @@
 import express from 'express';
 import { FAMILIES, GRADES, SECTION, SECTIONS } from '../data/catalog.js';
+import { TEXTBOOK } from '../data/textbook.js';
 import { FORMULA, FORMULAS } from '../data/formulas.js';
 import { SIMS } from '../data/sims.js';
 import { html, sel } from '../lib/html.js';
@@ -88,11 +89,25 @@ router.get('/formulas', asyncH(async (req, res) => {
   let groups;
   if (view === 'grade') {
     const order = Object.fromEntries(SECTIONS.map((s, i) => [s.k, i]));
-    groups = GRADES.map((g) => ({
-      key: `g${g}`, title: `${g}-сынып`,
-      sub: [...new Set(list.filter((f) => f.g === g).map((f) => SECTION[f.s].name))].join(' · '),
-      items: list.filter((f) => f.g === g).sort((a, b) => order[a.s] - order[b.s]),
-    })).filter((x) => x.items.length);
+    groups = [];
+    for (const g of GRADES) {
+      const items = list.filter((f) => f.g === g);
+      if (!items.length) continue;
+      if (TEXTBOOK[g]) {
+        // 7–8-сынып: оқулықтың тараулары бойынша
+        for (const ch of TEXTBOOK[g]) {
+          const its = ch.f.map((n) => items.find((f) => f.name === n)).filter(Boolean);
+          const ps = ch.p.map((x) => x[0]);
+          if (its.length) groups.push({ key: `g${g}-${ch.no}`, title: `${g}-сынып · ${ch.no} тарау. ${ch.t}`, sub: `§${ps[0]}–${ps[ps.length - 1]}`, items: its });
+        }
+      } else {
+        groups.push({
+          key: `g${g}`, title: `${g}-сынып`,
+          sub: [...new Set(items.map((f) => SECTION[f.s].name))].join(' · '),
+          items: items.sort((a, b) => order[a.s] - order[b.s]),
+        });
+      }
+    }
   } else {
     groups = SECTIONS.map((s) => ({ key: s.k, title: `${s.no}. ${s.name}`, sub: `${s.grades} сынып`, items: list.filter((f) => f.s === s.k) })).filter((x) => x.items.length);
   }
@@ -102,7 +117,7 @@ router.get('/formulas', asyncH(async (req, res) => {
     scripts: ['/js/formulas.js'],
     body: html`
       <div class="view">
-        ${vhead('Формулалар', `7–11-сынып физикасының ${FORMULAS.length} формуласы. Формуланы басыңыз — ол толық экранда ашылады: анықтамасы, әр шаманың мағынасы мен ХБЖ-дағы өлшем бірлігі, байланысты симуляциялар. Терезеде ← → пернелерімен келесі формулаға өтуге болады.`,
+        ${vhead('Формулалар', `7–11-сынып физикасының ${FORMULAS.length} формуласы. 7 және 8-сынып формулалары оқулықтың тараулары бойынша топталған. Формуланы басыңыз — ол толық экранда ашылады: анықтамасы, әр шаманың мағынасы мен ХБЖ-дағы өлшем бірлігі, байланысты симуляциялар. Терезеде ← → пернелерімен келесі формулаға өтуге болады.`,
           html`<a class="btn" href="/games${section ? `?section=${section}` : ''}">${icon('game', 16)} Ойнап жаттау</a><button class="btn ghost no-print" type="button" data-print>Басып шығару</button>`)}
         <div class="filters no-print">
           <div class="seg" role="group" aria-label="Топтау">

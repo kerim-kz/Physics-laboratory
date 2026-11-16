@@ -708,3 +708,13 @@ body.noscroll{overflow:hidden}
 @media (max-width:560px){.exam-bar{top:58px;font-size:13px;gap:8px;padding:8px 12px}.exam-bar b{min-width:0;flex:1}.exam-bar .grow{display:none}}
 fieldset.qf{border:1px solid var(--line);border-radius:10px;padding:9px 14px 14px;margin:0;display:grid;gap:10px;min-width:0}
 fieldset.qf legend{font-size:12px;color:var(--muted);padding:0 4px}
+/* Симуляциялар: оқулық бойынша */
+.bk-list{display:grid;gap:6px}
+.bk-row{display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.bk-row .bk-sims,.bk-row > .muted{grid-column:2}
+.bk-no{font-family:var(--fm);font-weight:600;font-size:12.5px;color:var(--accent-ink);padding-top:2px}
+.bk-t{font-weight:500;font-size:14.5px}
+.bk-sims{display:flex;flex-wrap:wrap;gap:6px}
+.bk-sims .chip{white-space:normal;text-align:left}
+.bk-lab{background:var(--surface-2);border-style:dashed}
+.bk-lab .bk-no{color:var(--brass)}
