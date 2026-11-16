@@ -1,5 +1,6 @@
 /* Ньютон зеңбірегі: таудан горизонталь атылған снарядтың Жер тартылысындағы қозғалысы (ХБЖ бірліктерінде). */
 (function () {
+  var R = window.Real;
   var GM = 3.986e14, RE = 6.371e6;
   var trails = []; // алдыңғы атулардың іздері
   function verdict(v, r) {
@@ -12,6 +13,7 @@
     return 'парабола/гипербола — Жерден мүлде кетеді';
   }
   Sim.create({
+    grid: false,
     aspect: 0.72, substeps: 40,
     hint: 'Жылдамдықты өзгертіп, қайта ат. Алдыңғы іздер сақталады.',
     controls: [
@@ -61,10 +63,11 @@
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var cx = W / 2, cy = H / 2 + 10, k = Math.min(W, H) / 2 / (RE * 2.6);
-      ctx.fillStyle = '#081322'; ctx.fillRect(0, 0, W, H);
-      var g = ctx.createRadialGradient(cx - RE * k * 0.3, cy - RE * k * 0.3, RE * k * 0.1, cx, cy, RE * k);
-      g.addColorStop(0, '#5aa6e0'); g.addColorStop(1, '#1d4f86');
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, RE * k, 0, Math.PI * 2); ctx.fill();
+      R.scene(ctx, W, H, 'space', { seed: 21 });
+      // атмосфераның жұқа қабаты және Жер
+      var at = ctx.createRadialGradient(cx, cy, RE * k * 0.98, cx, cy, RE * k * 1.06); at.addColorStop(0, 'rgba(120,190,255,.5)'); at.addColorStop(1, 'rgba(120,190,255,0)');
+      ctx.fillStyle = at; ctx.beginPath(); ctx.arc(cx, cy, RE * k * 1.06, 0, 7); ctx.fill();
+      R.planet(ctx, cx, cy, RE * k, 'earth');
       // тау
       var mh = P.h * 1000 * k;
       ctx.fillStyle = '#7a6a55'; ctx.beginPath(); ctx.moveTo(cx - 14, cy - RE * k + 2); ctx.lineTo(cx, cy - RE * k - mh); ctx.lineTo(cx + 14, cy - RE * k + 2); ctx.fill();

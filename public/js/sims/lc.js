@@ -1,7 +1,9 @@
 /* Тербелмелі контур: Lq'' + Rq' + q/C = 0. Уақыт 100 есе баяулатылған. */
 (function () {
+  var RL = window.Real;
   var U0 = 10, SLOW = 100;
   Sim.create({
+    grid: false,
     aspect: 0.62, substeps: 20,
     hint: 'Уақыт 100 есе баяулатылған: нақты период мыңдаған есе қысқа.',
     controls: [
@@ -32,6 +34,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, Cc = api.C, D = api.D, C = P.C * 1e-6;
+      RL.scene(ctx, W, H, 'wall'); ctx.save(); ctx.globalAlpha = 0.9; ctx.fillStyle = '#f7f6f1'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 6; ctx.fillRect(10, 10, W - 20, H - 20); ctx.restore();
       var x0 = 40, y0 = 50, w = W * 0.3, h = H * 0.45;
       ctx.strokeStyle = Cc.ink; ctx.lineWidth = 2; ctx.strokeRect(x0, y0, w, h);
       // конденсатор (сол жақ)

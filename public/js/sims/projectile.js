@@ -1,5 +1,6 @@
 /* Көкжиекке бұрыш жасай лақтыру (ауа кедергісіз). */
 (function () {
+  var R = window.Real;
   var PLANETS = { earth: 9.8, moon: 1.62, mars: 3.71, jupiter: 24.8 };
   var traces = [];
   var COLORS = ['blue', 'orange', 'purple', 'teal', 'red', 'brass'];
@@ -12,6 +13,7 @@
   }
 
   Sim.create({
+    grid: false,
     tools: ['ruler', 'angle', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.6,
@@ -65,17 +67,16 @@
       var Y = function (y) { return H - padB - y * k; };
       api._sc = { px: k, unit: 'м' };
       // жер және шкала
-      ctx.fillStyle = C.bg2; ctx.fillRect(0, Y(0), W, padB);
-      D.line(ctx, 0, Y(0), W, Y(0), C.muted, 2);
+      R.scene(ctx, W, H, 'outdoor', { ground: Y(0), clouds: true });
       var step = Math.pow(10, Math.floor(Math.log10(maxX / 3)));
       if (maxX / step > 10) step *= 5; else if (maxX / step > 5) step *= 2;
       for (var g = 0; g <= maxX * 1.08; g += step) {
         D.line(ctx, X(g), Y(0), X(g), Y(0) + 6, C.muted, 1);
-        D.text(ctx, api.fmt(g, 0), X(g), Y(0) + 18, { size: 10, align: 'center', color: C.muted, mono: true });
+        R.txt(ctx, api.fmt(g, 0), X(g), Y(0) + 16, { size: 9.5, color: '#fff', mono: true });
       }
       D.text(ctx, 'x, м', W - padR, Y(0) + 32, { size: 11, align: 'right', color: C.muted });
       // мұнара
-      if (P.h0 > 0) { ctx.fillStyle = C.line; ctx.fillRect(X(0) - 8, Y(P.h0), 16, P.h0 * k); D.text(ctx, 'h₀ = ' + P.h0 + ' м', X(0) + 12, Y(P.h0 / 2), { size: 11, color: C.muted }); }
+      if (P.h0 > 0) { ctx.save(); ctx.beginPath(); ctx.rect(X(0) - 14, Y(P.h0), 28, P.h0 * k); ctx.clip(); R.paintFace(ctx, X(0) - 14, Y(P.h0), 28, P.h0 * k, 'brick', 0); ctx.restore(); R.tag(ctx, 'h₀ = ' + P.h0 + ' м', X(0) + 48, Y(P.h0 / 2), { size: 10.5 }); }
       // бұрын лақтырылғандар
       traces.forEach(function (tr) {
         ctx.save(); ctx.strokeStyle = C[tr.color] || C.muted; ctx.globalAlpha = 0.55; ctx.lineWidth = 2; ctx.setLineDash([5, 4]);

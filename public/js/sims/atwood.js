@@ -1,9 +1,11 @@
 /* Атвуд машинасы: a = (m₁ − m₂)g / (m₁ + m₂), T = 2m₁m₂g / (m₁ + m₂). Блок пен жіп салмақсыз. */
 (function () {
+  var R = window.Real;
   var G = { earth: 9.8, moon: 1.62, mars: 3.71 };
   var LIM = 1.2; // жүктің ең үлкен жылжуы, м
   function acc(P) { return (P.m1 - P.m2) * G[P.planet] / (P.m1 + P.m2); }
   Sim.create({
+    grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.64,
@@ -36,15 +38,17 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var cx = W * 0.38, py = 50, R = 34, k = (H - 170) / (2 * LIM);
       api._sc = { px: k, unit: 'м' };
-      ctx.fillStyle = C.line; ctx.fillRect(cx - 70, 10, 140, 8);
-      D.line(ctx, cx, 18, cx, py, C.ink, 2);
-      D.circle(ctx, cx, py, R, C.bg2, C.ink, 2); D.circle(ctx, cx, py, 4, C.ink);
+      window.Real.scene(ctx, W, H, 'lab', { table: H - 14 });
+      window.Real.block(ctx, cx - 70, 8, 140, 10, 'iron', { depth: 6, shadow: false });
+      D.line(ctx, cx, 18, cx, py, '#555', 3);
+      var pg = ctx.createRadialGradient(cx - R * 0.3, py - R * 0.3, 2, cx, py, R); pg.addColorStop(0, '#eef1f3'); pg.addColorStop(0.7, '#9aa3ab'); pg.addColorStop(1, '#5d656c');
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(cx, py, R, 0, 7); ctx.fill(); window.Real.sphere(ctx, cx, py, 6, '#c9a24a');
       var y0 = py + 30 + LIM * k;
       var y1 = y0 + S.s * k, y2 = y0 - S.s * k;
       function box(x, y, m, color, label) {
         var s = 26 + m * 7;
         D.line(ctx, x, py, x, y, C.ink, 1.5);
-        ctx.fillStyle = color; ctx.fillRect(x - s / 2, y, s, s);
+        window.Real.cylinder(ctx, x - s / 2, y, s, s, 'brass', { shadow: false, ry: 4 });
         D.text(ctx, label + ' = ' + api.fmt(m, 1) + ' кг', x, y + s + 15, { size: 11, align: 'center', color: C.muted });
         return s;
       }
@@ -55,7 +59,7 @@
       D.arrow(ctx, cx - R - s1 / 2 - 12, y1 + s1 / 2, cx - R - s1 / 2 - 12, y1 + s1 / 2 - T * fk, C.good, 2, 'T');
       D.arrow(ctx, cx + R + s2 / 2 + 12, y2 + s2 / 2, cx + R + s2 / 2 + 12, y2 + s2 / 2 + P.m2 * g * fk, C.red, 2, 'm₂g');
       D.arrow(ctx, cx + R + s2 / 2 + 12, y2 + s2 / 2, cx + R + s2 / 2 + 12, y2 + s2 / 2 - T * fk, C.good, 2, 'T');
-      ctx.fillStyle = C.bg2; ctx.fillRect(cx - 120, H - 24, 240, 10);
+
       var bx = W * 0.66;
       D.text(ctx, 'm₁a = m₁g − T', bx, 60, { size: 14, mono: true, weight: '600' });
       D.text(ctx, 'm₂a = T − m₂g', bx, 88, { size: 14, mono: true, weight: '600' });

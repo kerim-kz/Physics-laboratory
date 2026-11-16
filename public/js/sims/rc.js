@@ -1,6 +1,8 @@
 /* Конденсатордың резистор арқылы зарядталуы: U_C = E(1 − e^(−t/RC)), разрядталуы: U_C = U₀e^(−t/RC). */
 (function () {
+  var RL = window.Real;
   Sim.create({
+    grid: false,
     tools: ['stopwatch'],
     aspect: 0.62, substeps: 10,
     hint: 'Ауыстырып-қосқыш: зарядтау ↔ разрядтау. Мәндер жалғасып кетеді.',
@@ -34,6 +36,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
+      RL.scene(ctx, W, H, 'wall'); ctx.save(); ctx.globalAlpha = 0.9; ctx.fillStyle = '#f7f6f1'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 6; ctx.fillRect(10, 10, W - 20, H - 20); ctx.restore();
       // схема
       var x0 = 30, y0 = 40, w = W * 0.36, h = H * 0.42;
       ctx.strokeStyle = C.ink; ctx.lineWidth = 2;

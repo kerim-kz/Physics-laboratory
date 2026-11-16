@@ -1,8 +1,10 @@
 /* Доплер эффектісі: қозғалатын көз шеңберлік толқын фронттарын шығарады.
    Алдыңғы бақылаушы: f' = f·c/(c − v), артқы: f' = f·c/(c + v). v > c болса — Мах конусы. */
 (function () {
+  var R = window.Real;
   var CPX = 120; // экрандағы толқын жылдамдығы, px/с (дыбыс жылдамдығы 340 м/с-қа сәйкес)
   Sim.create({
+    grid: false,
     aspect: 0.58, autoplay: true,
     hint: 'Дыбыс жылдамдығы c = 340 м/с.',
     controls: [
@@ -36,6 +38,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, cy = H / 2;
+      R.scene(ctx, W, H, 'outdoor', { ground: cy + 40, road: true, clouds: true });
       S.fronts.forEach(function (f) {
         var r = (S.t - f.t) * CPX;
         ctx.strokeStyle = C.accent; ctx.lineWidth = 1.5; ctx.globalAlpha = Math.max(0.15, 1 - r / (W * 0.9));
@@ -49,12 +52,12 @@
         D.text(ctx, 'Мах конусы (соққы толқыны)', 14, 22, { size: 12, color: C.bad, weight: '600' });
       }
       // көз
-      ctx.fillStyle = C.red; ctx.fillRect(S.x - 16, cy - 8, 32, 16);
-      D.circle(ctx, S.x, cy, 4, '#fff');
+      R.car(ctx, S.x, cy + 18, 64, '#f2f2f0', S.x);
+      ctx.fillStyle = '#d2382b'; ctx.fillRect(S.x - 6, cy - 12, 12, 5); ctx.fillStyle = '#2f6fd1'; ctx.fillRect(S.x + 6, cy - 12, 8, 5);
       if (P.k > 0) D.arrow(ctx, S.x + 18, cy, S.x + 18 + 20 + P.k * 30, cy, C.ink, 2, 'v');
       // бақылаушылар
       function ear(x, label) {
-        D.circle(ctx, x, cy + 70, 11, C.orange, C.ink, 1.5);
+        R.sphere(ctx, x, cy + 70, 11, '#e3b48a');
         D.text(ctx, label, x, cy + 100, { size: 11, align: 'center', color: C.muted, weight: '600' });
       }
       ear(W - 30, 'алдында');

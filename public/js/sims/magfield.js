@@ -1,5 +1,6 @@
 /* Магнит өрісі: түзу ток (Эрстед тәжірибесі), соленоид және тұрақты магнит. Компас тілдері өріс бағытымен бұрылады. */
 (function () {
+  var RL = window.Real;
   var MU0 = 4e-7 * Math.PI;
   // Өріс векторы (экран координаттарында, у төмен). Нәтиже: [Bx, By] шартты бірлікпен.
   function field(P, x, y, W, H) {
@@ -27,6 +28,7 @@
     ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(x, y, 1.6, 0, Math.PI * 2); ctx.fill();
   }
   Sim.create({
+    grid: false,
     aspect: 0.62, static: true, resetLabel: false,
     hint: 'Қызыл ұш — компастың солтүстік полюсі. Зондты (сары шеңбер) жылжыт.',
     controls: [
@@ -57,6 +59,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, cx = W / 2, cy = H / 2;
+      RL.scene(ctx, W, H, 'wall');
       // күш сызықтары: өріс бойымен интегралдау
       if (P.lines && (P.I !== 0 || P.mode === 'magnet')) {
         ctx.save(); ctx.strokeStyle = C.accent; ctx.globalAlpha = 0.45; ctx.lineWidth = 1.2;

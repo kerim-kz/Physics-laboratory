@@ -1,5 +1,6 @@
 /* Дыбыс: жиілік (биіктік) және амплитуда (қаттылық). Web Audio арқылы нақты дыбыс шығады. */
 (function () {
+  var R = window.Real;
   var audio = null, osc = null, gain = null;
   function startAudio(P) {
     try {
@@ -27,6 +28,7 @@
     return s;
   }
   Sim.create({
+    grid: false,
     aspect: 0.6, autoplay: true, keepRunning: true,
     hint: 'Дыбысты қос та, жиілік пен амплитуданы өзгерт. Құлаққапты қолданған дұрыс.',
     controls: [
@@ -57,8 +59,11 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       // динамик
       var sx = 60, sy = H * 0.3, cone = 8 * P.vol * Math.sin(S.ph * 8);
-      ctx.fillStyle = C.ink; ctx.fillRect(sx - 36, sy - 26, 22, 52);
-      ctx.fillStyle = C.muted; ctx.beginPath(); ctx.moveTo(sx - 14, sy - 26); ctx.lineTo(sx + 14 + cone, sy - 56); ctx.lineTo(sx + 14 + cone, sy + 56); ctx.lineTo(sx - 14, sy + 26); ctx.closePath(); ctx.fill();
+      R.scene(ctx, W, H * 0.52, 'wall');
+      R.block(ctx, sx - 50, sy - 66, 44, 132, { c: '#2a2c30', t: 'plain', gloss: 0.4 }, { depth: 10, shadow: false });
+      var cg = ctx.createLinearGradient(sx - 14, 0, sx + 14 + cone, 0); cg.addColorStop(0, '#3a3d42'); cg.addColorStop(1, '#8a9399');
+      ctx.fillStyle = cg; ctx.beginPath(); ctx.moveTo(sx - 14, sy - 26); ctx.lineTo(sx + 14 + cone, sy - 56); ctx.lineTo(sx + 14 + cone, sy + 56); ctx.lineTo(sx - 14, sy + 26); ctx.closePath(); ctx.fill();
+      R.sphere(ctx, sx + 2 + cone * 0.5, sy, 9, '#2a2c30');
       // ауа бөлшектері: сығылу мен сиреу
       var lamPx = Math.max(18, Math.min(220, 340 / P.f * 400)), kk = 2 * Math.PI / lamPx;
       for (var col = 0; col < 70; col++) for (var row = 0; row < 9; row++) {

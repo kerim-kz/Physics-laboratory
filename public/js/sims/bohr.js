@@ -1,5 +1,6 @@
 /* Бор моделі: Eₙ = −13,6 эВ / n², hν = E_k − E_n, λ = hc/ΔE (hc ≈ 1240 эВ·нм). */
 (function () {
+  var RL = window.Real;
   function E(n) { return -13.6 / (n * n); }
   var SERIES = { 1: 'Лайман (ультракүлгін)', 2: 'Бальмер', 3: 'Пашен (инфрақызыл)', 4: 'Брэкет (инфрақызыл)', 5: 'Пфунд (инфрақызыл)' };
   function rgb(nm) {
@@ -12,6 +13,7 @@
   }
   function trans(P) { var hi = Math.max(+P.a, +P.b), lo = Math.min(+P.a, +P.b); return { hi: hi, lo: lo, dE: E(hi) - E(lo), emit: +P.a > +P.b }; }
   Sim.create({
+    grid: false,
     aspect: 0.62, autoplay: true,
     hint: 'Бастапқы деңгей жоғары болса — фотон шығарылады, төмен болса — жұтылады.',
     controls: [
@@ -36,6 +38,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, tr = trans(P);
+      RL.scene(ctx, W, H, 'space', { seed: 31, count: 90 }); C = Object.create(C); C.ink = '#e6eef8'; C.muted = '#9fb3c8'; C.soft = 'rgba(255,255,255,.22)'; C.line = 'rgba(255,255,255,.35)'; C.bg = '#121a28'; C.bg2 = '#1b2534'; D = Object.create(api.D); D.text = function (c2, s2, x2, y2, o2) { o2 = Object.assign({}, o2 || {}); if (!o2.color || o2.color === api.C.ink) o2.color = '#e6eef8'; if (o2.bg) o2.bg = 'rgba(20,30,50,.85)'; return api.D.text(c2, s2, x2, y2, o2); };
       // атом (сол жақ)
       var ax = W * 0.22, ay = H / 2, k = Math.min(W * 0.2, H * 0.42) / 36;
       D.circle(ctx, ax, ay, 6, C.red);

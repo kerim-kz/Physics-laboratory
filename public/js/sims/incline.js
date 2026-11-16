@@ -1,5 +1,6 @@
 /* Көлбеу жазықтықтағы дене: күштер, үдеу, сырғанау шарты tg α > μ. */
 (function () {
+  var R = window.Real;
   var g = 9.8, LEN = 2; // көлбеу жазықтықтың ұзындығы, м
 
   function phys(P) {
@@ -10,6 +11,7 @@
   }
 
   Sim.create({
+    grid: false,
     tools: ['angle', 'stopwatch'],
     aspect: 0.62,
     hint: 'Тыныштық үйкеліс коэффициенті сырғанау коэффициентіне тең деп алынған.',
@@ -54,9 +56,10 @@
       var topX = x0, topY = baseY - Lpx * Math.sin(a);
       var botX = x0 + Lpx * Math.cos(a), botY = baseY;
       // жазықтық
-      ctx.fillStyle = C.bg2; ctx.strokeStyle = C.muted; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(topX, topY); ctx.lineTo(botX, botY); ctx.lineTo(topX, botY); ctx.closePath(); ctx.fill(); ctx.stroke();
-      D.line(ctx, 20, baseY, W - 20, baseY, C.muted, 2);
+      R.scene(ctx, W, H, 'lab', { table: baseY });
+      ctx.save(); ctx.beginPath(); ctx.moveTo(topX, topY); ctx.lineTo(botX, botY); ctx.lineTo(topX, botY); ctx.closePath(); ctx.clip();
+      R.paintFace(ctx, topX, topY, botX - topX, botY - topY, 'oak', 0.1); ctx.restore();
+      ctx.strokeStyle = 'rgba(60,40,20,.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(topX, topY); ctx.lineTo(botX, botY); ctx.lineTo(topX, botY); ctx.closePath(); ctx.stroke();
       // бұрыш доғасы
       ctx.save(); ctx.strokeStyle = C.orange; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(botX, botY, 42, Math.PI, Math.PI + a, false); ctx.stroke(); ctx.restore();
       D.text(ctx, 'α = ' + P.angle + '°', botX - 92, botY - 10, { size: 12, color: C.orange, weight: '600' });
@@ -67,7 +70,7 @@
       var cx = topX + ux * (along + side / 2) + nx * side / 2;
       var cy = topY + uy * (along + side / 2) + ny * side / 2;
       ctx.save(); ctx.translate(cx, cy); ctx.rotate(a);
-      ctx.fillStyle = C.blue; ctx.fillRect(-side / 2, -side / 2, side, side);
+      R.block(ctx, -side / 2, -side / 2, side, side, 'steel', { depth: 0, shadow: false });
       ctx.restore();
       D.text(ctx, P.m + ' кг', cx, cy + 4, { size: 11, align: 'center', color: '#fff', weight: '600' });
       // күштер (mg = 90 px)

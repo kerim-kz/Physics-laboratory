@@ -1,5 +1,6 @@
 /* Зарядталған бөлшектің біртекті магнит өрісіндегі қозғалысы: R = mv/(|q|B), T = 2πm/(|q|B). */
 (function () {
+  var RL = window.Real;
   var PART = {
     e: { m: 9.11e-31, q: -1.6e-19, name: 'электрон' },
     p: { m: 1.67e-27, q: 1.6e-19, name: 'протон' },
@@ -18,6 +19,7 @@
   }
 
   Sim.create({
+    grid: false,
     aspect: 0.62,
     autoplay: true,
     keepRunning: true,
@@ -43,6 +45,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, c = S.c;
+      ctx.fillStyle = '#0e1420'; ctx.fillRect(0, 0, W, H); C = Object.create(C); C.ink = '#e6eef8'; C.muted = '#9fb3c8'; C.soft = 'rgba(255,255,255,.22)'; C.line = 'rgba(255,255,255,.35)'; C.bg = '#121a28'; C.bg2 = '#1b2534'; D = Object.create(api.D); D.text = function (c2, s2, x2, y2, o2) { o2 = Object.assign({}, o2 || {}); if (!o2.color || o2.color === api.C.ink) o2.color = '#e6eef8'; if (o2.bg) o2.bg = 'rgba(20,30,50,.85)'; return api.D.text(c2, s2, x2, y2, o2); };
       // өріс белгілері
       for (var y = 24; y < H; y += 40) for (var x = 24; x < W; x += 40) {
         if (P.dir === 'in') { D.line(ctx, x - 4, y - 4, x + 4, y + 4, C.soft, 1.5); D.line(ctx, x - 4, y + 4, x + 4, y - 4, C.soft, 1.5); }

@@ -1,5 +1,6 @@
 /* Нүктелік зарядтардың электр өрісі: E = kq/r², суперпозиция, күш сызықтары. Ені 1 м деп алынады. */
 (function () {
+  var RL = window.Real;
   var K = 9e9, NC = 1e-9;
   var charges = [];
   var mouse = null, drag = null;
@@ -54,6 +55,7 @@
   }
 
   Sim.create({
+    grid: false,
     static: true,
     aspect: 0.62,
     hint: 'Бос жерді бас — заряд қосылады. Зарядты сүйреп жылжыт.',
@@ -96,6 +98,7 @@
     },
     draw: function (api, ctx, W, H) {
       var C = api.C, D = api.D, P = api.P;
+      RL.scene(ctx, W, H, 'wall');
       if (P.lines && charges.length) traceLines(api, ctx);
       if (P.vec && charges.length) {
         for (var y = 22; y < H; y += 34) for (var x = 22; x < W; x += 34) {
@@ -111,7 +114,7 @@
       }
       charges.forEach(function (c) {
         var r = 9 + Math.abs(c.q) * 1.6;
-        D.circle(ctx, c.x, c.y, r, c.q > 0 ? C.red : C.blue, C.ink, 1.2);
+        RL.sphere(ctx, c.x, c.y, r, c.q > 0 ? '#d2382b' : '#2f6fd1');
         D.text(ctx, (c.q > 0 ? '+' : '−') + Math.abs(c.q), c.x, c.y + 4, { size: 11, align: 'center', color: '#fff', weight: '700' });
       });
       // масштаб

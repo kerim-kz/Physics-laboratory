@@ -1,6 +1,8 @@
 /* Айнымалы ток генераторы: магнит өрісінде айналатын рамка. Φ = BS·cos ωt, e = NBSω·sin ωt. */
 (function () {
+  var RL = window.Real;
   Sim.create({
+    grid: false,
     aspect: 0.62, autoplay: true, keepRunning: true, substeps: 4,
     tools: ['stopwatch'],
     hint: 'Рамка айналғанда ағын өзгереді — шамның жарығы мен ЭҚК графигін бақыла.',
@@ -31,6 +33,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
+      RL.scene(ctx, W, H, 'lab', { table: H - 12 });
       var cx = W * 0.27, cy = H * 0.36, half = Math.min(W * 0.16, H * 0.24) * Math.sqrt(P.S / 200);
       // полюстер
       var gN = ctx.createLinearGradient(cx - 190, 0, cx - 130, 0); gN.addColorStop(0, '#a62a20'); gN.addColorStop(1, '#e05545');

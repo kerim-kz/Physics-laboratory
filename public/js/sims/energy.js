@@ -1,6 +1,7 @@
 /* Скейт-трек: дене y(x) қисығы бойымен сырғанайды. Лагранж теңдеуі: x'' = −(g + y''x'²)·y' / (1 + y'²) − c·x'.
    Тұтқырлық үйкеліс (c) механикалық энергияны ішкі энергияға (жылуға) айналдырады. */
 (function () {
+  var R = window.Real;
   var g = 9.8;
   var TRACKS = {
     u: { name: 'U-тәрізді', y: function (x) { return x * x / 9; }, d: function (x) { return 2 * x / 9; }, dd: function () { return 2 / 9; } },
@@ -11,6 +12,7 @@
   };
   function ydd(T, x) { if (T.dd) return T.dd(x); var h = 1e-3; return (T.d(x + h) - T.d(x - h)) / (2 * h); }
   Sim.create({
+    grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.62, substeps: 30,
@@ -53,8 +55,15 @@
       var Y = function (y) { return H - 40 - y * k; };
       api._sc = { px: k, unit: 'м' };
       // жол
-      ctx.save(); ctx.strokeStyle = C.ink; ctx.lineWidth = 4; ctx.beginPath();
+      R.scene(ctx, w + 10, H, 'outdoor', { ground: H - 20, clouds: true, sun: false });
+      ctx.fillStyle = C.bg; ctx.fillRect(w + 10, 0, W - w - 10, H);
+      // бетон рампа
+      ctx.save(); ctx.beginPath();
       for (var x = -6.3; x <= 6.3; x += 0.05) { if (x === -6.3) ctx.moveTo(X(x), Y(T.y(x))); else ctx.lineTo(X(x), Y(T.y(x))); }
+      ctx.lineTo(X(6.3), H); ctx.lineTo(X(-6.3), H); ctx.closePath(); ctx.clip();
+      R.paintFace(ctx, 0, 0, w + 10, H, 'concrete', 0); ctx.restore();
+      ctx.save(); ctx.strokeStyle = '#5c646b'; ctx.lineWidth = 4; ctx.beginPath();
+      for (var x2 = -6.3; x2 <= 6.3; x2 += 0.05) { if (x2 === -6.3) ctx.moveTo(X(x2), Y(T.y(x2))); else ctx.lineTo(X(x2), Y(T.y(x2))); }
       ctx.stroke(); ctx.restore();
       D.line(ctx, 10, Y(0), w, Y(0), C.soft, 1, [4, 4]);
       D.text(ctx, 'h = 0', 14, Y(0) - 4, { size: 10, color: C.muted, mono: true });

@@ -1,5 +1,6 @@
 /* Математикалық маятник: θ'' = −(g/l)·sin θ (шағын бұрыш жуықтауынсыз, RK4). */
 (function () {
+  var R = window.Real;
   var PLANETS = { earth: 9.8, moon: 1.62, mars: 3.71, jupiter: 24.8, x: 6.3 };
 
   function acc(th, P) { return -(PLANETS[P.planet] / P.l) * Math.sin(th); }
@@ -13,6 +14,7 @@
   }
 
   Sim.create({
+    grid: false,
     tools: ['ruler', 'angle', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.62,
@@ -63,15 +65,16 @@
       api._sc = { px: k, unit: 'м' };
       var bx = px0 + Math.sin(S.th) * P.l * k, by = py0 + Math.cos(S.th) * P.l * k;
       // тірек
-      ctx.fillStyle = C.line; ctx.fillRect(px0 - 60, py0 - 10, 120, 8);
+      R.scene(ctx, W, H, 'lab', { table: H - 18 });
+      R.block(ctx, px0 - 60, py0 - 12, 120, 10, 'iron', { depth: 6, shadow: false });
       // тік сызық және амплитуда
       D.line(ctx, px0, py0, px0, py0 + P.l * k + 20, C.soft, 1, [4, 4]);
       var a0 = P.amp * Math.PI / 180;
       ctx.save(); ctx.strokeStyle = C.soft; ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
       ctx.beginPath(); ctx.arc(px0, py0, P.l * k, Math.PI / 2 - a0, Math.PI / 2 + a0); ctx.stroke(); ctx.restore();
       // жіп пен жүк
-      D.line(ctx, px0, py0, bx, by, C.ink, 1.5);
-      D.circle(ctx, bx, by, 13, C.blue, C.ink, 1.5);
+      D.line(ctx, px0, py0, bx, by, '#444', 1.3);
+      R.sphere(ctx, bx, by, 13, '#9aa3ab');
       D.text(ctx, 'l = ' + api.fmt(P.l, 2) + ' м', px0 + 8, py0 + P.l * k / 2, { size: 11, color: C.muted });
       // энергия бағандары
       var m = 1;

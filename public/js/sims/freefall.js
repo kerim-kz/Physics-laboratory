@@ -1,11 +1,13 @@
 /* Еркін түсу: тас пен қағаз шар. Ауа кедергісі F = k v² (квадраттық), Айда ауа жоқ. */
 (function () {
+  var R = window.Real;
   var G = { earth: 9.8, moon: 1.62 };
   var BODIES = [
     { name: 'Тас', m: 1, k: 0.0005, r: 12 },
     { name: 'Қағаз шар', m: 0.005, k: 0.0004, r: 10 },
   ];
   Sim.create({
+    grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.66,
@@ -50,18 +52,20 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var top = 30, bot = H - 40, X0 = 70, k = (bot - top) / P.h;
       api._sc = { px: k, unit: 'м' };
-      ctx.fillStyle = C.bg2; ctx.fillRect(40, bot, W * 0.45 - 30, 16);
+      R.scene(ctx, W * 0.5, H, P.planet === 'moon' ? 'space' : 'outdoor', { ground: bot, clouds: P.planet !== 'moon', sun: false });
+      if (P.planet === 'moon') { ctx.fillStyle = '#8f8f8a'; ctx.fillRect(0, bot, W * 0.5, H - bot); }
+      ctx.fillStyle = C.bg; ctx.fillRect(W * 0.5, 0, W * 0.5, H);
       var step = P.h > 50 ? 10 : 5;
       for (var m = 0; m <= P.h; m += step) {
         var y = top + m * k;
         D.line(ctx, 40, y, 48, y, C.muted, 1);
-        D.text(ctx, (P.h - m) + ' м', 36, y + 4, { size: 10, align: 'right', color: C.muted, mono: true });
+        R.txt(ctx, (P.h - m) + ' м', 34, y, { size: 9.5, align: 'right', color: '#1b2329', mono: true });
       }
       [[X0 + 50, C.ink, C.muted], [X0 + 140, C.orange, C.brass]].forEach(function (c, i) {
         var b = S.b[i], B = BODIES[i];
         var y = top + b.y * k - B.r;
-        D.circle(ctx, c[0], Math.min(y, bot - B.r), B.r, i ? '#f3ead8' : C.muted, c[1], 1.5);
-        D.text(ctx, B.name, c[0], bot + 30, { size: 11, align: 'center', color: C.muted });
+        R.sphere(ctx, c[0], Math.min(y, bot - B.r), B.r, i ? '#f3ead8' : '#8f99a3', { shadowY: bot + 2 });
+        R.tag(ctx, B.name, c[0], bot + 22, { size: 10.5 });
       });
       var vmax = Math.max(5, Math.sqrt(2 * G[P.planet] * P.h) * 1.1);
       var tmax = Math.max(1, Math.sqrt(2 * P.h / G[P.planet]) * (P.air && P.planet === 'earth' ? 2.2 : 1.15));
