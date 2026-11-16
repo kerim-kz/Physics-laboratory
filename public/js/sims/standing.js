@@ -1,6 +1,8 @@
 /* Шектелген ішектегі тұрғын толқын: y = 2A·sin(kx)·cos(ωt), λₙ = 2L/n, νₙ = n·v/(2L), v = √(T/μ). */
 (function () {
+  var R = window.Real;
   Sim.create({
+    grid: false,
     aspect: 0.6, autoplay: true, keepRunning: true,
     hint: 'Түйіндер (қозғалмайтын нүктелер) мен шоқтарды санап көр.',
     controls: [
@@ -28,7 +30,9 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var x0 = 50, x1 = 50 + (W - 100) * P.L / 2, cy = H * 0.45, A = Math.min(70, H * 0.17);
       // тіректер
-      ctx.fillStyle = C.line; ctx.fillRect(x0 - 12, cy - 60, 12, 120); ctx.fillRect(x1, cy - 60, 12, 120);
+      R.scene(ctx, W, H, 'lab', { table: cy + 80 });
+      R.block(ctx, x0 - 14, cy - 50, 14, 130, 'oak', { depth: 6, shadow: false }); R.block(ctx, x1, cy - 50, 14, 130, 'oak', { depth: 6, shadow: false });
+      ctx.fillStyle = C.bg; ctx.fillRect(0, cy + 90, W, H - cy - 90);
       var k = P.n * Math.PI / (x1 - x0), c = Math.cos(S.ph);
       // қабықша (ең үлкен ауытқу)
       ctx.save(); ctx.globalAlpha = 0.25; ctx.strokeStyle = C.accent; ctx.lineWidth = 1;
@@ -42,7 +46,7 @@
         });
       }
       // ішек
-      ctx.save(); ctx.strokeStyle = C.ink; ctx.lineWidth = 3; ctx.beginPath();
+      ctx.save(); ctx.strokeStyle = '#b8a070'; ctx.lineWidth = 3; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 3; ctx.beginPath();
       for (var x2 = x0; x2 <= x1; x2 += 2) { var y2 = cy - A * Math.sin(k * (x2 - x0)) * c; if (x2 === x0) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2); }
       ctx.stroke(); ctx.restore();
       // түйіндер мен шоқтар

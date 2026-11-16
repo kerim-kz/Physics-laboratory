@@ -1,5 +1,6 @@
 /* Ай фазалары: Ай Жерді айналады, Күн жарығы оң жақтан түседі. Жерден Айдың жарықталған бөлігінің көрінуі өзгереді. */
 (function () {
+  var RL = window.Real;
   var SYN = 29.53;
   var NAMES = ['Жаңа ай', 'Өспелі орақ ай', 'Бірінші ширек', 'Өспелі толысқан ай', 'Толған ай', 'Кемімелі толысқан ай', 'Соңғы ширек', 'Кемімелі орақ ай'];
   function phaseName(f) { return NAMES[Math.floor(((f + 1 / 16) % 1) * 8)]; }
@@ -29,20 +30,19 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, C = api.C, D = api.D, f = S.day / SYN, ang = 2 * Math.PI * f;
-      ctx.fillStyle = '#070d18'; ctx.fillRect(0, 0, W, H);
-      for (var i = 0; i < 80; i++) { ctx.fillStyle = 'rgba(255,255,255,' + (0.15 + (i * 13 % 10) / 25) + ')'; ctx.fillRect((i * 131) % W, (i * 71) % H, 1.4, 1.4); }
+      RL.scene(ctx, W, H, 'space', { seed: 8, count: 160 });
       // Күн сәулелері
       for (var k = 0; k < 7; k++) D.arrow(ctx, W - 20, 40 + k * (H - 80) / 6, W - 80, 40 + k * (H - 80) / 6, 'rgba(255,214,94,.5)', 1.5);
       D.text(ctx, 'Күн жарығы', W - 24, 24, { size: 11, color: '#ffd25e', align: 'right', weight: '600' });
       var ex = W * 0.36, ey = H / 2, R = Math.min(W * 0.26, H * 0.38);
       ctx.save(); ctx.strokeStyle = 'rgba(160,190,230,.35)'; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.arc(ex, ey, R, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
       // Жер (күндізгі жағы оңда)
-      D.circle(ctx, ex, ey, 22, '#2f6fb5', null, 0);
+      RL.planet(ctx, ex, ey, 22, 'earth', { light: 0 });
       ctx.save(); ctx.beginPath(); ctx.arc(ex, ey, 22, Math.PI / 2, 3 * Math.PI / 2); ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fill(); ctx.restore();
       D.text(ctx, 'Жер', ex, ey + 38, { size: 11, align: 'center', color: '#c4d3e0' });
       // Ай (Жаңа ай — Күн жақта, яғни оң жақта)
       var mx = ex + R * Math.cos(ang), my = ey - R * Math.sin(ang);
-      D.circle(ctx, mx, my, 12, '#d8d4c8', null, 0, true);
+      RL.planet(ctx, mx, my, 12, 'moon', { light: 0 });
       ctx.save(); ctx.beginPath(); ctx.arc(mx, my, 12, Math.PI / 2, 3 * Math.PI / 2); ctx.fillStyle = 'rgba(0,0,0,.7)'; ctx.fill(); ctx.restore();
       // Жерден көрінісі
       var vx = W - 110, vy = H - 110, vr = 70;

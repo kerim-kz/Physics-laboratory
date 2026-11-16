@@ -1,5 +1,6 @@
 /* Идеал газдың екі өлшемді моделі. Қысым қабырғаға соқтығысқан бөлшектердің импульсі бойынша өлшенеді. */
 (function () {
+  var R = window.Real;
   var BOX_H = 0.7;           // ыдыс биіктігі (шартты бірлік)
   var WIN = 1.5;             // қысымды орташалау терезесі, с
   function sigma(T) { return 0.25 * Math.sqrt(T / 300); } // жылдамдық құраушысының стандартты ауытқуы
@@ -8,6 +9,7 @@
   function pTheory(N, T, V) { return (N * sigma(T) * sigma(T)) / (V * BOX_H) / ((100 * sigma(300) * sigma(300)) / (1 * BOX_H)); }
 
   Sim.create({
+    grid: false,
     aspect: 0.6,
     autoplay: true,
     keepRunning: true,
@@ -69,18 +71,19 @@
       var pad = 30, k = Math.min((W - 2 * pad - 60) / 1, (H - 2 * pad) / BOX_H);
       var ox = pad, oy = pad;
       // ыдыс
-      ctx.strokeStyle = C.muted; ctx.lineWidth = 3;
-      ctx.strokeRect(ox, oy, 1 * k, BOX_H * k);
-      ctx.fillStyle = C.bg2; ctx.fillRect(ox + P.V * k, oy, (1 - P.V) * k, BOX_H * k);
-      // поршень
-      ctx.fillStyle = C.line; ctx.fillRect(ox + P.V * k, oy, 10, BOX_H * k);
-      ctx.fillRect(ox + P.V * k + 10, oy + BOX_H * k / 2 - 4, (1 - P.V) * k + 40, 8);
+      R.scene(ctx, W, H, 'wall');
+      // шыны цилиндр, металл поршень
+      var gl = ctx.createLinearGradient(0, oy, 0, oy + BOX_H * k); gl.addColorStop(0, 'rgba(200,230,245,.45)'); gl.addColorStop(0.2, 'rgba(255,255,255,.6)'); gl.addColorStop(1, 'rgba(160,200,220,.45)');
+      ctx.fillStyle = gl; ctx.fillRect(ox, oy, 1 * k, BOX_H * k);
+      ctx.strokeStyle = 'rgba(80,120,140,.85)'; ctx.lineWidth = 3; ctx.strokeRect(ox, oy, 1 * k, BOX_H * k);
+      R.block(ctx, ox + P.V * k, oy + 2, 12, BOX_H * k - 4, 'steel', { depth: 0, shadow: false });
+      var rod = ctx.createLinearGradient(0, oy + BOX_H * k / 2 - 4, 0, oy + BOX_H * k / 2 + 4); rod.addColorStop(0, '#9aa3ab'); rod.addColorStop(0.5, '#eef1f3'); rod.addColorStop(1, '#6c757d');
+      ctx.fillStyle = rod; ctx.fillRect(ox + P.V * k + 12, oy + BOX_H * k / 2 - 4, (1 - P.V) * k + 40, 8);
       // бөлшектер (жылдамдыққа қарай түс)
       var s = sigma(P.T);
       S.ps.forEach(function (p) {
         var sp = Math.hypot(p.vx, p.vy) / (s * 2.2);
-        ctx.fillStyle = sp > 1 ? C.red : sp > 0.55 ? C.orange : C.blue;
-        ctx.beginPath(); ctx.arc(ox + p.x * k, oy + p.y * k, 3.2, 0, Math.PI * 2); ctx.fill();
+        R.sphere(ctx, ox + p.x * k, oy + p.y * k, 3.6, sp > 1 ? '#d2382b' : sp > 0.55 ? '#e0861f' : '#2f6fd1');
       });
       D.text(ctx, 'V = ' + api.fmt(P.V, 2) + ' V₀', ox + 6, oy + BOX_H * k + 18, { size: 12, mono: true, color: C.muted });
       D.text(ctx, 'T = ' + P.T + ' К', ox + 120, oy + BOX_H * k + 18, { size: 12, mono: true, color: C.muted });

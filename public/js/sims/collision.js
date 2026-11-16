@@ -1,9 +1,11 @@
 /* Екі арбашаның бір өлшемді соқтығысуы: импульс пен кинетикалық энергия. */
 (function () {
+  var R = window.Real;
   var TRACK = 10;
   var width = function (m) { return 0.45 + 0.12 * m; };
 
   Sim.create({
+    grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.5,
@@ -63,14 +65,15 @@
       var left = 30, right = W - 30, k = (right - left) / TRACK, y = H * 0.55;
       var X = function (x) { return left + x * k; };
       api._sc = { px: k, unit: 'м' };
-      D.line(ctx, left, y, right, y, C.muted, 3);
+      R.scene(ctx, W, H, 'lab', { table: y + 2 });
+      var rg = ctx.createLinearGradient(0, y - 3, 0, y + 5); rg.addColorStop(0, '#eef1f3'); rg.addColorStop(1, '#6c757d');
+      ctx.fillStyle = rg; ctx.fillRect(left - 6, y - 3, right - left + 12, 8);
       for (var i = 0; i <= TRACK; i++) { D.line(ctx, X(i), y, X(i), y + 6, C.muted, 1); D.text(ctx, String(i), X(i), y + 18, { size: 10, align: 'center', color: C.muted, mono: true }); }
       D.text(ctx, 'x, м', right, y + 32, { size: 11, align: 'right', color: C.muted });
       function cart(x, m, u, color, label) {
         var w = width(m) * k, h = 26 + m * 4, cx = X(x);
-        ctx.fillStyle = color; ctx.fillRect(cx - w / 2, y - h - 8, w, h);
-        D.circle(ctx, cx - w / 3, y - 5, 5, C.ink); D.circle(ctx, cx + w / 3, y - 5, 5, C.ink);
-        D.text(ctx, label + ': ' + api.fmt(m, 1) + ' кг', cx, y - h / 2 - 4, { size: 11, align: 'center', color: '#fff', weight: '600' });
+        R.block(ctx, cx - w / 2, y - h - 8, w, h, color === C.blue ? 'plasticBlue' : 'plasticRed', { depth: 8, shadow: false, label: label + ': ' + api.fmt(m, 1) + ' кг' });
+        R.wheel(ctx, cx - w / 3, y - 6, 6, x * 8); R.wheel(ctx, cx + w / 3, y - 6, 6, x * 8);
         if (Math.abs(u) > 0.01) D.arrow(ctx, cx, y - h - 20, cx + u * 22, y - h - 20, color, 2.5, api.fmt(u, 2) + ' м/с');
       }
       cart(S.x1, P.m1, S.u1, C.blue, 'm₁');

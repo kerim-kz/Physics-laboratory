@@ -1,8 +1,10 @@
 /* Механикалық толқын: y(x, t) = A·sin 2πν(t − x/v), толқын көзі x = 0 нүктесінде t = 0 сәтте іске қосылады. */
 (function () {
+  var R = window.Real;
   var L = 4, N = 121, MARK = 30;
 
   Sim.create({
+    grid: false,
     tools: ['stopwatch'],
     aspect: 0.5,
     autoplay: true,
@@ -30,21 +32,23 @@
       var left = 30, right = W - 30, mid = H * 0.5, kx = (right - left) / L, ky = Math.min(36, H * 0.18);
       var lam = P.v / P.nu;
       var disp = function (x) { var ph = S.t - x / P.v; return ph > 0 ? Math.sin(2 * Math.PI * P.nu * ph) : 0; };
-      D.line(ctx, left, mid, right, mid, C.soft, 1, [4, 4]);
+      R.scene(ctx, W, H, 'lab', { table: H - 14 });
+      R.block(ctx, left - 26, mid - 50, 16, 100, 'iron', { depth: 5, shadow: false });
+      D.line(ctx, left, mid, right, mid, 'rgba(0,0,0,.18)', 1, [4, 4]);
       if (P.type === 'tr') {
-        ctx.save(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.2; ctx.beginPath();
+        ctx.save(); ctx.strokeStyle = '#c0392b'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath();
         for (var i = 0; i < N; i++) { var x = i / (N - 1) * L, px = left + x * kx, py = mid - disp(x) * P.A * ky; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
         ctx.stroke(); ctx.restore();
         for (var j = 0; j < N; j += 2) {
           var xx = j / (N - 1) * L;
-          D.circle(ctx, left + xx * kx, mid - disp(xx) * P.A * ky, j === MARK ? 7 : 4, j === MARK ? C.red : C.blue);
+          if (j === MARK) R.sphere(ctx, left + xx * kx, mid - disp(xx) * P.A * ky, 7, '#ffd43b');
         }
       } else {
         // бойлық: бөлшектер толқынның таралу бағытымен ығысады
         var amp = Math.min(0.12, lam / 6) * P.A / 1.5;
         for (var q = 0; q < N; q++) {
           var x0 = q / (N - 1) * L, x1 = x0 + disp(x0) * amp, px1 = left + x1 * kx;
-          D.line(ctx, px1, mid - 40, px1, mid + 40, q === MARK ? C.red : C.blue, q === MARK ? 3 : 1.3);
+          D.line(ctx, px1, mid - 40, px1, mid + 40, q === MARK ? '#d2382b' : '#8f99a3', q === MARK ? 3.5 : 2.2);
         }
       }
       // толқын көзі және λ белгісі

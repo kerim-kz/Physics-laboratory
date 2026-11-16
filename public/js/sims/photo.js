@@ -1,5 +1,6 @@
 /* Фотоэффект: hν = A + E_k max. Фотон энергиясы E = 1240 эВ·нм / λ. */
 (function () {
+  var RL = window.Real;
   var METALS = { cs: [1.9, 'Цезий'], k: [2.2, 'Калий'], na: [2.3, 'Натрий'], li: [2.4, 'Литий'], zn: [4.2, 'Мырыш'], ag: [4.3, 'Күміс'], pt: [5.3, 'Платина'] };
   var OPTS = Object.keys(METALS).map(function (k) { return [k, METALS[k][1] + ' (A ≈ ' + String(METALS[k][0]).replace('.', ',') + ' эВ)']; });
 
@@ -18,6 +19,7 @@
   }
 
   Sim.create({
+    grid: false,
     aspect: 0.6,
     autoplay: true,
     keepRunning: true,
@@ -75,6 +77,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, c = calc(P);
+      ctx.fillStyle = '#0e1420'; ctx.fillRect(0, 0, W, H); C = Object.create(C); C.ink = '#e6eef8'; C.muted = '#9fb3c8'; C.soft = 'rgba(255,255,255,.22)'; C.line = 'rgba(255,255,255,.35)'; C.bg = '#121a28'; C.bg2 = '#1b2534'; D = Object.create(api.D); D.text = function (c2, s2, x2, y2, o2) { o2 = Object.assign({}, o2 || {}); if (!o2.color || o2.color === api.C.ink) o2.color = '#e6eef8'; if (o2.bg) o2.bg = 'rgba(20,30,50,.85)'; return api.D.text(c2, s2, x2, y2, o2); };
       var cathX = W * 0.3, anodeX = W * 0.85, top = H * 0.3, bot = H * 0.78, lampX = Math.max(30, W * 0.08), lampY = H * 0.14;
       // вакуумдық түтік
       ctx.save(); ctx.strokeStyle = C.muted; ctx.lineWidth = 2; ctx.fillStyle = C.bg2;

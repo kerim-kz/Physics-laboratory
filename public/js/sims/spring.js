@@ -1,5 +1,6 @@
 /* Серіппелі маятник: m·x'' = −k·x − b·x' (горизонталь, үйкеліссіз бет). */
 (function () {
+  var R = window.Real;
   var WINDOW = 10; // графиктегі уақыт терезесі, с
 
   function stepRK(S, P, h) {
@@ -13,6 +14,7 @@
   }
 
   Sim.create({
+    grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.66,
@@ -57,15 +59,14 @@
       api._sc = { px: k, unit: 'м' };
       var bx = eq + S.x * k, side = 30 + Math.sqrt(P.m) * 14;
       // қабырға мен бет
-      ctx.fillStyle = C.line; ctx.fillRect(wall - 12, y - 45, 12, 90);
-      D.line(ctx, wall, y + side / 2, W - 160, y + side / 2, C.muted, 2);
+      R.scene(ctx, W, y + side / 2 + 40, 'lab', { table: y + side / 2 });
+      ctx.fillStyle = C.bg; ctx.fillRect(0, y + side / 2 + 40, W, H);
+      R.block(ctx, wall - 14, y - 45, 14, 90 + side / 2 - 10, 'iron', { depth: 6, shadow: false });
       // серіппе (ирек)
       var coils = 14, sx = wall, ex = bx - side / 2;
-      ctx.save(); ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(sx, y);
-      for (var i = 1; i <= coils * 2; i++) ctx.lineTo(sx + (ex - sx) * i / (coils * 2 + 1), y + (i % 2 ? -10 : 10));
-      ctx.lineTo(ex, y); ctx.stroke(); ctx.restore();
+      R.spring(ctx, sx, y, ex, y, { coils: coils, r: 10, wire: 2 });
       // жүк
-      ctx.fillStyle = C.blue; ctx.fillRect(bx - side / 2, y - side / 2, side, side);
+      R.block(ctx, bx - side / 2, y - side / 2, side, side, 'brass', { depth: 8, shadow: false });
       D.text(ctx, api.fmt(P.m, 1) + ' кг', bx, y + 4, { size: 11, align: 'center', color: '#fff', weight: '600' });
       D.line(ctx, eq, y - 50, eq, y + side / 2 + 8, C.muted, 1, [3, 3]);
       D.text(ctx, 'x = 0', eq, y - 54, { size: 10, align: 'center', color: C.muted });

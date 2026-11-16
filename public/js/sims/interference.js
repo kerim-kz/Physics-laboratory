@@ -1,5 +1,6 @@
 /* Юнг тәжірибесі: Δx = λL/d; дифракциялық тор: d·sinφ = kλ. Экрандағы интенсивтілік және түс толқын ұзындығы бойынша. */
 (function () {
+  var RL = window.Real;
   function rgb(nm) {
     var r = 0, g = 0, b = 0;
     if (nm < 440) { r = -(nm - 440) / 60; b = 1; } else if (nm < 490) { g = (nm - 440) / 50; b = 1; }
@@ -21,6 +22,7 @@
     return Math.abs(s) < 1e-6 ? 1 : Math.pow(num / (N * s), 2);
   }
   Sim.create({
+    grid: false,
     aspect: 0.62, static: true, resetLabel: false,
     hint: 'Экрандағы сурет толқын ұзындығына сай түспен салынған.',
     controls: [
@@ -44,6 +46,7 @@
     },
     draw: function (api, ctx, W, H) {
       var P = api.P, C = api.C, D = api.D, col = rgb(P.lam), cs = 'rgb(' + col.join(',') + ')';
+      ctx.fillStyle = '#0b1018'; ctx.fillRect(0, 0, W, H); C = Object.create(C); C.ink = '#e6eef8'; C.muted = '#9fb3c8'; C.soft = 'rgba(255,255,255,.22)'; C.line = 'rgba(255,255,255,.35)'; C.bg = '#121a28'; C.bg2 = '#1b2534'; D = Object.create(api.D); D.text = function (c2, s2, x2, y2, o2) { o2 = Object.assign({}, o2 || {}); if (!o2.color || o2.color === api.C.ink) o2.color = '#e6eef8'; if (o2.bg) o2.bg = 'rgba(20,30,50,.85)'; return api.D.text(c2, s2, x2, y2, o2); };
       var young = P.mode === 'young';
       var span = young ? 8 * P.lam * 1e-9 * P.L / (P.d * 1e-3) : P.L * 1.5; // экранның көрінетін жарты ені, м
       // сызба

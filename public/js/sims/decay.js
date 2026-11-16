@@ -1,6 +1,8 @@
 /* Радиоактивті ыдырау: әр ядро dt уақытта p = 1 − 2^(−dt/T) ықтималдықпен ыдырайды. */
 (function () {
+  var RL = window.Real;
   Sim.create({
+    grid: false,
     aspect: 0.62,
     controls: [
       { type: 'select', key: 'N0', label: 'Бастапқы ядролар саны N₀', value: '400', options: [['100', '100'], ['400', '400'], ['1600', '1600'], ['2500', '2500']] },
@@ -30,6 +32,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D, n = +P.N0;
+      RL.scene(ctx, W, H, 'wall');
       var side = Math.round(Math.sqrt(n)), gw = Math.min(W * 0.42, H - 40), cell = gw / side;
       for (var i = 0; i < n; i++) {
         var x = 20 + (i % side) * cell, y = 20 + Math.floor(i / side) * cell;

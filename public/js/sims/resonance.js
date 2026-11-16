@@ -1,10 +1,12 @@
 /* Еріксіз тербелістер және резонанс: x'' + 2βx' + ω₀²x = (ω₀² A₀) cos ωt (тірек тербеледі). */
 (function () {
+  var R = window.Real;
   function amp(P, f) {
     var w0 = Math.sqrt(P.k / P.m), w = 2 * Math.PI * f, b = P.b;
     return P.A0 * w0 * w0 / Math.sqrt(Math.pow(w0 * w0 - w * w, 2) + 4 * b * b * w * w);
   }
   Sim.create({
+    grid: false,
     aspect: 0.62, autoplay: true, keepRunning: true, substeps: 20,
     tools: ['stopwatch'],
     hint: 'Мәжбүрлеуші жиілікті жүктің меншікті жиілігіне жақындат.',
@@ -42,15 +44,13 @@
       var cx = W * 0.16, top = 40, drive = 0.02 * Math.cos(S.ph), scale = 900;
       var sy = top + drive * scale * 0.6, by = H * 0.45 + S.x * scale * 0.6;
       // тербелетін тірек (эксцентрик)
-      ctx.fillStyle = C.line; ctx.fillRect(cx - 50, sy - 10, 100, 10);
-      D.circle(ctx, cx + 70, top - 10, 14, C.bg2, C.ink, 1.5);
+      R.scene(ctx, W * 0.34, H, 'lab', { table: H - 14 });
+      R.block(ctx, cx - 50, sy - 12, 100, 10, 'iron', { depth: 5, shadow: false });
+      R.sphere(ctx, cx + 70, top - 10, 14, '#9aa3ab');
       D.line(ctx, cx + 70, top - 10, cx + 70 + 14 * Math.cos(S.ph), top - 10 + 14 * Math.sin(S.ph), C.red, 2);
       // серіппе
-      ctx.save(); ctx.strokeStyle = C.blue; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, sy);
-      var n = 16; for (var i = 1; i < n; i++) ctx.lineTo(cx + (i % 2 ? 10 : -10), sy + (by - 22 - sy) * i / n);
-      ctx.lineTo(cx, by - 22); ctx.stroke(); ctx.restore();
-      var gb = ctx.createLinearGradient(cx - 22, 0, cx + 22, 0); gb.addColorStop(0, '#d4a04f'); gb.addColorStop(1, '#8a5d18');
-      ctx.fillStyle = gb; ctx.fillRect(cx - 22, by - 22, 44, 44);
+      R.spring(ctx, cx, sy, cx, by - 22, { coils: 14, r: 10 });
+      R.cylinder(ctx, cx - 22, by - 22, 44, 44, 'brass', { shadow: false, ry: 5 });
       D.text(ctx, api.fmt(P.m, 1) + ' кг', cx, by + 4, { size: 11, align: 'center', color: '#fff', weight: '600' });
       // x(t)
       var span = 12, t0 = Math.max(0, S.t - span), A = amp(p, P.f) * 100, ym = Math.max(3, A * 1.3);

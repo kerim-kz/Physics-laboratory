@@ -1,11 +1,13 @@
 /* Толық тізбек үшін Ом заңы: I = ε/(R + r), сыртқы тізбектегі қуат P = I²R. */
 (function () {
+  var RL = window.Real;
   function calc(P) {
     var I = P.eps / (P.R + P.r);
     return { I: I, U: I * P.R, Pout: I * I * P.R, Ptot: P.eps * I, eta: P.R / (P.R + P.r), Isc: P.eps / P.r };
   }
 
   Sim.create({
+    grid: false,
     aspect: 0.7,
     autoplay: true,
     keepRunning: true,
@@ -29,6 +31,7 @@
     read: function (api) { var c = calc(api.P); c.eta *= 100; return c; },
     draw: function (api, ctx, W, H) {
       var P = api.P, S = api.S, C = api.C, D = api.D, c = calc(P);
+      RL.scene(ctx, W, H, 'wall'); ctx.save(); ctx.globalAlpha = 0.9; ctx.fillStyle = '#f7f6f1'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 6; ctx.fillRect(10, 10, W - 20, H - 20); ctx.restore();
       var x1 = 130, x2 = Math.min(W - 110, 560), y1 = 50, y2 = Math.min(H * 0.5, 230);
       // сымдар
       ctx.strokeStyle = C.ink; ctx.lineWidth = 2;

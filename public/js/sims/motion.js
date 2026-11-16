@@ -1,10 +1,12 @@
 /* Бірқалыпты үдемелі қозғалыс: x(t) = x₀ + v₀t + at²/2, v(t) = v₀ + at. */
 (function () {
+  var R = window.Real;
   var TMAX = 10;
   function pos(P, t) { return P.x0 + P.v0 * t + P.a * t * t / 2; }
   function vel(P, t) { return P.v0 + P.a * t; }
 
   Sim.create({
+    grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.72,
@@ -53,7 +55,10 @@
       var top = 24, trackY = 92, left = 30, right = W - 30;
       var X = function (x) { return left + (x - S.xmin) / (S.xmax - S.xmin) * (right - left); };
       api._sc = { px: (right - left) / (S.xmax - S.xmin), unit: 'м' };
-      D.line(ctx, left, trackY, right, trackY, C.line, 3);
+      R.scene(ctx, W, trackY + 50, 'lab', { table: trackY });
+      ctx.fillStyle = C.bg; ctx.fillRect(0, trackY + 50, W, H - trackY - 50);
+      var rg = ctx.createLinearGradient(0, trackY - 3, 0, trackY + 5); rg.addColorStop(0, '#eef1f3'); rg.addColorStop(1, '#6c757d');
+      ctx.fillStyle = rg; ctx.fillRect(left - 10, trackY - 3, right - left + 20, 8);
       var step = Math.pow(10, Math.floor(Math.log10((S.xmax - S.xmin) / 4)));
       if ((S.xmax - S.xmin) / step > 12) step *= 5; else if ((S.xmax - S.xmin) / step > 6) step *= 2;
       for (var g = Math.ceil(S.xmin / step) * step; g <= S.xmax; g += step) {
@@ -67,12 +72,8 @@
       D.text(ctx, 'x₀', X(P.x0) + 4, trackY - 30, { size: 11, color: C.muted });
       // арбаша
       var x = pos(P, S.t), cx = X(x);
-      ctx.fillStyle = C.blue;
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(cx - 22, trackY - 30, 44, 22, 5); else ctx.rect(cx - 22, trackY - 30, 44, 22);
-      ctx.fill();
-      D.circle(ctx, cx - 12, trackY - 5, 5, C.ink);
-      D.circle(ctx, cx + 12, trackY - 5, 5, C.ink);
+      R.block(ctx, cx - 22, trackY - 30, 44, 20, 'plasticBlue', { depth: 7, shadow: false });
+      R.wheel(ctx, cx - 12, trackY - 7, 6, x * 6); R.wheel(ctx, cx + 12, trackY - 7, 6, x * 6);
       var v = vel(P, S.t);
       if (Math.abs(v) > 0.05) D.arrow(ctx, cx, trackY - 42, cx + Math.max(-80, Math.min(80, v * 6)), trackY - 42, C.accent, 2.5, 'v');
       if (Math.abs(P.a) > 0.05) D.arrow(ctx, cx, trackY - 58, cx + P.a * 15, trackY - 58, C.orange, 2.5, 'a');

@@ -1,6 +1,8 @@
 /* Шеңбер бойымен бірқалыпты қозғалыс: v = 2πR/T, ω = 2π/T, a = v²/R. */
 (function () {
+  var R = window.Real;
   Sim.create({
+    grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
     aspect: 0.62, autoplay: true,
@@ -29,7 +31,8 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var cx = W * 0.4, cy = H / 2, k = (H / 2 - 40) / 3, r = P.R * k;
       api._sc = { px: k, unit: 'м' };
-      ctx.save(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
+      R.tableTop(ctx, 0, 0, W * 0.62, H, '#b98352');
+      ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
       var phi = S.phi % (2 * Math.PI);
       if (P.trail) {
@@ -39,13 +42,13 @@
       }
       D.circle(ctx, cx, cy, 4, C.ink);
       var x = cx + r * Math.cos(phi), y = cy - r * Math.sin(phi);
-      D.line(ctx, cx, cy, x, y, C.muted, 1);
+      D.line(ctx, cx, cy, x, y, '#2a2014', 1.4); R.sphere(ctx, cx, cy, 6, '#9aa3ab');
       var v = 2 * Math.PI * P.R / P.T, a = v * v / P.R;
       var vs = Math.min(100, 12 + v * 12), as = Math.min(100, 10 + a * 6);
       var tx = -Math.sin(phi), ty = -Math.cos(phi); // сағат тіліне қарсы айналудағы жанама
       D.arrow(ctx, x, y, x + tx * vs, y + ty * vs, C.blue, 2.5, 'v');
       D.arrow(ctx, x, y, x + (cx - x) / r * as, y + (cy - y) / r * as, C.red, 2.5, 'a');
-      D.circle(ctx, x, y, 9, C.orange, C.ink, 1.5);
+      R.sphere(ctx, x, y, 10, '#d9733a');
       D.text(ctx, 'R = ' + api.fmt(P.R, 1) + ' м', cx + 8, cy - 8, { size: 11, color: C.muted });
       // формулалар тақтасы
       var bx = W * 0.72;

@@ -1,8 +1,10 @@
 /* Электромагниттік индукция: ε = −N·dΦ/dt. Магнит катушка осі бойымен қозғалады (автомат немесе тінтуірмен). */
 (function () {
+  var RL = window.Real;
   var A = 0.12; // катушка радиусына сай масштаб, м
   function flux(z, B0) { return B0 / Math.pow(1 + (z / A) * (z / A), 1.5); } // осьтегі ағын (бір орам), шартты бірлік
   Sim.create({
+    grid: false,
     aspect: 0.62, substeps: 4,
     hint: 'Магнитті тінтуірмен (саусақпен) жылжытуға да болады.',
     controls: [
@@ -49,6 +51,7 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
+      RL.scene(ctx, W, H, 'lab', { table: H - 12 });
       var cx = W * 0.55, cy = H * 0.3, k = W * 0.5;
       // катушка
       var turns = Math.round(6 + P.N / 40);
@@ -61,8 +64,7 @@
       // магнит
       var mx = cx + S.z * k, mw = 90;
       var left = P.flip ? C.blue : C.red, right = P.flip ? C.red : C.blue;
-      ctx.fillStyle = right; ctx.fillRect(mx - mw / 2, cy - 14, mw / 2, 28);
-      ctx.fillStyle = left; ctx.fillRect(mx, cy - 14, mw / 2, 28);
+      RL.magnet(ctx, mx, cy, mw, P.flip ? Math.PI : 0, { h: 28 });
       D.text(ctx, P.flip ? 'N' : 'S', mx - mw / 4, cy + 5, { size: 13, align: 'center', color: '#fff', weight: '700' });
       D.text(ctx, P.flip ? 'S' : 'N', mx + mw / 4, cy + 5, { size: 13, align: 'center', color: '#fff', weight: '700' });
       // гальванометр
