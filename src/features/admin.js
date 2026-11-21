@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { config } from '../config.js';
-import { DOMAIN, DOMAINS, EXAM, EXAMS, GRADES, hasDomains, MATERIAL_TYPE, MATERIAL_TYPES, REGIONS, ROLE_NAME, SECTION, SECTIONS } from '../data/catalog.js';
+import { DOMAIN, domainName, domainsOf, EXAM, EXAMS, GRADES, hasDomains, TEST_EXAMS, validDomain, MATERIAL_TYPE, MATERIAL_TYPES, REGIONS, ROLE_NAME, SECTION, SECTIONS } from '../data/catalog.js';
 import { csrfAfterUpload, dropUserSessions, hashPassword, requireAdmin, requireOwner } from '../lib/auth.js';
 import { many, one, q, tx } from '../lib/db.js';
 import { chk, html, sel } from '../lib/html.js';
@@ -381,28 +381,28 @@ const KINDS = [
 const KIND_NAME = { single: 'таңдау', multi: 'бірнеше дұрыс', matrix: 'кесте', number: 'сан', open: 'ашық жауап' };
 
 router.get('/questions', asyncH(async (req, res) => {
-  const exam = EXAM[req.query.exam] ? req.query.exam : 'ubt';
-  const domains = hasDomains(exam);
-  const domain = domains && DOMAIN[req.query.domain] ? req.query.domain : '';
+  const exam = EXAM[req.query.exam] && !EXAM[req.query.exam].survey ? req.query.exam : 'ubt';
+  const domains = hasDomains(exam), doms = domainsOf(exam);
+  const domain = validDomain(exam, req.query.domain) ? req.query.domain : '';
   const params = [exam];
   if (domain) params.push(domain);
   const units = await many(`SELECT u.*, (SELECT json_agg(json_build_object('stem', q.stem, 'kind', q.kind) ORDER BY q.ord) FROM exam_questions q WHERE q.unit_id = u.id) AS qs
       FROM exam_units u WHERE u.exam = $1${domain ? ' AND u.domain = $2' : ''} ORDER BY u.domain, u.section, u.id`, params);
   const unitName = (u) => u.title || (u.qs && u.qs[0] ? u.qs[0].stem.split('\n').pop().slice(0, 90) : `№${u.id}`);
   await adminPage(req, res, 'questions', 'Тест банкі', html`
-    <div class="seg">${EXAMS.map((e) => html`<a href="/admin/questions?exam=${e.k}" class="${e.k === exam ? 'on' : ''}">${e.name}</a>`)}</div>
-    ${domains ? html`<div class="seg"><a href="/admin/questions?exam=${exam}" class="${domain ? '' : 'on'}">Барлық бағыт</a>${DOMAINS.map((d) => html`<a href="/admin/questions?exam=${exam}&domain=${d.k}" class="${d.k === domain ? 'on' : ''}">${d.name}</a>`)}</div>` : ''}
+    <div class="seg">${TEST_EXAMS.map((e) => html`<a href="/admin/questions?exam=${e.k}" class="${e.k === exam ? 'on' : ''}">${e.name}</a>`)}</div>
+    ${domains ? html`<div class="seg"><a href="/admin/questions?exam=${exam}" class="${domain ? '' : 'on'}">Барлық бағыт</a>${doms.map((d) => html`<a href="/admin/questions?exam=${exam}&domain=${d.k}" class="${d.k === domain ? 'on' : ''}">${d.name}</a>`)}</div>` : ''}
     <form class="panel form" method="post" action="/admin/questions" enctype="multipart/form-data" id="qForm">
       ${csrfField(req)}
       <input type="hidden" name="exam" value="${exam}">
       <h2>${EXAM[exam].name}: тапсырма қосу</h2>
       <p class="muted small">Мәтінде кесте жасау үшін жолды «|» белгісімен бастаңыз: <span class="mono">| Аялдама | Уақыт |</span> (бірінші жол — тақырып). Тізім үшін жолды «• » белгісімен бастаңыз.</p>
       <div class="row3">
-        ${domains ? html`<label class="fl"><span class="req">Бағыт</span><select name="domain">${DOMAINS.map((d) => html`<option value="${d.k}"${sel(d.k === (domain || 'science'))}>${d.name}</option>`)}</select></label>` : ''}
+        ${domains ? html`<label class="fl"><span class="req">Бағыт</span><select name="domain">${doms.map((d) => html`<option value="${d.k}"${sel(d.k === (domain || doms[0].k))}>${d.name}</option>`)}</select></label>` : ''}
         <label class="fl">Физика бөлімі<select name="section"><option value="">—</option>${SECTIONS.map((s) => html`<option value="${s.k}">${s.name}</option>`)}</select></label>
         <label class="fl">Сынып<select name="grade"><option value="0">—</option>${GRADES.map((g) => html`<option value="${g}">${g}</option>`)}</select></label>
       </div>
-      <label class="fl">Қай блокқа қосу<select name="unit_id"><option value="">Жаңа блок (жаңа мәтін немесе жағдаят)</option>${units.map((u) => html`<option value="${u.id}">Бар блокқа: ${unitName(u)}${domains && DOMAIN[u.domain] ? ` · ${DOMAIN[u.domain].name}` : ''}</option>`)}</select></label>
+      <label class="fl">Қай блокқа қосу<select name="unit_id"><option value="">Жаңа блок (жаңа мәтін немесе жағдаят)</option>${units.map((u) => html`<option value="${u.id}">Бар блокқа: ${unitName(u)}${domains && DOMAIN[u.domain] ? ` · ${domainName(exam, u.domain)}` : ''}</option>`)}</select></label>
       <fieldset class="qf" data-for="new">
         <legend>Жаңа блок (бар блокқа қоссаңыз, бұл бөлім ескерілмейді)</legend>
         <label class="fl">Блоктың атауы<input type="text" name="title" maxlength="160" placeholder="Мысалы: Мұхит ағыстары"></label>
@@ -438,7 +438,7 @@ router.get('/questions', asyncH(async (req, res) => {
     <div class="list">${units.map((u) => html`
       <div class="row">
         <div class="grow"><b>${unitName(u)}</b>
-          <span>${domains && DOMAIN[u.domain] ? `${DOMAIN[u.domain].name} · ` : ''}${SECTION[u.section] ? `${SECTION[u.section].name} · ` : ''}${u.grade ? `${u.grade}-сынып · ` : ''}${u.qs ? u.qs.length : 0} сұрақ (${[...new Set((u.qs || []).map((x) => KIND_NAME[x.kind] || x.kind))].join(', ')})${u.image ? ' · суреті бар' : ''}${u.seed_key ? ' · бастапқы банк' : ''}</span></div>
+          <span>${domains && DOMAIN[u.domain] ? `${domainName(exam, u.domain)} · ` : ''}${SECTION[u.section] ? `${SECTION[u.section].name} · ` : ''}${u.grade ? `${u.grade}-сынып · ` : ''}${u.qs ? u.qs.length : 0} сұрақ (${[...new Set((u.qs || []).map((x) => KIND_NAME[x.kind] || x.kind))].join(', ')})${u.image ? ' · суреті бар' : ''}${u.seed_key ? ' · бастапқы банк' : ''}</span></div>
         <form method="post" action="/admin/questions/${u.id}/delete" data-confirm="Блок өшірілсін бе?">${csrfField(req)}<button class="btn warn sm" type="submit">Өшіру</button></form>
       </div>`)}</div>`, { scripts: ['/js/admin-q.js'] });
 }));
@@ -455,8 +455,8 @@ router.post('/questions', (req, res, next) => {
   });
 }, csrfAfterUpload, asyncH(async (req, res) => {
   const b = req.body;
-  const exam = EXAM[b.exam] ? b.exam : null;
-  const domain = exam && hasDomains(exam) ? (DOMAIN[b.domain] ? b.domain : 'science') : '';
+  const exam = EXAM[b.exam] && !EXAM[b.exam].survey ? b.exam : null;
+  const domain = exam && hasDomains(exam) ? (validDomain(exam, b.domain) ? b.domain : EXAM[exam].domains[0]) : '';
   const back = `/admin/questions?exam=${exam || 'ubt'}${domain ? `&domain=${domain}` : ''}`;
   const fail = (text) => { discardUpload(req.file); setFlash(res, 'error', text); res.redirect(back); };
   if (req.uploadError) return fail(req.uploadError);
