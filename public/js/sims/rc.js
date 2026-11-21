@@ -4,7 +4,7 @@
   Sim.create({
     grid: false,
     tools: ['stopwatch'],
-    aspect: 0.62, substeps: 10,
+    aspect: 0.62, aspectNarrow: 1.35, substeps: 10,
     hint: 'Ауыстырып-қосқыш: зарядтау ↔ разрядтау. Мәндер жалғасып кетеді.',
     controls: [
       { type: 'select', key: 'mode', label: 'Кілт', value: 'charge', options: [['charge', 'Зарядтау (көзге қосу)'], ['discharge', 'Разрядтау (резисторға тұйықтау)']], live: true },
@@ -36,31 +36,45 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
-      RL.scene(ctx, W, H, 'wall'); ctx.save(); ctx.globalAlpha = 0.9; ctx.fillStyle = '#f7f6f1'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 6; ctx.fillRect(10, 10, W - 20, H - 20); ctx.restore();
-      // схема
-      var x0 = 30, y0 = 40, w = W * 0.36, h = H * 0.42;
-      ctx.strokeStyle = C.ink; ctx.lineWidth = 2;
-      ctx.strokeRect(x0, y0, w, h);
-      ctx.fillStyle = C.bg; ctx.fillRect(x0 - 12, y0 + h / 2 - 14, 24, 28);
-      D.line(ctx, x0 - 12, y0 + h / 2 - 5, x0 + 12, y0 + h / 2 - 5, C.ink, 3); D.line(ctx, x0 - 6, y0 + h / 2 + 5, x0 + 6, y0 + h / 2 + 5, C.ink, 3);
-      D.text(ctx, 'E', x0 - 18, y0 + h / 2 + 4, { size: 12, align: 'right', weight: '600' });
-      ctx.fillStyle = C.bg; ctx.fillRect(x0 + w / 2 - 30, y0 - 10, 60, 20); ctx.strokeRect(x0 + w / 2 - 30, y0 - 10, 60, 20);
-      D.text(ctx, 'R', x0 + w / 2, y0 - 16, { size: 12, align: 'center', weight: '600' });
-      // конденсатор
-      var cx = x0 + w, cy = y0 + h / 2;
-      ctx.fillStyle = C.bg; ctx.fillRect(cx - 24, cy - 10, 48, 20);
-      D.line(ctx, cx - 22, cy - 6, cx + 22, cy - 6, C.ink, 3); D.line(ctx, cx - 22, cy + 6, cx + 22, cy + 6, C.ink, 3);
-      var n = Math.round(S.u / Math.max(1, P.E) * 6);
-      for (var i = 0; i < n; i++) { D.text(ctx, '+', cx - 18 + i * 7, cy - 10, { size: 10, color: C.red, weight: '600' }); D.text(ctx, '−', cx - 18 + i * 7, cy + 18, { size: 10, color: C.blue, weight: '600' }); }
-      D.text(ctx, 'C', cx + 28, cy + 4, { size: 12, weight: '600' });
-      // кілт
-      var charge = P.mode === 'charge';
-      D.text(ctx, charge ? 'Кілт: көзге қосулы' : 'Кілт: көз ажыратылған, C резистор арқылы разрядталады', x0, y0 + h + 26, { size: 12, color: charge ? C.good : C.brass, weight: '600' });
+      RL.tableTop(ctx, 0, 0, W, H, '#a87a4c');
+      var wide = W > 640, charge = P.mode === 'charge', Imax = P.E / P.R, I = (charge ? P.E - S.u : -S.u) / P.R, ph = S.t * 40 * Math.sign(I);
+      var x0 = wide ? 50 : 30, x1 = wide ? W * 0.42 : W - 30, yT = wide ? 50 : 34, yB = wide ? H * 0.5 : H * 0.3, xs = x0 + (x1 - x0) * 0.32;
+      // ауыстырып-қосқыш: көз тармағы (сол) немесе разряд тармағы (шам арқылы)
+      var on = Math.abs(I) > Imax * 0.01;
+      var cyy = (yT + yB) / 2;
+      RL.wire(ctx, [[xs, yT], [x1, yT], [x1, cyy - 10]], { color: '#c0392b', phase: ph * 20, current: on });
+      RL.wire(ctx, [[x1, cyy + 12], [x1, yB], [x0, yB], [x0, yT + 30]], { color: '#c0392b', phase: ph * 20, current: on });
+      ctx.save(); ctx.translate(x0, (yT + yB) / 2 + 10); ctx.rotate(-Math.PI / 2); RL.battery(ctx, -32, -12, 64, 24, { label: P.E + ' В' }); ctx.restore();
+      RL.wire(ctx, [[x0, yT + 30], [x0, yT], [xs - 40, yT]], { color: '#c0392b', phase: ph * 20, current: on && charge });
+      // разряд тармағы: шам
+      var bx = xs - 20, by = (yT + yB) / 2 + 6;
+      RL.wire(ctx, [[xs - 20, yT + 26], [bx, by - 18]], { color: '#2b2f33', phase: ph * 20, current: on && !charge });
+      RL.wire(ctx, [[bx, by + 16], [bx, yB]], { color: '#2b2f33', phase: ph * 20, current: on && !charge });
+      RL.bulb(ctx, bx, by, 12, charge ? 0 : Math.min(1, Math.abs(I) / Imax * 1.4));
+      // ауыстырып-қосқыштың тұтқасы
+      ctx.strokeStyle = '#c9cfd4'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(xs, yT); ctx.lineTo(charge ? xs - 40 : xs - 20, charge ? yT : yT + 26); ctx.stroke();
+      RL.sphere(ctx, xs, yT, 5, '#2b2f33'); RL.sphere(ctx, xs - 40, yT, 4, '#b7bec4'); RL.sphere(ctx, xs - 20, yT + 26, 4, '#b7bec4');
+      RL.tag(ctx, charge ? 'зарядтау' : 'разрядтау', xs - 20, yT - 22, { size: 10.5, color: charge ? '#0b8a7a' : '#b4560f' });
+      // резистор
+      RL.resistor(ctx, (xs + x1) / 2, yT, 70, {}); RL.tag(ctx, 'R = ' + P.R + ' кОм', (xs + x1) / 2, yT - 22, { size: 10.5 });
+      // конденсатор: екі пластина, зарядтар
+      var cy = (yT + yB) / 2, pw = 46;
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      RL.block(ctx, x1 - pw / 2, cy - 10, pw, 6, 'copper', { depth: 2, shadow: false }); RL.block(ctx, x1 - pw / 2, cy + 6, pw, 6, 'copper', { depth: 2, shadow: false });
+      ctx.fillStyle = wide ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,0)';
+      var n = Math.round(S.u / 12 * 8);
+      for (var i = 0; i < n; i++) { RL.txt(ctx, '+', x1 - pw / 2 + 4 + i * 5.5, cy - 17, { size: 10, color: '#b4342a', weight: '700' }); RL.txt(ctx, '−', x1 - pw / 2 + 4 + i * 5.5, cy + 20, { size: 10, color: '#1f5fd1', weight: '700' }); }
+      RL.tag(ctx, 'C = ' + P.C + ' мкФ', x1 - 70, cy, { size: 10.5 });
+      if (wide) { RL.meter(ctx, x1 - 70, yB + 50, 26, S.u, 12, { letter: 'V', step: 2 }); RL.tag(ctx, 'U_C = ' + S.u.toFixed(2).replace('.', ',') + ' В', x1 - 70, yB + 92, { size: 10.5, mono: true, color: '#0b6b78' }); }
       // графиктер
       var tau = P.R * P.C * 1e-3, tmax = Math.max(5 * tau, 10), t0 = Math.max(0, S.t - tmax);
-      D.plot(ctx, { x: W * 0.5, y: 30, w: W * 0.46, h: H * 0.38 }, { xmin: t0, xmax: t0 + tmax, ymin: 0, ymax: 12.5, ylabel: 'U_C, В', series: [{ pts: S.h, color: C.accent }, { pts: [[t0, P.E], [t0 + tmax, P.E]], color: C.muted, dash: [4, 4], width: 1 }] });
-      D.plot(ctx, { x: W * 0.5, y: H * 0.56, w: W * 0.46, h: H * 0.32 }, { xmin: t0, xmax: t0 + tmax, ymin: -P.E / P.R * 1.15, ymax: P.E / P.R * 1.15, xlabel: 't, с', ylabel: 'I, мА', series: [{ pts: S.hi, color: C.orange }] });
-      if (S.t === 0) D.text(ctx, '0,63·E деңгейіне τ уақытта жетеді', W * 0.5 + 6, 30 + H * 0.38 - 8, { size: 10, color: C.muted });
+      var gx = wide ? W * 0.52 : 46, gw = wide ? W * 0.44 : W - 64, g1y = wide ? 30 : H * 0.5, g1h = wide ? H * 0.38 : H * 0.2, g2y = wide ? H * 0.56 : H * 0.76, g2h = wide ? H * 0.32 : H * 0.16;
+      ctx.save(); RL.rr(ctx, gx - 44, g1y - 18, gw + 56, (g2y + g2h + 30) - (g1y - 18), 8); ctx.fillStyle = RL.isDark() ? 'rgba(20,26,32,.92)' : 'rgba(255,255,255,.95)'; ctx.fill(); ctx.restore();
+      var o1 = D.plot(ctx, { x: gx, y: g1y, w: gw, h: g1h }, { xmin: t0, xmax: t0 + tmax, ymin: 0, ymax: 12.5, ylabel: 'U_C, В', series: [{ pts: S.h, color: C.accent }, { pts: [[t0, P.E], [t0 + tmax, P.E]], color: C.muted, dash: [4, 4], width: 1 }] });
+      D.plot(ctx, { x: gx, y: g2y, w: gw, h: g2h }, { xmin: t0, xmax: t0 + tmax, ymin: -P.E / P.R * 1.15, ymax: P.E / P.R * 1.15, xlabel: 't, с', ylabel: 'I, мА', series: [{ pts: S.hi, color: C.orange }] });
+      // τ белгісі: 0,63E деңгейі
+      ctx.strokeStyle = '#0b8a7a'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(o1.X(t0), o1.Y(0.632 * P.E)); ctx.lineTo(o1.X(t0 + tmax), o1.Y(0.632 * P.E)); ctx.stroke(); ctx.setLineDash([]);
+      RL.tag(ctx, '0,63·E — τ уақытта жетеді', gx + gw - 90, o1.Y(0.632 * P.E) - 12, { size: 9.5, color: '#0b6b78' });
     },
   });
 })();
