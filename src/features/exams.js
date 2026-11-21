@@ -1,5 +1,6 @@
 import express from 'express';
-import { DOMAIN, DOMAINS, EXAM, EXAMS, examLabel, hasDomains, SECTION, SECTIONS } from '../data/catalog.js';
+import { domainsOf, EXAM, examArea, examLabel, hasDomains, INTL, SECTION, SECTIONS, validDomain } from '../data/catalog.js';
+import { TALIS_SCALES } from '../data/talis.js';
 import { requireUser } from '../lib/auth.js';
 import { many, one, q } from '../lib/db.js';
 import { gradeAnswer, isAnswered, loadUnits, pickUnitIds, questionHtml, unitHtml } from '../lib/examcore.js';
@@ -63,6 +64,18 @@ export function attemptsTable(attempts, { withStudent = false } = {}) {
       <td>${a.has_answers ? html`<a class="linkbtn" href="/exams/attempts/${a.id}">Қарау</a>` : ''}</td></tr>`)}</tbody></table></div>`;
 }
 
+// Емтихан картасы: анықтамасы, мақсаты, тапсырма саны.
+function examCard(e, n) {
+  return html`
+    <a class="excard" href="/exams/${e.k}">
+      <span class="exn"><b>${e.name}</b><span>${e.who}</span></span>
+      <p>${e.def}</p>
+      <p class="muted small"><b>Мақсаты:</b> ${e.goal.replace(/^Мақсаты — /, '')}</p>
+      <span class="exc">${e.survey ? 'Мұғалімге арналған сауалнама →' : `${n || 0} тапсырма · бастау →`}</span>
+    </a>`;
+}
+
+// Барлық бөлімдердің жалпы беті (тағайындалған тесттер мен соңғы нәтижелер осында).
 router.get('/exams', asyncH(async (req, res) => {
   const { byExam } = await bankCounts();
   const u = req.user;
@@ -71,46 +84,85 @@ router.get('/exams', asyncH(async (req, res) => {
        FROM exam_attempts WHERE user_id = $1 ORDER BY created_at DESC LIMIT 10`, [u.id]) : [];
   const assigned = u && u.role === 'student' ? await assignedFor(u.id) : [];
   await page(req, res, {
-    title: 'PISA · ББЖМ · ҰБТ', active: 'exams',
+    title: 'Емтиханға дайындық', active: 'exams',
     body: html`
       <div class="view">
-        ${vhead('Емтиханға дайындық', 'Халықаралық PISA зерттеуіне, ұлттық ББЖМ мониторингіне және ҰБТ-ға дайындық. PISA мен ББЖМ үш бағытқа бөлінген: оқу сауаттылығы, математикалық сауаттылық және жаратылыстану сауаттылығы.',
+        ${vhead('Емтиханға дайындық', 'Үш бөлім: халықаралық зерттеулер (PISA, TIMSS, PIRLS, ICILS, TALIS), білім алушылардың білім жетістіктерін мониторингі (ББЖМ) және ұлттық бірыңғай тестілеу (ҰБТ).',
           u && u.role === 'teacher' ? html`<a class="btn" href="/teacher/assignments">${icon('exam', 16)} Оқушыларға тест тағайындау</a>` : '')}
         ${assignedBlock(assigned)}
-        <div class="exgrid">${EXAMS.map((e) => html`
-          <a class="excard" href="/exams/${e.k}">
-            <span class="exn"><b>${e.name}</b><span>${e.who}</span></span>
-            <p>${e.desc}</p>
-            <span class="exc">${byExam[e.k] || 0} тапсырма · бастау →</span>
-          </a>`)}</div>
-        <div class="notice"><div>Тапсырмалардың көбі PISA, ББЖМ және ҰБТ-2026 форматында құрастырылған авторлық тапсырмалар, бір бөлігі — мұғалімдер ұсынған сауаттылық тапсырмаларының жинағынан алынған. Ресми спецификация мен демонұсқаларды <a href="https://testcenter.kz" target="_blank" rel="noopener">Ұлттық тестілеу орталығының</a> сайтынан, PISA туралы мәліметті <a href="https://www.oecd.org/pisa/" target="_blank" rel="noopener">OECD PISA</a> сайтынан қараңыз.</div></div>
+        <div class="exgrid">
+          <a class="excard" href="/intl"><span class="exn"><b>Халықаралық зерттеулер</b><span>PISA · TIMSS · PIRLS · ICILS · TALIS</span></span>
+            <p>Білім сапасын елдер арасында салыстыратын халықаралық зерттеулер: олардың анықтамасы, мақсаты және дайындық тапсырмалары.</p>
+            <span class="exc">${INTL.reduce((a, e) => a + (byExam[e.k] || 0), 0)} тапсырма · ашу →</span></a>
+          ${examCard(EXAM.bbzhm, byExam.bbzhm)}
+          ${examCard(EXAM.ubt, byExam.ubt)}
+        </div>
         ${attempts.length ? html`<section class="block"><div class="block-h"><h2>Соңғы нәтижелерім</h2><a class="more" href="/cabinet">Барлық нәтижем</a></div>${attemptsTable(attempts)}</section>` : ''}
       </div>`,
   });
 }));
 
+// Халықаралық зерттеулер бөлімі.
+router.get('/intl', asyncH(async (req, res) => {
+  const { byExam } = await bankCounts();
+  await page(req, res, {
+    title: 'Халықаралық зерттеулер', active: 'intl',
+    body: html`
+      <div class="view">
+        ${vhead('Халықаралық зерттеулер', 'Халықаралық салыстырмалы зерттеулер елдердің білім беру жүйесінің сапасын бірдей өлшеммен бағалайды. Қазақстан PISA, TIMSS, PIRLS, ICILS және TALIS зерттеулеріне қатысады. Әр зерттеудің анықтамасы мен мақсатын оқып, дайындық тапсырмаларын орында.')}
+        <div class="exgrid">${INTL.map((e) => examCard(e, byExam[e.k]))}</div>
+        <section class="panel">
+          <h2>Зерттеулерді кім өткізеді?</h2>
+          <div class="tblwrap"><table><thead><tr><th>Зерттеу</th><th>Ұйым</th><th>Кім қатысады</th><th>Жиілігі</th><th>Қазақстан</th></tr></thead>
+            <tbody>${INTL.map((e) => html`<tr><td><a href="/exams/${e.k}"><b>${e.name}</b></a><br><span class="muted small">${e.full}</span></td><td>${e.org}</td><td>${e.who}</td><td class="wrap">${e.cycle}</td><td class="wrap">${e.kz}</td></tr>`)}</tbody></table></div>
+          <p class="muted small">ЭЫДҰ (OECD) — Экономикалық ынтымақтастық және даму ұйымы. IEA — Білім беру жетістіктерін бағалаудың халықаралық қауымдастығы. Қазақстанда зерттеулерді Оқу-ағарту министрлігінің тапсырысымен ұлттық орталықтар ұйымдастырады.</p>
+        </section>
+        <div class="notice"><div>Бұл бөлімдегі тапсырмалар зерттеулердің форматына сай құрастырылған авторлық жаттығулар. Ресми мәліметтер мен жария етілген тапсырмаларды әр зерттеудің ресми сайтынан қараңыз.</div></div>
+      </div>`,
+  });
+}));
+
+// Бөлімнің жол сілтемесі (crumbs).
+const areaCrumb = (e) => (e.group === 'intl' ? html`<a href="/intl">Халықаралық зерттеулер</a><span>/</span>` : '');
+
+// Зерттеудің анықтамасы, мақсаты және негізгі фактілері.
+function examInfo(e) {
+  return html`
+    <section class="exinfo panel">
+      <div>
+        <h1 style="font-family:var(--fd)">${e.name}</h1>
+        <p class="mono muted small">${e.full} · ${e.org}</p>
+        <p><b>Анықтамасы.</b> ${e.def}</p>
+        <p><b>Мақсаты.</b> ${e.goal.replace(/^Мақсаты — /, '')}</p>
+        <p class="small"><b>Кім қатысады:</b> ${e.who} · <b>Жиілігі:</b> ${e.cycle}. ${e.kz}</p>
+      </div>
+      <div>
+        <ul class="facts">${e.facts.map((f) => html`<li>${f}</li>`)}</ul>
+        <p class="small"><a href="${e.link}" target="_blank" rel="noopener">Ресми сайт ${icon('ext', 13)}</a></p>
+      </div>
+    </section>`;
+}
+
 router.get('/exams/:exam', asyncH(async (req, res) => {
   const e = EXAM[req.params.exam];
   if (!e) throw new HttpError(404, 'Емтихан табылмады.');
+  if (e.survey) return talisPage(req, res, e);
   const { byDomain } = await bankCounts();
   const secs = await many(
     `SELECT u.section, count(q.id) AS n FROM exam_units u JOIN exam_questions q ON q.unit_id = u.id WHERE u.exam = $1 GROUP BY u.section`, [e.k]);
   const total = secs.reduce((a, s) => a + s.n, 0);
   const mats = await many(`SELECT * FROM materials WHERE status = 'published' AND $1 = ANY(exams) ORDER BY created_at DESC LIMIT 6`, [e.k]);
-  const domains = hasDomains(e.k);
+  const doms = domainsOf(e.k);
   await page(req, res, {
-    title: e.name, active: 'exams',
+    title: e.name, active: examArea(e.k),
     body: html`
       <div class="view">
-        <div class="crumbs"><a href="/exams">Емтиханға дайындық</a><span>/</span><span>${e.name}</span></div>
-        <section class="exinfo panel">
-          <div><h1 style="font-family:var(--fd)">${e.name}</h1><p class="mono muted small">${e.full} · ${e.who}</p><p>${e.desc}</p></div>
-          <ul class="facts">${e.facts.map((f) => html`<li>${f}</li>`)}</ul>
-        </section>
-        ${domains ? html`
+        <div class="crumbs">${areaCrumb(e)}<span>${e.name}</span></div>
+        ${examInfo(e)}
+        ${doms.length ? html`
         <section class="block">
           <div class="block-h"><h2>Бағытты таңда</h2><span class="cnt">${total} тапсырма</span></div>
-          <div class="domgrid">${DOMAINS.map((d) => { const n = byDomain[`${e.k}:${d.k}`] || 0; return html`
+          <div class="domgrid">${doms.map((d) => { const n = byDomain[`${e.k}:${d.k}`] || 0; return html`
             <article class="domcard dom-${d.k}">
               <div class="card-top"><span class="glyph">${icon(d.icon)}</span><span class="cls">${n} тапсырма</span></div>
               <h3>${d.name}</h3>
@@ -138,6 +190,36 @@ router.get('/exams/:exam', asyncH(async (req, res) => {
   });
 }));
 
+// TALIS: мұғалімнің өзін-өзі бағалау сауалнамасы. Жауаптар серверге жіберілмейді — нәтиже браузерде есептеледі.
+async function talisPage(req, res, e) {
+  const opts = ['Мүлде сәйкес емес', 'Көбіне сәйкес емес', 'Көбіне сәйкес', 'Толық сәйкес'];
+  let n = 0;
+  await page(req, res, {
+    title: e.name, active: 'intl', scripts: ['/js/talis.js'],
+    body: html`
+      <div class="view">
+        <div class="crumbs">${areaCrumb(e)}<span>${e.name}</span></div>
+        ${examInfo(e)}
+        <section class="panel">
+          <h2>Өзін-өзі бағалау сауалнамасы</h2>
+          <p>TALIS сауалнамасының тақырыптарына құрылған ${TALIS_SCALES.reduce((a, s) => a + s.items.length, 0)} тұжырым. Әр тұжырымның өз тәжірибеңе қаншалықты сәйкес екенін белгіле. Жауаптар еш жерге жіберілмейді, нәтиже осы бетте ғана есептеледі.</p>
+          <form id="talisForm" class="stack" data-scales="${JSON.stringify(TALIS_SCALES.map((s) => ({ k: s.k, name: s.name, tips: s.tips })))}">
+            ${TALIS_SCALES.map((sc) => html`
+              <fieldset class="talis-scale" data-scale="${sc.k}">
+                <legend><b>${sc.name}</b> <span class="muted small">${sc.desc}</span></legend>
+                ${sc.items.map((it) => { n++; return html`
+                  <div class="talis-item"><p>${n}. ${it}</p>
+                    <div class="talis-opts">${opts.map((o, i) => html`<label><input type="radio" name="t${n}" value="${i + 1}" data-scale="${sc.k}" required> ${o}</label>`)}</div></div>`; })}
+              </fieldset>`)}
+            <div class="panel exam-foot"><button class="btn lg" type="submit">Нәтижені көру</button></div>
+          </form>
+          <div id="talisResult" hidden></div>
+        </section>
+        <div class="notice"><div>Бұл — ресми TALIS сауалнамасы емес, оның тақырыптарына негізделген кәсіби рефлексия құралы. Нәтижені әдістемелік бірлестікте талқылап, өзіңнің кәсіби даму жоспарыңа енгізуге болады.</div></div>
+      </div>`,
+  });
+}
+
 // Тест беті (жаттығу, сынақ және мұғалім тапсырмасы үшін ортақ).
 async function testPage(req, res, { e, units, mode, domain = '', section = '', assignment = null }) {
   const total = units.reduce((a, u) => a + u.questions.length, 0);
@@ -145,11 +227,11 @@ async function testPage(req, res, { e, units, mode, domain = '', section = '', a
   let no = 0;
   const perQuestion = hasDomains(e.k) ? 150 : 90;
   await page(req, res, {
-    title: `${e.name}: тест`, active: 'exams',
+    title: `${e.name}: тест`, active: examArea(e.k),
     scripts: ['/js/exam.js'],
     body: html`
       <div class="view">
-        <div class="crumbs"><a href="/exams">Емтиханға дайындық</a><span>/</span><a href="/exams/${e.k}">${e.name}</a><span>/</span><span>${assignment ? assignment.title : mode === 'exam' ? 'Сынақ' : 'Жаттығу'}</span></div>
+        <div class="crumbs">${areaCrumb(e)}<a href="/exams/${e.k}">${e.name}</a><span>/</span><span>${assignment ? assignment.title : mode === 'exam' ? 'Сынақ' : 'Жаттығу'}</span></div>
         ${assignment ? html`<div class="notice"><div><b>${assignment.title}.</b> Бұл тестті саған мұғалімің ${assignment.teacher} тағайындады${assignment.due_at ? ` (мерзімі: ${fmtDate(assignment.due_at)})` : ''}. Тестті бір рет қана тапсыруға болады. Ашық жауаптарыңды мұғалім тексеріп, ұпай қояды.</div></div>` : ''}
         <div class="exam-bar panel" id="examBar">
           <b>${examLabel(e.k, domain)} · ${modeName}${section ? ` · ${SECTION[section].name}` : ''}</b>
@@ -173,10 +255,10 @@ async function testPage(req, res, { e, units, mode, domain = '', section = '', a
 
 router.get('/exams/:exam/test', asyncH(async (req, res) => {
   const e = EXAM[req.params.exam];
-  if (!e) throw new HttpError(404, 'Емтихан табылмады.');
+  if (!e || e.survey) throw new HttpError(404, 'Емтихан табылмады.');
   const mode = req.query.mode === 'exam' ? 'exam' : 'practice';
   const section = SECTION[req.query.section] ? req.query.section : '';
-  if (req.query.domain && !(hasDomains(e.k) && DOMAIN[req.query.domain])) throw new HttpError(404, 'Бұл бағыт табылмады.');
+  if (req.query.domain && !validDomain(e.k, req.query.domain)) throw new HttpError(404, 'Бұл бағыт табылмады.');
   const domain = req.query.domain || '';
   const n = [domain ? 0 : 10, 10, 20, 30, 40].includes(toInt(req.query.n, 10)) ? toInt(req.query.n, 10) : 10;
   const units = await loadUnits(await pickUnitIds(e.k, { domain, section, n }));
@@ -251,7 +333,7 @@ router.post('/api/exams/submit', asyncH(async (req, res) => {
   } else {
     qs = await loadQuestions(Object.keys(answers));
   }
-  const exam = assignment ? assignment.exam : EXAM[req.body.exam] ? req.body.exam : null;
+  const exam = assignment ? assignment.exam : EXAM[req.body.exam] && !EXAM[req.body.exam].survey ? req.body.exam : null;
   if (!exam) return res.status(400).json({ error: 'Емтихан белгісіз.' });
   if (!qs.length) return res.status(400).json({ error: 'Жауаптар жоқ.' });
 
@@ -282,7 +364,7 @@ router.post('/api/exams/submit', asyncH(async (req, res) => {
   if (req.user) {
     const mode = assignment ? 'assigned' : req.body.mode === 'exam' ? 'exam' : 'practice';
     const section = SECTION[req.body.section] ? req.body.section : '';
-    const domain = assignment ? assignment.domain : hasDomains(exam) && DOMAIN[req.body.domain] ? req.body.domain : '';
+    const domain = assignment ? assignment.domain : validDomain(exam, req.body.domain) ? req.body.domain : '';
     const duration = Math.max(0, Math.min(36000, toInt(req.body.duration)));
     const row = await one(
       `INSERT INTO exam_attempts(user_id, exam, mode, section, score, max_score, total, correct_count, duration_s, domain, assignment_id, answers, pending)

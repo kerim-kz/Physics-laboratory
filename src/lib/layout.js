@@ -21,7 +21,11 @@ const NAV = [
     ['/labs', 'Зертханалар', 'labs', 'lab'],
     ['/games', 'Ойындар', 'games', 'game'],
   ]],
-  ['Емтихан', [['/exams', 'PISA · ББЖМ · ҰБТ', 'exams', 'exam']]],
+  ['Емтиханға дайындық', [
+    ['/intl', 'Халықаралық зерттеулер', 'intl', 'globe'],
+    ['/exams/bbzhm', 'ББЖМ', 'bbzhm', 'exam'],
+    ['/exams/ubt', 'ҰБТ', 'ubt', 'cap'],
+  ]],
   ['Платформа', [
     ['/shop', 'Ақылы материалдар', 'shop', 'shop'],
     ['/schools', 'Мектептер', 'schools', 'school'],

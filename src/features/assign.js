@@ -1,6 +1,6 @@
 // Мұғалімнің оқушыларға тест тағайындауы, нәтижелерді қарау және сайт ішіндегі хабарламалар.
 import express from 'express';
-import { DOMAIN, DOMAINS, EXAM, EXAMS, examLabel, hasDomains } from '../data/catalog.js';
+import { domainsOf, EXAM, examLabel, hasDomains, TEST_EXAMS, validDomain } from '../data/catalog.js';
 import { requireActiveTeacher, requireUser } from '../lib/auth.js';
 import { many, one, q, tx } from '../lib/db.js';
 import { pickUnitIds } from '../lib/examcore.js';
@@ -17,8 +17,8 @@ async function targets() {
   const rows = await many(`SELECT u.exam, u.domain, count(q.id)::int AS n FROM exam_units u JOIN exam_questions q ON q.unit_id = u.id GROUP BY u.exam, u.domain`);
   const n = (exam, domain) => (rows.find((r) => r.exam === exam && r.domain === domain) || { n: 0 }).n;
   const out = [];
-  for (const e of EXAMS) {
-    if (hasDomains(e.k)) for (const d of DOMAINS) out.push({ v: `${e.k}:${d.k}`, exam: e.k, domain: d.k, label: examLabel(e.k, d.k), n: n(e.k, d.k) });
+  for (const e of TEST_EXAMS) {
+    if (hasDomains(e.k)) for (const d of domainsOf(e.k)) out.push({ v: `${e.k}:${d.k}`, exam: e.k, domain: d.k, label: examLabel(e.k, d.k), n: n(e.k, d.k) });
     else out.push({ v: `${e.k}:`, exam: e.k, domain: '', label: `${e.name} · Физика`, n: n(e.k, '') });
   }
   return out;
@@ -107,7 +107,7 @@ router.post('/teacher/assignments', requireActiveTeacher, asyncH(async (req, res
   if (!c) throw new HttpError(404, 'Сынып табылмады.');
   const back = `/teacher/assignments/new?class=${c.id}`;
   const [exam, domain = ''] = String(req.body.target || '').split(':');
-  if (!EXAM[exam] || (hasDomains(exam) ? !DOMAIN[domain] : domain !== '')) { setFlash(res, 'error', 'Тест түрін таңдаңыз.'); return res.redirect(back); }
+  if (!EXAM[exam] || EXAM[exam].survey || (hasDomains(exam) ? !validDomain(exam, domain) : domain !== '')) { setFlash(res, 'error', 'Тест түрін таңдаңыз.'); return res.redirect(back); }
   const picked = [].concat(req.body.students || []).map(toInt);
   const students = (await many(`SELECT id FROM users WHERE class_id = $1 AND role = 'student' AND id = ANY($2)`, [c.id, picked])).map((s) => s.id);
   if (!students.length) { setFlash(res, 'error', 'Кемінде бір оқушыны белгілеңіз.'); return res.redirect(back); }

@@ -365,6 +365,31 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal((await c.get('/exams/pisa/test?domain=xxx&mode=practice')).status, 404);
   });
 
+  test('халықаралық зерттеулер, ББЖМ және ҰБТ бөлек бөлімдер; әрқайсысында анықтама мен мақсат бар', async () => {
+    const c = new Client();
+    const intl = await c.get('/intl');
+    assert.equal(intl.status, 200);
+    for (const n of ['PISA', 'TIMSS', 'PIRLS', 'ICILS', 'TALIS']) assert.match(intl.text, new RegExp(`href="/exams/${n.toLowerCase()}"`));
+    for (const k of ['pisa', 'timss', 'pirls', 'icils', 'talis', 'bbzhm', 'ubt']) {
+      const r = await c.get(`/exams/${k}`);
+      assert.equal(r.status, 200, k);
+      assert.match(r.text, /Анықтамасы\./, k);
+      assert.match(r.text, /Мақсаты\./, k);
+    }
+    const menu = (await c.get('/')).text;
+    assert.match(menu, /href="\/intl"/);
+    assert.match(menu, /href="\/exams\/bbzhm"/);
+    assert.match(menu, /href="\/exams\/ubt"/);
+    assert.match((await c.get('/exams/talis')).text, /id="talisForm"/);
+    assert.equal((await c.get('/exams/talis/test')).status, 404);
+    assert.equal((await c.get('/exams/pirls/test?domain=math')).status, 404, 'PIRLS-те математика бағыты жоқ');
+    for (const [k, d] of [['timss', 'science'], ['timss', 'math'], ['pirls', 'literary'], ['pirls', 'info'], ['icils', 'cil'], ['icils', 'ct']]) {
+      const t = await c.get(`/exams/${k}/test?domain=${d}&mode=practice&n=0`);
+      assert.equal(t.status, 200, `${k}/${d}`);
+      assert.match(t.text, /data-kind=/, `${k}/${d} бағытында тапсырма бар`);
+    }
+  });
+
   test('мұғалім тест тағайындайды, оқушыға хабарлама барады, мұғалім ашық жауапты бағалайды', async () => {
     const cab = await teacher.get('/cabinet');
     const classId = cab.text.match(/\/teacher\/classes\/(\d+)"/)[1];

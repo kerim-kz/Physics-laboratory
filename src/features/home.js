@@ -53,7 +53,7 @@ router.get('/', asyncH(async (req, res) => {
           <a class="qlink" href="/sims"><span class="glyph">${icon('sim')}</span><span>Симуляциялар<small>${SIMS.length} интерактивті модель</small></span></a>
           <a class="qlink" href="/formulas"><span class="glyph">${icon('formula')}</span><span>Формулалар<small>${FORMULAS.length} формула, 7–11-сынып</small></span></a>
           <a class="qlink" href="/olympiad"><span class="glyph brass">${icon('trophy')}</span><span>Олимпиада<small>${OLYMPIAD.length} есеп шешімімен</small></span></a>
-          <a class="qlink" href="/exams"><span class="glyph">${icon('exam')}</span><span>PISA · ББЖМ · ҰБТ<small>${counts.questions} тапсырма</small></span></a>
+          <a class="qlink" href="/exams"><span class="glyph">${icon('exam')}</span><span>Халықаралық зерттеулер · ББЖМ · ҰБТ<small>${counts.questions} тапсырма</small></span></a>
         </nav>
 
         <div class="home2">

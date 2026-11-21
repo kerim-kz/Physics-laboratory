@@ -210,5 +210,6 @@ unit('pisa', 'pisa-5', 'stat', 10, 'Әуе шары',
 
 import { SEED_UNITS_PISA_DOC } from './questions-pisa.js';
 import { SEED_UNITS_V2 } from './questions-v2.js';
+import { SEED_UNITS_V3 } from './questions-v3.js';
 
-export const SEED_UNITS = [...U, ...SEED_UNITS_V2, ...SEED_UNITS_PISA_DOC];
+export const SEED_UNITS = [...U, ...SEED_UNITS_V2, ...SEED_UNITS_PISA_DOC, ...SEED_UNITS_V3];
