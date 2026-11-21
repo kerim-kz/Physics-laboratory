@@ -184,17 +184,17 @@ describe('ашық беттер', () => {
     for (const s of SCIENTISTS) { assert.ok(s.q.length, s.k); if (s.sim) assert.ok(simKeys.has(s.sim), s.k); }
   });
 
-  test('7–9-сынып оқулық құрылымы: формулалар тарауларға бөлінген, симуляциялар бар', async () => {
+  test('7–10-сынып оқулық құрылымы: формулалар тарауларға бөлінген, симуляциялар бар', async () => {
     const fs = await import('node:fs');
     const { FORMULAS } = await import('../src/data/formulas.js');
     const { SIM } = await import('../src/data/sims.js');
     const { TEXTBOOK, FORMULA_CHAPTER } = await import('../src/data/textbook.js');
     const byName = new Map(FORMULAS.map((f) => [f.name, f]));
-    for (const g of [7, 8, 9]) {
+    for (const g of [7, 8, 9, 10]) {
       for (const ch of TEXTBOOK[g]) for (const n of ch.f) { assert.ok(byName.has(n), n); assert.equal(byName.get(n).g, g, n); }
       for (const f of FORMULAS.filter((x) => x.g === g)) assert.ok(FORMULA_CHAPTER.has(f.name), `тарауы жоқ: ${f.name}`);
     }
-    for (const g of [7, 8, 9]) for (const ch of TEXTBOOK[g]) for (const [, , keys] of [...ch.p, ...(ch.labs || [])]) for (const k of keys) assert.ok(SIM[k], `${g}-сынып симуляциясы жоқ: ${k}`);
+    for (const g of [7, 8, 9, 10]) for (const ch of TEXTBOOK[g]) for (const [, , keys] of [...ch.p, ...(ch.labs || [])]) for (const k of keys) assert.ok(SIM[k], `${g}-сынып симуляциясы жоқ: ${k}`);
     for (const k of Object.keys(SIM)) assert.ok(fs.existsSync(new URL(`../public/js/sims/${k}.js`, import.meta.url)), k);
     const c = new Client();
     const f7 = await c.get('/formulas?grade=7');
@@ -209,6 +209,13 @@ describe('ашық беттер', () => {
     assert.match(b9.text, /Қорытынды\. Әлемнің қазіргі физикалық бейнесі/);
     const s9 = await c.get('/sims/river');
     assert.match(s9.text, /9-сынып · §1/);
+    const f10 = await c.get('/formulas?grade=10');
+    assert.match(f10.text, /10-сынып · 1-тарау\. Кинематика/);
+    assert.match(f10.text, /10-сынып · 14-тарау\. Электромагниттік индукция/);
+    const b10 = await c.get('/sims?book=10');
+    assert.match(b10.text, /§52/);
+    const s10 = await c.get('/sims/errors');
+    assert.match(s10.text, /10-сынып · §2/);
     const sim = await c.get('/sims/torricelli');
     assert.match(sim.text, /real\.js\?v=/);
     assert.match(sim.text, /7-сынып · §26/);

@@ -232,7 +232,7 @@
       var box = canvas.parentElement;
       var w = box.clientWidth;
       var maxH = document.fullscreenElement ? window.innerHeight - 90 : 560;
-      var h = Math.round(Math.min(maxH, Math.max(260, w * (o.aspect || 0.62))));
+      var h = Math.round(Math.min(maxH, Math.max(260, w * ((w < 600 && o.aspectNarrow) || o.aspect || 0.62))));
       var dpr = window.devicePixelRatio || 1;
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
