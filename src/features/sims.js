@@ -3,7 +3,7 @@ import { FAMILIES, SECTION, SECTIONS } from '../data/catalog.js';
 import { FORMULAS } from '../data/formulas.js';
 import { LABS } from '../data/labs.js';
 import { SIM, SIMS } from '../data/sims.js';
-import { TEXTBOOK, TEXTBOOK_GRADES } from '../data/textbook.js';
+import { TEXTBOOK, TEXTBOOK_GRADES, chapterTitle } from '../data/textbook.js';
 import { html } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { page, vhead } from '../lib/layout.js';
@@ -40,7 +40,7 @@ router.get('/sims', asyncH(async (req, res) => {
     };
     body = TEXTBOOK[grade].map((ch) => html`
       <section class="shelf">
-        <div class="shelf-h"><h2>${ch.no} тарау. ${ch.t}</h2><span class="cnt">${new Set(ch.p.flatMap((x) => x[2]).concat((ch.labs || []).flatMap((x) => x[2])).filter((k) => SIM[k])).size} симуляция</span></div>
+        <div class="shelf-h"><h2>${chapterTitle(ch)}</h2><span class="cnt">${new Set(ch.p.flatMap((x) => x[2]).concat((ch.labs || []).flatMap((x) => x[2])).filter((k) => SIM[k])).size} симуляция</span></div>
         <div class="rule"></div>
         <div class="bk-list">
           ${ch.p.map(([n, t, keys]) => html`<div class="bk-row"><span class="bk-no">§${n}</span><span class="bk-t">${t}</span>${simRow(keys)}</div>`)}
@@ -60,7 +60,7 @@ router.get('/sims', asyncH(async (req, res) => {
     title: 'Симуляциялар', active: 'sims',
     body: html`
       <div class="view">
-        ${vhead('Интерактивті симуляциялар', `Физиканың бөлімдері бойынша ${SIMS.length} модель. Әрқайсысында параметрлерді өзгертіп, құбылысты бақылап, өлшеулер жүргізуге болады. 7 және 8-сынып симуляцияларын оқулықтың параграфтары бойынша да ашуға болады.`)}
+        ${vhead('Интерактивті симуляциялар', `Физиканың бөлімдері бойынша ${SIMS.length} модель. Әрқайсысында параметрлерді өзгертіп, құбылысты бақылап, өлшеулер жүргізуге болады. 7, 8 және 9-сынып симуляцияларын оқулықтың параграфтары бойынша да ашуға болады.`)}
         <div class="filters no-print">${tabs}</div>
         ${body}
       </div>`,
