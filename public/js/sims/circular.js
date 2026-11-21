@@ -31,10 +31,19 @@
       var S = api.S, P = api.P, C = api.C, D = api.D;
       var cx = W * 0.4, cy = H / 2, k = (H / 2 - 40) / 3, r = P.R * k;
       api._sc = { px: k, unit: 'м' };
-      R.tableTop(ctx, 0, 0, W * 0.62, H, '#b98352');
-      ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
-      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      R.tableTop(ctx, 0, 0, W, H, '#b98352');
       var phi = S.phi % (2 * Math.PI);
+      // айналмалы диск (жоғарыдан көрініс): радиус сызықтары дискпен бірге айналады
+      var dr = 3 * k + 14, dg = ctx.createRadialGradient(cx - dr * 0.3, cy - dr * 0.3, dr * 0.1, cx, cy, dr);
+      dg.addColorStop(0, '#f1f3f5'); dg.addColorStop(1, '#a9b2ba');
+      R.shadow(ctx, cx + 6, cy + dr * 0.95, dr * 2, 0.5);
+      ctx.fillStyle = dg; ctx.beginPath(); ctx.arc(cx, cy, dr, 0, 7); ctx.fill(); ctx.strokeStyle = '#6d747b'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.save(); ctx.strokeStyle = 'rgba(60,70,80,.25)'; ctx.lineWidth = 1;
+      for (var sp = 0; sp < 12; sp++) { var sa = -phi + sp * Math.PI / 6; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(sa) * dr, cy + Math.sin(sa) * dr); ctx.stroke(); }
+      for (var rc = 1; rc <= 3; rc++) { ctx.beginPath(); ctx.arc(cx, cy, rc * k, 0, 7); ctx.stroke(); }
+      ctx.restore();
+      ctx.save(); ctx.strokeStyle = 'rgba(31,95,209,.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
       if (P.trail) {
         ctx.save(); ctx.strokeStyle = C.accent; ctx.lineWidth = 3; ctx.globalAlpha = 0.45; ctx.beginPath();
         if (S.phi >= 2 * Math.PI) ctx.arc(cx, cy, r, 0, Math.PI * 2); else ctx.arc(cx, cy, r, 0, -phi, true);
@@ -52,6 +61,7 @@
       D.text(ctx, 'R = ' + api.fmt(P.R, 1) + ' м', cx + 8, cy - 8, { size: 11, color: C.muted });
       // формулалар тақтасы
       var bx = W * 0.72;
+      ctx.save(); R.rr(ctx, bx - 16, 26, Math.min(220, W * 0.26), 160, 10); ctx.fillStyle = R.isDark() ? 'rgba(20,26,32,.88)' : 'rgba(255,255,255,.9)'; ctx.fill(); ctx.restore();
       D.text(ctx, 'v = 2πR / T', bx, 50, { size: 14, mono: true, weight: '600' });
       D.text(ctx, 'ω = 2π / T', bx, 78, { size: 14, mono: true, weight: '600' });
       D.text(ctx, 'v = ωR', bx, 106, { size: 14, mono: true, weight: '600' });

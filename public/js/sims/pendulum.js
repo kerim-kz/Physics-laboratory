@@ -72,10 +72,17 @@
       var a0 = P.amp * Math.PI / 180;
       ctx.save(); ctx.strokeStyle = C.soft; ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
       ctx.beginPath(); ctx.arc(px0, py0, P.l * k, Math.PI / 2 - a0, Math.PI / 2 + a0); ctx.stroke(); ctx.restore();
-      // жіп пен жүк
+      // транспортир (тіректің астында)
+      var pr = Math.min(70, P.l * k * 0.45);
+      ctx.save(); ctx.fillStyle = 'rgba(240,244,248,.55)'; ctx.strokeStyle = 'rgba(60,80,100,.7)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(px0 - pr, py0); ctx.arc(px0, py0, pr, Math.PI, 0, true); ctx.closePath(); ctx.fill(); ctx.stroke();
+      for (var dg = -90; dg <= 90; dg += 5) { var ar = (90 - dg) * Math.PI / 180, l1 = dg % 10 === 0 ? 9 : 5; ctx.beginPath(); ctx.moveTo(px0 + Math.cos(ar) * pr, py0 + Math.sin(ar) * pr); ctx.lineTo(px0 + Math.cos(ar) * (pr - l1), py0 + Math.sin(ar) * (pr - l1)); ctx.stroke(); if (dg % 30 === 0 && dg) R.txt(ctx, Math.abs(dg) + '°', px0 + Math.cos(ar) * (pr - 18), py0 + Math.sin(ar) * (pr - 18), { size: 8, color: '#38424b' }); }
+      ctx.restore();
+      // жіп пен жүк (жез шар)
       D.line(ctx, px0, py0, bx, by, '#444', 1.3);
-      R.sphere(ctx, bx, by, 13, '#9aa3ab');
-      D.text(ctx, 'l = ' + api.fmt(P.l, 2) + ' м', px0 + 8, py0 + P.l * k / 2, { size: 11, color: C.muted });
+      R.sphere(ctx, bx, by, 13, '#c9a24a', { shadowY: H - 16 });
+      R.tag(ctx, api.fmt(S.th * 180 / Math.PI, 1) + '°', px0 + (bx > px0 ? -34 : 34), py0 + pr + 12, { size: 10 });
+      R.tag(ctx, 'l = ' + api.fmt(P.l, 2) + ' м', px0 + 40, py0 + P.l * k * 0.72, { size: 10.5 });
       // энергия бағандары
       var m = 1;
       var E = m * g * P.l * (1 - Math.cos(a0));
@@ -90,7 +97,7 @@
         D.text(ctx, r[0], x + 15, base + 16, { size: 11, align: 'center', color: C.muted });
       });
       // секундомер
-      D.text(ctx, 't = ' + api.fmt(S.t, 2) + ' с   N = ' + S.n, 20, H - 16, { size: 13, mono: true, weight: '600' });
+      R.lcd(ctx, 16, H - 52, 150, 28, api.fmt(S.t, 2) + ' с  N=' + S.n, { size: 13 });
       if (P.amp > 15) D.text(ctx, 'Үлкен амплитуда: T формуладағыдан ұзағырақ', 20, 24, { size: 12, color: C.brass, weight: '600' });
     },
   });

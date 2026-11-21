@@ -17,7 +17,7 @@
     grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },
-    aspect: 0.66,
+    aspect: 1,
     controls: [
       { type: 'range', key: 'm', label: 'Жүк массасы m', min: 0.1, max: 5, step: 0.1, value: 1, unit: 'кг', digits: 1 },
       { type: 'range', key: 'k', label: 'Серіппе қатаңдығы k', min: 5, max: 200, step: 5, value: 40, unit: 'Н/м', digits: 0 },
@@ -55,34 +55,39 @@
     },
     draw: function (api, ctx, W, H) {
       var S = api.S, P = api.P, C = api.C, D = api.D;
-      var y = 70, wall = 30, eq = W * 0.42, k = (W * 0.42 - 90) / 0.2 * 0.8;
+      var table = Math.max(130, H * 0.4), y = table - 40, wall = 34, eq = W * 0.4, k = Math.min((W * 0.4 - 100) / 0.2, 1400);
       api._sc = { px: k, unit: 'м' };
-      var bx = eq + S.x * k, side = 30 + Math.sqrt(P.m) * 14;
-      // қабырға мен бет
-      R.scene(ctx, W, y + side / 2 + 40, 'lab', { table: y + side / 2 });
-      ctx.fillStyle = C.bg; ctx.fillRect(0, y + side / 2 + 40, W, H);
-      R.block(ctx, wall - 14, y - 45, 14, 90 + side / 2 - 10, 'iron', { depth: 6, shadow: false });
-      // серіппе (ирек)
-      var coils = 14, sx = wall, ex = bx - side / 2;
-      R.spring(ctx, sx, y, ex, y, { coils: coils, r: 10, wire: 2 });
-      // жүк
-      R.block(ctx, bx - side / 2, y - side / 2, side, side, 'brass', { depth: 8, shadow: false });
-      D.text(ctx, api.fmt(P.m, 1) + ' кг', bx, y + 4, { size: 11, align: 'center', color: '#fff', weight: '600' });
-      D.line(ctx, eq, y - 50, eq, y + side / 2 + 8, C.muted, 1, [3, 3]);
-      D.text(ctx, 'x = 0', eq, y - 54, { size: 10, align: 'center', color: C.muted });
-      if (Math.abs(S.v) > 0.005) D.arrow(ctx, bx, y - side / 2 - 12, bx + S.v * 120, y - side / 2 - 12, C.accent, 2, 'v');
-      // энергия
+      var side = 34 + Math.sqrt(P.m) * 12, bx = eq + S.x * k;
+      R.scene(ctx, W, table + 34, 'lab', { table: table });
+      ctx.fillStyle = C.bg; ctx.fillRect(0, table + 34, W, H - table - 34);
+      // ауа жастықшалы жол (тесіктері бар алюминий профиль)
+      R.block(ctx, wall - 10, table - 18, W * 0.8, 14, 'aluminum', { depth: 6 });
+      ctx.fillStyle = 'rgba(0,0,0,.35)'; for (var hx = wall + 6; hx < wall + W * 0.8 - 20; hx += 14) { ctx.beginPath(); ctx.arc(hx, table - 11, 1.2, 0, 7); ctx.fill(); }
+      // сызғыш (x, см)
+      R.ruler(ctx, eq - 0.2 * k - 4, table - 4, 0.4 * k + 8, k / 100, { width: 16, from: -20 });
+      // қабырға (тірек)
+      R.block(ctx, wall - 18, y - 56, 16, table - 18 - (y - 56), 'iron', { depth: 6, shadow: false });
+      R.spring(ctx, wall - 2, y, bx - side / 2, y, { coils: 14, r: 10, wire: 2 });
+      // арбаша-жүк (ауада қалықтайды)
+      R.block(ctx, bx - side / 2, y - side / 2, side, side, 'brass', { depth: 8, shadow: false, label: api.fmt(P.m, 1) + ' кг' });
+      ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.fillRect(bx - side / 2 + 2, table - 18 - 2, side - 4, 2);
+      ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = 'rgba(210,56,43,.8)'; ctx.beginPath(); ctx.moveTo(eq, y - side / 2 - 30); ctx.lineTo(eq, table - 4); ctx.stroke(); ctx.restore();
+      R.tag(ctx, 'x = 0', eq, y - side / 2 - 38, { size: 10 });
+      if (Math.abs(S.v) > 0.005) R.force(ctx, bx, y - side / 2 - 14, bx + Math.max(-120, Math.min(120, S.v * 140)), y - side / 2 - 14, '#1f5fd1', 'v');
+      if (Math.abs(S.x) > 0.003) R.force(ctx, bx, y + side / 2 - 8, bx - Math.max(-90, Math.min(90, P.k * S.x * 1.6)), y + side / 2 - 8, '#e0761b', 'F серп');
+      // энергия бағаналары
       var Ek = P.m * S.v * S.v / 2, Ep = P.k * S.x * S.x / 2, E0 = P.k * P.A * P.A / 2;
-      var bx0 = W - 140, bh = 90, base = 130;
-      [['Eк', Ek, C.orange], ['Eп', Ep, C.purple], ['E', Ek + Ep, C.accent]].forEach(function (r, i) {
-        var h = E0 > 0 ? r[1] / E0 * bh : 0, x = bx0 + i * 40;
-        ctx.fillStyle = C.bg2; ctx.fillRect(x, base - bh, 28, bh);
-        ctx.fillStyle = r[2]; ctx.fillRect(x, base - Math.min(bh, h), 28, Math.min(bh, h));
-        D.text(ctx, r[0], x + 14, base + 14, { size: 11, align: 'center', color: C.muted });
+      var nar = W < 600, bw = nar ? 18 : 28, bs = nar ? 24 : 42, bx0 = W - (nar ? 84 : 150), bh = Math.min(90, table * (nar ? 0.3 : 0.55)), base = 24 + bh;
+      ctx.save(); R.rr(ctx, bx0 - 10, 10, bs * 3 + 10, bh + 40, 8); ctx.fillStyle = R.isDark() ? 'rgba(20,26,32,.85)' : 'rgba(255,255,255,.85)'; ctx.fill(); ctx.restore();
+      [['Eк', Ek, '#e0761b'], ['Eп', Ep, '#7a3fb0'], ['E', Ek + Ep, '#0b8a7a']].forEach(function (r, i) {
+        var h = E0 > 0 ? r[1] / E0 * bh : 0, x = bx0 + i * bs;
+        ctx.fillStyle = R.isDark() ? '#2a333b' : '#e6eaed'; ctx.fillRect(x, base - bh, bw, bh);
+        ctx.fillStyle = r[2]; ctx.fillRect(x, base - Math.min(bh, h), bw, Math.min(bh, h));
+        D.text(ctx, r[0], x + bw / 2, base + 14, { size: 11, align: 'center', color: C.muted });
       });
       // x(t) графигі
-      var t0 = Math.max(0, S.t - WINDOW);
-      D.plot(ctx, { x: 50, y: 175, w: W - 80, h: H - 215 }, { xmin: t0, xmax: t0 + WINDOW, ymin: -0.22, ymax: 0.22, xlabel: 't, с', ylabel: 'x(t), м',
+      var t0 = Math.max(0, S.t - WINDOW), gy = table + 50;
+      D.plot(ctx, { x: 50, y: gy, w: W - 80, h: H - gy - 36 }, { xmin: t0, xmax: t0 + WINDOW, ymin: -0.22, ymax: 0.22, xlabel: 't, с', ylabel: 'x(t), м',
         series: [{ pts: S.hist, color: C.blue }], marker: [S.t, S.x] });
     },
   });
