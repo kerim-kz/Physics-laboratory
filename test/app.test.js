@@ -90,7 +90,7 @@ after(async () => {
 describe('ашық беттер', () => {
   test('негізгі беттер ашылады', async () => {
     const c = new Client();
-    for (const url of ['/', '/library', '/formulas', '/formulas?section=opt', '/games', '/games/quiz', '/sims', '/sims/lens', '/labs', '/exams', '/exams/pisa', '/exams/ubt/test?mode=exam&n=20', '/shop', '/schools', '/register', '/register/teacher', '/healthz']) {
+    for (const url of ['/', '/library', '/formulas', '/formulas?section=opt', '/games', '/games/quiz', '/sims', '/sims/lens', '/labs', '/exams', '/exams/pisa', '/exams/ubt/test?mode=exam&n=20', '/shop', '/schools', '/register', '/register/teacher', '/units', '/healthz']) {
       const r = await c.get(url);
       assert.equal(r.status, 200, url);
     }
@@ -241,6 +241,11 @@ describe('ашық беттер', () => {
     assert.equal(r.status, 302);
     assert.match(r.location, /^\/login\?next=/);
     assert.equal((await c.get('/admin')).status, 302);
+    assert.equal((await c.get('/results')).status, 302);
+    const u = await c.get('/units');
+    assert.match(u.text, /id="rail"/);
+    assert.match(u.text, /\/js\/units\.js/);
+    assert.doesNotMatch((await c.get('/labs')).text, /claude\.ai\/artifact\/VNmeiF8wBHof4mGZ8LNyYW/);
   });
 });
 
@@ -483,6 +488,19 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal(att.score, att.max_score);
     assert.match((await student.get('/notifications')).text, /Мұғалім жауаптарыңды тексерді/);
     assert.match((await student.get('/cabinet')).text, /Мұғалім тағайындаған тесттер/);
+    // «Нәтижелер» бөлімі: мұғалім сыныптың кестесін, оқушы өз нәтижесін көреді
+    const rt = await teacher.get(`/results?class=${classId}&exam=pisa`);
+    assert.equal(rt.status, 200);
+    assert.match(rt.text, /Оқушылар × тесттер/);
+    assert.match(rt.text, /PISA дайындық/);
+    assert.match(rt.text, /Сейітов Нұрлан/);
+    const rcsv = await teacher.get(`/results/export.csv?class=${classId}&exam=pisa`);
+    assert.match(rcsv.text, /Сейітов Нұрлан/);
+    const rs = await student.get('/results?exam=pisa');
+    assert.equal(rs.status, 200);
+    assert.match(rs.text, /Менің нәтижелерім/);
+    assert.match(rs.text, /Бағыттар бойынша орташа нәтиже/);
+    assert.equal((await student.get(`/results/export.csv?class=${classId}`)).status, 403);
   });
 
   test('әкімші бағыт, сурет және жаңа сұрақ түрлерімен тапсырма қосады', async () => {
