@@ -663,6 +663,13 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.match(journal.text, /pill ok">платформа/);
     const cab = await student.get('/cabinet');
     assert.match(cab.text, /8 \/ 10/);
+    // «Нәтижелер → Зертханалар»: мұғалім сынып кестесінде, оқушы өз бетінде көреді
+    const rl = await teacher.get('/results?exam=labs');
+    assert.match(rl.text, /Оқушылар × жұмыстар/);
+    assert.match(rl.text, /Сейітов Нұрлан/);
+    assert.match(rl.text, /\d+ \/ 10 \(\d\)/);
+    assert.match((await student.get('/results?exam=labs')).text, /8 \/ 10 · баға 4/);
+    assert.equal((await teacher.get('/results?exam=olymp')).status, 200);
 
     assert.equal((await student.json('DELETE', `/api/labs/om/subs/${cfg.uid}`)).status, 403, 'оқушы өз нәтижесін өшіре алмайды');
     assert.equal((await teacher.json('DELETE', `/api/labs/om/subs/${cfg.uid}`)).status, 204);
