@@ -970,6 +970,12 @@ describe('үш тіл: қазақша, орысша, ағылшынша', () => 
     assert.equal(i18n.t('en', '12 қараша 2026, 09:05'), '12 November 2026, 09:05');
     assert.equal(i18n.t('en', 'PISA · Жаратылыстану сауаттылығы · 3 қараша 2026'), 'PISA · Science literacy · 3 November 2026');
     assert.equal(i18n.t('en', 'Белгісіз мәтін'), 'Белгісіз мәтін', 'сөздікте жоқ мәтін өзгермейді');
+    // симуляциялардағы шама жазулары: бірліктер сөзбе-сөз, сөйлем сөзбе-сөз аударылмайды
+    assert.equal(i18n.t('en', 't = 2.5 с'), 't = 2.5 s');
+    assert.equal(i18n.t('ru', 'r = 384 мың км'), 'r = 384 тыс. км');
+    assert.equal(i18n.t('en', '³He — Гелий-3'), '³He — Helium-3');
+    assert.equal(i18n.t('en', 'Ақтау (жерг.): 10:05'), 'Aktau (local): 10:05');
+    assert.equal(i18n.t('en', 'Белгісіз сөз = 5 м'), 'Белгісіз сөз = 5 м');
     assert.equal(i18n.t('ru', '8А сынып'), '8А класс', 'сынып әрпі — кез келген мәтін');
     assert.equal(i18n.t('en', 'тест тапсырған оқушы'), 'students took a test', 'сан үлгісі басқа сөзге жабыспайды');
     assert.equal(T('<p>Нәтижеңді сақтау үшін <a href="/login?next=/exams/ubt">кір</a> немесе <a href="/register">тіркел</a>.</p>'),

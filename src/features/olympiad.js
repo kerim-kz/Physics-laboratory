@@ -140,7 +140,7 @@ function questionBlock(t, qq, result) {
       <div class="otq-opts" role="radiogroup" aria-label="${qq.n}-тапсырманың жауабы">
         ${LETTERS.map((L) => {
           const mark = r ? (L === r.correct ? ' right' : L === r.picked ? ' wrong' : '') : '';
-          return html`<label class="otq-opt${mark}"><input type="radio" name="q${qq.n}" value="${L}"${r && r.picked === L ? raw(' checked') : ''}${r ? raw(' disabled') : ''}><span>${L}</span></label>`;
+          return html`<label class="otq-opt${mark}"><input type="radio" name="q${qq.n}" value="${L}"${r && r.picked === L ? raw(' checked') : ''}${r ? raw(' disabled') : ''}><span translate="no">${L}</span></label>`;
         })}
       </div>
     </fieldset>`;

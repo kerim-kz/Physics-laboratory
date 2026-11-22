@@ -94,7 +94,26 @@ export function lookup(c, text) {
       return fill(p.v, vals);
     }
   }
-  return null;
+  return unitWords(s, (w) => c.exact.get(w));
+}
+
+// Шама жазуы: «t = 5 с», «m₁: 2 кг», «{0}·10⁻⁴ мДж». Санмен немесе «=» белгісімен бірге келген
+// 1–3 қазақша сөздің әрқайсысы сөздікте жеке тұрса (бірліктер), сөзбе-сөз ауыстырылады.
+const EDGE = /^([(«"]*)(.*?)([)»",.;:]*)$/s;
+export function unitWords(s, get) {
+  if (!/[\d=]/.test(s)) return null;
+  const toks = s.split(/(\s+)/);
+  const kz = toks.filter((t) => HAS_KZ.test(t));
+  if (!kz.length || kz.length > 3) return null;
+  const out = [];
+  for (const t of toks) {
+    if (!HAS_KZ.test(t)) { out.push(t); continue; }
+    let r = get(t);
+    if (r === undefined) { const nums = []; const k = t.replace(NUM, (m) => `{${nums.push(m) - 1}}`); const h = nums.length ? get(k) : undefined; if (h !== undefined) r = fill(h, nums); }
+    if (r === undefined) { const m = t.match(EDGE); const v = m[2] && get(m[2]); if (v === undefined || !m[2]) return null; r = m[1] + v + m[3]; }
+    out.push(r);
+  }
+  return out.join('');
 }
 
 const cache = {};
