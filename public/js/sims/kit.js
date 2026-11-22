@@ -2,7 +2,12 @@
 (function () {
   'use strict';
   // Аударма (сайт тілі қазақша емес болса, public/js/i18n.js жүктеледі)
-  var TR = function (x) { return window.tr ? window.tr(x) : x; };
+  // Белгілері бар жазуда (мысалы «p<sub>қ</sub>») әр мәтін бөлігі жеке аударылады.
+  var TR = function (x) {
+    if (!window.tr || x == null) return x;
+    x = String(x);
+    return x.indexOf('<') < 0 ? window.tr(x) : x.split(/(<[^>]+>)/).map(function (p) { return p.charAt(0) === '<' ? p : window.tr(p); }).join('');
+  };
 
   function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   var C = {};
