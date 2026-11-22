@@ -1,5 +1,5 @@
-// ЖИ құралының негізі: Anthropic Claude API-ге сұраныс, күнделікті лимит, шығын есебі.
-// API кілті тек сервердің ANTHROPIC_API_KEY ортасының айнымалысынан алынады; кілт болмаса,
+// ЖИ құралының негізі: Anthropic Claude API-ге немесе тегін OpenAI-үйлесімді провайдерге сұраныс, күнделікті лимит, шығын есебі.
+// Кілттер тек сервердің орта айнымалыларынан алынады (ANTHROPIC_API_KEY немесе AI_BASE_URL + AI_API_KEY + AI_MODEL); кілт болмаса,
 // ЖИ функциялары «бапталмаған» күйінде көрсетіледі және сұраныс жіберілмейді.
 import Anthropic from '@anthropic-ai/sdk';
 import { many, one, q } from './db.js';
@@ -26,7 +26,18 @@ export class AiError extends Error {
 // Тесттерде нақты API-ге бармау үшін орнына функция қоюға болады: runner(params, onText) → {text, stop, usage, model}.
 let runner = null;
 export function setAiRunner(fn) { runner = fn; }
-export const aiConfigured = () => !!runner || !!process.env.ANTHROPIC_API_KEY;
+
+// Тегін / басқа провайдер: OpenAI-үйлесімді кез келген API (FreeLLMAPI, Google AI Studio, Groq, OpenRouter т.б.).
+// AI_BASE_URL (мысалы, https://…/v1), AI_API_KEY және AI_MODEL берілсе, Anthropic-тің орнына соны қолданамыз.
+export function compatConfig() {
+  const base = String(process.env.AI_BASE_URL || '').trim().replace(/\/+$/, '').replace(/\/chat\/completions$/, '');
+  const key = String(process.env.AI_API_KEY || '').trim();
+  if (!base || !key) return null;
+  return { base, key, model: String(process.env.AI_MODEL || '').trim() || 'auto', host: (() => { try { return new URL(base).host; } catch { return base; } })() };
+}
+// Қай провайдер қосулы: 'compat' (тегін / OpenAI-үйлесімді), 'anthropic' немесе null.
+export const aiProvider = () => (compatConfig() ? 'compat' : process.env.ANTHROPIC_API_KEY ? 'anthropic' : null);
+export const aiConfigured = () => !!runner || !!aiProvider();
 
 let client = null;
 const getClient = () => (client ||= new Anthropic({ maxRetries: 2, timeout: 5 * 60_000 }));
@@ -75,6 +86,7 @@ function friendlyError(e) {
 // Бір сұраныс: модельге жіберіп, мәтінді (ағынмен) қайтарады.
 async function callModel({ model, system, messages, maxTokens, effort, schema }, onText) {
   if (runner) return runner({ model, system, messages, maxTokens, effort, schema }, onText);
+  if (aiProvider() === 'compat') return callCompat({ system, messages, maxTokens, schema }, onText);
   const params = {
     model, max_tokens: maxTokens, system, messages,
     output_config: { effort, ...(schema ? { format: { type: 'json_schema', schema } } : {}) },
@@ -94,6 +106,92 @@ async function callModel({ model, system, messages, maxTokens, effort, schema },
   return { text, stop: msg.stop_reason, usage: msg.usage, model: msg.model };
 }
 
+// ---------------- OpenAI-үйлесімді провайдер (тегін жол) ----------------
+const COMPAT_MAX_TOKENS = 8192; // тегін модельдердің көбінде шығыс шектеулі
+const JSON_HINT = (schema) => `\n\nЖауапты ТЕК жарамды JSON түрінде бер — алдында да, соңында да басқа мәтін, түсініктеме немесе \`\`\` белгісі болмасын. JSON схемасы:\n${JSON.stringify(schema)}`;
+
+function compatError(status, body) {
+  if (status === 401 || status === 403 || (status === 400 && /api.?key/i.test(body))) return new AiError(503, 'Тегін ЖИ провайдерінің кілті (AI_API_KEY) жарамсыз немесе рұқсаты жоқ. Әкімші кілтті тексеруі керек.');
+  if (status === 429) return new AiError(429, 'Тегін ЖИ провайдерінің лимиті уақытша таусылды. Бірнеше минуттан кейін қайталап көріңіз.');
+  if (status === 404) return new AiError(503, 'ЖИ моделі табылмады: AI_MODEL атауын немесе AI_BASE_URL мекенжайын тексеру керек.');
+  if (status === 400 && /model/i.test(body)) return new AiError(503, 'ЖИ моделінің атауы (AI_MODEL) қате болуы мүмкін. Әкімші тексеруі керек.');
+  return new AiError(502, 'Тегін ЖИ провайдері уақытша қолжетімсіз. Сәлден соң қайталаңыз.');
+}
+
+// <think>…</think> ойлау бөлігін көрсетпейміз (кейбір ашық модельдер оны мәтінге қосады).
+const visibleText = (raw) => raw.replace(/<think>[\s\S]*?(<\/think>\s*|$)/g, '').replace(/^\s+/, '');
+
+async function callCompat({ system, messages, maxTokens, schema }, onText) {
+  const c = compatConfig();
+  const body = {
+    model: c.model, stream: true, max_tokens: Math.min(maxTokens || 4000, COMPAT_MAX_TOKENS),
+    messages: [{ role: 'system', content: schema ? system + JSON_HINT(schema) : system }, ...messages],
+  };
+  let res;
+  try {
+    res = await fetch(`${c.base}/chat/completions`, {
+      method: 'POST', headers: { authorization: `Bearer ${c.key}`, 'content-type': 'application/json', accept: 'text/event-stream, application/json' },
+      body: JSON.stringify(body), signal: AbortSignal.timeout(4 * 60_000), // тегін сервер «ұйықтап» тұрса, оянуына уақыт керек
+    });
+  } catch {
+    throw new AiError(503, 'Тегін ЖИ провайдеріне қосылу мүмкін болмады. Сервер «ұйықтап» тұрған болуы мүмкін — бір минуттан кейін қайталаңыз.');
+  }
+  if (!res.ok) {
+    const t = await res.text().catch(() => '');
+    console.error('ЖИ провайдерінің қатесі:', res.status, t.slice(0, 300));
+    throw compatError(res.status, t);
+  }
+  let raw = '', sent = '', finish = null, usage = null, model = res.headers.get('x-routed-via') || c.model;
+  const emit = () => {
+    if (!onText) return;
+    const vis = visibleText(raw);
+    if (vis.startsWith(sent)) { if (vis.length > sent.length) onText(vis.slice(sent.length)); } else { onText(null); onText(vis); }
+    sent = vis;
+  };
+  const take = (o) => {
+    if (o.error) throw compatError(Number(o.error.code) || 502, JSON.stringify(o.error));
+    const ch = o.choices && o.choices[0];
+    const piece = ch ? (ch.delta?.content ?? ch.message?.content ?? '') : '';
+    if (typeof piece === 'string' && piece) { raw += piece; emit(); }
+    if (ch?.finish_reason) finish = ch.finish_reason;
+    if (o.usage) usage = o.usage;
+    if (o.model && !res.headers.get('x-routed-via')) model = o.model;
+  };
+  if ((res.headers.get('content-type') || '').includes('application/json')) {
+    take(await res.json()); // провайдер ағынсыз жауап берсе
+  } else {
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    try {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split('\n');
+        buf = lines.pop();
+        for (const line of lines) {
+          const m = line.match(/^data:\s?(.*)$/);
+          if (!m || !m[1].trim() || m[1].trim() === '[DONE]') continue;
+          let o;
+          try { o = JSON.parse(m[1]); } catch { continue; }
+          take(o);
+        }
+      }
+    } catch (e) {
+      if (e instanceof AiError) throw e;
+      throw new AiError(502, 'Тегін ЖИ провайдерімен байланыс үзілді. Қайталап көріңіз.');
+    }
+  }
+  const text = visibleText(raw).trim();
+  if (!text) throw new AiError(502, 'Тегін ЖИ бос жауап қайтарды. Қайталап көріңіз.');
+  return {
+    text, model,
+    stop: finish === 'length' ? 'max_tokens' : finish === 'content_filter' ? 'refusal' : 'end_turn',
+    usage: { input_tokens: usage?.prompt_tokens || 0, output_tokens: usage?.completion_tokens || 0 },
+  };
+}
+
 const busy = new Set();
 
 // Негізгі функция: лимитті тексереді, сұранысты орындайды, есепке жазады.
@@ -106,12 +204,13 @@ export async function runAi(user, feature, opts, onText = null) {
   if (qt.left !== null && qt.left <= 0) throw new AiError(429, `Бүгінгі ЖИ лимиті таусылды (${qt.limit} сұраныс). Ертең қайта жаңарады.`);
   if (busy.has(user.id)) throw new AiError(429, 'Алдыңғы сұраныс әлі орындалуда. Біраз күтіңіз.');
   busy.add(user.id);
-  const row = await one('INSERT INTO ai_usage(user_id, role, feature, model) VALUES ($1,$2,$3,$4) RETURNING id', [user.id, user.role, feature, st.model]);
+  const model = !runner && aiProvider() === 'compat' ? compatConfig().model : st.model;
+  const row = await one('INSERT INTO ai_usage(user_id, role, feature, model) VALUES ($1,$2,$3,$4) RETURNING id', [user.id, user.role, feature, model]);
   try {
-    const r = await callModel({ model: st.model, effort: 'medium', maxTokens: 16000, ...opts }, onText);
+    const r = await callModel({ model, effort: 'medium', maxTokens: 16000, ...opts }, onText);
     const u = r.usage || {};
     const input = (u.input_tokens || 0) + (u.cache_creation_input_tokens || 0) + (u.cache_read_input_tokens || 0);
-    await q('UPDATE ai_usage SET ok = true, model = $1, input_tokens = $2, output_tokens = $3 WHERE id = $4', [r.model || st.model, input, u.output_tokens || 0, row.id]);
+    await q('UPDATE ai_usage SET ok = true, model = $1, input_tokens = $2, output_tokens = $3 WHERE id = $4', [String(r.model || model).slice(0, 120), input, u.output_tokens || 0, row.id]);
     if (r.stop === 'refusal') return { text: '', refused: true, left: qt.left === null ? null : qt.left - 1 };
     if (r.stop === 'max_tokens' && !r.text) throw new AiError(502, 'Жауап тым ұзақ болып шықты. Сұранысты қысқартып көріңіз.');
     return { text: r.text, refused: false, truncated: r.stop === 'max_tokens', left: qt.left === null ? null : qt.left - 1 };
@@ -137,8 +236,10 @@ export async function usageReport() {
                            WHERE a.ok AND a.created_at > now() - interval '30 days' GROUP BY u.id ORDER BY n DESC LIMIT 10`);
   let cost = 0;
   for (const m of byModel) {
-    const [, , pin, pout] = MODEL[m.model] || Object.values(MODEL).find((x) => m.model.startsWith(x[0])) || AI_MODELS[0];
+    // Тізімде жоқ модель — тегін провайдердікі, шығыны 0.
+    const [, , pin, pout] = MODEL[m.model] || Object.values(MODEL).find((x) => m.model.startsWith(x[0])) || [0, 0, 0, 0];
     m.cost = (Number(m.inp) * pin + Number(m.outp) * pout) / 1e6;
+    m.free = !pin;
     cost += m.cost;
   }
   return { byModel, byFeature, today, failed: failed.n, top, cost };

@@ -14,7 +14,7 @@ import {
   asArray, asyncH, cleanMultiline, cleanText, fmtDate, fmtDateTime, fmtPrice, HttpError, LOGIN_RE, newTempPassword, setFlash, toCsv, toInt, validFullName,
 } from '../lib/util.js';
 import { statusPill } from './cabinet.js';
-import { AI_MODELS, aiConfigured, aiSettings, FEATURE_NAME, usageReport } from '../lib/ai.js';
+import { AI_MODELS, aiProvider, aiSettings, compatConfig, FEATURE_NAME, usageReport } from '../lib/ai.js';
 
 export const router = express.Router();
 router.use(requireAdmin);
@@ -575,32 +575,54 @@ const usd = (x) => `$${x < 0.01 && x > 0 ? x.toFixed(4) : x.toFixed(2)}`;
 router.get('/ai', asyncH(async (req, res) => {
   const st = await aiSettings();
   const r = await usageReport();
-  const ok = aiConfigured();
+  const prov = aiProvider();
+  const cc = compatConfig();
   await adminPage(req, res, 'ai', 'ЖИ', html`
     <section class="panel">
       <h2>${icon('spark')} ЖИ құралының күйі</h2>
-      ${ok ? html`<p><span class="pill ok">API кілті қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>`
-        : html`<p><span class="pill pending">API кілті қосылмаған</span> — ЖИ функциялары «бапталмаған» күйінде көрсетіледі.</p>`}
-      <details class="op-d"${ok ? '' : html` open`}><summary>${icon('key', 15)} API кілтін алу және серверге қосу (қадамдық нұсқаулық)</summary>
+      ${prov === 'compat' ? html`<p><span class="pill ok">тегін провайдер қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>
+          <p class="muted small">Мекенжай: <code>${cc.host}</code> · модель: <code>${cc.model}</code>. Шығын — 0 ₸, бірақ сапа мен лимит провайдерге байланысты.</p>`
+        : prov === 'anthropic' ? html`<p><span class="pill ok">Anthropic API кілті қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>`
+        : html`<p><span class="pill pending">ЖИ провайдері қосылмаған</span> — ЖИ функциялары «бапталмаған» күйінде көрсетіледі.</p>`}
+      <details class="op-d"${prov ? '' : html` open`}><summary>${icon('key', 15)} 1-жол (тегін, ең оңай): Google AI Studio кілті</summary>
         <ol class="op-steps">
-          <li><b>console.anthropic.com</b> сайтына кіріп, тіркеліңіз (электрондық пошта арқылы).</li>
-          <li><b>Settings → Billing</b> бөлімінде төлем картасын қосып, балансты толтырыңыз (мысалы, 5–10 $). Шығынды шектеу үшін <b>Limits</b> бөлімінде айлық лимит қойыңыз.</li>
-          <li><b>Settings → API keys → Create key</b>: кілтке атау беріңіз (мысалы, «gylym-ordasy»), жасалған кілтті (<code>sk-ant-…</code>) бірден көшіріп алыңыз — ол қайта көрсетілмейді. Кілтті ешкімге жібермеңіз және чатқа қоймаңыз.</li>
-          <li><b>dashboard.render.com</b> → сайттың қызметі (Web Service) → <b>Environment</b> → <b>Add Environment Variable</b>: атауы <code>ANTHROPIC_API_KEY</code>, мәні — көшірген кілт. <b>Save changes</b> басыңыз.</li>
-          <li>Render қызметті өзі қайта іске қосады (болмаса, <b>Manual Deploy → Deploy latest commit</b>). Осы бетті жаңартқанда «API кілті қосылған» деп шығуы керек.</li>
+          <li><b>aistudio.google.com</b> сайтына Google аккаунтымен кіріп, <b>Get API key → Create API key</b> басыңыз. Кілтті (<code>AIza…</code>) көшіріп алыңыз. Төлем картасы керек емес.</li>
+          <li>Сол жерде тегін қолжетімді <b>Flash</b> моделінің атауын қараңыз (мысалы, <code>gemini-2.5-flash</code> — нақты атауын AI Studio-дан тексеріңіз).</li>
+          <li><b>dashboard.render.com</b> → сайттың қызметі → <b>Environment</b> → үш айнымалы қосыңыз:<br>
+            <code>AI_BASE_URL</code> = <code>https://generativelanguage.googleapis.com/v1beta/openai</code><br>
+            <code>AI_API_KEY</code> = көшірген кілт<br>
+            <code>AI_MODEL</code> = модель атауы. Содан кейін <b>Save changes</b> басыңыз.</li>
+          <li>Сайт қайта іске қосылған соң осы бетте «тегін провайдер қосылған» деп шығады.</li>
+        </ol>
+        <p class="hint">Ескерту: тегін тарифте Google жіберілген мәтінді өз қызметтерін жақсартуға пайдалануы мүмкін. Сондықтан оқушыларға ЖИ-ге жеке деректерін (аты-жөні, телефоны т.б.) жазбауды ескертіңіз. Сайт өзі оқушылардың аты-жөнін ЖИ-ге жібермейді.</p>
+      </details>
+      <details class="op-d"><summary>${icon('key', 15)} 2-жол (тегін): өз FreeLLMAPI серверіңіз</summary>
+        <ol class="op-steps">
+          <li>FreeLLMAPI-ді үнемі қосулы тұратын компьютерге немесе тұрақты дискісі бар серверге Docker арқылы орнатыңыз (нұсқаулық: репозиторийдегі <code>docs/en/install/01-install.md</code>). Тегін Render-де дискі өшіп-жанған сайын тазаланады, сондықтан ол жерде кілттер мен баптаулар жоғалуы мүмкін.</li>
+          <li>FreeLLMAPI панелінде <b>Keys</b> бетіне тегін провайдерлердің кілттерін қосыңыз (Google, Groq т.б.) және сол беттің жоғарғы жағындағы ортақ кілтті (<code>freellmapi-…</code>) көшіріңіз.</li>
+          <li>Render → <b>Environment</b>: <code>AI_BASE_URL</code> = серверіңіздің HTTPS мекенжайы + <code>/v1</code>; <code>AI_API_KEY</code> = ортақ кілт; <code>AI_MODEL</code> = <code>auto</code>.</li>
         </ol>
       </details>
+      <details class="op-d"><summary>${icon('key', 15)} 3-жол (ақылы, ең сапалы): Anthropic Claude</summary>
+        <ol class="op-steps">
+          <li><b>console.anthropic.com</b> → <b>Settings → Billing</b>: картаны қосып, балансты толтырыңыз; <b>Limits</b> бөлімінде айлық лимит қойыңыз.</li>
+          <li><b>Settings → API keys → Create key</b>: кілтті (<code>sk-ant-…</code>) көшіріңіз.</li>
+          <li>Render → <b>Environment</b>: <code>ANTHROPIC_API_KEY</code> = кілт. (<code>AI_BASE_URL</code> берілсе, тегін провайдер бірінші орында тұрады.)</li>
+        </ol>
+      </details>
+      <p class="hint">Кілттерді ешкімге жібермеңіз және чатқа қоймаңыз — оларды тек Render-дің Environment бетіне енгізіңіз.</p>
     </section>
     <form class="panel form" method="post" action="/admin/ai">
       ${csrfField(req)}
       <h2>Баптаулар</h2>
       <label class="chip plain"><input type="checkbox" name="ai_enabled" value="1"${chk(st.enabled)}> ЖИ құралы қосулы</label>
-      <label class="fl">Модель<select name="ai_model">${AI_MODELS.map(([id, name, pin, pout]) => html`<option value="${id}"${sel(st.model === id)}>${name} · ${usd(pin)} / ${usd(pout)} (1 млн токен: кіріс / шығыс)</option>`)}</select></label>
+      ${prov === 'compat' ? html`<input type="hidden" name="ai_model" value="${st.model}">`
+        : html`<label class="fl">Claude моделі<select name="ai_model">${AI_MODELS.map(([id, name, pin, pout]) => html`<option value="${id}"${sel(st.model === id)}>${name} · ${usd(pin)} / ${usd(pout)} (1 млн токен: кіріс / шығыс)</option>`)}</select></label>`}
       <div class="ai-row">
         <label class="fl">Оқушыға күнделікті лимит (сұраныс)<input type="number" name="ai_student_limit" min="0" max="500" value="${st.student}"></label>
         <label class="fl">Мұғалімге күнделікті лимит (сұраныс)<input type="number" name="ai_teacher_limit" min="0" max="2000" value="${st.teacher}"></label>
       </div>
-      <p class="hint">Лимит Алматы уақытымен түн ортасында жаңарады; 0 — ЖИ-ді осы рөл үшін өшіреді. Әкімшіге лимит жоқ. Шамамен: оқушының бір сұрағы ≈ 0,01–0,03 $, ҚМЖ жасау ≈ 0,1–0,3 $ (ең сапалы модельмен; арзан модельдерде бірнеше есе аз).</p>
+      <p class="hint">Лимит Алматы уақытымен түн ортасында жаңарады; 0 — ЖИ-ді осы рөл үшін өшіреді. Әкімшіге лимит жоқ. Тегін провайдерде шығын жоқ, бірақ лимитті қалдырған жөн — провайдердің тегін тәуліктік квотасы ортақ. Claude-та шамамен: оқушының бір сұрағы ≈ 0,01–0,03 $ (арзан модельде ≈ 0,001 $).</p>
       <div class="formfoot"><button class="btn" type="submit">Сақтау</button></div>
     </form>
     <section class="block">
@@ -614,7 +636,7 @@ router.get('/ai', asyncH(async (req, res) => {
       ${r.byFeature.length ? html`<div class="tblwrap"><table><thead><tr><th>Функция</th><th>Кім</th><th class="num">Сұраныс</th></tr></thead>
         <tbody>${r.byFeature.map((x) => html`<tr><td>${FEATURE_NAME[x.feature] || x.feature}</td><td>${ROLE_SHORT[x.role] || x.role}</td><td class="num">${x.n}</td></tr>`)}</tbody></table></div>
         <div class="tblwrap"><table><thead><tr><th>Модель</th><th class="num">Сұраныс</th><th class="num">Кіріс токен</th><th class="num">Шығыс токен</th><th class="num">Шығын</th></tr></thead>
-        <tbody>${r.byModel.map((m) => html`<tr><td class="mono">${m.model}</td><td class="num">${m.n}</td><td class="num">${m.inp}</td><td class="num">${m.outp}</td><td class="num">${usd(m.cost)}</td></tr>`)}</tbody></table></div>
+        <tbody>${r.byModel.map((m) => html`<tr><td class="mono">${m.model}</td><td class="num">${m.n}</td><td class="num">${m.inp}</td><td class="num">${m.outp}</td><td class="num">${m.free ? 'тегін' : usd(m.cost)}</td></tr>`)}</tbody></table></div>
         <div class="tblwrap"><table><thead><tr><th>Ең белсенді пайдаланушылар</th><th>Рөлі</th><th class="num">Сұраныс</th></tr></thead>
         <tbody>${r.top.map((x) => html`<tr><td>${x.full_name}</td><td>${ROLE_SHORT[x.role] || x.role}</td><td class="num">${x.n}</td></tr>`)}</tbody></table></div>`
         : emptyBox('Әзірге пайдаланылмаған', 'ЖИ құралына сұраныстар осында есептеледі. Сұраныстардың мәтіні сақталмайды.')}

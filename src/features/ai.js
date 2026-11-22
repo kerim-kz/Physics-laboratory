@@ -223,6 +223,15 @@ const GRADE_SCHEMA = {
   },
 };
 
+// Модель JSON-ды ``` ішіне орап немесе алдына мәтін қосып жіберсе де оқимыз (тегін модельдер үшін).
+function parseJsonLoose(text) {
+  const t = String(text || '').replace(/```(?:json)?/gi, '');
+  try { return JSON.parse(t); } catch { /* төменде */ }
+  const a = t.indexOf('{'), b = t.lastIndexOf('}');
+  if (a < 0 || b <= a) throw new Error('JSON жоқ');
+  return JSON.parse(t.slice(a, b + 1));
+}
+
 router.post('/api/ai/grade/:id', requireUser, asyncH(async (req, res) => {
   const a = await attemptFor(req);
   if (!a.canGrade) return res.status(403).json({ error: 'Бұл нәтижені бағалауға рұқсат жоқ.' });
@@ -242,7 +251,7 @@ router.post('/api/ai/grade/:id', requireUser, asyncH(async (req, res) => {
     });
     if (r.refused) return res.status(422).json({ error: 'ЖИ бұл жауаптарды бағалай алмады. Қолмен бағалаңыз.' });
     let parsed;
-    try { parsed = JSON.parse(r.text); } catch { return res.status(502).json({ error: 'ЖИ жауабын оқу мүмкін болмады. Қайталап көріңіз.' }); }
+    try { parsed = parseJsonLoose(r.text); } catch { return res.status(502).json({ error: 'ЖИ жауабын оқу мүмкін болмады. Қайталап көріңіз.' }); }
     const byId = new Map(items.map((x) => [x.id, x]));
     const out = (Array.isArray(parsed.items) ? parsed.items : []).filter((x) => byId.has(Number(x.id))).map((x) => {
       const it = byId.get(Number(x.id));
