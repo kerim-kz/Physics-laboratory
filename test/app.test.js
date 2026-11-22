@@ -2,6 +2,7 @@
 // Іске қосу: TEST_DATABASE_URL=postgres://... npm test
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { after, before, describe, test } from 'node:test';
@@ -551,7 +552,7 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal((await nd(student, '/api/ai/tutor', { messages: [{ role: 'assistant', content: 'x' }] })).status, 400);
 
     // 3) Әкімші: модель мен лимит; лимит таусылса — сұраныс жіберілмейді
-    assert.match((await owner.get('/admin/ai')).text, /API кілті қосылған/);
+    assert.match((await owner.get('/admin/ai')).text, /ЖИ құралының күйі/);
     assert.equal((await student.get('/admin/ai')).status, 403);
     assert.equal((await owner.post('/admin/ai', { ai_enabled: '1', ai_model: 'claude-haiku-5-5', ai_student_limit: '1', ai_teacher_limit: '50' }, '/admin/ai')).status, 302);
     const n = seen.length;
@@ -609,6 +610,89 @@ describe('тіркелу, рөлдер және сыныптар', () => {
 
     ai.setAiRunner(null);
     await owner.post('/admin/ai', { ai_enabled: '1', ai_model: 'claude-opus-5-5', ai_student_limit: '20', ai_teacher_limit: '200' }, '/admin/ai');
+  });
+
+  test('ЖИ: тегін OpenAI-үйлесімді провайдер (FreeLLMAPI / Google AI Studio) ағынмен жұмыс істейді', async () => {
+    const ai = await import('../src/lib/ai.js');
+    ai.setAiRunner(null);
+    const calls = [];
+    let mode = 'ok';
+    // Жалған провайдер: /v1/chat/completions, SSE ағыны
+    const fake = http.createServer((req, res) => {
+      let body = '';
+      req.on('data', (d) => { body += d; });
+      req.on('end', () => {
+        const j = JSON.parse(body || '{}');
+        calls.push({ url: req.url, auth: req.headers.authorization, body: j });
+        if (req.headers.authorization !== 'Bearer free-key') { res.writeHead(401, { 'content-type': 'application/json' }); return res.end('{"error":{"message":"bad key"}}'); }
+        if (mode === 'limit') { res.writeHead(429, { 'content-type': 'application/json' }); return res.end('{"error":{"message":"quota"}}'); }
+        res.writeHead(200, { 'content-type': 'text/event-stream', 'x-routed-via': 'google/free-flash' });
+        const isJson = /JSON схемасы/.test(j.messages[0].content);
+        const ids = isJson ? [...j.messages[1].content.matchAll(/id=(\d+) \(ең көбі (\d+)/g)].map(([, id]) => +id) : [];
+        const text = isJson ? '```json\n' + JSON.stringify({ items: ids.map((id) => ({ id, points: 1, reason: 'Жартылай дұрыс.' })) }) + '\n```'
+          : '<think>оқушыға жауапты айтпау керек</think>Жылдамдықтың анықтамасын еске түсірші: $v = s/t$. Бүкіл жолға қанша уақыт кетті?';
+        for (const part of text.match(/[\s\S]{1,7}/g)) res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: part } }] })}\n\n`);
+        res.write(`data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: 'stop' }], usage: { prompt_tokens: 321, completion_tokens: 45 } })}\n\n`);
+        res.end('data: [DONE]\n\n');
+      });
+    });
+    await new Promise((r) => fake.listen(0, '127.0.0.1', r));
+    process.env.AI_BASE_URL = `http://127.0.0.1:${fake.address().port}/v1/`;
+    process.env.AI_API_KEY = 'free-key';
+    process.env.AI_MODEL = 'free-flash';
+    const nd = async (c, url, body) => {
+      const token = await c.csrf('/games/quiz');
+      const r = await fetch(base + url, { method: 'POST', headers: { cookie: c.cookieHeader(), 'content-type': 'application/json', 'x-csrf-token': token }, body: JSON.stringify(body) });
+      const lines = (await r.text()).split('\n').filter(Boolean).map((l) => JSON.parse(l));
+      let text = '';
+      for (const x of lines) { if (x.reset) text = ''; else if (x.t) text += x.t; }
+      return { status: r.status, lines, last: lines[lines.length - 1], text };
+    };
+    try {
+      assert.equal(ai.aiProvider(), 'compat');
+      const r1 = await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'Орташа жылдамдық қалай табылады?' }], ctx: 'olymp:o7-1' });
+      assert.equal(r1.last.done, true, JSON.stringify(r1.last));
+      assert.equal(r1.text, 'Жылдамдықтың анықтамасын еске түсірші: $v = s/t$. Бүкіл жолға қанша уақыт кетті?');
+      assert.doesNotMatch(r1.text, /think|айтпау керек/, 'ойлау бөлігі оқушыға көрсетілмеуі керек');
+      const c1 = calls[calls.length - 1];
+      assert.equal(c1.url, '/v1/chat/completions');
+      assert.equal(c1.body.model, 'free-flash');
+      assert.equal(c1.body.stream, true);
+      assert.equal(c1.body.messages[0].role, 'system');
+      assert.match(c1.body.messages[0].content, /сократтық/);
+      assert.ok(c1.body.max_tokens <= 8192);
+
+      // Ашық жауапқа ұсыныс: ```json ішіндегі жауап та оқылады
+      const pool = new pg.Pool({ connectionString: DB });
+      const { rows: [att] } = await pool.query('SELECT id FROM exam_attempts WHERE assignment_id IS NOT NULL ORDER BY id DESC LIMIT 1');
+      const rg = await teacher.json('POST', `/api/ai/grade/${att.id}`, {});
+      assert.equal(rg.status, 200, JSON.stringify(rg.body));
+      assert.ok(rg.body.items.length > 0);
+      assert.ok(rg.body.items.every((x) => x.points === Math.min(1, x.max) && x.reason === 'Жартылай дұрыс.'));
+      const { rows: [u] } = await pool.query(`SELECT model, input_tokens, output_tokens FROM ai_usage WHERE ok ORDER BY id DESC LIMIT 1`);
+      assert.equal(u.model, 'google/free-flash');
+      assert.equal(u.input_tokens, 321);
+
+      // Әкімші беті: тегін провайдер, шығын «тегін»
+      const adm = await owner.get('/admin/ai');
+      assert.match(adm.text, /тегін провайдер қосылған/);
+      assert.match(adm.text, /google\/free-flash/);
+      assert.doesNotMatch(adm.text, /name="ai_model">/, 'тегін провайдерде Claude моделін таңдау көрсетілмейді');
+
+      // Провайдер қателері түсінікті хабарға айналады; сәтсіз сұраныс лимитке есептелмейді
+      mode = 'limit';
+      const before = (await pool.query(`SELECT count(*)::int AS n FROM ai_usage WHERE ok IS NOT FALSE`)).rows[0].n;
+      assert.match((await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] })).last.error, /лимиті уақытша таусылды/);
+      assert.equal((await pool.query(`SELECT count(*)::int AS n FROM ai_usage WHERE ok IS NOT FALSE`)).rows[0].n, before);
+      mode = 'ok';
+      process.env.AI_API_KEY = 'wrong';
+      assert.match((await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] })).last.error, /AI_API_KEY/);
+      await pool.end();
+    } finally {
+      delete process.env.AI_BASE_URL; delete process.env.AI_API_KEY; delete process.env.AI_MODEL;
+      fake.close();
+    }
+    assert.equal(ai.aiProvider(), null);
   });
 
   test('әкімші бағыт, сурет және жаңа сұрақ түрлерімен тапсырма қосады', async () => {

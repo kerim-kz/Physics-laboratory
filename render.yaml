@@ -39,5 +39,14 @@ services:
         sync: false
       - key: ADMIN_NAME
         sync: false
-      - key: ANTHROPIC_API_KEY # ЖИ құралы үшін (міндетті емес; бос қалса, ЖИ «бапталмаған» күйде)
+      # ЖИ құралы (міндетті емес; бәрі бос қалса, ЖИ «бапталмаған» күйде).
+      # Тегін жол: OpenAI-үйлесімді провайдер (Google AI Studio, өз FreeLLMAPI серверіңіз т.б.)
+      - key: AI_BASE_URL
+        sync: false
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        sync: false
+      # Ақылы жол: Anthropic Claude
+      - key: ANTHROPIC_API_KEY
         sync: false
