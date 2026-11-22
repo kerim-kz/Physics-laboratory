@@ -581,7 +581,7 @@ router.get('/ai', asyncH(async (req, res) => {
     <section class="panel">
       <h2>${icon('spark')} ЖИ құралының күйі</h2>
       ${prov === 'compat' ? html`<p><span class="pill ok">тегін провайдер қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>
-          <p class="muted small">Мекенжай: <code>${cc.host}</code> · модель: <code>${cc.model}</code>. Шығын — 0 ₸, бірақ сапа мен лимит провайдерге байланысты.</p>`
+          <p class="muted small">Мекенжай: <code>${cc.host}</code> · модель: <code>${cc.models.join(', ')}</code>${cc.models.length > 1 ? ' (біріншісі жүктелсе, келесісі қолданылады)' : ''}. Шығын — 0 ₸, бірақ сапа мен лимит провайдерге байланысты.</p>`
         : prov === 'anthropic' ? html`<p><span class="pill ok">Anthropic API кілті қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>`
         : html`<p><span class="pill pending">ЖИ провайдері қосылмаған</span> — ЖИ функциялары «бапталмаған» күйінде көрсетіледі.</p>`}
       <details class="op-d"${prov ? '' : html` open`}><summary>${icon('key', 15)} 1-жол (тегін, ең оңай): Google AI Studio кілті</summary>
@@ -591,7 +591,7 @@ router.get('/ai', asyncH(async (req, res) => {
           <li><b>dashboard.render.com</b> → сайттың қызметі → <b>Environment</b> → үш айнымалы қосыңыз:<br>
             <code>AI_BASE_URL</code> = <code>https://generativelanguage.googleapis.com/v1beta/openai</code><br>
             <code>AI_API_KEY</code> = көшірген кілт<br>
-            <code>AI_MODEL</code> = модель атауы. Содан кейін <b>Save changes</b> басыңыз.</li>
+            <code>AI_MODEL</code> = модель атауы. Бір модель жиі жүктеліп қалса, үтір арқылы қосалқы модель қосыңыз (мысалы, <code>негізгі-модель,қосалқы-модель</code> — атауларын AI Studio-дан алыңыз). Содан кейін <b>Save changes</b> басыңыз.</li>
           <li>Сайт қайта іске қосылған соң осы бетте «тегін провайдер қосылған» деп шығады.</li>
         </ol>
         <p class="hint">Ескерту: тегін тарифте Google жіберілген мәтінді өз қызметтерін жақсартуға пайдалануы мүмкін. Сондықтан оқушыларға ЖИ-ге жеке деректерін (аты-жөні, телефоны т.б.) жазбауды ескертіңіз. Сайт өзі оқушылардың аты-жөнін ЖИ-ге жібермейді.</p>
