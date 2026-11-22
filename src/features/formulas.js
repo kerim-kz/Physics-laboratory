@@ -1,4 +1,5 @@
 import express from 'express';
+import { translateHtml } from '../lib/i18n.js';
 import { FAMILIES, GRADES, SECTION, SECTIONS } from '../data/catalog.js';
 import { TEXTBOOK, chapterTitle } from '../data/textbook.js';
 import { FORMULA, FORMULAS } from '../data/formulas.js';
@@ -153,7 +154,7 @@ router.get('/formulas/:id', asyncH(async (req, res) => {
   if (!f) throw new HttpError(404, 'Формула табылмады.');
   if (req.query.part === '1') {
     res.set('Cache-Control', 'public, max-age=3600');
-    return res.type('html').send(formulaDetail(f).toString());
+    return res.type('html').send(translateHtml(formulaDetail(f).toString(), req.lang));
   }
   const i = FORMULAS.indexOf(f);
   const prev = FORMULAS[i - 1], next = FORMULAS[i + 1];

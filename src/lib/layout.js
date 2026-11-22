@@ -6,6 +6,7 @@ import { asset } from './assets.js';
 import { icon } from './icons.js';
 import { getSettings } from './settings.js';
 import { takeFlash } from './util.js';
+import { clientDict, LANG_LABEL, LANG_NAME, LANGS, translateHtml } from './i18n.js';
 
 // Бүйір мәзірдің бөлімдері: [мекенжай, атауы, белсенді кілт, белгіше]
 const NAV = [
@@ -63,8 +64,19 @@ function userSlot(user, csrf, unread = 0) {
     </form>`;
 }
 
+// Тіл ауыстырғыш: ҚАЗ / РУС / ENG (JavaScript-сіз жұмыс істейді).
+function langSwitch(req) {
+  const lang = req.lang || 'kk';
+  const here = req.originalUrl.replace(/([?&])lang=[^&]*&?/, '$1').replace(/[?&]$/, '');
+  return html`<details class="langsw" translate="no">
+    <summary class="iconbtn" title="Тіл / Язык / Language" aria-label="Тіл / Язык / Language">${LANG_LABEL[lang]}</summary>
+    <div class="langsw-m">${LANGS.map((l) => html`<a href="/lang/${l}?next=${encodeURIComponent(here)}" lang="${l}" class="${l === lang ? 'on' : ''}"${l === lang ? raw(' aria-current="true"') : ''}><b>${LANG_LABEL[l]}</b> ${LANG_NAME[l]}</a>`)}</div>
+  </details>`;
+}
+
 export async function page(req, res, opts) {
   const { title, active = '', body, scripts = [], styles = [], katex = false, description = '' } = opts;
+  const lang = req.lang || 'kk';
   const settings = await getSettings();
   const flash = takeFlash(req, res);
   const user = req.user;
@@ -88,7 +100,7 @@ export async function page(req, res, opts) {
 <div class="scrim" id="drawerScrim" hidden></div>`;
 
   const doc = html`<!doctype html>
-<html lang="kk">
+<html lang="${lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -117,6 +129,7 @@ ${styles.map((s) => raw(`<link rel="stylesheet" href="${asset(s)}">`))}
       <span class="brand-t"><b>${siteName}</b><span>физика пәнінің платформасы</span></span>
     </a>
     <div class="bar-act">
+      ${langSwitch(req)}
       <button class="iconbtn" id="themeBtn" type="button" title="Жарық / қараңғы тақырып" aria-label="Тақырыпты ауыстыру">${icon('sun')}</button>
       ${userSlot(user, req.csrfToken, user ? await unreadCount(user.id) : 0)}
     </div>
@@ -140,11 +153,12 @@ ${body}
   <a href="/schools">Мектептер</a>
   <p class="credit">Құрастырушы: <b>Әбілқасым Керім Шәмшитұлы</b>, №54 орта мектептің физика пәні мұғалімі</p>
 </footer>
+${lang !== 'kk' ? raw(`<script src="/i18n/${lang}.js?v=${encodeURIComponent(clientDict(lang).etag.replace(/"/g, ''))}" defer></script><script src="${asset('/js/i18n.js')}" defer></script>`) : ''}
 <script src="${asset('/js/app.js')}" defer></script>
 ${scripts.map((s) => raw(`<script src="${asset(s)}" defer></script>`))}
 </body>
 </html>`;
-  res.type('html').send(doc.toString());
+  res.type('html').send(translateHtml(doc.toString(), lang));
 }
 
 // Ортақ шағын компоненттер

@@ -12,7 +12,7 @@
 .ai-msg.bot .ai-b{background:var(--sunken);border-top-left-radius:4px}
 .ai-msg.me .ai-b{background:var(--accent);color:var(--on-accent);border-top-right-radius:4px;white-space:pre-wrap}
 .ai-msg.err .ai-b{background:var(--bad-soft);color:var(--ink)}
-.ai-b.typing:empty::after{content:'ЖИ ойланып жатыр…';color:var(--muted);font-style:italic}
+.ai-b.typing:empty::after{content:attr(data-wait);color:var(--muted);font-style:italic}
 .ai-b p{margin:0 0 .5em}.ai-b p:last-child{margin-bottom:0}
 .ai-form{display:flex;gap:10px;align-items:flex-end}
 .ai-form textarea{flex:1;min-width:0;resize:vertical;font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}

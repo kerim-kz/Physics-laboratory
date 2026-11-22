@@ -111,6 +111,7 @@
     var first = log.innerHTML;
     var add = function (who, text) {
       var w = document.createElement('div'); w.className = 'ai-msg ' + who;
+      w.setAttribute('translate', 'no'); // оқушы мен ЖИ мәтінін сайт сөздігімен аудармаймыз
       var b = document.createElement('div'); b.className = 'ai-b';
       if (who === 'me') b.textContent = text; else b.innerHTML = md(text);
       w.appendChild(b); log.appendChild(w); w.scrollIntoView({ block: 'end', behavior: 'smooth' });
@@ -125,12 +126,13 @@
       add('me', text);
       history.push({ role: 'user', content: text });
       var b = add('bot', ''); b.classList.add('typing');
+      b.setAttribute('data-wait', window.tr ? window.tr('ЖИ ойланып жатыр…') : 'ЖИ ойланып жатыр…');
       var paint = painter(b);
       var r = await stream('/api/ai/tutor', chat.dataset.csrf, { messages: history, ctx: chat.dataset.ctx }, paint);
       b.classList.remove('typing');
       if (r.error) {
         history.pop();
-        b.parentNode.classList.add('err'); b.textContent = r.error;
+        b.parentNode.classList.add('err'); b.textContent = window.tr ? window.tr(r.error) : r.error;
         if (!r.text) input.value = text;
       } else {
         history.push({ role: 'assistant', content: r.text });

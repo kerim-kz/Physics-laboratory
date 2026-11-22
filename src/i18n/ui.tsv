@@ -1,0 +1,1354 @@
+kk	ru	en
+${#} / ${#} ({#} млн токен: кіріс / шығыс)	${#} / ${#} ({#} млн токенов: вход / выход)	${#} / ${#} (per {#}M tokens: input / output)
+(бірінші жол — тақырып). Тізім үшін жолды «• » белгісімен бастаңыз.	(первая строка — заголовок). Чтобы сделать список, начинайте строку с «• ».	(the first line is the heading). Start a line with “• ” to make a list.
+* — сыныпқа тіркелмеген, журналға код арқылы енгізілген	* — не зарегистрирован в классе, внесён в журнал по коду	* — not registered in the class, added to the log by code
+<><b>Settings → API keys → Create key</b>: кілтті (<code>sk-ant-…</code>) көшіріңіз.	<b>Settings → API keys → Create key</b>: скопируйте ключ (<code>sk-ant-…</code>).	<b>Settings → API keys → Create key</b>: copy the key (<code>sk-ant-…</code>).
+<><b>aistudio.google.com</b> сайтына Google аккаунтымен кіріп, <b>Get API key → Create API key</b> басыңыз. Кілтті (<code>AIza…</code>) көшіріп алыңыз. Төлем картасы керек емес.	Войдите на <b>aistudio.google.com</b> через аккаунт Google и нажмите <b>Get API key → Create API key</b>. Скопируйте ключ (<code>AIza…</code>). Банковская карта не нужна.	Sign in to <b>aistudio.google.com</b> with a Google account and click <b>Get API key → Create API key</b>. Copy the key (<code>AIza…</code>). No payment card is needed.
+<><b>console.anthropic.com</b> → <b>Settings → Billing</b>: картаны қосып, балансты толтырыңыз; <b>Limits</b> бөлімінде айлық лимит қойыңыз.	<b>console.anthropic.com</b> → <b>Settings → Billing</b>: привяжите карту и пополните баланс; в разделе <b>Limits</b> задайте месячный лимит.	<b>console.anthropic.com</b> → <b>Settings → Billing</b>: add a card and top up the balance; set a monthly limit under <b>Limits</b>.
+<><b>dashboard.render.com</b> → сайттың қызметі → <b>Environment</b> → үш айнымалы қосыңыз:<br> <code>AI_BASE_URL</code> = <code>https://generativelanguage.googleapis.com/v{#}beta/openai</code><br> <code>AI_API_KEY</code> = көшірген кілт<br> <code>AI_MODEL</code> = модель атауы. Бір модель жиі жүктеліп қалса, үтір арқылы қосалқы модель қосыңыз (мысалы, <code>негізгі-модель,қосалқы-модель</code> — атауларын AI Studio-дан алыңыз). Содан кейін <b>Save changes</b> басыңыз.	<b>dashboard.render.com</b> → сервис сайта → <b>Environment</b> → добавьте три переменные:<br> <code>AI_BASE_URL</code> = <code>https://generativelanguage.googleapis.com/v{#}beta/openai</code><br> <code>AI_API_KEY</code> = скопированный ключ<br> <code>AI_MODEL</code> = название модели. Если модель часто перегружена, добавьте через запятую запасную (например, <code>основная-модель,запасная-модель</code> — названия возьмите в AI Studio). Затем нажмите <b>Save changes</b>.	<b>dashboard.render.com</b> → the site service → <b>Environment</b> → add three variables:<br> <code>AI_BASE_URL</code> = <code>https://generativelanguage.googleapis.com/v{#}beta/openai</code><br> <code>AI_API_KEY</code> = the copied key<br> <code>AI_MODEL</code> = the model name. If a model is often overloaded, add a backup after a comma (e.g. <code>main-model,backup-model</code> — take the names from AI Studio). Then click <b>Save changes</b>.
+<><b>Анықтамасы.</b> ICILS — {#}-сынып білім алушыларының компьютерлік-ақпараттық сауаттылығын және компьютерлік ойлауын бағалайтын халықаралық зерттеу.	<b>Определение.</b> ICILS — международное исследование компьютерной и информационной грамотности и компьютерного мышления учащихся {#}-го класса.	<b>Definition.</b> ICILS is an international study assessing the computer and information literacy and computational thinking of grade {#} students.
+<><b>Анықтамасы.</b> PIRLS — бастауыш мектептің {#}-сынып білім алушыларының мәтінді оқу және түсіну сапасын бағалайтын халықаралық зерттеу.	<b>Определение.</b> PIRLS — международное исследование качества чтения и понимания текста учащимися {#}-го класса начальной школы.	<b>Definition.</b> PIRLS is an international study assessing the reading and text comprehension of primary school students in grade {#}.
+<><b>Анықтамасы.</b> PISA — {#} жастағы білім алушылардың алған білімі мен дағдыларын өмірлік жағдаяттарда қолдана алуын бағалайтын халықаралық зерттеу. Оқушы мәтінмен, кестемен, графикпен жұмыс істеп, күнделікті өмірден алынған мәселені шешеді.	<b>Определение.</b> PISA — международное исследование, оценивающее, насколько {#}-летние учащиеся умеют применять знания и навыки в жизненных ситуациях. Ученик работает с текстом, таблицей, графиком и решает задачу из повседневной жизни.	<b>Definition.</b> PISA is an international study assessing how well {#}-year-old students apply their knowledge and skills in real-life situations. Students work with texts, tables and graphs to solve everyday problems.
+<><b>Анықтамасы.</b> TALIS — мұғалімдер мен мектеп басшыларының еңбек жағдайын, кәсіби дамуын, сабақ беру тәжірибесі мен көзқарастарын зерттейтін халықаралық сауалнама. Оқушылар тест тапсырмайды.	<b>Определение.</b> TALIS — международный опрос учителей и руководителей школ об условиях труда, профессиональном развитии, практике преподавания и взглядах. Учащиеся тест не сдают.	<b>Definition.</b> TALIS is an international survey of teachers and school leaders about working conditions, professional development, teaching practices and beliefs. Students do not take a test.
+<><b>Анықтамасы.</b> TIMSS — {#} және {#}-сынып білім алушыларының математика мен жаратылыстану пәндері бойынша білім сапасын салыстыратын халықаралық зерттеу. Тапсырмалар мектеп бағдарламасының мазмұнына сүйенеді.	<b>Определение.</b> TIMSS — международное исследование, сравнивающее качество знаний учащихся {#} и {#} классов по математике и естественным наукам. Задания основаны на содержании школьной программы.	<b>Definition.</b> TIMSS is an international study comparing the mathematics and science achievement of students in grades {#} and {#}. The tasks are based on the school curriculum.
+<><b>Анықтамасы.</b> ББЖМ — білім алушылардың білім жетістіктерін сырттай бағалаудың ұлттық жүйесі. {#}-сынып білім алушыларының функционалдық сауаттылығы тексеріледі.	<b>Определение.</b> МОДО — национальная система внешней оценки учебных достижений обучающихся. Проверяется функциональная грамотность учащихся {#}-го класса.	<b>Definition.</b> MODO (BBZhM) is Kazakhstan's national external assessment of student achievement. It checks the functional literacy of grade {#} students.
+<><b>Анықтамасы.</b> ҰБТ — жалпы орта білім беру деңгейін бітірушілердің білімін бағалайтын және жоғары оқу орнына түсуге арналған ұлттық тестілеу. Физика — бейіндік пәндердің бірі.	<b>Определение.</b> ЕНТ — национальное тестирование выпускников средней школы, используемое для поступления в вузы. Физика — один из профильных предметов.	<b>Definition.</b> UNT (ENT) is the national test for secondary school graduates used for university admission. Physics is one of the profile subjects.
+<><b>ББЖМ</b><span>{#}-сынып білім алушылары</span>	<b>МОДО</b><span>учащиеся {#}-го класса</span>	<b>MODO</b><span>grade {#} students</span>
+<><b>Бет табылмады</b>Сілтеме ескірген болуы мүмкін. <a href="{H}">Басты бетке</a> оралыңыз.	<b>Страница не найдена</b>Возможно, ссылка устарела. Вернитесь на <a href="{H}">главную</a>.	<b>Page not found</b>The link may be outdated. Go back to the <a href="{H}">home page</a>.
+<><b>Бұл сүзгі бойынша нәтиже жоқ</b>Басқа тест түрін немесе дереккөзін таңдаңыз, не болмаса сыныпқа тест тағайындаңыз.	<b>По этому фильтру результатов нет</b>Выберите другой тип теста или источник либо назначьте классу тест.	<b>No results for this filter</b>Choose another test type or source, or assign a test to the class.
+<><b>Бұл сүзгі бойынша нәтиже жоқ</b>Тест тапсыру үшін «Халықаралық зерттеулер», «ББЖМ» немесе «ҰБТ» бөліміне өт.	<b>По этому фильтру результатов нет</b>Чтобы пройти тест, перейди в раздел «Международные исследования», «МОДО» или «ЕНТ».	<b>No results for this filter</b>To take a test, go to “International studies”, “MODO” or “UNT”.
+<><b>Бұл тізім бос</b>Тексеруді күтетін материал жоқ.	<b>Список пуст</b>Нет материалов, ожидающих проверки.	<b>This list is empty</b>No materials are awaiting review.
+<><b>ЖИ құралы әлі бапталмаған.</b> Платформа әкімшісі API кілтін қосқаннан кейін іске қосылады.	<b>ИИ-инструмент ещё не настроен.</b> Он заработает после того, как администратор добавит API-ключ.	<b>The AI tool is not set up yet.</b> It will start working once the administrator adds an API key.
+<><b>ЖИ құралы әлі бапталмаған.</b> Серверге Anthropic API кілтін қосу керек — нұсқаулық <a href="{H}">Әкімші → ЖИ</a> бетінде.	<b>ИИ-инструмент ещё не настроен.</b> Нужно добавить на сервер API-ключ — инструкция на странице <a href="{H}">Администратор → ИИ</a>.	<b>The AI tool is not set up yet.</b> An API key must be added on the server — see <a href="{H}">Admin → AI</a> for instructions.
+<><b>Жаңа өтінім жоқ</b>Мұғалім тіркелгенде осында шығады.	<b>Новых заявок нет</b>Когда учитель зарегистрируется, заявка появится здесь.	<b>No new requests</b>They will appear here when a teacher registers.
+<><b>Журнал бос</b>Оқушылардың нәтиже кодтарын жоғарыдағы өріске қойып, тексеріп, журналға жазыңыз.	<b>Журнал пуст</b>Вставьте коды результатов учащихся в поле выше, проверьте и внесите в журнал.	<b>The log is empty</b>Paste students' result codes into the field above, check them and add them to the log.
+<><b>Кім қатысады:</b> {#} жастағы білім алушылар · <b>Жиілігі:</b> {#} жылдан бастап әр {#} жыл сайын ({#} циклынан кейін — әр {#} жыл). Қазақстан {#} жылдан бастап қатысады.	<b>Участники:</b> учащиеся {#} лет · <b>Периодичность:</b> с {#} года каждые {#} года (после цикла {#} — каждые {#} года). Казахстан участвует с {#} года.	<b>Who takes part:</b> {#}-year-old students · <b>Frequency:</b> every {#} years since {1} (every {4} years after the {3} cycle). Kazakhstan has taken part since {5}.
+<><b>Кім қатысады:</b> {#} және {#}-сынып білім алушылары · <b>Жиілігі:</b> {#} жылдан бастап әр {#} жыл сайын. Қазақстан {#} жылдан бастап қатысады.	<b>Участники:</b> учащиеся {#} и {#} классов · <b>Периодичность:</b> с {#} года каждые {#} года. Казахстан участвует с {#} года.	<b>Who takes part:</b> students in grades {0} and {1} · <b>Frequency:</b> every {3} years since {2}. Kazakhstan has taken part since {4}.
+<><b>Кім қатысады:</b> {#}-сынып білім алушылары · <b>Жиілігі:</b> {#} жылдан бастап әр {#} жыл сайын. Қазақстан {#} жылдан бастап қатысады.	<b>Участники:</b> учащиеся {#}-го класса · <b>Периодичность:</b> с {#} года каждые {#} лет. Казахстан участвует с {#} года.	<b>Who takes part:</b> grade {0} students · <b>Frequency:</b> every {2} years since {1}. Kazakhstan has taken part since {3}.
+<><b>Кім қатысады:</b> {#}-сынып білім алушылары · <b>Жиілігі:</b> {#}, {#}, {#} жылдары (әр {#} жыл сайын). Қазақстан {#} жылдан бастап қатысады.	<b>Участники:</b> учащиеся {#}-го класса · <b>Периодичность:</b> {#}, {#}, {#} годы (каждые {#} лет). Казахстан участвует с {#} года.	<b>Who takes part:</b> grade {#} students · <b>Frequency:</b> {#}, {#}, {#} (every {#} years). Kazakhstan has taken part since {#}.
+<><b>Кім қатысады:</b> {#}-сынып білім алушылары · <b>Жиілігі:</b> Жыл сайын. Ұлттық тестілеу орталығы өткізеді.	<b>Участники:</b> учащиеся {#}-го класса · <b>Периодичность:</b> ежегодно. Проводит Национальный центр тестирования.	<b>Who takes part:</b> grade {#} students · <b>Frequency:</b> every year. Conducted by the National Testing Center.
+<><b>Кім қатысады:</b> {#}-сынып түлектері · <b>Жиілігі:</b> Жыл сайын (негізгі және қосымша кезеңдер). Ұлттық тестілеу орталығы өткізеді.	<b>Участники:</b> выпускники {#}-го класса · <b>Периодичность:</b> ежегодно (основной и дополнительный этапы). Проводит Национальный центр тестирования.	<b>Who takes part:</b> grade {#} graduates · <b>Frequency:</b> every year (main and additional rounds). Conducted by the National Testing Center.
+<><b>Кім қатысады:</b> Мұғалімдер мен мектеп басшылары · <b>Жиілігі:</b> {#} жылдан бастап ({#}, {#}, {#}, {#}). Қазақстан TALIS {#} зерттеуіне қатысқан.	<b>Участники:</b> учителя и руководители школ · <b>Периодичность:</b> с {#} года ({#}, {#}, {#}, {#}). Казахстан участвовал в TALIS {#}.	<b>Who takes part:</b> teachers and school leaders · <b>Frequency:</b> since {#} ({#}, {#}, {#}, {#}). Kazakhstan took part in TALIS {#}.
+<><b>Кіру қажет</b>ЖИ-көмекшіні пайдалану үшін платформаға кіріңіз немесе тіркеліңіз.	<b>Нужно войти</b>Чтобы пользоваться ИИ-помощником, войдите на платформу или зарегистрируйтесь.	<b>Sign-in required</b>To use the AI assistant, sign in or register.
+<><b>Материал табылмады</b>Сүзгіні өзгертіп көріңіз немесе кейінірек кіріңіз — кітапхана үнемі толықтырылады.	<b>Материалы не найдены</b>Измените фильтр или загляните позже — библиотека постоянно пополняется.	<b>No materials found</b>Try changing the filter or come back later — the library is updated regularly.
+<><b>Мақсаты.</b> білім беру сапасын мектеп, аудан және өңір деңгейінде бағалау, білім алушылардың білімін қолдану дағдыларын анықтау және білім беру процесін жетілдіруге ұсыныс беру.	<b>Цель.</b> оценить качество образования на уровне школы, района и региона, выявить умение учащихся применять знания и дать рекомендации по совершенствованию учебного процесса.	<b>Purpose.</b> to assess the quality of education at school, district and regional level, identify how well students apply their knowledge and recommend improvements to teaching.
+<><b>Мақсаты.</b> математика мен жаратылыстану бойынша оқу жетістіктерінің деңгейі мен оның уақыт бойынша өзгеру үрдістерін анықтау, нәтижені оқу бағдарламасы, сабақ беру және оқу жағдайларымен байланыстыру.	<b>Цель.</b> определить уровень учебных достижений по математике и естественным наукам и их динамику во времени, связать результаты с программой, преподаванием и условиями обучения.	<b>Purpose.</b> to measure achievement in mathematics and science and its trends over time, and to relate the results to the curriculum, teaching and learning conditions.
+<><b>Мақсаты.</b> міндетті білім берудің соңына қарай оқушылардың қазіргі қоғамға толыққанды араласуға қаншалықты дайын екенін анықтау және елдердің білім беру саясатын жетілдіруге дерек беру.	<b>Цель.</b> определить, насколько учащиеся к концу обязательного обучения готовы к полноценному участию в жизни современного общества, и дать странам данные для совершенствования образовательной политики.	<b>Purpose.</b> to find out how ready students are, near the end of compulsory education, to take a full part in modern society, and to give countries data for improving education policy.
+<><b>Мақсаты.</b> мұғалімдік қызметтің сапасы мен жағдайы туралы салыстырмалы дерек жинап, мұғалімдерді қолдау және кәсіби дамыту саясатын жетілдіру.	<b>Цель.</b> собрать сопоставимые данные о качестве и условиях педагогической работы и улучшить политику поддержки и профессионального развития учителей.	<b>Purpose.</b> to collect comparable data on the quality and conditions of teaching work and to improve policies for supporting and developing teachers.
+<><b>Мақсаты.</b> оқу сауаттылығының деңгейін, оқуға деген қызығушылықты және оған ықпал ететін отбасы мен мектеп жағдайларын анықтау; бастауыш білім беруді жетілдіру.	<b>Цель.</b> определить уровень читательской грамотности, интерес к чтению и влияющие на них условия семьи и школы; совершенствовать начальное образование.	<b>Purpose.</b> to measure reading literacy, interest in reading and the family and school factors that influence them; to improve primary education.
+<><b>Мақсаты.</b> оқушылардың ақпаратты іздеу, бағалау, өңдеу, құру және қауіпсіз алмасу үшін цифрлық құралдарды қаншалықты пайдалана алатынын, сондай-ақ мәселені алгоритм түрінде шеше алатынын анықтау.	<b>Цель.</b> определить, насколько учащиеся умеют использовать цифровые инструменты для поиска, оценки, обработки, создания информации и безопасного обмена ею, а также решать задачи алгоритмически.	<b>Purpose.</b> to find out how well students use digital tools to search for, evaluate, process, create and safely share information, and how well they solve problems algorithmically.
+<><b>Мақсаты.</b> түлектердің жоғары оқу орнында оқуға дайындығын анықтау және мемлекеттік білім беру грантын конкурстық негізде беру.	<b>Цель.</b> определить готовность выпускников к обучению в вузе и распределить государственные образовательные гранты на конкурсной основе.	<b>Purpose.</b> to determine graduates' readiness for university study and to award state education grants competitively.
+<><b>Мақсаты:</b> білім беру сапасын мектеп, аудан және өңір деңгейінде бағалау, білім алушылардың білімін қолдану дағдыларын анықтау және білім беру процесін жетілдіруге ұсыныс беру.	<b>Цель:</b> оценить качество образования на уровне школы, района и региона, выявить умение учащихся применять знания и дать рекомендации по совершенствованию учебного процесса.	<b>Purpose:</b> to assess the quality of education at school, district and regional level, identify how well students apply their knowledge and recommend improvements to teaching.
+<><b>Мақсаты:</b> математика мен жаратылыстану бойынша оқу жетістіктерінің деңгейі мен оның уақыт бойынша өзгеру үрдістерін анықтау, нәтижені оқу бағдарламасы, сабақ беру және оқу жағдайларымен байланыстыру.	<b>Цель:</b> определить уровень учебных достижений по математике и естественным наукам и их динамику во времени, связать результаты с программой, преподаванием и условиями обучения.	<b>Purpose:</b> to measure achievement in mathematics and science and its trends over time, and to relate the results to the curriculum, teaching and learning conditions.
+<><b>Мақсаты:</b> міндетті білім берудің соңына қарай оқушылардың қазіргі қоғамға толыққанды араласуға қаншалықты дайын екенін анықтау және елдердің білім беру саясатын жетілдіруге дерек беру.	<b>Цель:</b> определить, насколько учащиеся к концу обязательного обучения готовы к полноценному участию в жизни современного общества, и дать странам данные для совершенствования образовательной политики.	<b>Purpose:</b> to find out how ready students are, near the end of compulsory education, to take a full part in modern society, and to give countries data for improving education policy.
+<><b>Мақсаты:</b> мұғалімдік қызметтің сапасы мен жағдайы туралы салыстырмалы дерек жинап, мұғалімдерді қолдау және кәсіби дамыту саясатын жетілдіру.	<b>Цель:</b> собрать сопоставимые данные о качестве и условиях педагогической работы и улучшить политику поддержки и профессионального развития учителей.	<b>Purpose:</b> to collect comparable data on the quality and conditions of teaching work and to improve policies for supporting and developing teachers.
+<><b>Мақсаты:</b> оқу сауаттылығының деңгейін, оқуға деген қызығушылықты және оған ықпал ететін отбасы мен мектеп жағдайларын анықтау; бастауыш білім беруді жетілдіру.	<b>Цель:</b> определить уровень читательской грамотности, интерес к чтению и влияющие на них условия семьи и школы; совершенствовать начальное образование.	<b>Purpose:</b> to measure reading literacy, interest in reading and the family and school factors that influence them; to improve primary education.
+<><b>Мақсаты:</b> оқушылардың ақпаратты іздеу, бағалау, өңдеу, құру және қауіпсіз алмасу үшін цифрлық құралдарды қаншалықты пайдалана алатынын, сондай-ақ мәселені алгоритм түрінде шеше алатынын анықтау.	<b>Цель:</b> определить, насколько учащиеся умеют использовать цифровые инструменты для поиска, оценки, обработки, создания информации и безопасного обмена ею, а также решать задачи алгоритмически.	<b>Purpose:</b> to find out how well students use digital tools to search for, evaluate, process, create and safely share information, and how well they solve problems algorithmically.
+<><b>Мақсаты:</b> түлектердің жоғары оқу орнында оқуға дайындығын анықтау және мемлекеттік білім беру грантын конкурстық негізде беру.	<b>Цель:</b> определить готовность выпускников к обучению в вузе и распределить государственные образовательные гранты на конкурсной основе.	<b>Purpose:</b> to determine graduates' readiness for university study and to award state education grants competitively.
+<><b>Платформа иесі</b><i>Әкімші</i>	<b>Владелец платформы</b><i>Администратор</i>	<b>Platform owner</b><i>Administrator</i>
+<><b>Ғылым Ордасы</b><span>физика пәнінің платформасы</span>	<b>Ғылым Ордасы</b><span>платформа по физике</span>	<b>Ғылым Ордасы</b><span>physics learning platform</span>
+<><b>Қате</b>Бұл бет тек расталған мұғалімдерге арналған.	<b>Ошибка</b>Эта страница доступна только подтверждённым учителям.	<b>Error</b>This page is only for verified teachers.
+<><b>Қате</b>Сынып табылмады.	<b>Ошибка</b>Класс не найден.	<b>Error</b>Class not found.
+<><b>ҰБТ</b><span>{#}-сынып түлектері</span>	<b>ЕНТ</b><span>выпускники {#}-го класса</span>	<b>UNT</b><span>grade {#} graduates</span>
+<><b>Әзірге ақылы материал жоқ</b>Әкімші ақылы материалдарды жариялағанда осында шығады.	<b>Платных материалов пока нет</b>Они появятся здесь, когда администратор их опубликует.	<b>No paid materials yet</b>They will appear here once the administrator publishes them.
+<><b>Әзірге материал жоқ</b>Алғашқы презентацияңызды немесе ҚМЖ-ңызды жүктеңіз.	<b>Материалов пока нет</b>Загрузите свою первую презентацию или КСП.	<b>No materials yet</b>Upload your first presentation or lesson plan.
+<><b>Әзірге ойын жоқ</b>Формулаларды ойын арқылы жатта — нәтижең осында сақталады.	<b>Игр пока нет</b>Запоминай формулы в играх — твои результаты сохранятся здесь.	<b>No games yet</b>Learn formulas through games — your scores will be saved here.
+<><b>Әзірге сынып жоқ</b>Алдымен кабинетте сынып ашып, оқушыларды тіркеңіз.	<b>Классов пока нет</b>Сначала создайте класс в кабинете и зарегистрируйте учащихся.	<b>No classes yet</b>First create a class in your dashboard and register your students.
+<><b>Әзірге тест тағайындалмаған</b>Жоғарыдан сыныпты таңдап, алғашқы тестті беріңіз.	<b>Тесты пока не назначены</b>Выберите класс выше и назначьте первый тест.	<b>No tests assigned yet</b>Choose a class above and assign the first test.
+<><b>Әзірге хабарлама жоқ</b>Жаңа хабарлама келгенде, жоғарғы жақтағы қоңырау белгішесінде сан пайда болады.	<b>Уведомлений пока нет</b>Когда придёт новое уведомление, на значке колокольчика вверху появится число.	<b>No notifications yet</b>When a new one arrives, a number will appear on the bell icon at the top.
+<><b>Өтінім жоқ</b>Сатып алу өтінімдері осында шығады.	<b>Заявок нет</b>Здесь появятся заявки на покупку.	<b>No requests</b>Purchase requests will appear here.
+<><div><b>Платформаға кірмегенсің.</b> Жұмысты орындай бересің, бірақ соңында <b>нәтиже кодын</b> мұғаліміңе өзің жіберуің керек. <a href="{H}">Кірсең</a>, нәтижең мұғаліміңнің журналына өзі түседі.</div>	<div><b>Ты не вошёл на платформу.</b> Работу можно выполнять, но в конце нужно самому отправить учителю <b>код результата</b>. <a href="{H}">Если войдёшь</a>, результат сам попадёт в журнал учителя.</div>	<div><b>You are not signed in.</b> You can still do the lab, but at the end you will have to send the <b>result code</b> to your teacher yourself. <a href="{H}">Sign in</a> and your result goes to your teacher's log automatically.</div>
+<><div><b>Платформаға кіріп орындасаң</b>, нәтижең мұғаліміңнің журналына өзі түседі. Кірмей орындасаң, жұмыстың соңында шыққан <b>нәтиже кодын</b> толық көшіріп, мұғаліміңе жібер — мұғалім оны «Нәтиже кодын тексеру» бетінде журналға жазады. Кодты қолмен өзгертуге болмайды: бір таңба ауысса, код қабылданбайды.</div>	<div><b>Если выполнять работу, войдя на платформу</b>, результат сам попадёт в журнал учителя. Если без входа — полностью скопируй <b>код результата</b>, который появится в конце, и отправь учителю: он внесёт его в журнал на странице «Проверка кода результата». Код нельзя менять вручную: если изменится хоть один символ, код не будет принят.</div>	<div><b>If you do the lab while signed in</b>, your result goes to your teacher's log automatically. Without signing in, copy the whole <b>result code</b> shown at the end and send it to your teacher, who will add it to the log on the “Check result code” page. Do not edit the code: if a single character changes, it will be rejected.</div>
+<><div><b>Төмендегі есептерді қалай қолдану керек?</b> Алдымен есепті өзің шығарып көр. Қиналсаң — «Физикалық мағынасы» деген кеңесті аш, содан кейін ғана шешімді қара. Бұл бөлімдегі есептер олимпиадалардың типтік тақырыптары бойынша құрастырылған авторлық есептер; ресми тапсырмалар жоғарыдағы онлайн тесттерде және беттің соңындағы мұрағаттарда.</div>	<div><b>Как работать с задачами ниже?</b> Сначала попробуй решить задачу сам. Если трудно — открой подсказку «Физический смысл» и только потом смотри решение. Задачи этого раздела — авторские, по типичным темам олимпиад; официальные задания — в онлайн-тестах выше и в архивах внизу страницы.</div>	<div><b>How to use the problems below?</b> First try to solve the problem yourself. If you get stuck, open the “Physical meaning” hint, and only then look at the solution. These are original problems on typical olympiad topics; official tasks are in the online tests above and in the archives at the bottom of the page.</div>
+<><div>Нәтижең мұғаліміңнің — <b>{0}</b> — журналына автоматты түрде түседі. Код жіберудің қажеті жоқ.</div>	<div>Твой результат автоматически попадёт в журнал твоего учителя — <b>{0}</b>. Отправлять код не нужно.</div>	<div>Your result goes automatically to the log of your teacher, <b>{0}</b>. No need to send a code.</div>
+<><div>Сенің физика мұғалімің: <b>{0}</b>. Зертханалық жұмыстың нәтиже кодын мұғаліміңе бер.</div>	<div>Твой учитель физики: <b>{0}</b>. Передай учителю код результата лабораторной работы.</div>	<div>Your physics teacher: <b>{0}</b>. Give your teacher the result code of the lab.</div>
+<><div>Сіз мұғалім ретінде кірдіңіз. Зертхананың ішіндегі <b>«Мұғалім панелі»</b> өз сыныптарыңыздағы оқушылардың осы жұмыс бойынша нәтижелерін көрсетеді; барлық жұмыстың жиынтығы — <a href="{H}">журналда</a>.</div>	<div>Вы вошли как учитель. <b>«Панель учителя»</b> внутри лаборатории показывает результаты учащихся ваших классов по этой работе; сводка по всем работам — в <a href="{H}">журнале</a>.</div>	<div>You are signed in as a teacher. The <b>“Teacher panel”</b> inside the lab shows your students' results for this lab; the summary of all labs is in the <a href="{H}">log</a>.</div>
+<>FreeLLMAPI панелінде <b>Keys</b> бетіне тегін провайдерлердің кілттерін қосыңыз (Google, Groq т.б.) және сол беттің жоғарғы жағындағы ортақ кілтті (<code>freellmapi-…</code>) көшіріңіз.	В панели FreeLLMAPI на странице <b>Keys</b> добавьте ключи бесплатных провайдеров (Google, Groq и др.) и скопируйте общий ключ (<code>freellmapi-…</code>) в верхней части страницы.	In the FreeLLMAPI panel, add free provider keys (Google, Groq, etc.) on the <b>Keys</b> page and copy the unified key (<code>freellmapi-…</code>) at the top of that page.
+<>FreeLLMAPI-ді үнемі қосулы тұратын компьютерге немесе тұрақты дискісі бар серверге Docker арқылы орнатыңыз (нұсқаулық: репозиторийдегі <code>docs/en/install/{#}-install.md</code>). Тегін Render-де дискі өшіп-жанған сайын тазаланады, сондықтан ол жерде кілттер мен баптаулар жоғалуы мүмкін.	Установите FreeLLMAPI через Docker на постоянно включённый компьютер или сервер с постоянным диском (инструкция: <code>docs/en/install/{#}-install.md</code> в репозитории). На бесплатном Render диск очищается при каждом перезапуске, поэтому ключи и настройки там могут теряться.	Install FreeLLMAPI with Docker on an always-on computer or a server with a persistent disk (guide: <code>docs/en/install/{#}-install.md</code> in the repository). On free Render the disk is wiped on every restart, so keys and settings may be lost there.
+<>PISA · Жаратылыстану сауаттылығы<small>өзіндік жаттығу (ең жақсы)</small>	PISA · Естественнонаучная грамотность<small>самостоятельная практика (лучший)</small>	PISA · Science literacy<small>self-practice (best)</small>
+<>PISA · Математикалық сауаттылық<small>өзіндік жаттығу (ең жақсы)</small>	PISA · Математическая грамотность<small>самостоятельная практика (лучший)</small>	PISA · Mathematical literacy<small>self-practice (best)</small>
+<>PISA · Оқу сауаттылығы<small>өзіндік жаттығу (ең жақсы)</small>	PISA · Читательская грамотность<small>самостоятельная практика (лучший)</small>	PISA · Reading literacy<small>self-practice (best)</small>
+<>Render → <b>Environment</b>: <code>AI_BASE_URL</code> = серверіңіздің HTTPS мекенжайы + <code>/v{#}</code>; <code>AI_API_KEY</code> = ортақ кілт; <code>AI_MODEL</code> = <code>auto</code>.	Render → <b>Environment</b>: <code>AI_BASE_URL</code> = HTTPS-адрес вашего сервера + <code>/v{#}</code>; <code>AI_API_KEY</code> = общий ключ; <code>AI_MODEL</code> = <code>auto</code>.	Render → <b>Environment</b>: <code>AI_BASE_URL</code> = your server's HTTPS address + <code>/v{#}</code>; <code>AI_API_KEY</code> = the unified key; <code>AI_MODEL</code> = <code>auto</code>.
+<>Render → <b>Environment</b>: <code>ANTHROPIC_API_KEY</code> = кілт. (<code>AI_BASE_URL</code> берілсе, тегін провайдер бірінші орында тұрады.)	Render → <b>Environment</b>: <code>ANTHROPIC_API_KEY</code> = ключ. (Если задан <code>AI_BASE_URL</code>, приоритет у бесплатного провайдера.)	Render → <b>Environment</b>: <code>ANTHROPIC_API_KEY</code> = the key. (If <code>AI_BASE_URL</code> is set, the free provider takes priority.)
+<>ББЖМ · Жаратылыстану сауаттылығы<small>өзіндік жаттығу (ең жақсы)</small>	МОДО · Естественнонаучная грамотность<small>самостоятельная практика (лучший)</small>	MODO · Science literacy<small>self-practice (best)</small>
+<>Нәтижеңді сақтау үшін <a href="{H}">кір</a> немесе <a href="{H}">тіркел</a>.	Чтобы сохранить результат, <a href="{H}">войди</a> или <a href="{H}">зарегистрируйся</a>.	To save your result, <a href="{H}">sign in</a> or <a href="{H}">register</a>.
+<>Олимпиада<small>{#} есеп шешімімен</small>	Олимпиада<small>{#} задач с решениями</small>	Olympiad<small>{#} problems with solutions</small>
+<>Симуляциялар<small>{#} интерактивті модель</small>	Симуляции<small>{#} интерактивных моделей</small>	Simulations<small>{#} interactive models</small>
+<>Сол жерде тегін қолжетімді <b>Flash</b> моделінің атауын қараңыз (мысалы, <code>gemini-{#}-flash</code> — нақты атауын AI Studio-дан тексеріңіз).	Там же посмотрите название бесплатной модели <b>Flash</b> (например, <code>gemini-{#}-flash</code> — точное название уточните в AI Studio).	There, find the name of the free <b>Flash</b> model (e.g. <code>gemini-{#}-flash</code> — check the exact name in AI Studio).
+<>Тақырып: <a href="{H}">Олимпиада есебі: Орташа жылдамдық</a>	Тема: <a href="{H}">Олимпиадная задача: Средняя скорость</a>	Topic: <a href="{H}">Olympiad problem: Average speed</a>
+<>Тақырып: <a href="{H}">Симуляция: Жұқа линзадағы кескін</a>	Тема: <a href="{H}">Симуляция: Изображение в тонкой линзе</a>	Topic: <a href="{H}">Simulation: Image in a thin lens</a>
+<>Халықаралық зерттеулер · ББЖМ · ҰБТ<small>{#} тапсырма</small>	Международные исследования · МОДО · ЕНТ<small>{#} заданий</small>	International studies · MODO · UNT<small>{#} tasks</small>
+<>Құрастырушы: <b>Әбілқасым Керім Шәмшитұлы</b>, №{#} орта мектептің физика пәні мұғалімі	Автор: <b>Әбілқасым Керім Шәмшитұлы</b>, учитель физики средней школы №{#}	Created by <b>Abilkassym Kerim Shamshituly</b>, physics teacher at secondary school No. {#}
+<>ҰБТ<small>өзіндік жаттығу (ең жақсы)</small>	ЕНТ<small>самостоятельная практика (лучший)</small>	UNT<small>self-practice (best)</small>
+<>Ұпайыңды сақтау үшін <a href="{H}">кір</a> немесе <a href="{H}">тіркел</a>.	Чтобы сохранить очки, <a href="{H}">войди</a> или <a href="{H}">зарегистрируйся</a>.	To save your score, <a href="{H}">sign in</a> or <a href="{H}">register</a>.
+Claude моделі	Модель Claude	Claude model
+Haiku {#} — ең арзан әрі жылдам	Haiku {#} — самая дешёвая и быстрая	Haiku {#} — cheapest and fastest
+ICILS — {#}-сынып білім алушыларының компьютерлік-ақпараттық сауаттылығын және компьютерлік ойлауын бағалайтын халықаралық зерттеу.	ICILS — международное исследование компьютерной и информационной грамотности и компьютерного мышления учащихся {#}-го класса.	ICILS is an international study assessing the computer and information literacy and computational thinking of grade {#} students.
+ICILS: тапсырма қосу	ICILS: добавить задание	ICILS: add a task
+Opus {#} — ең сапалы (ұсынылады)	Opus {#} — самая качественная (рекомендуется)	Opus {#} — highest quality (recommended)
+PIRLS — бастауыш мектептің {#}-сынып білім алушыларының мәтінді оқу және түсіну сапасын бағалайтын халықаралық зерттеу.	PIRLS — международное исследование качества чтения и понимания текста учащимися {#}-го класса начальной школы.	PIRLS is an international study assessing the reading and text comprehension of primary school students in grade {#}.
+PIRLS: тапсырма қосу	PIRLS: добавить задание	PIRLS: add a task
+PISA {#} циклында жаратылыстану сауаттылығы — негізгі бағыт	В цикле PISA {#} естественнонаучная грамотность — основное направление	Science literacy is the main domain in the PISA {#} cycle
+PISA типті контекстік тапсырма	Контекстное задание формата PISA	PISA-style context task
+PISA — {#} жастағы білім алушылардың алған білімі мен дағдыларын өмірлік жағдаяттарда қолдана алуын бағалайтын халықаралық зерттеу. Оқушы мәтінмен, кестемен, графикпен жұмыс істеп, күнделікті өмірден алынған мәселені шешеді.	PISA — международное исследование, оценивающее, насколько {#}-летние учащиеся умеют применять знания и навыки в жизненных ситуациях. Ученик работает с текстом, таблицей, графиком и решает задачу из повседневной жизни.	PISA is an international study assessing how well {#}-year-old students apply their knowledge and skills in real-life situations. Students work with texts, tables and graphs to solve everyday problems.
+PISA, ББЖМ, ҰБТ тестін сынып оқушыларына тағайындап, кім тапсырғанын және балын көру. Берілген тест: {#}.	Назначайте ученикам класса тесты PISA, МОДО, ЕНТ и смотрите, кто сдал и с каким баллом. Назначено тестов: {#}.	Assign PISA, MODO and UNT tests to your students and see who has taken them and their scores. Tests assigned: {#}.
+PISA: тапсырма қосу	PISA: добавить задание	PISA: add a task
+PISA: тест	PISA: тест	PISA: test
+PowerPoint презентация, Word ҚМЖ, PDF оқу құралы немесе тест. Әкімші тексеріп жариялайды.	Презентация PowerPoint, КСП в Word, учебное пособие в PDF или тест. Администратор проверит и опубликует.	A PowerPoint presentation, a Word lesson plan, a PDF study guide or a test. The administrator reviews and publishes it.
+Sonnet {#} — сапа мен бағаның теңгерімі	Sonnet {#} — баланс качества и цены	Sonnet {#} — balance of quality and price
+TALIS сауалнамасының тақырыптарына құрылған {#} тұжырым. Әр тұжырымның өз тәжірибеңе қаншалықты сәйкес екенін белгіле. Жауаптар еш жерге жіберілмейді, нәтиже осы бетте ғана есептеледі.	{#} утверждений по темам опроса TALIS. Отметьте, насколько каждое утверждение соответствует вашему опыту. Ответы никуда не отправляются, результат считается только на этой странице.	{#} statements based on the TALIS survey topics. Mark how well each statement matches your own experience. Answers are not sent anywhere; the result is calculated on this page only.
+TALIS — мұғалімдер мен мектеп басшыларының еңбек жағдайын, кәсіби дамуын, сабақ беру тәжірибесі мен көзқарастарын зерттейтін халықаралық сауалнама. Оқушылар тест тапсырмайды.	TALIS — международный опрос учителей и руководителей школ об условиях труда, профессиональном развитии, практике преподавания и взглядах. Учащиеся тест не сдают.	TALIS is an international survey of teachers and school leaders about working conditions, professional development, teaching practices and beliefs. Students do not take a test.
+TIMSS — {#} және {#}-сынып білім алушыларының математика мен жаратылыстану пәндері бойынша білім сапасын салыстыратын халықаралық зерттеу. Тапсырмалар мектеп бағдарламасының мазмұнына сүйенеді.	TIMSS — международное исследование, сравнивающее качество знаний учащихся {#} и {#} классов по математике и естественным наукам. Задания основаны на содержании школьной программы.	TIMSS is an international study comparing the mathematics and science achievement of students in grades {#} and {#}. The tasks are based on the school curriculum.
+TIMSS: тапсырма қосу	TIMSS: добавить задание	TIMSS: add a task
+{#} (толық нұсқа)	{#} (полный вариант)	{#} (full version)
+{#} жастағы білім алушылар	учащиеся {#} лет	{#}-year-old students
+{#} жыл	{#} г.	{#}
+{#} жылдан бастап ({#}, {#}, {#}, {#})	с {#} года ({#}, {#}, {#}, {#})	since {#} ({#}, {#}, {#}, {#})
+{#} жылдан бастап әр {#} жыл сайын	с {#} года каждые {#} года	every {1} years since {0}
+{#} жылдан бастап әр {#} жыл сайын ({#} циклынан кейін — әр {#} жыл)	с {#} года каждые {#} года (после цикла {#} — каждые {#} года)	every {1} years since {0} (every {3} years after the {2} cycle)
+{#} және {#}-сынып білім алушылары	учащиеся {#} и {#} классов	students in grades {#} and {#}
+{#} мин	{#} мин	{#} min
+{#} мин (қос сабақ)	{#} мин (сдвоенный урок)	{#} min (double lesson)
+{#} оқушы. Тіркелу коды:	Учеников: {#}. Код регистрации:	Students: {#}. Registration code:
+{#} секунд ішінде атауына сәйкес формуланы таңда. Қатарынан дұрыс жауап бонус әкеледі.	За {#} секунд выбери формулу по её названию. Серия правильных ответов приносит бонус.	In {#} seconds, pick the formula that matches its name. A streak of correct answers earns a bonus.
+{#} сұрақ (ашық жауап)	Вопросов: {#} (открытый ответ)	{#} questions (open answer)
+{#} сұрақ (ашық жауап, кесте)	Вопросов: {#} (открытый ответ, таблица)	{#} questions (open answer, table)
+{#} сұрақ (ашық жауап, таңдау)	Вопросов: {#} (открытый ответ, выбор)	{#} questions (open answer, choice)
+{#} сұрақ (бірнеше дұрыс)	Вопросов: {#} (несколько верных)	{#} questions (multiple correct)
+{#} сұрақ (бірнеше дұрыс, таңдау)	Вопросов: {#} (несколько верных, выбор)	{#} questions (multiple correct, choice)
+{#} сұрақ (кесте)	Вопросов: {#} (таблица)	{#} questions (table)
+{#} сұрақ (кесте, сан)	Вопросов: {#} (таблица, число)	{#} questions (table, number)
+{#} сұрақ (кесте, таңдау)	Вопросов: {#} (таблица, выбор)	{#} questions (table, choice)
+{#} сұрақ (сан)	Вопросов: {#} (число)	{#} questions (number)
+{#} сұрақ (сан, таңдау)	Вопросов: {#} (число, выбор)	{#} questions (number, choice)
+{#} сұрақ (сан, таңдау, ашық жауап)	Вопросов: {#} (число, выбор, открытый ответ)	{#} questions (number, choice, open answer)
+{#} сұрақ (таңдау)	Вопросов: {#} (выбор)	{#} questions (choice)
+{#} сұрақ (таңдау, ашық жауап)	Вопросов: {#} (выбор, открытый ответ)	{#} questions (choice, open answer)
+{#} сұрақ (таңдау, бірнеше дұрыс)	Вопросов: {#} (выбор, несколько верных)	{#} questions (choice, multiple correct)
+{#} сұрақ (таңдау, бірнеше дұрыс, ашық жауап)	Вопросов: {#} (выбор, несколько верных, открытый ответ)	{#} questions (choice, multiple correct, open answer)
+{#} сұрақ (таңдау, кесте)	Вопросов: {#} (выбор, таблица)	{#} questions (choice, table)
+{#} сұрақ (таңдау, кесте, ашық жауап)	Вопросов: {#} (выбор, таблица, открытый ответ)	{#} questions (choice, table, open answer)
+{#} сұрақ (таңдау, сан)	Вопросов: {#} (выбор, число)	{#} questions (choice, number)
+{#} тапсырылмаған	не сдано: {#}	{#} not submitted
+{#} шама ·	{#} величин ·	{#} quantities ·
+{#}% және одан жоғары	{#}% и выше	{#}% and above
+{#}%-дан төмен	ниже {#}%	below {#}%
+{#}, {#}, {#} жылдары (әр {#} жыл сайын)	{#}, {#}, {#} годы (каждые {#} лет)	{#}, {#}, {#} (every {#} years)
+{#} қаңтар {#}	{0} января {1}	{0} January {1}
+{#} ақпан {#}	{0} февраля {1}	{0} February {1}
+{#} наурыз {#}	{0} марта {1}	{0} March {1}
+{#} сәуір {#}	{0} апреля {1}	{0} April {1}
+{#} мамыр {#}	{0} мая {1}	{0} May {1}
+{#} маусым {#}	{0} июня {1}	{0} June {1}
+{#} шілде {#}	{0} июля {1}	{0} July {1}
+{#} тамыз {#}	{0} августа {1}	{0} August {1}
+{#} қыркүйек {#}	{0} сентября {1}	{0} September {1}
+{#} қазан {#}	{0} октября {1}	{0} October {1}
+{#} қараша {#}	{0} ноября {1}	{0} November {1}
+{#} желтоқсан {#}	{0} декабря {1}	{0} December {1}
+{#} қаңтар {#}, {#}:{#}	{0} января {1}, {2}:{3}	{0} January {1}, {2}:{3}
+{#} ақпан {#}, {#}:{#}	{0} февраля {1}, {2}:{3}	{0} February {1}, {2}:{3}
+{#} наурыз {#}, {#}:{#}	{0} марта {1}, {2}:{3}	{0} March {1}, {2}:{3}
+{#} сәуір {#}, {#}:{#}	{0} апреля {1}, {2}:{3}	{0} April {1}, {2}:{3}
+{#} мамыр {#}, {#}:{#}	{0} мая {1}, {2}:{3}	{0} May {1}, {2}:{3}
+{#} маусым {#}, {#}:{#}	{0} июня {1}, {2}:{3}	{0} June {1}, {2}:{3}
+{#} шілде {#}, {#}:{#}	{0} июля {1}, {2}:{3}	{0} July {1}, {2}:{3}
+{#} тамыз {#}, {#}:{#}	{0} августа {1}, {2}:{3}	{0} August {1}, {2}:{3}
+{#} қыркүйек {#}, {#}:{#}	{0} сентября {1}, {2}:{3}	{0} September {1}, {2}:{3}
+{#} қазан {#}, {#}:{#}	{0} октября {1}, {2}:{3}	{0} October {1}, {2}:{3}
+{#} қараша {#}, {#}:{#}	{0} ноября {1}, {2}:{3}	{0} November {1}, {2}:{3}
+{#} желтоқсан {#}, {#}:{#}	{0} декабря {1}, {2}:{3}	{0} December {1}, {2}:{3}
+{#}-сынып	{0} класс	Grade {0}
+{0} сынып	{0} класс	Grade {0}
+{#} балл	{0} б.	{0} pts
+{#} / {#} балл	{0} / {1} б.	{0} / {1} pts
+{#} оқушы	учеников: {0}	students: {0}
+{#} тапсырма	заданий: {0}	tasks: {0}
+<><b>{0}</b><i>{1} сынып</i>	<b>{0}</b><i>{1} класс</i>	<b>{0}</b><i>Grade {1}</i>
+I(U) және I(R) тәуелділігін өлшеп, график тұрғызып, кедергіні графиктен анықтайды.	Измеряют зависимости I(U) и I(R), строят график и находят по нему сопротивление.	Measure I(U) and I(R), plot the graphs and find the resistance from the graph.
+{#}-жол (ақылы, ең сапалы): Anthropic Claude	Вариант {#} (платный, самый качественный): Anthropic Claude	Option {#} (paid, highest quality): Anthropic Claude
+{#}-жол (тегін): өз FreeLLMAPI серверіңіз	Вариант {#} (бесплатный): ваш сервер FreeLLMAPI	Option {#} (free): your own FreeLLMAPI server
+{#}-жол (тегін, ең оңай): Google AI Studio кілті	Вариант {#} (бесплатный, самый простой): ключ Google AI Studio	Option {#} (free, easiest): Google AI Studio key
+{#}-сынып білім алушылары	учащиеся {#}-го класса	grade {#} students
+{#}-сынып №{#}	{#} класс, №{#}	Grade {#}, No. {#}
+{#}-сынып №{#}. Архимед заңын зерделеу	{#} класс, №{#}. Изучение закона Архимеда	Grade {#}, No. {#}. Studying Archimedes' principle
+{#}-сынып №{#}. Беттік толқындардың таралу жылдамдығын анықтау	{#} класс, №{#}. Определение скорости распространения поверхностных волн	Grade {#}, No. {#}. Measuring the speed of surface waves
+{#}-сынып №{#}. Горизонталь лақтырылған дененің қозғалысын зерделеу	{#} класс, №{#}. Изучение движения тела, брошенного горизонтально	Grade {#}, No. {#}. Studying the motion of a horizontally launched body
+{#}-сынып №{#}. Дененің сұйықта жүзу шарттарын анықтау	{#} класс, №{#}. Определение условий плавания тел	Grade {#}, No. {#}. Conditions for floating bodies
+{#}-сынып №{#}. Жұқа линзаның фокустық қашықтығы мен оптикалық күші	{#} класс, №{#}. Фокусное расстояние и оптическая сила тонкой линзы	Grade {#}, No. {#}. Focal length and optical power of a thin lens
+{#}-сынып №{#}. Математикалық маятниктің көмегімен еркін түсу үдеуін анықтау	{#} класс, №{#}. Определение ускорения свободного падения с помощью математического маятника	Grade {#}, No. {#}. Measuring free-fall acceleration with a simple pendulum
+{#}-сынып №{#}. Мұздың меншікті балқу жылуын анықтау	{#} класс, №{#}. Определение удельной теплоты плавления льда	Grade {#}, No. {#}. Specific latent heat of fusion of ice
+{#}-сынып №{#}. Сұйықтар мен қатты денелердің тығыздығын анықтау	{#} класс, №{#}. Определение плотности жидкостей и твёрдых тел	Grade {#}, No. {#}. Density of liquids and solids
+{#}-сынып №{#}. Температуралары әртүрлі суды араластырғандағы жылу мөлшерін салыстыру	{#} класс, №{#}. Сравнение количества теплоты при смешивании воды разной температуры	Grade {#}, No. {#}. Comparing heat when mixing water at different temperatures
+{#}-сынып №{#}. Тізбек бөлігі үшін ток күшінің кернеуге және кедергіге тәуелділігі	{#} класс, №{#}. Зависимость силы тока от напряжения и сопротивления на участке цепи	Grade {#}, No. {#}. Current versus voltage and resistance in part of a circuit
+{#}-сынып №{#}. Тұрақты магнит және магнит өрісі	{#} класс, №{#}. Постоянный магнит и магнитное поле	Grade {#}, No. {#}. Permanent magnet and magnetic field
+{#}-сынып №{#}. Шынының сыну көрсеткішін анықтау	{#} класс, №{#}. Определение показателя преломления стекла	Grade {#}, No. {#}. Refractive index of glass
+{#}-сынып №{#}. Электр тізбегін құрастыру, ток күші мен кернеуді өлшеу	{#} класс, №{#}. Сборка электрической цепи, измерение силы тока и напряжения	Grade {#}, No. {#}. Building a circuit, measuring current and voltage
+{#}-сынып №{#}. Электромагнитті жинау және оның әрекетін тексеру	{#} класс, №{#}. Сборка электромагнита и проверка его действия	Grade {#}, No. {#}. Building an electromagnet and testing it
+{#}-сынып №{#}. Өткізгіштерді параллель жалғауды зерттеу	{#} класс, №{#}. Изучение параллельного соединения проводников	Grade {#}, No. {#}. Parallel connection of conductors
+{#}-сынып №{#}. Өткізгіштерді тізбектей жалғауды зерттеу	{#} класс, №{#}. Изучение последовательного соединения проводников	Grade {#}, No. {#}. Series connection of conductors
+{#}-сынып: онлайн тест	{#} класс: онлайн-тест	Grade {#}: online test
+{#}-сыныпқа дейінгі барлық формула	все формулы до {#} класса	all formulas up to grade {#}
+{#}-тапсырманың жауабы	ответ на задание {#}	answer to task {#}
+{#}. Атом және ядро физикасы	{#}. Атомная и ядерная физика	{#}. Atomic and nuclear physics
+{#}. Индукция және айнымалы ток	{#}. Индукция и переменный ток	{#}. Induction and alternating current
+{#}. Кванттық физика және салыстырмалылық	{#}. Квантовая физика и теория относительности	{#}. Quantum physics and relativity
+{#}. Статика және гидростатика	{#}. Статика и гидростатика	{#}. Statics and hydrostatics
+{#}. Тербелістер мен толқындар	{#}. Колебания и волны	{#}. Oscillations and waves
+{#}. Физикалық шамалар және өлшеулер	{#}. Физические величины и измерения	{#}. Physical quantities and measurements
+{0} сыныбына тест беру	Дать тест {0} классу	Give a test to class {0}
+{0} сыныбына тест тағайындау	Назначить тест {0} классу	Assign a test to class {0}
+{#}–{#} (жалпы)	{#}–{#} (общий)	{#}–{#} (general)
+{#}–{#} оқу жылы	{#}–{#} учебный год	{#}–{#} school year
+{#}–{#} сыныптар	{#}–{#} классы	grades {#}–{#}
+{#}–{#}-сынып физикасының {#} формуласы. {#}, {#} және {#}-сынып формулалары оқулықтың тараулары бойынша топталған. Формуланы басыңыз — ол толық экранда ашылады: анықтамасы, әр шаманың мағынасы мен ХБЖ-дағы өлшем бірлігі, байланысты симуляциялар. Терезеде ← → пернелерімен келесі формулаға өтуге болады.	{#} формул физики {0}–{1} классов. Формулы {3}, {4} и {5} классов сгруппированы по главам учебника. Нажмите на формулу — она откроется на весь экран: определение, смысл каждой величины и её единица в СИ, связанные симуляции. Клавишами ← → можно переходить к следующей формуле.	{2} physics formulas for grades {0}–{1}. Formulas for grades {3}, {4} and {5} are grouped by textbook chapter. Click a formula to open it full screen: definition, the meaning of each quantity and its SI unit, related simulations. Use the ← → keys to move to the next formula.
+{#}–{#}-сыныптарға арналған {#} есеп: қарапайым (мектеп және аудан кезеңі) және күрделі (облыс және республика кезеңі). Әр есептің физикалық мағынасы, қадамдық шешімі, жауабы, мұғалімге әдістемелік нұсқауы және тексеруге арналған симуляциясы бар.	{2} задач для {0}–{1} классов: простые (школьный и районный этапы) и сложные (областной и республиканский этапы). У каждой задачи — физический смысл, пошаговое решение, ответ, методические указания для учителя и симуляция для проверки.	{2} problems for grades {0}–{1}: basic (school and district rounds) and advanced (regional and national rounds). Each problem has its physical meaning, a step-by-step solution, the answer, teaching notes and a simulation for checking.
+«Жұбын тап»: апта көшбасшылары	«Найди пару»: лидеры недели	“Find the pair”: leaders of the week
+«—» — тапсырмаған	«—» — не сдавал	“—” — not taken
+Іздеу	Поиск	Search
+Абай облысы	Абайская область	Abai Region
+Авторлық курстар, толық ҚМЖ жинақтары, тест банктері. Төлемді әкімші растағаннан кейін материал сіз үшін ашылады.	Авторские курсы, полные сборники КСП, банки тестов. Материал откроется после того, как администратор подтвердит оплату.	Original courses, complete lesson plan sets, test banks. The material opens for you once the administrator confirms payment.
+Алгоритм, қайталану, шарт, қателерді табу, деректерді модельдеу.	Алгоритм, циклы, условия, поиск ошибок, моделирование данных.	Algorithms, loops, conditions, debugging, data modelling.
+Алматы облысы	Алматинская область	Almaty Region
+Алматы қаласы	г. Алматы	Almaty city
+Алты формула мен олардың атауын жұптастыр. Неғұрлым аз жүріс пен аз уақыт жұмсасаң, соғұрлым көп ұпай.	Сопоставь шесть формул с их названиями. Чем меньше ходов и времени, тем больше очков.	Match six formulas with their names. The fewer moves and the less time you use, the more points you get.
+Анықтамасы	Определение	Definition
+Апта көшбасшылары	Лидеры недели	Leaders of the week
+Артқа	Назад	Back
+Архимедтен Эйнштейнге дейін {#} ғалым: өмір сүрген жылдары, ашқан заңдары мен жаңалықтары. Әр ғалымның жанында оның еңбегін көрсететін симуляция мен формулалар бөлімі бар.	{#} учёных от Архимеда до Эйнштейна: годы жизни, открытые законы и открытия. У каждого — симуляция и формулы, показывающие его вклад.	{#} scientists from Archimedes to Einstein: their lifetimes, laws and discoveries. Each one has a simulation and formulas showing their work.
+Астана қаласы	г. Астана	Astana city
+Астрономия ({#})	Астрономия ({#})	Astronomy ({#})
+Атауы	Название	Title
+Атауы немесе сипаттамасы	Название или описание	Title or description
+Атом және ядро физикасы ({#})	Атомная и ядерная физика ({#})	Atomic and nuclear physics ({#})
+Аты-жөні немесе логин	ФИО или логин	Full name or login
+Атырау облысы	Атырауская область	Atyrau Region
+Ашу	Открыть	Open
+Ашық жауап	Открытый ответ	Open answer
+Ашық жауап (мұғалім бағалайды)	Открытый ответ (оценивает учитель)	Open answer (graded by the teacher)
+Ашық жауаптарды бағалау	Оценка открытых ответов	Grading open answers
+Ашық жауапты бағалау	Оценка открытого ответа	Grading the open answer
+Аяқтау	Завершить	Finish
+АҚШ	США	USA
+Ақмола облысы	Акмолинская область	Akmola Region
+Ақпаратты іздеу және бағалау, файлдар мен кестелермен жұмыс, цифрлық қауіпсіздік, ақпаратты ұсыну.	Поиск и оценка информации, работа с файлами и таблицами, цифровая безопасность, представление информации.	Searching and evaluating information, working with files and spreadsheets, digital safety, presenting information.
+Ақпараттық мәтін	Информационный текст	Informational text
+Ақпараттық мәтін ({#} тапсырма)	Информационный текст (заданий: {#})	Informational text ({#} tasks)
+Ақтөбе облысы	Актюбинская область	Aktobe Region
+Ақылы	Платно	Paid
+Ақылы материалдар	Платные материалы	Paid materials
+ББЖМ — білім алушылардың білім жетістіктерін сырттай бағалаудың ұлттық жүйесі. {#}-сынып білім алушыларының функционалдық сауаттылығы тексеріледі.	МОДО — национальная система внешней оценки учебных достижений обучающихся. Проверяется функциональная грамотность учащихся {#}-го класса.	MODO (BBZhM) is Kazakhstan's national external assessment of student achievement. It checks the functional literacy of grade {#} students.
+ББЖМ	МОДО	MODO
+ҰБТ	ЕНТ	UNT
+ББЖМ: тапсырма қосу	МОДО: добавить задание	MODO: add a task
+ББЖМ: тест	МОДО: тест	MODO: test
+Байланыс (беттің төменгі жағында)	Контакты (внизу страницы)	Contact (at the bottom of the page)
+Баптаулар	Настройки	Settings
+Барлығы →	Все →	All →
+Барлық бағыт	Все направления	All domains
+Барлық бөлім	Все разделы	All sections
+Барлық жауапты белгілеп болған соң «Аяқтау» батырмасын бас. Уақыт біткенде тест өздігінен аяқталады.	Отметив все ответы, нажми «Завершить». Когда время истечёт, тест завершится автоматически.	When you have marked all answers, press “Finish”. When time runs out, the test ends automatically.
+Барлық зертхана	Все лаборатории	All labs
+Барлық мұғалімдер	Все учителя	All teachers
+Барлық нәтижем	Все мои результаты	All my results
+Барлық ойындар →	Все игры →	All games →
+Барлық талпыныстар	Все попытки	All attempts
+Барлық тапсырманы шешіп болған соң «Тексеру» батырмасын бас. Жауап берілмеген тапсырма {#} ұпай болып есептеледі.	Решив все задания, нажми «Проверить». Задание без ответа оценивается в {#} баллов.	When you have solved all the tasks, press “Check”. An unanswered task scores {#} points.
+Барлық тест	Все тесты	All tests
+Барлық шешімдерді ашу	Открыть все решения	Show all solutions
+Барлық ғалымдар ({#}) →	Все учёные ({#}) →	All scientists ({#}) →
+Барлық өңір	Все регионы	All regions
+Бас тарту	Отклонить	Reject
+Басты бет	Главная	Home
+Басып шығару	Печать	Print
+Батыс Қазақстан облысы	Западно-Казахстанская область	West Kazakhstan Region
+Бағалау критерийі және үлгі жауап (мұғалімге көрінеді)	Критерий оценивания и образец ответа (видит учитель)	Grading criterion and model answer (visible to the teacher)
+Бағалау рубрикасы	Рубрика оценивания	Grading rubric
+Бағандар (үтірмен)	Столбцы (через запятую)	Columns (comma-separated)
+Бағаны сақтау	Сохранить оценку	Save the grade
+Бағасы	Цена	Price
+Бағасы, ₸ ({#} — тегін)	Цена, ₸ ({#} — бесплатно)	Price, ₸ ({#} = free)
+Бағыттар бойынша орташа нәтиже	Средний результат по направлениям	Average result by domain
+Бағытты таңда	Выбери направление	Choose a domain
+Бақылау жұмысы (БЖБ / ТЖБ)	Контрольная работа (СОР / СОЧ)	Assessment test (summative unit / term)
+Бет табылмады	Страница не найдена	Page not found
+Беттік толқындардың таралу жылдамдығын анықтау	Определение скорости распространения поверхностных волн	Measuring the speed of surface waves
+Блок өшірілсін бе?	Удалить блок?	Delete the block?
+Блоктың атауы	Название блока	Block title
+Білім алушылардың білім жетістіктерін мониторингі	Мониторинг образовательных достижений обучающихся	Monitoring of student achievement
+Білім сапасын елдер арасында салыстыратын халықаралық зерттеулер: олардың анықтамасы, мақсаты және дайындық тапсырмалары.	Международные исследования, сравнивающие качество образования в разных странах: их определение, цели и задания для подготовки.	International studies that compare the quality of education across countries: what they are, their purpose and practice tasks.
+Бірлік түрлендіру	Перевод единиц	Unit conversion
+Бірліктер түрлендіргіші	Конвертер единиц	Unit converter
+Бұл аптада әлі ешкім ойнаған жоқ — бірінші бол!	На этой неделе ещё никто не играл — будь первым!	Nobody has played this week yet — be the first!
+Бұл бөлімде — TALIS тақырыптарына құрылған өзін-өзі бағалау сауалнамасы (ресми сауалнама емес)	В этом разделе — анкета самооценки по темам TALIS (не официальный опрос)	This section has a self-assessment questionnaire based on TALIS topics (not the official survey)
+Бұл бөлімдегі мәтіндер мен сұрақтар — PIRLS форматындағы авторлық жаттығулар	Тексты и вопросы этого раздела — авторские упражнения в формате PIRLS	The texts and questions in this section are original PIRLS-style exercises
+Бұл бөлімдегі тапсырмалар — ICILS тақырыптарына құрылған авторлық жаттығулар	Задания этого раздела — авторские упражнения по темам ICILS	The tasks in this section are original exercises on ICILS topics
+Бұғатталсын ба?	Заблокировать?	Block?
+Бұғаттау	Заблокировать	Block
+{0} сыныптан шығарылсын ба?	Исключить {0} из класса?	Remove {0} from the class?
+{0} толық өшірілсін бе? Бұл әрекетті қайтару мүмкін емес.	Удалить {0} полностью? Это действие нельзя отменить.	Delete {0} completely? This cannot be undone.
+{0} үшін жаңа уақытша құпиясөз жасалсын ба?	Создать новый временный пароль для {0}?	Create a new temporary password for {0}?
+{0} бұғатталсын ба?	Заблокировать {0}?	Block {0}?
+Бөлім бойынша	По разделам	By section
+Бөлімдер	Разделы	Sections
+Викторина: апта көшбасшылары	Викторина: лидеры недели	Quiz: leaders of the week
+Виртуалды зертхана ретінде симуляциялар	Симуляции как виртуальная лаборатория	Simulations as a virtual lab
+Горизонталь лақтырылған дененің қозғалысын зерделеу	Изучение движения тела, брошенного горизонтально	Studying the motion of a horizontally launched body
+Гравитация симуляциясы	Симуляция гравитации	Gravity simulation
+Денені ауада және сұйықта динамометрмен өлшеп, ығыстырушы күшті тауып, ρgV есебімен салыстырады.	Взвешивают тело динамометром в воздухе и в жидкости, находят выталкивающую силу и сравнивают её с расчётом ρgV.	Weigh a body with a spring balance in air and in liquid, find the buoyant force and compare it with ρgV.
+Дереккөз	Источник	Source
+Дереккөзі	Источник	Source
+Деректемелер бойынша төлеп, өтінімге төлем туралы белгі қалдырыңыз.	Оплатите по реквизитам и отметьте оплату в заявке.	Pay using the details and note the payment in your request.
+Деңгей	Уровень	Level
+Деңгейі	Уровень	Level
+Динамика ({#})	Динамика ({#})	Dynamics ({#})
+Дұрыс жауап (бірнеше болса — «;» арқылы)	Правильный ответ (если несколько — через «;»)	Correct answer (separate several with “;”)
+Дұрыс жауаптың нөмірі (бірнеше болса — үтірмен: {#}, {#})	Номер правильного ответа (если несколько — через запятую: {#}, {#})	Number of the correct option (several: comma-separated, e.g. {#}, {#})
+Ел	Страна	Country
+Елді мекен	Населённый пункт	Town / village
+Емтиханға дайындық	Подготовка к экзаменам	Exam preparation
+Есепте немесе тақырыпта тұрып қалсаң, сұра. Көмекші дайын жауапты айтпайды — бағыттаушы сұрақтар қойып, шешімді өзің табуыңа көмектеседі.	Застрял на задаче или теме — спроси. Помощник не даёт готовый ответ: он задаёт наводящие вопросы и помогает найти решение самому.	Stuck on a problem or topic? Ask. The assistant won't give you the answer — it asks guiding questions and helps you find the solution yourself.
+Ескерту: тегін тарифте Google жіберілген мәтінді өз қызметтерін жақсартуға пайдалануы мүмкін. Сондықтан оқушыларға ЖИ-ге жеке деректерін (аты-жөні, телефоны т.б.) жазбауды ескертіңіз. Сайт өзі оқушылардың аты-жөнін ЖИ-ге жібермейді.	Внимание: на бесплатном тарифе Google может использовать отправленный текст для улучшения своих сервисов. Поэтому предупредите учеников не писать ИИ личные данные (ФИО, телефон и т. п.). Сам сайт не передаёт ИИ имена учеников.	Note: on the free tier Google may use submitted text to improve its services. Warn students not to write personal data (names, phone numbers, etc.) to the AI. The site itself never sends students' names to the AI.
+Ең белсенді пайдаланушылар	Самые активные пользователи	Most active users
+Ең жақсы ұпай:	Лучший счёт:	Best score:
+ЖИ	ИИ	AI
+ЖИ жасаған материал — жоба. Сабаққа қолданар алдында физикалық дұрыстығын, оқу мақсаттарының кодтарын және уақытты тексеріңіз.	Материал, созданный ИИ, — черновик. Перед уроком проверьте физическую корректность, коды целей обучения и тайминг.	AI-generated material is a draft. Before using it in class, check the physics, the learning objective codes and the timing.
+ЖИ провайдері қосылмаған	ИИ-провайдер не подключён	No AI provider connected
+ЖИ қателесуі мүмкін — маңызды тұжырымды оқулықпен немесе мұғаліммен тексер. Әңгіме сақталмайды; оны бетті жаңартқанда жоғалады.	ИИ может ошибаться — проверяй важное по учебнику или у учителя. Разговор не сохраняется и пропадёт при обновлении страницы.	The AI can make mistakes — check important points against the textbook or with your teacher. The chat is not saved and disappears when you reload the page.
+ЖИ құралы	ИИ-инструмент	AI tool
+ЖИ құралы қосулы	ИИ-инструмент включён	AI tool enabled
+ЖИ құралының күйі	Состояние ИИ-инструмента	AI tool status
+ЖИ-көмекші	ИИ-помощник	AI assistant
+ЖИ-көмекшімен шешу	Решать с ИИ-помощником	Solve with the AI assistant
+ЖИ: тапсырма генераторы	ИИ: генератор заданий	AI: task generator
+Жазба өшірілсін бе?	Удалить запись?	Delete the entry?
+Жалғастыру	Продолжить	Continue
+Жамбыл облысы	Жамбылская область	Zhambyl Region
+Жаратылыстану ({#} тапсырма)	Естествознание (заданий: {#})	Science ({#} tasks)
+Жаратылыстану сауаттылығы ({#} тапсырма)	Естественнонаучная грамотность (заданий: {#})	Science literacy ({#} tasks)
+Жарияланған	Опубликованные	Published
+Жарық / қараңғы тақырып	Светлая / тёмная тема	Light / dark theme
+Жасау	Создать	Create
+Жаттығу	Практика	Practice
+Жаттығу (бірден түсіндірме)	Практика (объяснение сразу)	Practice (instant explanation)
+Жаттығу режимі	Режим практики	Practice mode
+Жаттығу режимінде әр жауап бірден тексеріледі. Сынақ режимі уақытпен өтеді, нәтиже соңында шығады. Ашық жауапты сұрақтарды мұғалім тағайындаған тестте мұғалім бағалайды.	В режиме практики каждый ответ проверяется сразу. Пробный режим идёт на время, результат показывается в конце. Открытые ответы в тесте, назначенном учителем, оценивает учитель.	In practice mode each answer is checked immediately. Exam mode is timed and shows the result at the end. Open answers in a test assigned by the teacher are graded by the teacher.
+Жауап берілді:	Отвечено:	Answered:
+Жауап нұсқалары (әрқайсысы жаңа жолдан, {#}–{#} нұсқа)	Варианты ответа (каждый с новой строки, {#}–{#} вариантов)	Answer options (one per line, {#}–{#} options)
+Жауап таңдау	Выбор ответа	Choose an answer
+Жауап таңдау (бір немесе бірнеше дұрыс)	Выбор ответа (один или несколько верных)	Choose an answer (one or more correct)
+Жауап:	Ответ:	Answer:
+Жауаптарын қарау	Посмотреть ответы	View answers
+Жаңа блок (бар блокқа қоссаңыз, бұл бөлім ескерілмейді)	Новый блок (если добавляете в существующий, этот раздел не учитывается)	New block (ignored if you add to an existing block)
+Жаңа блок (жаңа мәтін немесе жағдаят)	Новый блок (новый текст или ситуация)	New block (new text or situation)
+Жаңа мектеп (тізімде жоқ болса ғана толтырыңыз)	Новая школа (заполняйте, только если её нет в списке)	New school (fill in only if it is not on the list)
+Жаңа тест	Новый тест	New test
+Жаңа уақытша құпиясөз жасалсын ба?	Создать новый временный пароль?	Create a new temporary password?
+Жаңа құпиясөз	Новый пароль	New password
+Жаңа құпиясөзді қайталаңыз	Повторите новый пароль	Repeat the new password
+Жаңа әкімші алғаш кіргенде өз құпиясөзін ойлап табады.	При первом входе новый администратор придумает свой пароль.	The new administrator will set their own password on first sign-in.
+Жаңа әңгіме	Новый разговор	New chat
+Жеке кабинет	Личный кабинет	My dashboard
+Жетісу облысы	Жетысуская область	Zhetysu Region
+Жиынтық кесте	Сводная таблица	Summary table
+Жоқ	Нет	No
+Журнал	Журнал	Log
+Жүктеу	Загрузить	Upload
+Жұбын тап	Найди пару	Find the pair
+Жұмыстар бойынша орташа нәтиже	Средний результат по работам	Average result by lab
+Жұмысты бастау	Начать работу	Start the lab
+Жұқа линзадағы кескін: модель	Изображение в тонкой линзе: модель	Image in a thin lens: model
+Жұқа линзаның фокустық қашықтығы мен оптикалық күші	Фокусное расстояние и оптическая сила тонкой линзы	Focal length and optical power of a thin lens
+Заңы немесе жаңалығы бойынша оны ашқан ғалымды тап. Физика тарихын білу есептің мағынасын түсінуге көмектеседі — {#} сұрақ.	Найди учёного по его закону или открытию. Знание истории физики помогает понять смысл задач — {#} вопросов.	Find the scientist from their law or discovery. Knowing the history of physics helps you understand problems — {#} questions.
+Зерттеу компьютерде өтеді: оқушы шынайы бағдарламаларға ұқсас ортада тапсырма орындайды	Исследование проходит на компьютере: ученик выполняет задания в среде, похожей на реальные программы	The study is computer-based: students work in an environment similar to real software
+Зерттеу тапсырмалары	Исследовательские задания	Investigation tasks
+Зерттеулерді кім өткізеді?	Кто проводит исследования?	Who runs the studies?
+Зертхана нәтижелері	Результаты лабораторных	Lab results
+Зертхана ішіндегі мұғалім панелі	Панель учителя внутри лаборатории	Teacher panel inside the lab
+Зертханалар	Лаборатории	Labs
+Зертханалық жұмыс. Архимед заңын зерделеу	Лабораторная работа. Изучение закона Архимеда	Lab. Studying Archimedes' principle
+Зертханалық жұмыс. Дененің сұйықта жүзу шарттарын анықтау	Лабораторная работа. Определение условий плавания тел	Lab. Conditions for floating bodies
+Зертханалық жұмыс. Жазық фигураның массалар центрін анықтау	Лабораторная работа. Определение центра масс плоской фигуры	Lab. Finding the centre of mass of a flat shape
+Зертханалық жұмыс. Иіндіктің тепе-теңдік шарттарын анықтау	Лабораторная работа. Определение условий равновесия рычага	Lab. Conditions for the equilibrium of a lever
+Зертханалық жұмыс. Кішкентай денелердің өлшемін анықтау	Лабораторная работа. Определение размеров малых тел	Lab. Measuring the size of small objects
+Зертханалық жұмыс. Көлбеу жазықтықтың ПӘК-ін анықтау	Лабораторная работа. Определение КПД наклонной плоскости	Lab. Efficiency of an inclined plane
+Зертханалық жұмыс. Серпімді деформацияларды зерделеу	Лабораторная работа. Изучение упругих деформаций	Lab. Studying elastic deformation
+Зертханалық жұмыс. Сырғанау үйкеліс күшін зерттеу	Лабораторная работа. Исследование силы трения скольжения	Lab. Investigating sliding friction
+Зертханалық жұмыс. Физикалық шамаларды өлшеу	Лабораторная работа. Измерение физических величин	Lab. Measuring physical quantities
+Зертханалық жұмыс. Қатты денелер мен сұйықтардың тығыздығын анықтау	Лабораторная работа. Определение плотности твёрдых тел и жидкостей	Lab. Density of solids and liquids
+Зертханалық жұмыстар	Лабораторные работы	Lab work
+Зертханалық жұмыстардың нәтижелері: платформада орындалғандары және мұғалім код арқылы журналға енгізгендері. Әр ұяшықта оқушының ең жақсы нәтижесі ({#} балдық және {#} балдық баға).	Результаты лабораторных работ: выполненные на платформе и внесённые учителем по коду. В каждой ячейке — лучший результат ученика (по {#}-балльной и {#}-балльной шкале).	Lab results: done on the platform or added by the teacher by code. Each cell shows the student's best result ({#}-point score and {#}-point grade).
+Зертханалық жұмыстарым	Мои лабораторные	My labs
+Иә	Да	Yes
+Кабинет	Кабинет	Dashboard
+Кабинетке өту	Перейти в кабинет	Go to dashboard
+Калориметрде ыстық пен суық суды араластырып, берілген және алынған жылу мөлшерін есептеп салыстырады.	Смешивают в калориметре горячую и холодную воду, рассчитывают и сравнивают отданное и полученное количество теплоты.	Mix hot and cold water in a calorimeter, calculate and compare the heat given and received.
+Калориметрдегі жылы суға мұз салып, жылулық тепе-теңдік теңдеуінен λ мәнін табады.	Кладут лёд в тёплую воду в калориметре и находят λ из уравнения теплового баланса.	Put ice into warm water in a calorimeter and find λ from the heat balance equation.
+Карточкалар	Карточки	Flashcards
+Катушка, өзек және кілттен электромагнит жинап, күшінің ток күші мен орам санына тәуелділігін зерттейді.	Собирают электромагнит из катушки, сердечника и ключа и исследуют зависимость его силы от тока и числа витков.	Build an electromagnet from a coil, core and switch and investigate how its strength depends on current and number of turns.
+Кванттық физика және салыстырмалылық ({#})	Квантовая физика и теория относительности ({#})	Quantum physics and relativity ({#})
+Кесте: әр тұжырымға «Иә / Жоқ» сияқты жауап	Таблица: ответ вида «Да / Нет» на каждое утверждение	Table: a “Yes / No” type answer for each statement
+Кинематика ({#})	Кинематика ({#})	Kinematics ({#})
+Код оқушының зертханадағы «Тапсыру» бетінде шығады. Әр кодтың ішінде жұмыстың атауы, оқушының аты-жөні, нұсқасы, балы мен критерийлері жазылған және қолдан өзгертуден қорғалған.	Код появляется у ученика на странице «Сдать» в лаборатории. В каждом коде записаны название работы, ФИО ученика, вариант, балл и критерии; код защищён от ручного изменения.	The code appears on the student's “Submit” page in the lab. Each code contains the lab title, the student's name, variant, score and criteria, and is protected against manual editing.
+Компьютерлік ойлау	Компьютерное мышление	Computational thinking
+Компьютерлік ойлау ({#} тапсырма)	Компьютерное мышление (заданий: {#})	Computational thinking ({#} tasks)
+Компьютерлік ойлау {#} жылдан бастап бағаланады	Компьютерное мышление оценивается с {#} года	Computational thinking has been assessed since {#}
+Компьютерлік-ақпараттық сауаттылық	Компьютерная и информационная грамотность	Computer and information literacy
+Компьютерлік-ақпараттық сауаттылық ({#} тапсырма)	Компьютерная и информационная грамотность (заданий: {#})	Computer and information literacy ({#} tasks)
+Критерийлер	Критерии	Criteria
+Кілттерді ешкімге жібермеңіз және чатқа қоймаңыз — оларды тек Render-дің Environment бетіне енгізіңіз.	Никому не передавайте ключи и не вставляйте их в чат — вводите их только на странице Environment в Render.	Never share keys or paste them into a chat — enter them only on Render's Environment page.
+Кім	Кто	Who
+Кім қатысады	Кто участвует	Who takes part
+Кіріс токен	Входные токены	Input tokens
+Кітапханадан іздеу	Поиск по библиотеке	Search the library
+Күн жүйесінің моделі: планеталар Күнді айналады. Экранды тартып, жаңа планета ұшыруға болады.	Модель Солнечной системы: планеты обращаются вокруг Солнца. Потяните по экрану, чтобы запустить новую планету.	Solar system model: planets orbit the Sun. Drag across the screen to launch a new planet.
+Күрделі	Сложные	Advanced
+Көбі өмірлік жағдаятқа құрылған	Большинство построено на жизненных ситуациях	Most are based on real-life situations
+Көбіне сәйкес	Скорее соответствует	Mostly true
+Көбіне сәйкес емес	Скорее не соответствует	Mostly not true
+Көмекші әкімші қосу ({#} / {#})	Добавить помощника администратора ({#} / {#})	Add an assistant administrator ({#} / {#})
+Көркем мәтін	Художественный текст	Literary text
+Көркем мәтін ({#} тапсырма)	Художественный текст (заданий: {#})	Literary text ({#} tasks)
+Көшіру	Копировать	Copy
+Лимит Алматы уақытымен түн ортасында жаңарады; {#} — ЖИ-ді осы рөл үшін өшіреді. Әкімшіге лимит жоқ. Тегін провайдерде шығын жоқ, бірақ лимитті қалдырған жөн — провайдердің тегін тәуліктік квотасы ортақ. Claude-та шамамен: оқушының бір сұрағы ≈ {#}–{#} $ (арзан модельде ≈ {#} $).	Лимит обновляется в полночь по времени Алматы; {#} — отключает ИИ для этой роли. У администратора лимита нет. У бесплатного провайдера расходов нет, но лимит лучше оставить — дневная бесплатная квота провайдера общая. В Claude примерно: один вопрос ученика ≈ {#}–{#} $ (на дешёвой модели ≈ {#} $).	The limit resets at midnight Almaty time; {#} turns the AI off for that role. Administrators have no limit. The free provider costs nothing, but keep a limit anyway — the provider's free daily quota is shared. With Claude, roughly: one student question ≈ ${#}–{#} (≈ ${#} on the cheap model).
+Логин	Логин	Login
+Логин мен құпиясөзіңізді енгізіңіз. Құпиясөзді ұмытсаңыз, оқушы өз мұғаліміне, мұғалім әкімшіге хабарласады.	Введите логин и пароль. Если забыли пароль: ученик обращается к своему учителю, учитель — к администратору.	Enter your login and password. If you forget your password, students should contact their teacher and teachers the administrator.
+Магнит инесінің бағыты бойынша өріс сызықтарын салып, полюстерді және өрістің әсер ету аймағын анықтайды.	По направлению магнитной стрелки строят силовые линии, определяют полюсы и область действия поля.	Draw field lines using a compass needle and identify the poles and the region where the field acts.
+Мазмұндық бағыттар ({#}-сынып жаратылыстану): биология, химия, физика, Жер туралы ғылымдар	Содержательные области (естествознание, {#} класс): биология, химия, физика, науки о Земле	Content domains (grade {#} science): biology, chemistry, physics, Earth science
+Математика ({#} тапсырма)	Математика (заданий: {#})	Mathematics ({#} tasks)
+Математикалық маятник: модель	Математический маятник: модель	Simple pendulum: model
+Математикалық маятниктің көмегімен еркін түсу үдеуін анықтау	Определение ускорения свободного падения с помощью математического маятника	Measuring free-fall acceleration with a simple pendulum
+Математикалық сауаттылық	Математическая грамотность	Mathematical literacy
+Математикалық сауаттылық ({#} тапсырма)	Математическая грамотность (заданий: {#})	Mathematical literacy ({#} tasks)
+Материал жариялау	Опубликовать материал	Publish material
+Материал жүктеу	Загрузить материал	Upload material
+Материалдар	Материалы	Materials
+Материалды ашып, «Сатып алу өтінімін жіберу» батырмасын басыңыз.	Откройте материал и нажмите «Отправить заявку на покупку».	Open the material and click “Send purchase request”.
+Материалды әкімші тексеріп, жариялайды. Бағасын ұсына аласыз, түпкілікті бағаны әкімші бекітеді. Рұқсат етілген файлдар: pdf, ppt, pptx, pps, ppsx, doc, docx, xls, xlsx, odt, odp, ods, zip, png, jpg, jpeg; ең көбі {#} МБ.	Администратор проверит и опубликует материал. Вы можете предложить цену, окончательную цену утверждает администратор. Разрешённые файлы: pdf, ppt, pptx, pps, ppsx, doc, docx, xls, xlsx, odt, odp, ods, zip, png, jpg, jpeg; не более {#} МБ.	The administrator reviews and publishes the material. You can suggest a price; the administrator sets the final price. Allowed files: pdf, ppt, pptx, pps, ppsx, doc, docx, xls, xlsx, odt, odp, ods, zip, png, jpg, jpeg; up to {#} MB.
+Маятниктің ұзындығы мен тербеліс периодын өлшеп, g мәнін тауып, T²(l) графигін тұрғызады.	Измеряют длину маятника и период колебаний, находят g и строят график T²(l).	Measure the pendulum length and period, find g and plot T²(l).
+Маңғыстау облысы	Мангистауская область	Mangystau Region
+Мектебім тізімде жоқ — жаңасын ұсынамын	Моей школы нет в списке — предложу новую	My school isn't listed — I'll suggest it
+Мектебімнің көшбасшылары	Лидеры моей школы	Leaders of my school
+Мектебіңізді тізімнен таңдаңыз немесе жаңасын ұсыныңыз. Әкімші растағаннан кейін сынып ашып, материал жүктей аласыз.	Выберите школу из списка или предложите новую. После подтверждения администратором вы сможете создавать классы и загружать материалы.	Choose your school from the list or suggest a new one. Once the administrator confirms you, you can create classes and upload materials.
+Мектеп атауы немесе елді мекен	Название школы или населённый пункт	School name or town
+Мектеп іздеу	Поиск школы	Find a school
+Мектеп қосу	Добавить школу	Add a school
+Мектептер	Школы	Schools
+Мектептің толық атауы	Полное название школы	Full school name
+Мен мұғаліммін	Я учитель	I'm a teacher
+Мен оқушымын	Я ученик	I'm a student
+Менің материалдарым	Мои материалы	My materials
+Менің нәтижелерім	Мои результаты	My results
+Менің нәтижем	Мой результат	My result
+Менің сыныптарым	Мои классы	My classes
+Менің уақыт бойынша өсуім	Мой прогресс во времени	My progress over time
+Молекулалық физика ({#})	Молекулярная физика ({#})	Molecular physics ({#})
+Мысалы: K{#}M{#}QX	Например: K{#}M{#}QX	For example: K{#}M{#}QX
+Мысалы: PISA-ға дайындық, {#}-апта	Например: подготовка к PISA, {#}-я неделя	For example: PISA preparation, week {#}
+Мысалы: §{#}. Архимед заңы	Например: §{#}. Закон Архимеда	For example: §{#}. Archimedes' principle
+Мысалы: Мұхит ағыстары	Например: Океанские течения	For example: Ocean currents
+Мүлде сәйкес емес	Совсем не соответствует	Not true at all
+Мұғалім кабинеті	Кабинет учителя	Teacher dashboard
+Мұғалім панелі	Панель учителя	Teacher panel
+Мұғалім ретінде тіркелу	Регистрация учителя	Register as a teacher
+Мұғалім сізді тестке қосқанда немесе жауабыңызды тексергенде хабарлама осында келеді.	Когда учитель добавит вас в тест или проверит ваш ответ, уведомление придёт сюда.	When a teacher adds you to a test or checks your answer, the notification appears here.
+Мұғалім тапсырмасы	Задание учителя	Teacher's task
+Мұғалім тағайындаған	Назначенные учителем	Assigned by the teacher
+Мұғалім тағайындаған тесттер	Тесты от учителя	Tests assigned by the teacher
+Мұғалімге	Учителю	For teachers
+Мұғалімге арналған сауалнама →	Опросник для учителя →	Teacher questionnaire →
+Мұғалімге күнделікті лимит (сұраныс)	Дневной лимит для учителя (запросов)	Daily limit for teachers (requests)
+Мұғалімге: генератор	Учителю: генератор	For teachers: generator
+Мұғалімге: әдістемелік нұсқау	Учителю: методические указания	For teachers: teaching notes
+Мұғалімдер	Учителя	Teachers
+Мұғалімдер мен мектеп басшылары	Учителя и руководители школ	Teachers and school leaders
+Мұғалімдерді растау, мектептер, материалдар, төлемдер, тест банкі және платформа баптаулары.	Подтверждение учителей, школы, материалы, оплаты, банк тестов и настройки платформы.	Teacher approval, schools, materials, payments, test bank and platform settings.
+Мұғалімді растағанда, ол ұсынған жаңа мектеп те бірге бекітіледі. Мектеп атауын «Мектептер» бөлімінде түзетуге болады.	При подтверждении учителя предложенная им новая школа тоже утверждается. Название школы можно исправить в разделе «Школы».	When you approve a teacher, the new school they suggested is approved as well. You can correct the school name under “Schools”.
+Мұғалімді тіркеу	Регистрация учителя	Teacher registration
+Мәзір	Меню	Menu
+Мәзірді жабу	Закрыть меню	Close menu
+Мәліметтер мектеп оқулықтары мен ғылыми энциклопедиялардағы жалпыға белгілі деректерге сүйенеді. Сабақта қолданарда ғалымның өмірбаянын оқушыларға шағын зерттеу тапсырмасы ретінде беруге болады: «Бұл заң қандай тәжірибеден туды?»	Сведения основаны на общеизвестных данных из школьных учебников и научных энциклопедий. На уроке биографию учёного можно дать как небольшое исследовательское задание: «Из какого опыта родился этот закон?»	The information is based on well-known facts from school textbooks and encyclopedias. In class, a scientist's biography can be a short research task: “What experiment did this law come from?”
+Мәтін, жағдаят (контекст)	Текст, ситуация (контекст)	Text, situation (context)
+Мәтінде кесте жасау үшін жолды «|» белгісімен бастаңыз:	Чтобы сделать таблицу в тексте, начинайте строку с «|»:	To make a table in the text, start the line with “|”:
+Мәтінді түсіну, ақпаратты табу, мәтіннің мазмұны мен пішінін бағалау: хабарландыру, кесте, көркем мәтін.	Понимание текста, поиск информации, оценка содержания и формы текста: объявление, таблица, художественный текст.	Understanding texts, finding information, evaluating content and form: notices, tables, literary texts.
+Науадан лақтырылған шардың ұшу қашықтығы мен биіктігінен бастапқы жылдамдықты тауып, қателікті бағалайды.	По дальности полёта и высоте шарика, скатившегося с жёлоба, находят начальную скорость и оценивают погрешность.	From the range and height of a ball launched from a ramp, find the initial speed and estimate the error.
+Не жасау керек?	Что нужно создать?	What do you need?
+Негізгі бөлімдер	Основные разделы	Main sections
+Негізгі мазмұнға өту	Перейти к основному содержимому	Skip to main content
+Негізгі нысаны — негізгі орта мектеп ({#}–{#}-сынып) мұғалімдері	Основная целевая группа — учителя основной средней школы ({#}–{#} классы)	Main focus: lower secondary teachers (grades {#}–{#})
+Нұсқа	Вариант	Variant
+Нәтиже кодтары (әр кодты жаңа жолдан)	Коды результатов (каждый с новой строки)	Result codes (one per line)
+Нәтиже кодын тексеру	Проверка кода результата	Check result code
+Нәтиже мектеп пен өңір деңгейінде талданады; ресми спецификацияны testcenter.kz сайтынан тексеріңіз	Результаты анализируются на уровне школы и региона; официальную спецификацию смотрите на testcenter.kz	Results are analysed at school and regional level; check the official specification at testcenter.kz
+Нәтижелер	Результаты	Results
+Нәтижелерді талдау	Анализ результатов	Results analysis
+Нәтижелерім	Мои результаты	My results
+Нәтижені көру	Посмотреть результат	See the result
+Нәтижені қарау	Посмотреть результат	View the result
+Ойналды: {#} рет	Сыграно: {#} раз	Played: {#} times
+Ойнап жатта	Учи, играя	Learn by playing
+Ойнап жаттау	Учить, играя	Learn by playing
+Ойнау	Играть	Play
+Ойын жұмыс істеуі үшін браузерде JavaScript қосулы болуы керек.	Для работы игры в браузере должен быть включён JavaScript.	JavaScript must be enabled in your browser for the game to work.
+Ойын: «Ғалымды тап»	Игра: «Найди учёного»	Game: “Find the scientist”
+Ойындардағы нәтижелерім	Мои результаты в играх	My game scores
+Олимпиада тапсырмаларының онлайн тест нәтижелері.	Результаты онлайн-тестов по олимпиадным заданиям.	Online test results for olympiad tasks.
+Олимпиада тесттері	Олимпиадные тесты	Olympiad tests
+Оптика ({#})	Оптика ({#})	Optics ({#})
+Орындалды	Выполнено	Done
+Осы бөлімнің зертханалары	Лаборатории этого раздела	Labs in this section
+Оқу	Учёба	Learning
+Оқу сауаттылығы	Читательская грамотность	Reading literacy
+Оқу сауаттылығы ({#} тапсырма)	Читательская грамотность (заданий: {#})	Reading literacy ({#} tasks)
+Оқу құралы	Учебное пособие	Study guide
+Оқулықта	В учебнике	In the textbook
+Оқушы әкелген нәтиже кодын тексеріп, журналға жазу. Журналда {#} жазба.	Проверка кода результата, принесённого учеником, и запись в журнал. В журнале записей: {#}.	Check a result code brought by a student and add it to the log. Entries in the log: {#}.
+Оқушылар × жұмыстар	Ученики × работы	Students × labs
+Оқушылар × тесттер	Ученики × тесты	Students × tests
+Оқушылар мұғалім берген сынып кодымен тіркеледі. Мұғалім аккаунтын әкімші растайды. Әкімші аккаунттары тіркеу арқылы ашылмайды.	Ученики регистрируются по коду класса от учителя. Аккаунт учителя подтверждает администратор. Аккаунты администраторов через регистрацию не создаются.	Students register with the class code from their teacher. Teacher accounts are approved by the administrator. Administrator accounts cannot be created by registering.
+Оқушылардың соңғы тест нәтижелері	Последние результаты тестов учеников	Students' latest test results
+Оқушыларға тест беру	Дать тест ученикам	Give a test to students
+Оқушыларға тест тағайындау	Назначить тест ученикам	Assign a test to students
+Оқушыны тіркеу	Регистрация ученика	Student registration
+Оқушының жауабын критериймен салыстырып, ұпай қойыңыз. Сақтағаннан кейін оқушыға хабарлама барады.	Сравните ответ ученика с критерием и поставьте балл. После сохранения ученику придёт уведомление.	Compare the student's answer with the criterion and give a score. After saving, the student is notified.
+Оқушыға күнделікті лимит (сұраныс)	Дневной лимит для ученика (запросов)	Daily limit for students (requests)
+Оқушыға көмекші	Помощник ученику	Student assistant
+Павлодар облысы	Павлодарская область	Pavlodar Region
+Пайдаланушы іздеу	Поиск пользователя	Find a user
+Пайдаланушылар	Пользователи	Users
+Параллель жалғауда кернеу бірдей, тармақтардағы ток күштері қосылатынын тексереді.	Проверяют, что при параллельном соединении напряжение одинаково, а токи в ветвях складываются.	Check that in a parallel connection the voltage is the same and the branch currents add up.
+Платформа атауы	Название платформы	Platform name
+Платформада орындалған жұмыстар журналға өздігінен түседі («платформа»). Платформадан тыс орындалған жұмыстың нәтиже кодын төменде тексеріп, журналға жазыңыз («код»). Журнал тек сізге көрінеді; оқушы жұмысты қайта тапсырса, жазба соңғы нәтижемен жаңартылады.	Работы, выполненные на платформе, попадают в журнал сами («платформа»). Код результата работы, выполненной вне платформы, проверьте ниже и внесите в журнал («код»). Журнал видите только вы; если ученик пересдаст работу, запись обновится последним результатом.	Labs done on the platform go into the log automatically (“platform”). For labs done outside the platform, check the result code below and add it to the log (“code”). Only you can see the log; if a student resubmits, the entry is updated with the latest result.
+Платформада орындаған зертханалық жұмыстарыңның нәтижелері.	Результаты твоих лабораторных работ, выполненных на платформе.	Results of the labs you did on the platform.
+Платформаның әкімшілері: иесі және тағы ең көбі {#} көмекші (барлығы {#}). Көмекші әкімшілерді тек платформа иесі қосады, олардың құпиясөзін жаңартады немесе алып тастайды.	Администраторы платформы: владелец и ещё не более {#} помощников (всего {#}). Помощников добавляет, меняет им пароль и удаляет только владелец платформы.	Platform administrators: the owner plus up to {#} assistants ({#} in total). Only the owner can add assistants, reset their passwords or remove them.
+Платформаға кіру	Вход на платформу	Sign in
+Платформаға тіркелген мектептер. Мектебіңіз тізімде жоқ болса, мұғалім тіркелгенде жаңа мектепті ұсынады, ал әкімші тексеріп қосады.	Школы, зарегистрированные на платформе. Если вашей школы нет в списке, учитель при регистрации предлагает новую, а администратор проверяет и добавляет её.	Schools registered on the platform. If your school isn't listed, a teacher suggests it when registering and the administrator reviews and adds it.
+Пән	Предмет	Subject
+Растауды күтетін мұғалімдер	Учителя, ожидающие подтверждения	Teachers awaiting approval
+Ресми олимпиада тапсырмалары: онлайн тест	Официальные олимпиадные задания: онлайн-тест	Official olympiad tasks: online test
+Ресми олимпиада тапсырмаларының онлайн тест нәтижелері.	Результаты онлайн-тестов по официальным олимпиадным заданиям.	Online test results for official olympiad tasks.
+Ресми сайт	Официальный сайт	Official website
+Ресми спецификацияны Ұлттық тестілеу орталығының сайтынан (testcenter.kz) тексеріңіз	Официальную спецификацию смотрите на сайте Национального центра тестирования (testcenter.kz)	Check the official specification on the National Testing Center website (testcenter.kz)
+Рұқсат етілген ауытқу	Допустимое отклонение	Allowed tolerance
+Рөлі	Роль	Role
+Сайт қайта іске қосылған соң осы бетте «тегін провайдер қосылған» деп шығады.	После перезапуска сайта на этой странице появится «бесплатный провайдер подключён».	After the site restarts, this page will show “free provider connected”.
+Сан жазу (жауабы сан)	Ввод числа (ответ — число)	Number entry (the answer is a number)
+Сан жауап	Числовой ответ	Numeric answer
+Сауалнама жасырын толтырылады, нәтижесі ел деңгейінде талданады	Опрос анонимный, результаты анализируются на уровне страны	The survey is anonymous; results are analysed at country level
+Сақталу заңдары ({#})	Законы сохранения ({#})	Conservation laws ({#})
+Сақтау	Сохранить	Save
+Симуляцияда көру	Посмотреть в симуляции	See it in a simulation
+Симуляцияда тексер: {0}	Проверь в симуляции: {0}	Check in a simulation: {0}
+Сипаттама (мазмұны, оқу мақсаттары, қалай қолдану керек)	Описание (содержание, цели обучения, как использовать)	Description (contents, learning objectives, how to use)
+Солтүстік Қазақстан облысы	Северо-Казахстанская область	North Kazakhstan Region
+Соңғы {#} күндегі пайдалану	Использование за последние {#} дней	Usage in the last {#} days
+Соңғы кіру	Последний вход	Last sign-in
+Соңғы нәтижелерім	Мои последние результаты	My latest results
+Соңғы тапсырылған тесттер	Последние сданные тесты	Latest submitted tests
+Статика және гидростатика ({#})	Статика и гидростатика ({#})	Statics and hydrostatics ({#})
+Су бетіндегі толқынның ұзындығы мен жиілігін өлшеп, v = λν жылдамдығын табады.	Измеряют длину и частоту волны на поверхности воды и находят скорость v = λν.	Measure the wavelength and frequency of water surface waves and find the speed v = λν.
+Сурет (міндетті емес; PNG, JPG, ең көбі {#} МБ). Жаңа блокта — блоктың суреті, бар блокта — сұрақтың суреті.	Изображение (необязательно; PNG, JPG, не более {#} МБ). В новом блоке — изображение блока, в существующем — изображение вопроса.	Image (optional; PNG, JPG, up to {#} MB). For a new block it is the block image; for an existing block it is the question image.
+Суретті үлкейту үшін оны басыңыз.	Нажмите на изображение, чтобы увеличить.	Click the image to enlarge it.
+Сынақ (уақытпен)	Пробный (на время)	Exam (timed)
+Сынақ режимі	Пробный режим	Exam mode
+Сынып ашу	Создать класс	Create a class
+Сынып ашып, кодын оқушыларға беріңіз. Оқушы тіркелгенде сіздің сыныбыңызға автоматты түрде қосылады. Тіркеу аяқталса, кодты жауып қойыңыз.	Создайте класс и дайте код ученикам. При регистрации ученик автоматически попадёт в ваш класс. Когда регистрация закончится, закройте код.	Create a class and give the code to your students. When a student registers, they join your class automatically. Close the code when registration is over.
+Сынып бойынша	По классам	By grade
+Сынып коды	Код класса	Class code
+Сынып пен тақырыпты таңдап, ҚМЖ, бақылау жұмысы, рубрика, PISA типті тапсырма немесе олимпиадалық есептердің жобасын жасаңыз. Нәтиже — жоба: оны тексеріп, өз сыныбыңызға бейімдеңіз.	Выберите класс и тему и создайте черновик КСП, контрольной работы, рубрики, задания формата PISA или олимпиадных задач. Результат — черновик: проверьте его и адаптируйте под свой класс.	Choose a grade and topic and generate a draft lesson plan, assessment test, rubric, PISA-style task or olympiad problems. The result is a draft: check it and adapt it to your class.
+Сыныптардың нәтижелері	Результаты классов	Class results
+Сыныпты және тест түрін таңдаңыз. Кестеде әр оқушының әр тесттегі нәтижесі (пайызбен) көрсетіледі; өзіндік жаттығулар үшін — ең жақсы нәтиже.	Выберите класс и тип теста. В таблице показан результат каждого ученика по каждому тесту (в процентах); для самостоятельной практики — лучший результат.	Choose a class and test type. The table shows each student's result in each test (as a percentage); for self-practice, the best result.
+Сыныпты таңдап, оқушыларды PISA, ББЖМ немесе ҰБТ тестіне қосыңыз. Қосылған әр оқушыға сайтта хабарлама барады, ал нәтижесі осы бетте көрінеді.	Выберите класс и добавьте учеников в тест PISA, МОДО или ЕНТ. Каждому добавленному ученику придёт уведомление на сайте, а результат будет виден на этой странице.	Choose a class and add students to a PISA, MODO or UNT test. Each added student is notified on the site, and the results appear on this page.
+Сыныптың уақыт бойынша өсуі	Прогресс класса во времени	Class progress over time
+Сұйықтар мен қатты денелердің тығыздығын анықтау	Определение плотности жидкостей и твёрдых тел	Density of liquids and solids
+Сұлба бойынша тізбекті жинап, амперметрді тізбектей, вольтметрді параллель қосып өлшеу жүргізеді.	Собирают цепь по схеме, включают амперметр последовательно, а вольтметр параллельно и проводят измерения.	Build the circuit from the diagram, connect the ammeter in series and the voltmeter in parallel, and take measurements.
+Сұраныс	Запросов	Requests
+Сұрақтың түрі	Тип вопроса	Question type
+Сұраққа берілген сурет	Изображение к вопросу	Question image
+Танымдық бағыттар: білу, қолдану, пайымдау	Когнитивные области: знание, применение, рассуждение	Cognitive domains: knowing, applying, reasoning
+Танымдық мақала, нұсқаулық, кесте: нақты ақпаратты табу, салыстыру, қорытынды жасау.	Научно-популярная статья, инструкция, таблица: найти конкретную информацию, сравнить, сделать вывод.	Informational article, instructions, table: find specific information, compare, draw conclusions.
+Тапсырма генераторы	Генератор заданий	Task generator
+Тапсырма мәтін, кесте немесе графиктен тұратын өмірлік контекстке құрылады — жаттанды емес, ойлау тәсілі бағаланады	Задания строятся на жизненном контексте из текста, таблицы или графика — оценивается способ мышления, а не заученное	Tasks are built on real-life contexts with text, tables or graphs — thinking is assessed, not memorisation
+Тапсырма саны	Количество заданий	Number of tasks
+Тапсырма түрлері: бір дұрыс жауапты, контекстік, сәйкестендіру және бірнеше дұрыс жауапты	Типы заданий: с одним верным ответом, контекстные, на соответствие и с несколькими верными ответами	Task types: single correct answer, context-based, matching and multiple correct answers
+Тапсырмалар {#}–{#}-сынып мазмұнына сүйенеді	Задания основаны на содержании {#}–{#} классов	Tasks are based on grades {#}–{#} content
+Тапсырмалар — бір жауапты таңдау және өз жауабын жазу түрінде	Задания — с выбором одного ответа и со свободной записью ответа	Tasks: single choice and written answers
+Тапсырманы шығарарда дәптерге сызба сызып, шамаларды ХБЖ-ға аудар. Қате жауаптарыңды тексергеннен кейін ұқсас есептерді «Олимпиадалық есептер» бөліміндегі шешімдермен салыстыр.	Решая задачу, сделай чертёж в тетради и переведи величины в СИ. После проверки сравни похожие задачи с решениями в разделе «Олимпиадные задачи».	When solving, draw a diagram in your notebook and convert quantities to SI. After checking, compare similar problems with the solutions in “Olympiad problems”.
+Тапсыру мерзімі (міндетті емес)	Срок сдачи (необязательно)	Due date (optional)
+Тапсырылды	Сдано	Submitted
+Тапсырған барлық тестің: мұғалім тағайындағандары және өзің жаттыққандарың. Тест түрін таңдап, қай бағытта өсіп келе жатқаныңды көр.	Все твои тесты: назначенные учителем и пройденные самостоятельно. Выбери тип теста и посмотри, в каком направлении ты растёшь.	All your tests: assigned by the teacher and your own practice. Choose a test type to see where you are improving.
+Тапсырған уақыты	Время сдачи	Submitted at
+Таразымен массаны, мензуркамен көлемді өлшеп, дененің тығыздығын тауып, кестелік мәнмен салыстырады.	Измеряют массу весами, объём мензуркой, находят плотность тела и сравнивают с табличным значением.	Measure mass with a balance and volume with a measuring cylinder, find the density and compare it with the table value.
+Тағайындалған тесттер	Назначенные тесты	Assigned tests
+Тақырып (оқулықтан таңдаңыз немесе өзіңіз жазыңыз)	Тема (выберите из учебника или напишите свою)	Topic (choose from the textbook or type your own)
+Тақырыпты ауыстыру	Сменить тему	Change theme
+Таңдаңыз	Выберите	Choose
+Тегі, аты, әкесінің аты	Фамилия, имя, отчество	Surname, first name, patronymic
+Тексеруді күтуде	Ожидает проверки	Awaiting review
+Температуралары әртүрлі суды араластырғандағы жылу мөлшерін салыстыру	Сравнение количества теплоты при смешивании воды разной температуры	Comparing heat when mixing water at different temperatures
+Тербелістер мен толқындар ({#})	Колебания и волны ({#})	Oscillations and waves ({#})
+Термодинамика ({#})	Термодинамика ({#})	Thermodynamics ({#})
+Тест банкі	Банк тестов	Test bank
+Тест нәтижелері	Результаты тестов	Test results
+Тест нәтижелерім	Мои результаты тестов	My test results
+Тест нәтижесі	Результат теста	Test result
+Тест орташа, %	Средний по тестам, %	Test average, %
+Тест пен оның тағайындаулары өшірілсін бе? Оқушылардың тапсырған нәтижелері сақталады.	Удалить тест и его назначения? Результаты учеников сохранятся.	Delete the test and its assignments? Students' results will be kept.
+Тест тапсыру	Пройти тест	Take a test
+Тест тағайындау	Назначить тест	Assign a test
+Тест түрлері бойынша орташа нәтиже	Средний результат по типам тестов	Average result by test type
+Тест түрі	Тип теста	Test type
+Тест түрін таңдап, оны тапсыратын оқушыларды белгілеңіз. Барлық оқушыға бірдей тапсырмалар беріледі, сондықтан нәтижелерін салыстыруға болады.	Выберите тип теста и отметьте учеников, которые будут его сдавать. Все получат одинаковые задания, поэтому результаты можно сравнивать.	Choose a test type and select the students who will take it. Everyone gets the same tasks, so the results can be compared.
+Тест, БЖБ, ТЖБ	Тест, СОР, СОЧ	Test, unit / term assessment
+Тесттер бойынша орташа нәтиже	Средний результат по тестам	Average result by test
+Тестті тапсыратын оқушылар ({#})	Ученики, сдающие тест ({#})	Students taking the test ({#})
+Тестті тағайындау	Назначить тест	Assign the test
+Тесттің атауы (міндетті емес)	Название теста (необязательно)	Test title (optional)
+Толығырақ	Подробнее	More
+Толық зертхана журналы (барлық сынып, код енгізу)	Полный журнал лабораторных (все классы, ввод кодов)	Full lab log (all classes, code entry)
+Толық сәйкес	Полностью соответствует	Completely true
+Топтау	Группировка	Grouping
+Тізбек бөлігі үшін ток күшінің кернеуге және кедергіге тәуелділігі	Зависимость силы тока от напряжения и сопротивления на участке цепи	Current versus voltage and resistance in part of a circuit
+Тізбектей жалғауда ток күші бірдей, кернеулер мен кедергілер қосылатынын өлшеумен тексереді.	Измерениями проверяют, что при последовательном соединении ток одинаков, а напряжения и сопротивления складываются.	Check by measurement that in a series connection the current is the same and the voltages and resistances add up.
+Тіл / Язык	Тіл / Язык	Language
+Тіркелді	Зарегистрирован	Registered
+Тіркеуді жабу	Закрыть регистрацию	Close registration
+Түсіндірме (жауап тексерілгеннен кейін көрінеді)	Пояснение (видно после проверки ответа)	Explanation (shown after the answer is checked)
+Түсіну процестері: нақты айтылған ақпаратты табу; қарапайым қорытынды жасау; ойларды түсіндіру және біріктіру; мәтіннің мазмұны мен тілін бағалау	Процессы понимания: найти явно указанную информацию; сделать простой вывод; интерпретировать и объединять идеи; оценить содержание и язык текста	Comprehension processes: find explicitly stated information; make straightforward inferences; interpret and integrate ideas; evaluate content and language
+Тұжырым	Утверждение	Statement
+Тұжырымдар (әрқайсысы жаңа жолдан)	Утверждения (каждое с новой строки)	Statements (one per line)
+Тұрақты магнит және магнит өрісі	Постоянный магнит и магнитное поле	Permanent magnet and magnetic field
+Төлем деректемелері (сатып алушыға көрсетіледі)	Реквизиты для оплаты (показываются покупателю)	Payment details (shown to the buyer)
+Төлемдер	Оплаты	Payments
+Төлемді банк қосымшасынан тексеріп, «Растау» басыңыз — материал сатып алушыға бірден ашылады. Төлем деректемелері «Баптаулар» бөлімінде.	Проверьте оплату в банковском приложении и нажмите «Подтвердить» — материал сразу откроется покупателю. Реквизиты — в разделе «Настройки».	Check the payment in your banking app and click “Confirm” — the material opens for the buyer immediately. Payment details are under “Settings”.
+Уақытша құпиясөз (кемінде {#} таңба)	Временный пароль (не менее {#} символов)	Temporary password (at least {#} characters)
+Физика ({#} тапсырма)	Физика (заданий: {#})	Physics ({#} tasks)
+Физика бойынша барлық тегін және ақылы материал. Бөлімді, сыныпты, түрін немесе емтиханды таңдап сүзіңіз.	Все бесплатные и платные материалы по физике. Фильтруйте по разделу, классу, типу или экзамену.	All free and paid physics materials. Filter by section, grade, type or exam.
+Физика бөлімі	Раздел физики	Physics section
+Физика есептерін өз бетінше шешуге бағыттайтын ЖИ-көмекші: дайын жауап емес, бағыттаушы сұрақтар.	ИИ-помощник, который учит решать задачи по физике самостоятельно: не готовый ответ, а наводящие вопросы.	An AI assistant that guides you to solve physics problems yourself: guiding questions, not ready answers.
+Физика мұғаліміңіз берген {#} таңбалы сынып коды керек. Мектебің мен сыныбың өздігінен белгіленеді.	Нужен {#}-значный код класса от учителя физики. Школа и класс определятся автоматически.	You need the {#}-character class code from your physics teacher. Your school and class are set automatically.
+Физика мұғаліміңіз берген сынып кодын енгізіңіз.	Введите код класса от учителя физики.	Enter the class code from your physics teacher.
+Физика пәнінің оқу платформасы: материалдар, формулалар, ойындар, симуляциялар, зертханалар, PISA, ББЖМ, ҰБТ.	Учебная платформа по физике: материалы, формулы, игры, симуляции, лаборатории, PISA, МОДО, ЕНТ.	A physics learning platform: materials, formulas, games, simulations, labs, PISA, MODO, UNT.
+Физикадан жасөспірімдер арасындағы Республикалық олимпиада. {#} тапсырма, ең көбі {#} ұпай. Тапсырмаларды сайтта шешіп, «Тексеру» батырмасымен бірден нәтижеңді және дұрыс жауаптарды көр.	Республиканская олимпиада школьников по физике. Заданий: {#}, максимум {#} баллов. Реши задания на сайте и нажми «Проверить», чтобы сразу увидеть результат и правильные ответы.	National physics olympiad for school students. {#} tasks, up to {#} points. Solve them on the site and press “Check” to see your result and the correct answers right away.
+Физикадан жасөспірімдер арасындағы Республикалық олимпиада. {#} тапсырма: {#}–{#} — {#} ұпайдан, {#}–{#} — {#} ұпайдан, {#}–{#} — {#} ұпайдан, барлығы {#} ұпай. Әр тапсырмада бір дұрыс жауап бар.	Республиканская олимпиада школьников по физике. Заданий: {#}: {#}–{#} — по {#} баллу, {#}–{#} — по {#} балла, {#}–{#} — по {#} балла, всего {#} баллов. В каждом задании один правильный ответ.	National physics olympiad for school students. {#} tasks: {#}–{#} — {#} point each, {#}–{#} — {#} points each, {#}–{#} — {#} points each, {#} points in total. Each task has one correct answer.
+Физикалық мағынасы (кеңес)	Физический смысл (подсказка)	Physical meaning (hint)
+Физикалық шамалар және өлшеулер	Физические величины и измерения	Physical quantities and measurements
+Физикалық шамалардың бірліктерін түрлендіргіш: шешу қадамдары, жаттығу тапсырмалары, ХБЖ қосымшалары.	Конвертер единиц физических величин: шаги решения, тренировочные задания, приставки СИ.	A converter for units of physical quantities: solution steps, practice tasks, SI prefixes.
+Физикалық шаманың ХБЖ-дағы өлшем бірлігін тап. {#} сұрақ.	Найди единицу физической величины в СИ. Вопросов: {#}.	Find the SI unit of a physical quantity. {#} questions.
+Физиканың бөлімдері бойынша {#} модель. Әрқайсысында параметрлерді өзгертіп, құбылысты бақылап, өлшеулер жүргізуге болады. {#}, {#} және {#}-сынып симуляцияларын оқулықтың параграфтары бойынша да ашуға болады.	{#} моделей по разделам физики. В каждой можно менять параметры, наблюдать явление и проводить измерения. Симуляции {#}, {#} и {#} классов можно открывать и по параграфам учебника.	{#} models across the branches of physics. In each you can change parameters, observe the phenomenon and take measurements. Grades {#}, {#} and {#} simulations can also be opened by textbook section.
+Формула атауы немесе шама (мысалы: қысым)	Название формулы или величина (например: давление)	Formula name or quantity (e.g. pressure)
+Формула викторинасы	Викторина по формулам	Formula quiz
+Формула ойындары	Игры с формулами	Formula games
+Формула іздеу	Поиск формулы	Find a formula
+Формуладағы белгіленген әріп қандай шаманы білдіреді? {#} сұрақ.	Какую величину обозначает выделенная буква в формуле? Вопросов: {#}.	Which quantity does the highlighted letter in the formula stand for? {#} questions.
+Формулаларды, шамалардың мағынасын және өлшем бірліктерін ойын арқылы жатта. Бөлімді таңда — ойындар сол бөлімнің формулаларымен жүреді. Тіркелген оқушының ұпайы сақталып, апталық рейтингке түседі.	Учи формулы, смысл величин и единицы измерения в играх. Выбери раздел — игры пойдут с его формулами. Очки зарегистрированного ученика сохраняются и попадают в недельный рейтинг.	Learn formulas, the meaning of quantities and units through games. Pick a section and the games use its formulas. Registered students' scores are saved and go into the weekly ranking.
+Формуланы алдымен өзің есіңе түсіріп көр, содан кейін ғана карточканы аудар. «Қайталау» деп белгіленген карточкалар топтаманың соңына қайта қосылады — осылай әлсіз тұстарың бекиді.	Сначала попробуй вспомнить формулу сам и только потом переверни карточку. Карточки с пометкой «Повторить» снова попадают в конец колоды — так закрепляются слабые места.	First try to recall the formula yourself, then flip the card. Cards marked “Repeat” go back to the end of the deck — that's how weak spots get stronger.
+Формуланың атауын оқып, есіңе түсір де, карточканы аудар. «Білемін» мен «Қайталау» арқылы өзіңді бағала.	Прочитай название формулы, вспомни её и переверни карточку. Оцени себя кнопками «Знаю» и «Повторить».	Read the formula name, recall it and flip the card. Rate yourself with “I know it” and “Repeat”.
+Функция	Функция	Feature
+Хабарламалар	Уведомления	Notifications
+Хабарландыру (барлық беттің жоғарғы жағында; бос қалса, көрсетілмейді)	Объявление (вверху всех страниц; если пусто — не показывается)	Announcement (at the top of every page; hidden if empty)
+Халықаралық зерттеулер	Международные исследования	International studies
+Халықаралық салыстырмалы зерттеулер елдердің білім беру жүйесінің сапасын бірдей өлшеммен бағалайды. Қазақстан PISA, TIMSS, PIRLS, ICILS және TALIS зерттеулеріне қатысады. Әр зерттеудің анықтамасы мен мақсатын оқып, дайындық тапсырмаларын орында.	Международные сравнительные исследования оценивают качество систем образования стран по единым меркам. Казахстан участвует в PISA, TIMSS, PIRLS, ICILS и TALIS. Прочитай определение и цель каждого исследования и выполни задания для подготовки.	International comparative studies assess the quality of countries' education systems on a common scale. Kazakhstan takes part in PISA, TIMSS, PIRLS, ICILS and TALIS. Read what each study is and its purpose, then do the practice tasks.
+Шамалар	Величины	Quantities
+Шамалар және өлшем бірліктері	Величины и единицы измерения	Quantities and units
+Шаманы таны	Узнай величину	Name the quantity
+Шешімі	Решение	Solution
+Шолу	Обзор	Overview
+Шымкент қаласы	г. Шымкент	Shymkent city
+Шыны пластинкадан өткен сәуленің жолын салып, бұрыштарды өлшеп, n = sin α / sin β есептейді.	Строят ход луча через стеклянную пластинку, измеряют углы и вычисляют n = sin α / sin β.	Trace a ray through a glass block, measure the angles and calculate n = sin α / sin β.
+Шығын — токендер саны бойынша болжам; нақты сома Anthropic Console → Billing бетінде көрсетіледі.	Расход — оценка по числу токенов; точная сумма — в Anthropic Console → Billing.	Cost is an estimate based on token counts; the exact amount is shown in Anthropic Console → Billing.
+Шығыс токен	Выходные токены	Output tokens
+Шығыс Қазақстан облысы	Восточно-Казахстанская область	East Kazakhstan Region
+ЭЫДҰ (OECD)	ОЭСР (OECD)	OECD
+ЭЫДҰ (OECD) — Экономикалық ынтымақтастық және даму ұйымы. IEA — Білім беру жетістіктерін бағалаудың халықаралық қауымдастығы. Қазақстанда зерттеулерді Оқу-ағарту министрлігінің тапсырысымен ұлттық орталықтар ұйымдастырады.	ОЭСР (OECD) — Организация экономического сотрудничества и развития. IEA — Международная ассоциация по оценке учебных достижений. В Казахстане исследования по заказу Министерства просвещения организуют национальные центры.	OECD — the Organisation for Economic Co-operation and Development. IEA — the International Association for the Evaluation of Educational Achievement. In Kazakhstan the studies are run by national centres on behalf of the Ministry of Education.
+Экрандағы айқын кескін бойынша d мен f өлшеп, линза формуласынан F және D табады.	По чёткому изображению на экране измеряют d и f и находят F и D по формуле линзы.	Using the sharp image on the screen, measure d and f and find F and D from the lens formula.
+Экранды тінтуірмен немесе саусақпен тартып, жаңа планета ұшыр. Жылдамдығы аз болса — Күнге құлайды, бірінші ғарыштық жылдамдыққа жақын болса — шеңбер сызады, тым үлкен болса — жүйеден кетеді.	Потяни экран мышью или пальцем, чтобы запустить новую планету. Если скорость мала — она упадёт на Солнце, если близка к первой космической — пойдёт по кругу, если слишком велика — покинет систему.	Drag the screen with the mouse or a finger to launch a new planet. Too slow and it falls into the Sun; close to the first cosmic velocity and it circles; too fast and it leaves the system.
+Электр тізбегін құрастыру, ток күші мен кернеуді өлшеу	Сборка электрической цепи, измерение силы тока и напряжения	Building a circuit, measuring current and voltage
+Электромагнитті жинау және оның әрекетін тексеру	Сборка электромагнита и проверка его действия	Building an electromagnet and testing it
+Электростатика ({#})	Электростатика ({#})	Electrostatics ({#})
+Су температурасы өзгергенде тығыздығы өзгереді, сондықтан ағыс пайда болады.	При изменении температуры воды меняется её плотность, поэтому возникает течение.	When water temperature changes, its density changes, so a current forms.
+апта бойынша орташа	среднее по неделям	weekly average
+ашу →	открыть →	open →
+базалық	базовый	basic
+бастау →	начать →	start →
+болжамды шығын: ${#}	ожидаемые расходы: ${#}	estimated cost: ${#}
+бүгін қолданған адам	пользователей сегодня	users today
+бүгінгі сұраныс	запросов сегодня	requests today
+ең жақсы нәтиже	лучший результат	best result
+жарияланған материал	опубликованных материалов	published materials
+жауабын жаз	впиши ответ	write the answer
+код	код	code
+код арқылы	по коду	by code
+км/сағ-ты м/с-қа, г/см³-ты кг/м³-қа аудар. Есеп шығарудың ең жиі кездесетін қадамы — {#} сұрақ.	Переведи км/ч в м/с, г/см³ в кг/м³. Самый частый шаг при решении задач — {#} вопросов.	Convert km/h to m/s and g/cm³ to kg/m³ — the most common step in problem solving. {#} questions.
+логин:	логин:	login:
+материал тексеруді күтуде	материалов ожидают проверки	materials awaiting review
+мектеп өтінімі	заявок от школ	school requests
+мұғалім растауды күтуде	учителей ожидают подтверждения	teachers awaiting approval
+мұғалім тапсырмасы	задание учителя	teacher's task
+мұғалім: {0}	учитель: {0}	teacher: {0}
+немесе сілтеме (Google Drive, YouTube т.б.)	или ссылка (Google Drive, YouTube и т. п.)	or a link (Google Drive, YouTube, etc.)
+ойын ойналды	игр сыграно	games played
+олимпиада тесті	олимпиадный тест	olympiad test
+олимпиадаға қатысқан	участвовали в олимпиаде	took part in the olympiad
+орташа нәтиже	средний результат	average result
+орташа нәтиже: {#}%.	средний результат: {#}%.	average result: {#}%.
+орындалған жұмыс	выполнено работ	labs done
+платформа иесі	владелец платформы	platform owner
+платформада	на платформе	on the platform
+расталған мұғалім	подтверждённых учителей	approved teachers
+расталған төлемдер	подтверждённые оплаты	confirmed payments
+суреті бар	с изображением	with image
+сұраныс ({#} күн)	запросов ({#} дней)	requests ({#} days)
+сәтсіз сұраныс	неудачных запросов	failed requests
+талпыныс	попыток	attempts
+тапсырды: {#} / {#}	сдали: {#} / {#}	submitted: {#} / {#}
+тапсырмады	не сдал	not taken
+тапсырылды	сдано	submitted
+тапсырылған жұмыс	сдано работ	labs submitted
+тапсырылған тест	сдано тестов	tests taken
+тексеруді күтетін жауап	ответов ожидают проверки	answers awaiting review
+теориялық тақырып	теоретическая тема	theory topic
+тест тапсырылды	тестов сдано	tests taken
+толық ашу	открыть полностью	open in full
+тіркеу ашық	регистрация открыта	registration open
+төлем өтінімі	заявок на оплату	payment requests
+ҚМЖ	КСП	Lesson plan
+ҚМЖ және тапсырма генераторы	Генератор КСП и заданий	Lesson plan and task generator
+Қабылданбаған	Отклонённые	Rejected
+Қазақстан TALIS {#} зерттеуіне қатысқан.	Казахстан участвовал в TALIS {#}.	Kazakhstan took part in TALIS {#}.
+Қазақстан {#} жылдан бастап қатысады.	Казахстан участвует с {#} года.	Kazakhstan has taken part since {#}.
+Қазіргі құпиясөз	Текущий пароль	Current password
+Қай блокқа қосу	В какой блок добавить	Add to which block
+Қайта бастау	Начать заново	Start again
+Қала, аудан, ауыл	Город, район, село	City, district, village
+Қалай жаттаған тиімді?	Как учить эффективнее?	How to learn effectively?
+Қарапайым	Простые	Basic
+Қарау	Просмотр	View
+Қарағанды облысы	Карагандинская область	Karaganda Region
+Қостанай облысы	Костанайская область	Kostanay Region
+Қосылған әр оқушыға «Сізді тестке қосты» деген хабарлама барады.	Каждому добавленному ученику придёт уведомление «Вас добавили в тест».	Each added student gets the notification “You have been added to a test”.
+Қосымша талаптар (міндетті емес)	Дополнительные требования (необязательно)	Additional requirements (optional)
+Қызылорда облысы	Кызылординская область	Kyzylorda Region
+Қысқа мерзімді сабақ жоспары (ҚМЖ)	Краткосрочный план урока (КСП)	Short-term lesson plan
+Құбылысты ғылыми түсіндіру, зерттеуді жоспарлау мен бағалау, деректер мен дәлелдерді түсіндіру.	Научное объяснение явлений, планирование и оценка исследования, интерпретация данных и доказательств.	Explaining phenomena scientifically, planning and evaluating investigations, interpreting data and evidence.
+Құзыреттер: құбылыстарды ғылыми түсіндіру; ғылыми зерттеуді жоспарлау, бағалау және деректерді сыни түсіндіру; ғылыми ақпаратты іздеу, бағалау және шешім қабылдауға пайдалану	Компетенции: научное объяснение явлений; планирование и оценка научного исследования и критическая интерпретация данных; поиск, оценка и использование научной информации для принятия решений	Competencies: explaining phenomena scientifically; designing and evaluating scientific enquiry and interpreting data critically; researching, evaluating and using scientific information for decision-making
+Құпиясөз (кемінде {#} таңба)	Пароль (не менее {#} символов)	Password (at least {#} characters)
+Құпиясөзді ауыстыру	Сменить пароль	Change password
+Құпиясөзді жаңарту	Сбросить пароль	Reset password
+Құпиясөзді қайталаңыз	Повторите пароль	Repeat the password
+Үздік нәтижелер	Лучшие результаты	Top results
+Үлкейтіп ашу	Открыть крупно	Open enlarged
+Үш бөлім: халықаралық зерттеулер (PISA, TIMSS, PIRLS, ICILS, TALIS), білім алушылардың білім жетістіктерін мониторингі (ББЖМ) және ұлттық бірыңғай тестілеу (ҰБТ).	Три раздела: международные исследования (PISA, TIMSS, PIRLS, ICILS, TALIS), мониторинг образовательных достижений обучающихся (МОДО) и единое национальное тестирование (ЕНТ).	Three sections: international studies (PISA, TIMSS, PIRLS, ICILS, TALIS), the national monitoring of student achievement (MODO) and the Unified National Test (UNT).
+Үш пробирканы екі сұйыққа батырып, Fа мен Fы қатысы бойынша батуын, жүзуін, қалқуын алдын ала болжап тексереді.	Погружают три пробирки в две жидкости и по соотношению Fа и Fт заранее предсказывают и проверяют, утонет, будет плавать или всплывёт пробирка.	Dip three test tubes into two liquids and use the ratio of buoyant force to weight to predict and check whether each sinks, floats or rises.
+ҰБТ — жалпы орта білім беру деңгейін бітірушілердің білімін бағалайтын және жоғары оқу орнына түсуге арналған ұлттық тестілеу. Физика — бейіндік пәндердің бірі.	ЕНТ — национальное тестирование выпускников средней школы, используемое для поступления в вузы. Физика — один из профильных предметов.	UNT (ENT) is the national test for secondary school graduates used for university admission. Physics is one of the profile subjects.
+ҰБТ: тапсырма қосу	ЕНТ: добавить задание	UNT: add a task
+ҰБТ: тест	ЕНТ: тест	UNT: test
+Ұйым	Организация	Organisation
+Ұлттық бірыңғай тестілеу	Единое национальное тестирование	Unified National Test
+Ұлттық тестілеу орталығы	Национальный центр тестирования	National Testing Center
+Ұлытау облысы	Улытауская область	Ulytau Region
+Ұқсас симуляциялар	Похожие симуляции	Similar simulations
+ұпаймен	с баллом	with a score of
+Әбілқасым Керім Шәмшитұлы, №{#} орта мектептің физика пәні мұғалімі	Әбілқасым Керім Шәмшитұлы, учитель физики средней школы №{#}	Abilkassym Kerim Shamshituly, physics teacher at secondary school No. {#}
+Әкімші бөлімдері	Разделы администратора	Admin sections
+Әкімші жүктеген материал бірден жарияланады. Рұқсат етілген файлдар: pdf, ppt, pptx, pps, ppsx, doc, docx, xls, xlsx, odt, odp, ods, zip, png, jpg, jpeg; ең көбі {#} МБ.	Материал, загруженный администратором, публикуется сразу. Разрешённые файлы: pdf, ppt, pptx, pps, ppsx, doc, docx, xls, xlsx, odt, odp, ods, zip, png, jpg, jpeg; не более {#} МБ.	Material uploaded by an administrator is published immediately. Allowed files: pdf, ppt, pptx, pps, ppsx, doc, docx, xls, xlsx, odt, odp, ods, zip, png, jpg, jpeg; up to {#} MB.
+Әкімші панелі	Панель администратора	Admin panel
+Әкімші төлемді растағанда материал жүктеуге ашылады.	Когда администратор подтвердит оплату, материал станет доступен для скачивания.	Once the administrator confirms payment, the material becomes available to download.
+Әкімші: Баптаулар	Администратор: Настройки	Admin: Settings
+Әкімші: ЖИ	Администратор: ИИ	Admin: AI
+Әкімші: Материалдар	Администратор: Материалы	Admin: Materials
+Әкімші: Мектептер	Администратор: Школы	Admin: Schools
+Әкімші: Мұғалімдер	Администратор: Учителя	Admin: Teachers
+Әкімші: Пайдаланушылар	Администратор: Пользователи	Admin: Users
+Әкімші: Тест банкі	Администратор: Банк тестов	Admin: Test bank
+Әкімші: Төлемдер	Администратор: Оплаты	Admin: Payments
+Әкімші: Шолу	Администратор: Обзор	Admin: Overview
+Әкімші: Әкімшілер	Администратор: Администраторы	Admin: Administrators
+Әкімшілер	Администраторы	Administrators
+Әкімшілер — платформа иесі және ол қосқан тағы ең көбі {#} адам. Әкімші аккаунттары тіркелу арқылы ашылмайды, оларды тек платформа иесі «Әкімшілер» бөлімінде жасайды.	Администраторы — владелец платформы и ещё не более {#} человек, которых он добавил. Аккаунты администраторов не создаются через регистрацию: их создаёт только владелец в разделе «Администраторы».	Administrators are the platform owner plus up to {#} people they add. Administrator accounts cannot be created by registering; only the owner creates them under “Administrators”.
+Әлемді физика заңдарымен зертте	Исследуй мир законами физики	Explore the world through the laws of physics
+Әлі ешкім тапсырған жоқ — бірінші бол!	Ещё никто не сдавал — будь первым!	Nobody has taken it yet — be the first!
+Әр жұмыс — толық виртуалды зертхана: қауіпсіздік тесті, құралдармен өлшеу, кесте мен есептеу, қорытынды сұрақтары және {#} критерий бойынша автоматты баға. Жұмыс соңында оқушы нәтиже кодын алады да, мұғаліміне береді.	Каждая работа — полноценная виртуальная лаборатория: тест по технике безопасности, измерения приборами, таблица и расчёты, итоговые вопросы и автоматическая оценка по {#} критериям. В конце ученик получает код результата и передаёт его учителю.	Each lab is a full virtual lab: a safety quiz, measurements with instruments, a table and calculations, final questions and automatic grading on {#} criteria. At the end the student gets a result code and gives it to the teacher.
+Әр мәтін мен оның сұрақтарына шамамен {#} минут беріледі	На каждый текст с вопросами даётся около {#} минут	About {#} minutes are given for each text and its questions
+Әр тапсырманы «Тексеру» арқылы тексеруге болады. Соңында жалпы нәтижені сақтау үшін «Аяқтау» бас.	Каждое задание можно проверить кнопкой «Проверить». В конце нажми «Завершить», чтобы сохранить общий результат.	You can check each task with “Check”. At the end, press “Finish” to save the overall result.
+Әр тұжырымның дұрыс бағаны, ретімен (мысалы: {#}, {#}, {#} — бірінші жол «Иә», екіншісі «Жоқ», ...)	Правильный столбец для каждого утверждения по порядку (например: {#}, {#}, {#} — первая строка «Да», вторая «Нет», ...)	The correct column for each statement in order (e.g. {#}, {#}, {#} — first row “Yes”, second “No”, ...)
+Әрпі	Буква	Letter
+Әңгіме, ертегі: кейіпкерлер, оқиғаның себебі мен салдары, автордың ойы, сөздің мағынасы.	Рассказ, сказка: герои, причины и следствия событий, мысль автора, значение слов.	Stories and fairy tales: characters, causes and effects of events, the author's message, word meanings.
+әр жолға бір жауап	один ответ в каждой строке	one answer per row
+Өз жүйеңді жаса	Создай свою систему	Build your own system
+Өзін-өзі бағалау сауалнамасы	Анкета самооценки	Self-assessment questionnaire
+Өзіндік жаттығу	Самостоятельная практика	Self-practice
+Өмірлік жағдаяттағы есептер: формула, график, кесте, геометриялық пішіндер, пайыз бен ықтималдық.	Задачи в жизненных ситуациях: формулы, графики, таблицы, геометрические фигуры, проценты и вероятность.	Real-life problems: formulas, graphs, tables, geometric shapes, percentages and probability.
+Өтінім жіберу	Отправить заявку	Send request
+Өтініміңізді әкімші тексереді. Расталғанша платформаны қарай аласыз, бірақ сынып аша алмайсыз және материал жүктей алмайсыз.	Администратор проверит вашу заявку. До подтверждения вы можете просматривать платформу, но не можете создавать классы и загружать материалы.	The administrator will review your request. Until then you can browse the platform but cannot create classes or upload materials.
+Өшіру	Удалить	Delete
+Өңір	Регион	Region
+өзін-өзі тексеру	самопроверка	self-check
+— ЖИ функциялары «бапталмаған» күйінде көрсетіледі.	— функции ИИ отображаются как «не настроено».	— AI features are shown as “not set up”.
+— таңдаңыз —	— выберите —	— choose —
+— өңір —	— регион —	— region —
+№{#} жалпы білім беретін мектеп	Общеобразовательная школа №{#}	General secondary school No. {#}
+ҚАЗ	ҚАЗ	ҚАЗ
+Емтихан бетіне	На страницу экзамена	To the exam page
+Жеке бетте ашыңыз	Откройте на отдельной странице	Open on a separate page
+Нәтижені толық қарау	Посмотреть результат полностью	See the full result
+{0} · {1}-сынып · {2}	{0} · {1} класс · {2}	{0} · Grade {1} · {2}
+Аудару	Перевернуть	Flip
+Байланыс қатесі. Қайталап көр.	Ошибка связи. Попробуй ещё раз.	Connection error. Try again.
+Байланыс үзілді. Қайталап көріңіз.	Связь прервалась. Попробуйте ещё раз.	The connection dropped. Please try again.
+Барлық жұп табылды!	Все пары найдены!	All pairs found!
+Барлық карточканы меңгердің!	Ты освоил все карточки!	You have mastered all the cards!
+{#} формула қайталанды. Енді ұпайлы ойындарда өзіңді сынап көр.	Повторено формул: {#}. Теперь проверь себя в играх на очки.	{#} formulas reviewed. Now test yourself in the scored games.
+Бастау	Начать	Start
+Білемін	Знаю	I know it
+Бірлік түрлендіру: нәтиже	Перевод единиц: результат	Unit conversion: result
+Бұл бөлімде формула аз болғандықтан, ойын барлық бөлімнің формулаларымен жүреді.	В этом разделе мало формул, поэтому игра идёт с формулами всех разделов.	This section has few formulas, so the game uses formulas from all sections.
+Бұл сұрақ ұпайға қосылмайды. Үлгі жауап пен критерий:	Этот вопрос не влияет на балл. Образец ответа и критерий:	This question does not count towards the score. Model answer and criterion:
+Дайынсың ба?	Готов?	Ready?
+Дұрыс	Верно	Correct
+Дұрыс жауап:	Правильный ответ:	Correct answer:
+Дұрыс!	Верно!	Correct!
+Ең төмен шкаладан бастап, бір тоқсанға бір нақты өзгеріс жоспарлаңыз. Сауалнаманы тоқсан сайын қайта толтырып, өзгерісті салыстырыңыз.	Начните с самой низкой шкалы и запланируйте одно конкретное изменение на четверть. Заполняйте анкету каждую четверть и сравнивайте изменения.	Start with your lowest scale and plan one concrete change per term. Fill in the questionnaire every term and compare the change.
+ЖИ бағалап жатыр…	ИИ оценивает…	The AI is grading…
+ЖИ деректерді талдап жатыр, бұл {#}–{#} секунд алуы мүмкін…	ИИ анализирует данные, это может занять {#}–{#} секунд…	The AI is analysing the data; this may take {#}–{#} seconds…
+ЖИ материалды жасап жатыр, бұл {#}–{#} минут алуы мүмкін…	ИИ создаёт материал, это может занять {#}–{#} минуты…	The AI is creating the material; this may take {#}–{#} minutes…
+ЖИ ұсынысы:	Предложение ИИ:	AI suggestion:
+ЖИ ұсынысы: {#} / {#} балл.	Предложение ИИ: {#} / {#} б.	AI suggestion: {#} / {#} pts.
+ЖИ ұсынысын алу	Получить предложение ИИ	Get AI suggestion
+ЖИ ұсынысын қайта алу	Получить предложение ИИ заново	Get a new AI suggestion
+Жабу ✕	Закрыть ✕	Close ✕
+Жартылай дұрыс	Частично верно	Partly correct
+Жасап жатыр…	Создаётся…	Creating…
+Жауап тым ұзақ болып, соңы қиылды. Тақырыпты тарылтып, қайталап көріңіз.	Ответ получился слишком длинным, конец обрезан. Сузьте тему и попробуйте снова.	The answer was too long and got cut off. Narrow the topic and try again.
+Жеке бетте ашу	Открыть на отдельной странице	Open on a separate page
+Желіге қосылу мүмкін болмады.	Не удалось подключиться к сети.	Could not connect to the network.
+Желіге қосылу мүмкін болмады. Интернетті тексеріңіз.	Не удалось подключиться к сети. Проверьте интернет.	Could not connect to the network. Check your internet connection.
+Жүктелуде…	Загрузка…	Loading…
+Жұп	Пары	Pairs
+Кабинетке	В кабинет	To the dashboard
+Келесі сұрақ →	Следующий вопрос →	Next question →
+Көшірілді	Скопировано	Copied
+Менің профилім	Мой профиль	My profile
+Нәтиже кабинетіңе сақталды.	Результат сохранён в твоём кабинете.	The result has been saved to your dashboard.
+Нәтиже сақталды. Ең жақсы ұпайың: {#}	Результат сохранён. Твой лучший счёт: {#}	Score saved. Your best: {#}
+Нәтиже сақталуда…	Результат сохраняется…	Saving the result…
+Нәтиже:	Результат:	Result:
+Нәтиже: {#} / {#} балл ({#}%)	Результат: {#} / {#} б. ({#}%)	Result: {#} / {#} pts ({#}%)
+Нәтижені сақтау мүмкін болмады.	Не удалось сохранить результат.	Could not save the result.
+Нәтижені сақтау үшін платформаға кір.	Чтобы сохранить результат, войди на платформу.	Sign in to save your result.
+Планета саны: {#}. Экранды тартып, жаңа планета ұшыр.	Планет: {#}. Потяни экран, чтобы запустить новую планету.	Planets: {#}. Drag the screen to launch a new planet.
+Сессия аяқталған болуы мүмкін: бетті жаңартып, қайта кіріңіз.	Возможно, сессия истекла: обновите страницу и войдите снова.	Your session may have expired: reload the page and sign in again.
+Сол жақтан атауды, оң жақтан оған сәйкес формуланы таңда.	Выбери слева название, а справа — подходящую формулу.	Pick a name on the left and the matching formula on the right.
+Сұрақ	Вопрос	Question
+Талдап жатыр…	Анализирует…	Analysing…
+Талдау жасау	Сделать анализ	Run analysis
+Тестті тапсырасың ба? Тапсырғаннан кейін жауапты өзгерту мүмкін емес.	Сдать тест? После сдачи ответы изменить нельзя.	Submit the test? You cannot change your answers afterwards.
+{#} тапсырмаға жауап берілмеді. Аяқтай бересің бе?	Без ответа заданий: {#}. Всё равно завершить?	{#} tasks have no answer. Finish anyway?
+Жауап берілмеген тапсырма бар: {#}. Соған қарамастан тексеру керек пе?	Есть задания без ответа: {#}. Всё равно проверить?	Some tasks have no answer: {#}. Check anyway?
+<><b>Жауабың мұғалімге жіберілді.</b> Мұғалім тексеріп, {#} балға дейін ұпай қояды.	<b>Твой ответ отправлен учителю.</b> Учитель проверит и поставит до {#} баллов.	<b>Your answer has been sent to the teacher.</b> The teacher will check it and give up to {#} points.
+Толық экран	Полный экран	Full screen
+Толық экраннан шығу	Выйти из полноэкранного режима	Exit full screen
+Тоқтату	Пауза	Pause
+Уақыт	Время	Time
+Уақыт бітті!	Время вышло!	Time's up!
+Уақыт:	Время:	Time:
+Уақыт: {#} с · Қате: {#}	Время: {#} с · Ошибок: {#}	Time: {#} s · Mistakes: {#}
+Формула	Формула	Formula
+Формуланы есіңе түсір де, карточканы аудар	Вспомни формулу и переверни карточку	Recall the formula and flip the card
+Шаманы таны: нәтиже	Узнай величину: результат	Name the quantity: result
+Шешімдерді жабу	Скрыть решения	Hide solutions
+ашық жауап мұғалімнің тексеруін күтуде	открытый ответ ожидает проверки учителем	open answer awaiting the teacher's review
+аяқталды	завершено	finished
+дамытуды қажет етеді	требует развития	needs development
+жоғары	высокий	high
+орташа	средний	medium
+нені білдіреді?	что означает?	stand for?
+Формуладағы	Что в формуле означает	In the formula, what does
+жүйеден мүлде кетеді (v ≥ √{#}·v₁)	навсегда покидает систему (v ≥ √{#}·v₁)	leaves the system for good (v ≥ √{#}·v₁)
+жұлдызға құлайды	падает на звезду	falls into the star
+созылған эллипс	вытянутый эллипс	elongated ellipse
+шеңберге жуық орбита (v ≈ v₁)	почти круговая орбита (v ≈ v₁)	nearly circular orbit (v ≈ v₁)
+эллипс бойымен қозғалады	движется по эллипсу	moves along an ellipse
+Ғалымды тап: нәтиже	Найди учёного: результат	Find the scientist: result
+Қайта жасау	Создать заново	Generate again
+Қайта ойнау	Сыграть ещё	Play again
+Қайта талдау	Повторить анализ	Analyse again
+Қайталап шық	Пройди ещё раз	Go through again
+Қайталау	Повторить	Repeat
+Қалды	Осталось	Left
+Қатарынан	Подряд	Streak
+Қате	Неверно	Wrong
+Қате шықты	Произошла ошибка	Something went wrong
+Қате шықты.	Произошла ошибка.	Something went wrong.
+Қате.	Неверно.	Wrong.
+Ұпай	Очки	Score
+Ұпайды сақтау үшін платформаға кір.	Чтобы сохранить очки, войди на платформу.	Sign in to save your score.
+Ұсынылған ұпайлар белгіленді. Тексеріп, «Бағаны сақтау» батырмасын басыңыз.	Предложенные баллы отмечены. Проверьте и нажмите «Сохранить оценку».	The suggested scores are marked. Check them and click “Save the grade”.
+ұпай	очков	points
+Өзіңді тексер.	Проверь себя.	Check yourself.
+Өлшем бірлігі қандай?	Какая единица измерения?	What is the unit?
+Өлшем бірлігі: нәтиже	Единица измерения: результат	Units: result
+— тексерілгеннен кейін балың толығады.	— после проверки балл будет дополнен.	— your score will be completed after review.
+{#} секунд ішінде мүмкіндігінше көп формуланы тап. Қатарынан дұрыс жауаптар бонус береді.	За {#} секунд найди как можно больше формул. Серия правильных ответов даёт бонус.	Find as many formulas as you can in {#} seconds. A streak of correct answers gives a bonus.
+Тексеру	Проверить	Check
+Жіберу	Отправить	Send
+Сұрағыңды немесе шешіміңді жаз…	Напиши свой вопрос или решение…	Write your question or solution…
+Сәлем! Қай есеп немесе тақырып бойынша көмек керек? Есептің шартын және өзің бастаған ойыңды жаз — бірге шешеміз.	Привет! С какой задачей или темой нужна помощь? Напиши условие и свои первые мысли — решим вместе.	Hi! Which problem or topic do you need help with? Write the problem and your first ideas — we'll solve it together.
+ЖИ ойланып жатыр…	ИИ думает…	The AI is thinking…
+Бүгін қалды:	Осталось сегодня:	Left today:
+Бүгін қалған ЖИ сұраныстары:	Осталось запросов к ИИ сегодня:	AI requests left today:
+Тақырып:	Тема:	Topic:
+Нәтиже	Результат	Result
+Word	Word	Word
+{#} бұғатталды.	{#} заблокирован(а).	{#} has been blocked.
+{#} бұғаттан шығарылды.	{#} разблокирован(а).	{#} has been unblocked.
+{#} мұғалім ретінде расталды.	{#} подтверждён(а) как учитель.	{#} has been approved as a teacher.
+{#} оқушы қосылып, хабарлама жіберілді.	Добавлено учеников: {#}, уведомления отправлены.	{#} students added and notified.
+{#} сыныптан шығарылды.	{#} исключён(а) из класса.	{#} has been removed from the class.
+{#} әкімші ретінде қосылды. Логин: {#}.	{#} добавлен(а) как администратор. Логин: {#}.	{#} has been added as an administrator. Login: {#}.
+{#} әкімшілер қатарынан алып тасталды.	{#} удалён(а) из администраторов.	{#} has been removed from the administrators.
+{#} өшірілді.	{#} удалён(а).	{#} has been deleted.
+{#}: логин «{#}», уақытша құпиясөз «{#}». Кіргенде жаңа құпиясөз ойлап табады.	{#}: логин «{#}», временный пароль «{#}». При входе нужно придумать новый пароль.	{#}: login “{#}”, temporary password “{#}”. A new password must be set at sign-in.
+{#}: логин «{#}», уақытша құпиясөз «{#}». Оқушы кіргенде өз құпиясөзін ойлап табады.	{#}: логин «{#}», временный пароль «{#}». При входе ученик придумает свой пароль.	{#}: login “{#}”, temporary password “{#}”. The student will set their own password at sign-in.
+{#}{#} сыныбы ашылды. Кодты оқушыларға беріңіз.	Класс {#}{#} создан. Дайте код ученикам.	Class {#}{#} has been created. Give the code to your students.
+Алдымен платформаға кіріңіз.	Сначала войдите на платформу.	Please sign in first.
+Алдыңғы сұраныс әлі орындалуда. Біраз күтіңіз.	Предыдущий запрос ещё выполняется. Подождите немного.	The previous request is still running. Please wait.
+Атауы мен түрін толтырыңыз.	Заполните название и тип.	Fill in the title and type.
+Атауын жазыңыз.	Укажите название.	Enter a title.
+Аты-жөніңізді толық жазыңыз (кемінде екі сөз, тек әріптер).	Введите полное имя (не менее двух слов, только буквы).	Enter your full name (at least two words, letters only).
+Баптаулар сақталды.	Настройки сохранены.	Settings saved.
+Блок өшірілді.	Блок удалён.	Block deleted.
+Бүгінгі ЖИ лимиті таусылды ({#} сұраныс). Ертең қайта жаңарады.	Дневной лимит ИИ исчерпан ({#} запросов). Он обновится завтра.	Today's AI limit is used up ({#} requests). It resets tomorrow.
+Бұл бағыт табылмады.	Это направление не найдено.	This domain was not found.
+Бұл бағытта әзірге тапсырма жоқ.	В этом направлении пока нет заданий.	There are no tasks in this domain yet.
+Бұл бет тек расталған мұғалімдерге арналған.	Эта страница доступна только подтверждённым учителям.	This page is only for verified teachers.
+Бұл бетті көру үшін платформаға кіріңіз.	Чтобы открыть эту страницу, войдите на платформу.	Sign in to view this page.
+Бұл логин бос емес, басқасын таңдаңыз.	Этот логин занят, выберите другой.	This login is taken; choose another.
+Бұл материал сатылмайды.	Этот материал не продаётся.	This material is not for sale.
+Бұл материалға өтінім бұрын жіберілген.	Заявка на этот материал уже отправлена.	A request for this material has already been sent.
+Бұл мүмкіндік тек мұғалімдерге арналған.	Эта возможность только для учителей.	This feature is for teachers only.
+Бұл нәтижеде бағаланатын ашық жауап жоқ.	В этом результате нет открытых ответов для оценки.	This result has no open answers to grade.
+Бұл нәтижені бағалауға рұқсат жоқ.	Нет прав на оценку этого результата.	You are not allowed to grade this result.
+Бұл тест бұрын тапсырылған.	Этот тест уже сдан.	This test has already been submitted.
+Бұл тест сізге тағайындалмаған.	Этот тест вам не назначен.	This test is not assigned to you.
+Бұл әкімшіні алып тастауға болмайды.	Этого администратора нельзя удалить.	This administrator cannot be removed.
+Бұл әрекет оқушыларға арналған.	Это действие для учеников.	This action is for students.
+Бұл әрекетті өз аккаунтыңызға жасай алмайсыз.	Это действие нельзя выполнить с собственным аккаунтом.	You cannot do this to your own account.
+Деректер дұрыс емес.	Некорректные данные.	Invalid data.
+Емтихан белгісіз.	Неизвестный экзамен.	Unknown exam.
+Емтихан табылмады.	Экзамен не найден.	Exam not found.
+ЖИ баптаулары сақталды.	Настройки ИИ сохранены.	AI settings saved.
+ЖИ бұл жауаптарды бағалай алмады. Қолмен бағалаңыз.	ИИ не смог оценить эти ответы. Оцените вручную.	The AI could not grade these answers. Please grade them manually.
+ЖИ бұл сұранысқа жауап бере алмады. Сұрақты басқаша тұжырымдап көріңіз.	ИИ не смог ответить на этот запрос. Попробуйте сформулировать вопрос иначе.	The AI could not answer this request. Try rephrasing the question.
+ЖИ жауабын оқу мүмкін болмады. Қайталап көріңіз.	Не удалось прочитать ответ ИИ. Попробуйте ещё раз.	Could not read the AI's response. Please try again.
+ЖИ моделі табылмады: AI_MODEL атауын немесе AI_BASE_URL мекенжайын тексеру керек.	Модель ИИ не найдена: проверьте название AI_MODEL или адрес AI_BASE_URL.	AI model not found: check the AI_MODEL name or the AI_BASE_URL address.
+ЖИ моделінің атауы (AI_MODEL) қате болуы мүмкін. Әкімші тексеруі керек.	Возможно, название модели ИИ (AI_MODEL) указано неверно. Администратору нужно проверить.	The AI model name (AI_MODEL) may be wrong. The administrator should check it.
+ЖИ сұранысын орындау кезінде қате шықты.	Ошибка при выполнении запроса к ИИ.	An error occurred while running the AI request.
+ЖИ талдауы тест нәтижелері үшін ғана қолжетімді.	Анализ ИИ доступен только для результатов тестов.	AI analysis is available for test results only.
+ЖИ қызметі уақытша қолжетімсіз. Сәлден соң қайталаңыз.	Сервис ИИ временно недоступен. Повторите чуть позже.	The AI service is temporarily unavailable. Please try again shortly.
+ЖИ қызметіне сұраныс тым көп. Бір минуттан кейін қайталап көріңіз.	Слишком много запросов к ИИ. Повторите через минуту.	Too many AI requests. Try again in a minute.
+ЖИ қызметіне қосылу мүмкін болмады. Сәлден соң қайталаңыз.	Не удалось подключиться к сервису ИИ. Повторите чуть позже.	Could not connect to the AI service. Please try again shortly.
+ЖИ қызметінің API кілті жарамсыз немесе рұқсаты жоқ. Әкімші кілтті тексеруі керек.	API-ключ сервиса ИИ недействителен или не имеет доступа. Администратору нужно проверить ключ.	The AI service API key is invalid or lacks access. The administrator should check the key.
+ЖИ қызметінің балансы таусылған. Әкімші Anthropic Console-да балансты толтыруы керек.	Баланс сервиса ИИ исчерпан. Администратору нужно пополнить баланс в Anthropic Console.	The AI service balance has run out. The administrator needs to top it up in Anthropic Console.
+ЖИ құралы әлі бапталмаған: әкімші серверге API кілтін қосуы керек.	ИИ-инструмент ещё не настроен: администратору нужно добавить API-ключ на сервер.	The AI tool is not set up yet: the administrator needs to add an API key on the server.
+ЖИ құралын әкімші уақытша өшірген.	Администратор временно отключил ИИ-инструмент.	The administrator has temporarily turned off the AI tool.
+Жауап тым ұзақ болып шықты. Сұранысты қысқартып көріңіз.	Ответ получился слишком длинным. Попробуйте сократить запрос.	The answer was too long. Try a shorter request.
+Жауаптар жоқ.	Ответов нет.	No answers.
+Жаңа мектептің атауын жазыңыз.	Укажите название новой школы.	Enter the name of the new school.
+Жаңа мектептің өңірін таңдаңыз.	Выберите регион новой школы.	Choose the region of the new school.
+Журналға {#} нәтиже жазылды.	В журнал записано результатов: {#}.	{#} results added to the log.
+Жұмысты тек оқушының мұғалімі өшіре алады.	Удалить работу может только учитель ученика.	Only the student's teacher can delete this lab.
+Зертхана табылмады.	Лаборатория не найдена.	Lab not found.
+Зертхана файлы табылмады.	Файл лаборатории не найден.	Lab file not found.
+Кемінде бір оқушыны белгілеңіз.	Отметьте хотя бы одного ученика.	Select at least one student.
+Код табылмады немесе сыныпқа тіркелу жабық.	Код не найден или регистрация в класс закрыта.	Code not found, or registration for this class is closed.
+Логин {#}–{#} таңбадан тұрсын: латын әріптері, сандар, нүкте, сызықша.	Логин должен содержать {#}–{#} символов: латинские буквы, цифры, точка, дефис.	The login must be {#}–{#} characters: Latin letters, digits, dot, hyphen.
+Материал жарияланды.	Материал опубликован.	Material published.
+Материал сақталды.	Материал сохранён.	Material saved.
+Материал табылмады.	Материал не найден.	Material not found.
+Материал түрін таңдаңыз.	Выберите тип материала.	Choose the material type.
+Материал қабылданбады.	Материал отклонён.	Material rejected.
+Материал өшірілді.	Материал удалён.	Material deleted.
+Мектеп атауы мен өңірін толтырыңыз.	Заполните название школы и регион.	Fill in the school name and region.
+Мектеп қосылды.	Школа добавлена.	School added.
+Мектеп өзгертілді.	Школа изменена.	School updated.
+Мектеп өшірілді.	Школа удалена.	School deleted.
+Мектепке тіркелген пайдаланушылар бар — өшіруге болмайды.	К школе привязаны пользователи — удалить нельзя.	Users are registered at this school — it cannot be deleted.
+Мектепті тізімнен таңдаңыз.	Выберите школу из списка.	Choose a school from the list.
+Мұғалім аккаунтыңыз әкімшінің растауын күтуде.	Ваш аккаунт учителя ожидает подтверждения администратора.	Your teacher account is awaiting the administrator's approval.
+Нәтиже табылмады.	Результат не найден.	Result not found.
+Нәтижелерді көру үшін мұғалім аккаунты расталуы керек.	Чтобы видеть результаты, аккаунт учителя должен быть подтверждён.	Your teacher account must be approved to view results.
+Ойын белгісіз.	Неизвестная игра.	Unknown game.
+Ойын табылмады.	Игра не найдена.	Game not found.
+Оқушы табылмады.	Ученик не найден.	Student not found.
+Пайдаланушы табылмады.	Пользователь не найден.	User not found.
+Платформа иесінің аккаунтын өзгертуге болмайды.	Аккаунт владельца платформы изменить нельзя.	The platform owner's account cannot be changed.
+Платформаға кіріңіз.	Войдите на платформу.	Please sign in.
+Рұқсат жоқ.	Нет доступа.	Access denied.
+Сен {#}{#} сыныбына қосылдың.	Ты добавлен(а) в класс {#}{#}.	You have joined class {#}{#}.
+Симуляция табылмады.	Симуляция не найдена.	Simulation not found.
+Сурет табылмады.	Изображение не найдено.	Image not found.
+Сынып нөмірі {#}–{#} аралығында, әрпі бір-екі әріп болсын.	Номер класса — от {#} до {#}, литера — одна-две буквы.	The grade must be {#}–{#} and the letter one or two characters.
+Сынып табылмады.	Класс не найден.	Class not found.
+Сынып өшірілді.	Класс удалён.	Class deleted.
+Сыныпта оқушылар бар. Алдымен оларды сыныптан шығарыңыз.	В классе есть ученики. Сначала исключите их из класса.	The class has students. Remove them from the class first.
+Сілтеме http:// немесе https:// арқылы басталуы керек.	Ссылка должна начинаться с http:// или https://.	The link must start with http:// or https://.
+Сұрақ бос.	Вопрос пустой.	The question is empty.
+Талдауға дерек жоқ: бұл сүзгі бойынша тапсырылған тест жоқ.	Нет данных для анализа: по этому фильтру тестов нет.	No data to analyse: no tests were taken for this filter.
+Тапсырма табылмады.	Задание не найдено.	Task not found.
+Тапсырма қосылды.	Задание добавлено.	Task added.
+Тақырыпты жазыңыз.	Укажите тему.	Enter a topic.
+Тегін ЖИ бос жауап қайтарды. Қайталап көріңіз.	Бесплатный ИИ вернул пустой ответ. Попробуйте ещё раз.	The free AI returned an empty answer. Please try again.
+Тегін ЖИ моделі қазір қатты жүктелген (Google жағында). Бір-екі минуттан кейін қайталаңыз.	Бесплатная модель ИИ сейчас перегружена (на стороне Google). Повторите через минуту-другую.	The free AI model is overloaded right now (on Google's side). Try again in a minute or two.
+Тегін ЖИ провайдері уақытша қолжетімсіз. Сәлден соң қайталаңыз.	Бесплатный провайдер ИИ временно недоступен. Повторите чуть позже.	The free AI provider is temporarily unavailable. Please try again shortly.
+Тегін ЖИ провайдерімен байланыс үзілді. Қайталап көріңіз.	Связь с бесплатным провайдером ИИ прервалась. Попробуйте ещё раз.	The connection to the free AI provider dropped. Please try again.
+Тегін ЖИ провайдеріне қосылу мүмкін болмады. Сервер «ұйықтап» тұрған болуы мүмкін — бір минуттан кейін қайталаңыз.	Не удалось подключиться к бесплатному провайдеру ИИ. Возможно, сервер «спит» — повторите через минуту.	Could not connect to the free AI provider. The server may be asleep — try again in a minute.
+Тегін ЖИ провайдерінің кілті (AI_API_KEY) жарамсыз немесе рұқсаты жоқ. Әкімші кілтті тексеруі керек.	Ключ бесплатного провайдера ИИ (AI_API_KEY) недействителен или не имеет доступа. Администратору нужно проверить ключ.	The free AI provider key (AI_API_KEY) is invalid or lacks access. The administrator should check the key.
+Тегін ЖИ провайдерінің лимиті уақытша таусылды. Бірнеше минуттан кейін қайталап көріңіз.	Лимит бесплатного провайдера ИИ временно исчерпан. Повторите через несколько минут.	The free AI provider's limit is temporarily used up. Try again in a few minutes.
+Тегің мен атыңды толық жаз (кемінде екі сөз, тек әріптер).	Напиши фамилию и имя полностью (не менее двух слов, только буквы).	Write your surname and first name in full (at least two words, letters only).
+Тек мұғалімге арналған.	Только для учителя.	For teachers only.
+Тек өз жұмысыңызды тапсыра аласыз.	Сдавать можно только свою работу.	You can only submit your own work.
+Тест табылмады.	Тест не найден.	Test not found.
+Тест тағайындалды: {#} оқушыға хабарлама жіберілді.	Тест назначен: уведомления отправлены ученикам ({#}).	Test assigned: {#} students notified.
+Тест түрін таңдаңыз.	Выберите тип теста.	Choose a test type.
+Тест өшірілді.	Тест удалён.	Test deleted.
+Төлем туралы белгі қалдырыңыз: кім атынан және қашан төленді.	Оставьте отметку об оплате: от чьего имени и когда оплачено.	Add a payment note: in whose name and when it was paid.
+Файл жүктеңіз немесе сілтеме беріңіз.	Загрузите файл или укажите ссылку.	Upload a file or provide a link.
+Файл серверде табылмады. Әкімшіге хабарласыңыз.	Файл на сервере не найден. Обратитесь к администратору.	The file was not found on the server. Contact the administrator.
+Формула табылмады.	Формула не найдена.	Formula not found.
+Қосылатын оқушы белгіленбеді.	Не отмечены ученики для добавления.	No students selected to add.
+Қош келдің! Сен {#}{#} сыныбына қосылдың.	Добро пожаловать! Ты добавлен(а) в класс {#}{#}.	Welcome! You have joined class {#}{#}.
+Құжат белгісіз.	Неизвестный документ.	Unknown document.
+Құпиясөз ауыстырылды.	Пароль изменён.	Password changed.
+Құпиясөз кемінде {#} таңба болсын.	Пароль должен быть не короче {#} символов.	The password must be at least {#} characters.
+Құпиясөздер сәйкес келмеді.	Пароли не совпадают.	The passwords do not match.
+Әкімшілер саны {#}-тен аспауы керек.	Администраторов может быть не больше {#}.	There can be no more than {#} administrators.
+Әкімшілерді тек платформа иесі басқарады.	Администраторами управляет только владелец платформы.	Only the platform owner manages administrators.
+Әкімшіні «Әкімшілер» бөлімінен алып тастаңыз.	Удалите администратора в разделе «Администраторы».	Remove the administrator under “Administrators”.
+Өтінім жіберілді. Әкімші төлемді растағанда материал ашылады.	Заявка отправлена. Материал откроется, когда администратор подтвердит оплату.	Request sent. The material opens once the administrator confirms payment.
+Өтінім қабылданды. Әкімші растағанда сынып ашып, материал жүктей аласыз.	Заявка принята. После подтверждения администратором вы сможете создавать классы и загружать материалы.	Request received. Once the administrator approves it, you can create classes and upload materials.
+Логин немесе құпиясөз қате.	Неверный логин или пароль.	Wrong login or password.
+Кіру	Войти	Sign in
+Тіркелу	Регистрация	Register
+Шығу	Выйти	Sign out
+Құпиясөз	Пароль	Password
+Хабарландыру	Объявление	Announcement
+Байланыс:	Контакты:	Contact:
+Физика · {#}–{#} сыныптар	Физика · {#}–{#} классы	Physics · grades {#}–{#}
+Симуляциялар	Симуляции	Simulations
+Формулалар	Формулы	Formulas
+Олимпиада	Олимпиада	Olympiad
+Олимпиадалық есептер	Олимпиадные задачи	Olympiad problems
+Кітапхана	Библиотека	Library
+Ғалымдар	Учёные	Scientists
+Ойындар	Игры	Games
+Интерактив	Интерактив	Interactive
+Құралдар	Инструменты	Tools
+Платформа	Платформа	Platform
+Бөлімдер	Разделы	Sections
+Хабарламалар	Уведомления	Notifications
+Жеке кабинет	Личный кабинет	My dashboard
+Сынып	Класс	Class
+Оқушы	Ученик	Student
+Мұғалім	Учитель	Teacher
+Әкімші	Администратор	Administrator
+Барлығы	Всего	Total
+Балл	Балл	Score
+Пайыз	Процент	Percent
+Күні	Дата	Date
+Нәтиже	Результат	Result
+Орташа	Среднее	Average
+Жаратылыстану сауаттылығы	Естественнонаучная грамотность	Science literacy
+Мақсаты — міндетті білім берудің соңына қарай оқушылардың қазіргі қоғамға толыққанды араласуға қаншалықты дайын екенін анықтау және елдердің білім беру саясатын жетілдіруге дерек беру.	Цель — определить, насколько учащиеся к концу обязательного обучения готовы к полноценному участию в жизни современного общества, и дать странам данные для совершенствования образовательной политики.	Purpose: to find out how ready students are, near the end of compulsory education, to take a full part in modern society, and to give countries data for improving education policy.
+Үш бағыт: оқу сауаттылығы, математикалық сауаттылық және жаратылыстану сауаттылығы. Оқушы өмірлік жағдаятты талдап, мәтінмен, кестемен және графикпен жұмыс істейді.	Три направления: читательская, математическая и естественнонаучная грамотность. Ученик анализирует жизненную ситуацию, работает с текстом, таблицей и графиком.	Three domains: reading, mathematical and science literacy. Students analyse real-life situations and work with texts, tables and graphs.
+Мақсаты — математика мен жаратылыстану бойынша оқу жетістіктерінің деңгейі мен оның уақыт бойынша өзгеру үрдістерін анықтау, нәтижені оқу бағдарламасы, сабақ беру және оқу жағдайларымен байланыстыру.	Цель — определить уровень учебных достижений по математике и естественным наукам и их динамику во времени, связать результаты с программой, преподаванием и условиями обучения.	Purpose: to measure achievement in mathematics and science and its trends over time, and to relate the results to the curriculum, teaching and learning conditions.
+Екі бағыт: математика және жаратылыстану (биология, химия, физика, Жер туралы ғылым). Танымдық деңгейлер: білу, қолдану, пайымдау.	Два направления: математика и естествознание (биология, химия, физика, науки о Земле). Когнитивные уровни: знание, применение, рассуждение.	Two domains: mathematics and science (biology, chemistry, physics, Earth science). Cognitive levels: knowing, applying, reasoning.
+Мақсаты — оқу сауаттылығының деңгейін, оқуға деген қызығушылықты және оған ықпал ететін отбасы мен мектеп жағдайларын анықтау; бастауыш білім беруді жетілдіру.	Цель — определить уровень читательской грамотности, интерес к чтению и влияющие на них условия семьи и школы; совершенствовать начальное образование.	Purpose: to measure reading literacy, interest in reading and the family and school factors that influence them; to improve primary education.
+Екі мақсаттағы оқу: көркем мәтін (әдеби тәжірибе) және ақпараттық мәтін (ақпаратты алу және пайдалану). Төрт түсіну процесі бағаланады.	Чтение с двумя целями: художественный текст (литературный опыт) и информационный текст (получение и использование информации). Оцениваются четыре процесса понимания.	Reading for two purposes: literary texts (literary experience) and informational texts (acquiring and using information). Four comprehension processes are assessed.
+Мақсаты — оқушылардың ақпаратты іздеу, бағалау, өңдеу, құру және қауіпсіз алмасу үшін цифрлық құралдарды қаншалықты пайдалана алатынын, сондай-ақ мәселені алгоритм түрінде шеше алатынын анықтау.	Цель — определить, насколько учащиеся умеют использовать цифровые инструменты для поиска, оценки, обработки, создания информации и безопасного обмена ею, а также решать задачи алгоритмически.	Purpose: to find out how well students use digital tools to search for, evaluate, process, create and safely share information, and how well they solve problems algorithmically.
+Екі бағыт: компьютерлік-ақпараттық сауаттылық (ақпаратты табу, бағалау, құру, қауіпсіздік) және компьютерлік ойлау (алгоритм, бағдарламалау, деректер).	Два направления: компьютерная и информационная грамотность (поиск, оценка, создание информации, безопасность) и компьютерное мышление (алгоритмы, программирование, данные).	Two domains: computer and information literacy (finding, evaluating and creating information, safety) and computational thinking (algorithms, programming, data).
+Мақсаты — мұғалімдік қызметтің сапасы мен жағдайы туралы салыстырмалы дерек жинап, мұғалімдерді қолдау және кәсіби дамыту саясатын жетілдіру.	Цель — собрать сопоставимые данные о качестве и условиях педагогической работы и улучшить политику поддержки и профессионального развития учителей.	Purpose: to collect comparable data on the quality and conditions of teaching work and to improve policies for supporting and developing teachers.
+Мұғалімге арналған сауалнама: сыныпты басқару, түсіндіру анықтығы, оқушыны танымдық белсендіру, кәсіби ынтымақтастық, өзіндік тиімділік, кәсіби даму.	Опросник для учителя: управление классом, ясность объяснения, когнитивная активизация учеников, профессиональное сотрудничество, самоэффективность, профессиональное развитие.	A teacher questionnaire: classroom management, clarity of instruction, cognitive activation, professional collaboration, self-efficacy, professional development.
+Мақсаты — білім беру сапасын мектеп, аудан және өңір деңгейінде бағалау, білім алушылардың білімін қолдану дағдыларын анықтау және білім беру процесін жетілдіруге ұсыныс беру.	Цель — оценить качество образования на уровне школы, района и региона, выявить умение учащихся применять знания и дать рекомендации по совершенствованию учебного процесса.	Purpose: to assess the quality of education at school, district and regional level, identify how well students apply their knowledge and recommend improvements to teaching.
+Жыл сайын	Ежегодно	Every year
+Ұлттық тестілеу орталығы өткізеді.	Проводит Национальный центр тестирования.	Conducted by the National Testing Center.
+Үш бағыт бойынша функционалдық сауаттылықты тексереді: оқу, математикалық және жаратылыстану сауаттылығы.	Проверяет функциональную грамотность по трём направлениям: читательская, математическая и естественнонаучная.	Checks functional literacy in three domains: reading, mathematical and science literacy.
+{#}-сынып түлектері	выпускники {#}-го класса	grade {#} graduates
+Мақсаты — түлектердің жоғары оқу орнында оқуға дайындығын анықтау және мемлекеттік білім беру грантын конкурстық негізде беру.	Цель — определить готовность выпускников к обучению в вузе и распределить государственные образовательные гранты на конкурсной основе.	Purpose: to determine graduates' readiness for university study and to award state education grants competitively.
+Жыл сайын (негізгі және қосымша кезеңдер)	Ежегодно (основной и дополнительный этапы)	Every year (main and additional rounds)
+Бейіндік пән ретіндегі физика. Бір дұрыс жауапты, контекстік, сәйкестендіру және бірнеше дұрыс жауапты тапсырмаларға дайындық; {#} тапсырмалық толық нұсқа.	Физика как профильный предмет. Подготовка к заданиям с одним верным ответом, контекстным, на соответствие и с несколькими верными ответами; полный вариант из {#} заданий.	Physics as a profile subject. Practice with single-answer, context-based, matching and multiple-answer tasks; a full {#}-task version.
+Механика	Механика	Mechanics
+Жылу	Теплота	Heat
+Электромагнетизм	Электромагнетизм	Electromagnetism
+Тербеліс және оптика	Колебания и оптика	Oscillations and optics
+Қазіргі физика	Современная физика	Modern physics
+Астрономия	Астрономия	Astronomy
+Презентация	Презентация	Presentation
+Зертханалық жұмыс	Лабораторная работа	Lab work
+Басқа	Другое	Other
+Түркістан облысы	Туркестанская область	Turkistan Region
+Өл	Изм	Me
+Кн	Кн	Ki
+Дн	Дн	Dy
+Сз	Зс	Co
+Ст	Ст	St
+Мк	Мф	Mo
+Тд	Тд	Td
+Эс	Эс	Es
+Тт	Пт	Dc
+Мг	Мп	Mf
+Эи	Ин	In
+Тб	Кв	Ow
+Оп	Оп	Op
+Кв	Кф	Qu
+Яд	Яд	Nu
+Ас	Ас	As
+Кинематика	Кинематика	Kinematics
+Динамика	Динамика	Dynamics
+Сақталу заңдары	Законы сохранения	Conservation laws
+Статика және гидростатика	Статика и гидростатика	Statics and hydrostatics
+Молекулалық физика	Молекулярная физика	Molecular physics
+Термодинамика	Термодинамика	Thermodynamics
+Электростатика	Электростатика	Electrostatics
+Тұрақты ток	Постоянный ток	Direct current
+Магнит өрісі	Магнитное поле	Magnetic field
+Индукция және айнымалы ток	Индукция и переменный ток	Induction and alternating current
+Тербелістер мен толқындар	Колебания и волны	Oscillations and waves
+Оптика	Оптика	Optics
+Кванттық физика және салыстырмалылық	Квантовая физика и теория относительности	Quantum physics and relativity
+Атом және ядро физикасы	Атомная и ядерная физика	Atomic and nuclear physics
+Архимед заңын зерделеу	Изучение закона Архимеда	Studying Archimedes' principle
+Дененің сұйықта жүзу шарттарын анықтау	Определение условий плавания тел	Conditions for floating bodies
+Мұздың меншікті балқу жылуын анықтау	Определение удельной теплоты плавления льда	Specific latent heat of fusion of ice
+Өткізгіштерді тізбектей жалғауды зерттеу	Изучение последовательного соединения проводников	Series connection of conductors
+Өткізгіштерді параллель жалғауды зерттеу	Изучение параллельного соединения проводников	Parallel connection of conductors
+Шынының сыну көрсеткішін анықтау	Определение показателя преломления стекла	Refractive index of glass
+Математикалық сауаттылық	Математическая грамотность	Mathematical literacy
+Оқу сауаттылығы	Читательская грамотность	Reading literacy
+оқушы	учеников	students
+тест тапсырған оқушы	учеников сдали тест	students took a test
+тапсырылған тест	сдано тестов	tests taken
+тексеруді күтетін жауап	ответов ожидают проверки	answers awaiting review
+{0} аптасы: {1}% ({2} тест)	неделя {0}: {1}% (тестов: {2})	week of {0}: {1}% ({2} tests)
+ашылған күні {0}	создан {0}	created {0}
+{#} баған	столбцов: {#}	{#} columns
+мұғалімге	учителю	for teachers
+Ұзақтығы	Длительность	Duration
+Сынақ	Пробный	Exam
+Жұмыс	Работа	Lab
+Баға	Оценка	Grade
+Оқушылар	Ученики	Students
+Жиілігі	Периодичность	Frequency
+Қазақстан	Казахстан	Kazakhstan
+{#} жұмыс	работ: {#}	{#} labs
+Шығын	Расход	Cost
+мұғалім	учитель	teacher
+әкімші	администратор	administrator
+Өлшем бірлігі	Единица измерения	Unit
+Күннің ғалымы	Учёный дня	Scientist of the day
+Күн жүйесі	Солнечная система	Solar system
+Қос жұлдыз	Двойная звезда	Binary star
+Модель	Модель	Model
+Ғылым Ордасы	Ғылым Ордасы	Ghylym Ordasy
++{#} тексерілуде	+{#} на проверке	+{#} under review
+{#} / {#} · баға {#}	{#} / {#} · оценка {#}	{#} / {#} · grade {#}
+{#} нәтижені журналға жазу	записать в журнал результатов: {#}	add {#} results to the log
+Сатып алу өтінімін жіберу — {#}	Отправить заявку на покупку — {#}	Send purchase request — {#}
+Сурет	Снимок	Image
+Тестті бастау	Начать тест	Start the test
+Жауабы	Ответ	Answer
+{#} есеп шешімімен	задач с решениями: {#}	{#} problems with solutions
+{#} жазба	записей: {#}	{#} entries
+{#} интерактивті модель	интерактивных моделей: {#}	{#} interactive models
+{#} мектеп	школ: {#}	{#} schools
+{#} мұғалім	учителей: {#}	{#} teachers
+{#} нәтиже	результатов: {#}	{#} results
+{#} оқу жылы	{#} учебный год	{#} school year
+{#} рет	{#} раз	{#} times
+{#} симуляция	симуляций: {#}	{#} simulations
+{#} тестті тапсырды	сдали тест: {#}	{#} took the test
+{#} формула	формул: {#}	{#} formulas
+{#} формула, {#}–{#}-сынып	формул: {#}, {#}–{#} классы	{#} formulas, grades {#}–{#}
+{#} ұпай	{#} очков	{#} points
+{#}-бет	стр. {#}	page {#}
+{#}–{#} жауап нұсқасын және дұрыс жауаптың нөмірін толтырыңыз.	Заполните {#}–{#} вариантов ответа и номер правильного.	Fill in {#}–{#} answer options and the number of the correct one.
+«Дарын» республикалық ғылыми-практикалық орталығы — олимпиадалардың ресми ұйымдастырушысы	Республиканский научно-практический центр «Дарын» — официальный организатор олимпиад	The “Daryn” national research and practice centre — official organiser of the olympiads
+· бастапқы банк	· исходный банк	· built-in bank
+· мерзімі: {0}	· срок: {0}	· due: {0}
+· суреті бар	· с изображением	· with image
+Авторы	Автор	Author
+Аккаунт бұғатталған. Әкімшіге хабарласыңыз.	Аккаунт заблокирован. Обратитесь к администратору.	The account is blocked. Contact the administrator.
+Алып тастау	Удалить	Remove
+Аралас	Смешанный	Mixed
+Аты-жөні	ФИО	Full name
+Аты-жөнін толық жазыңыз.	Укажите полное имя.	Enter the full name.
+Ашық жауапқа бағалау критерийін жазыңыз.	Укажите критерий оценивания для открытого ответа.	Enter a grading criterion for the open answer.
+Балл ({#})	Балл ({#})	Score ({#})
+Банк әзірге бос	Банк пока пуст	The bank is empty so far
+Барлық сұраққа жауап беріп болған соң «Тапсыру» батырмасын бас. Тапсырғаннан кейін жауапты өзгерту мүмкін емес.	Ответив на все вопросы, нажми «Сдать». После сдачи ответы изменить нельзя.	When you have answered all the questions, press “Submit”. You cannot change your answers afterwards.
+Баға ({#})	Оценка ({#})	Grade ({#})
+Бағасы, ₸	Цена, ₸	Price, ₸
+Блок табылмады.	Блок не найден.	Block not found.
+Бұл ақылы материал. Алдымен сатып алу өтінімін жіберіңіз.	Это платный материал. Сначала отправьте заявку на покупку.	This is a paid material. Send a purchase request first.
+Бұл бөлім мұғалімдерге арналған.	Этот раздел для учителей.	This section is for teachers.
+Бұл бөлім тек әкімшілерге арналған.	Этот раздел только для администраторов.	This section is for administrators only.
+Бұл бөлімге рұқсатыңыз жоқ.	У вас нет доступа к этому разделу.	You do not have access to this section.
+Бұл бөлімдегі тапсырмалар зерттеулердің форматына сай құрастырылған авторлық жаттығулар. Ресми мәліметтер мен жария етілген тапсырмаларды әр зерттеудің ресми сайтынан қараңыз.	Задания этого раздела — авторские упражнения в формате исследований. Официальные сведения и опубликованные задания смотрите на сайте каждого исследования.	The tasks in this section are original exercises in the format of the studies. See each study's official website for official information and released tasks.
+Бұл логин бос емес.	Этот логин занят.	This login is taken.
+Бұл сыныпқа тіркелу жабық. Мұғаліміңізге хабарласыңыз.	Регистрация в этот класс закрыта. Обратитесь к учителю.	Registration for this class is closed. Contact your teacher.
+Бұл файл түріне рұқсат жоқ.	Этот тип файла не разрешён.	This file type is not allowed.
+Бұл әрекетті тек платформа иесі жасай алады.	Это может сделать только владелец платформы.	Only the platform owner can do this.
+Бұл — ресми TALIS сауалнамасы емес, оның тақырыптарына негізделген кәсіби рефлексия құралы. Нәтижені әдістемелік бірлестікте талқылап, өзіңнің кәсіби даму жоспарыңа енгізуге болады.	Это не официальный опрос TALIS, а инструмент профессиональной рефлексии на его темы. Результат можно обсудить в методическом объединении и включить в свой план профессионального развития.	This is not the official TALIS survey but a professional reflection tool based on its topics. You can discuss the result with colleagues and include it in your professional development plan.
+Бөлім	Раздел	Section
+Дұрыс жауап	Правильный ответ	Correct answer
+Дұрыс жауапты сан түрінде жазыңыз.	Запишите правильный ответ числом.	Enter the correct answer as a number.
+Емтихан	Экзамен	Exam
+Ең көбі {#} балл.	Максимум {#} баллов.	Up to {#} points.
+Ең көп балл	Макс. балл	Max score
+ЖИ талдауы	Анализ ИИ	AI analysis
+ЖИ құралы уақытша өшірулі.	ИИ-инструмент временно отключён.	The AI tool is temporarily off.
+ЖИ құралы әлі бапталмаған.	ИИ-инструмент ещё не настроен.	The AI tool is not set up yet.
+Жалпы	Общее	General
+Жарияланды	Опубликовано	Published
+Жариялаудан алу	Снять с публикации	Unpublish
+Жауап берілмеді, дұрысы {#}	Ответа нет, правильный — {#}	No answer; the correct one is {#}
+Жақсы нәтиже	Хороший результат	Good result
+Жаңа құпиясөз кемінде {#} таңба болсын.	Новый пароль должен быть не короче {#} символов.	The new password must be at least {#} characters.
+Жаңа құпиясөздер сәйкес келмеді.	Новые пароли не совпадают.	The new passwords do not match.
+Жиілігі:	Периодичность:	Frequency:
+Журнал бос	Журнал пуст	The log is empty
+Журналға жазылды	Внесено в журнал	Added to the log
+Жүктелді	Загружено	Uploaded
+Жұмыс атауы	Название работы	Lab title
+Жұмыс №	Работа №	Lab No.
+Зерттеу	Исследование	Study
+Зертхана	Лаборатория	Lab
+Кабинетте	В кабинете	In the dashboard
+Керемет нәтиже!	Отличный результат!	Excellent result!
+Кесте	Таблица	Table
+Кестеде {#}–{#} тұжырым, {#}–{#} баған болуы керек, және әр тұжырымға дұрыс бағанның нөмірін жазыңыз.	В таблице должно быть {#}–{#} утверждений и {#}–{#} столбцов; для каждого утверждения укажите номер правильного столбца.	The table needs {#}–{#} statements and {#}–{#} columns; give the correct column number for each statement.
+Кеңес	Совет	Tip
+Критерий.	Критерий.	Criterion.
+Кім қатысады:	Участники:	Who takes part:
+Күйі	Статус	Status
+Көрініс	Вид	View
+Логин латынша {#}–{#} таңба болсын.	Логин — {#}–{#} латинских символов.	The login must be {#}–{#} Latin characters.
+Макс	Макс	Max
+Материал жүктелді. Әкімші тексергеннен кейін кітапханада шығады.	Материал загружен. Он появится в библиотеке после проверки администратором.	Material uploaded. It will appear in the library after the administrator reviews it.
+Материалды жүктеу үшін платформаға кіріңіз.	Чтобы загрузить материал, войдите на платформу.	Sign in to upload material.
+Материалға рұқсат жоқ.	Нет доступа к материалу.	No access to this material.
+Мақсаты.	Цель.	Purpose.
+Мақсаты:	Цель:	Purpose:
+Мектеп	Школа	School
+Мектеп көрсетілмеген	Школа не указана	No school specified
+Мұндай сынып коды табылмады. Мұғаліміңізден кодты қайта сұраңыз.	Такой код класса не найден. Попросите код у учителя ещё раз.	This class code was not found. Ask your teacher for the code again.
+Мұғалім бағасы: {#} / {#} балл.	Оценка учителя: {#} / {#} б.	Teacher's score: {#} / {#} pts.
+Мұғалім жауаптарыңды тексерді	Учитель проверил твои ответы	Your teacher has checked your answers
+Мұғалімнің тексеруін күтуде.	Ожидает проверки учителем.	Awaiting the teacher's review.
+Нәтиже сақталды.	Результат сохранён.	Result saved.
+Нәтижеңді сақтау және үздіктер тізіміне ену үшін	Чтобы сохранить результат и попасть в список лучших,	To save your result and appear among the top scores,
+Ойын саны	Игр	Games
+Олимпиада {#}: {#}-сынып	Олимпиада {#}: {#} класс	Olympiad {#}: grade {#}
+Олимпиада есебі: {0}	Олимпиадная задача: {0}	Olympiad problem: {0}
+Орташа %	Среднее, %	Average %
+Оқу мақсаттары	Цели обучения	Learning objectives
+Оқушылардың нәтиже кодтарын жоғарыдағы өріске қойып, тексеріп, журналға жазыңыз.	Вставьте коды результатов учеников в поле выше, проверьте и внесите в журнал.	Paste students' result codes into the field above, check them and add them to the log.
+Оқушыларға {0} кодын беріңіз: олар «Тіркелу → Мен оқушымын» бетінде енгізеді.	Дайте ученикам код {0}: они вводят его на странице «Регистрация → Я ученик».	Give students the code {0}: they enter it under “Register → I'm a student”.
+Параметрлер	Параметры	Parameters
+Режим	Режим	Mode
+Ресми олимпиада тапсырмалары	Официальные олимпиадные задания	Official olympiad tasks
+Республикалық олимпиада {#}, қорытынды кезең: {#}-сынып шешімдері (PDF)	Республиканская олимпиада {#}, заключительный этап: решения, {#} класс (PDF)	National olympiad {#}, final round: grade {#} solutions (PDF)
+Сатып алу өтінімдерім	Мои заявки на покупку	My purchase requests
+Себебі: {0}	Причина: {0}	Reason: {0}
+Сен әлі ешбір сыныпқа қосылмағансың, сондықтан нәтиже мұғалімге жетпейді.	Ты ещё не состоишь ни в одном классе, поэтому результат не дойдёт до учителя.	You haven't joined any class yet, so your result won't reach a teacher.
+Сервер қатесі.	Ошибка сервера.	Server error.
+Симуляция: {0}	Симуляция: {0}	Simulation: {0}
+Сипаттама	Описание	Description
+Сурет тек PNG, JPG, WEBP немесе GIF болуы керек.	Изображение — только PNG, JPG, WEBP или GIF.	The image must be PNG, JPG, WEBP or GIF.
+Сурет тым үлкен (ең көбі {#} МБ).	Изображение слишком большое (не более {#} МБ).	The image is too large (up to {#} MB).
+Сынып (жұмыс)	Класс (работа)	Grade (lab)
+Сынып коды жарамсыз немесе тіркелу жабық.	Код класса недействителен или регистрация закрыта.	The class code is invalid or registration is closed.
+Сынып нәтижелерін талдап, қиын тақырыптар мен келесі сабақтарға ұсыныстар береді. Оқушылардың аты-жөні ЖИ-ге жіберілмейді — олар кестедегі нөмірімен (№) аталады.	Анализирует результаты класса, выделяет трудные темы и даёт рекомендации к следующим урокам. Имена учеников ИИ не передаются — они обозначаются номером из таблицы (№).	Analyses the class results, highlights difficult topics and suggests next steps for upcoming lessons. Students' names are not sent to the AI — they are referred to by their number (No.) in the table.
+Сыныпта әзірге оқушы жоқ	В классе пока нет учеников	No students in the class yet
+Сізді тестке қосты	Вас добавили в тест	You have been added to a test
+Сұрақ саны	Вопросов	Questions
+Сұрақтың мәтінін жазыңыз.	Напишите текст вопроса.	Enter the question text.
+Тапсыру	Сдать	Submit
+Тағы жаттығу керек	Нужно ещё потренироваться	More practice needed
+Тегін	Бесплатно	Free
+Тексеруді күтетін ашық жауап: {#}.	Открытых ответов на проверке: {#}.	Open answers awaiting review: {#}.
+Тексерілмеген ашық жауап	Непроверенный открытый ответ	Unchecked open answer
+Теория	Теория	Theory
+Тест	Тест	Test
+Тест орташа %	Средний по тестам, %	Test average %
+Тест саны	Тестов	Tests
+Тым көп сәтсіз әрекет. {#} минуттан кейін қайталаңыз.	Слишком много неудачных попыток. Повторите через {#} мин.	Too many failed attempts. Try again in {#} minutes.
+Тізім	Список	List
+Түрі	Тип	Type
+Төлем расталды — материал ашылды.	Оплата подтверждена — материал открыт.	Payment confirmed — the material is now open.
+Төлем расталғанда материал осы бетте ашылады.	Материал откроется на этой странице после подтверждения оплаты.	The material will open on this page once payment is confirmed.
+Төлем туралы белгі (кім атынан, қашан, түбіртек нөмірі)	Отметка об оплате (от чьего имени, когда, номер квитанции)	Payment note (in whose name, when, receipt number)
+Төлеңіз	Оплатите	Pay
+Төмендегі есептерді қалай қолдану керек?	Как работать с задачами ниже?	How to use the problems below?
+Файл	Файл	File
+Файл тым үлкен (ең көбі {#} МБ).	Файл слишком большой (не более {#} МБ).	The file is too large (up to {#} MB).
+Шығару	Исключить	Remove
+ашық жауап	открытый ответ	open answer
+ашық жауап · мұғалім бағалайды	открытый ответ · оценивает учитель	open answer · graded by the teacher
+бірнеше дұрыс	несколько верных	multiple correct
+бірнеше дұрыс жауап	несколько верных ответов	multiple correct answers
+бұғатталған	заблокирован	blocked
+дұрыс	верно	correct
+жарияланбаған	не опубликован	unpublished
+жарияланды	опубликован	published
+жұмыстар	работы	labs
+иесі	владелец	owner
+кесте	таблица	table
+күтуде	ожидает	pending
+көмекші әкімші	помощник администратора	assistant administrator
+мектеп	школа	school
+онлайн тест	онлайн-тест	online test
+платформа	платформа	platform
+расталды	подтверждено	confirmed
+расталған	подтверждён	approved
+сынып	класс	class
+тапсырды	сдал	submitted
+тапсырылмаған	не сдано	not submitted
+таңдау	выбор	choice
+тексеруді күтеді: {#}	ожидает проверки: {#}	awaiting review: {#}
+тесттер	тесты	tests
+физика пәнінің платформасы	платформа по физике	physics learning platform
+қабылданбады	отклонён	rejected
+қате	неверно	wrong
+қосулы	включён	on
+Қабылдамау	Отклонить	Reject
+Қазіргі құпиясөз қате.	Текущий пароль неверен.	The current password is wrong.
+Қате: сенің жауабың {#}, дұрысы {#}	Неверно: твой ответ {#}, правильный — {#}	Wrong: your answer {#}, the correct one {#}
+Қате: сенің жауабың {0}, дұрысы {1}	Неверно: твой ответ {0}, правильный — {1}	Wrong: your answer {0}, the correct one {1}
+Жауап берілмеді, дұрысы {0}	Ответа нет, правильный — {0}	No answer; the correct one is {0}
+Қауіпсіздік белгісі сәйкес келмеді. Бетті жаңартып, қайталап көріңіз.	Токен безопасности не совпал. Обновите страницу и попробуйте снова.	Security token mismatch. Reload the page and try again.
+Қосу	Добавить	Add
+Әкімші тапсырмалар қосқанда тест қолжетімді болады.	Тест станет доступен, когда администратор добавит задания.	The test will be available once the administrator adds tasks.
+Әкімші қайта қосқанда жұмыс істейді.	Заработает, когда администратор снова включит.	It will work again when the administrator turns it back on.
+Өзгерту	Изменить	Edit
+Өлшеу құралдары	Измерительные приборы	Measuring tools
+Өлшеулер	Измерения	Readings
+Өтінім қабылданбады.	Заявка отклонена.	Request rejected.
+Өтініміңіз әкімшінің растауын күтуде.	Ваша заявка ожидает подтверждения администратора.	Your request is awaiting the administrator's approval.
+өзіндік	самостоятельно	self
+өзіндік жаттығу (ең жақсы)	самостоятельная практика (лучший)	self-practice (best)
+өлшемсіз	безразмерная	dimensionless
+өшірулі	выключен	off
+әкімшінің тексеруін күтуде	ожидает проверки администратора	awaiting the administrator's review
+Ойнап жатта	Учи, играя	Learn by playing
+Физикалық мағынасы (кеңес)	Физический смысл (подсказка)	Physical meaning (hint)
+Мұғалімге: әдістемелік нұсқау	Учителю: методические указания	For teachers: teaching notes
+Интерактивті симуляциялар	Интерактивные симуляции	Interactive simulations
+Физика тарихындағы ғалымдар	Учёные в истории физики	Scientists in the history of physics
+Тест тапсыру	Пройти тест	Take a test
+Нәтижелер	Результаты	Results
+Сатып алу	Купить	Buy
+Жүктеп алу	Скачать	Download
+Ғалымды тап	Найди учёного	Find the scientist
+{#} тест	тестов: {#}	{#} tests
+{#} нәтиже	результатов: {#}	{#} results

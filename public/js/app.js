@@ -98,3 +98,10 @@ document.querySelectorAll('[data-expand-all]').forEach(function (b) {
     b.textContent = openAll ? 'Шешімдерді жабу' : 'Барлық шешімдерді ашу';
   });
 });
+
+// Тіл ауыстырғыш: сыртын басқанда жабылады
+(function () {
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('details.langsw[open]').forEach(function (d) { if (!d.contains(e.target)) d.removeAttribute('open'); });
+  });
+})();
