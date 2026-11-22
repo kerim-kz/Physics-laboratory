@@ -28,6 +28,7 @@ import { router as scientistsRouter } from './features/scientists.js';
 import { router as simsRouter } from './features/sims.js';
 import { router as unitsRouter } from './features/units.js';
 import { router as resultsRouter } from './features/results.js';
+import { router as aiRouter } from './features/ai.js';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const nm = (p) => path.join(root, 'node_modules', p);
@@ -112,6 +113,7 @@ export function createApp() {
   app.use(scientistsRouter);
   app.use(unitsRouter);
   app.use(resultsRouter);
+  app.use(aiRouter);
   app.use('/admin', adminRouter);
 
   app.use(async (req, res) => {

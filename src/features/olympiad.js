@@ -51,7 +51,7 @@ function problem(o, n) {
       <details class="op-d"><summary>${icon('formula', 15)} Шешімі</summary><ol class="op-steps">${o.steps.map((s) => html`<li>${texText(s)}</li>`)}</ol></details>
       <details class="op-d op-ans"><summary>${icon('check', 15)} Жауабы</summary><div>${texText(o.ans)}</div></details>
       <details class="op-d op-tip"><summary>${icon('book', 15)} Мұғалімге: әдістемелік нұсқау</summary><div>${texText(o.tip)}</div></details>
-      ${sim ? html`<div class="op-f"><a class="btn ghost sm" href="/sims/${sim.k}">${icon('sim', 14)} Симуляцияда тексер: ${sim.t}</a></div>` : ''}
+      <div class="op-f"><a class="btn ghost sm" href="/ai?ctx=olymp:${o.k}">${icon('spark', 14)} ЖИ-көмекшімен шешу</a>${sim ? html`<a class="btn ghost sm" href="/sims/${sim.k}">${icon('sim', 14)} Симуляцияда тексер: ${sim.t}</a>` : ''}</div>
     </article>`;
 }
 

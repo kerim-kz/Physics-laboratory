@@ -1,6 +1,7 @@
 import express from 'express';
 import { domainsOf, EXAM, examArea, examLabel, hasDomains, INTL, SECTION, SECTIONS, validDomain } from '../data/catalog.js';
 import { TALIS_SCALES } from '../data/talis.js';
+import { aiState } from '../lib/ai.js';
 import { requireUser } from '../lib/auth.js';
 import { many, one, q } from '../lib/db.js';
 import { gradeAnswer, isAnswered, loadUnits, pickUnitIds, questionHtml, unitHtml } from '../lib/examcore.js';
@@ -383,7 +384,7 @@ router.post('/api/exams/submit', asyncH(async (req, res) => {
 }));
 
 // ---------------- Нәтижені қарау (оқушы, оның мұғалімі, әкімші) ----------------
-async function attemptFor(req) {
+export async function attemptFor(req) {
   const a = await one(
     `SELECT at.*, u.full_name, u.class_id, c.teacher_id AS class_teacher, c.grade AS class_grade, c.letter AS class_letter,
             asg.teacher_id AS asg_teacher, asg.title AS asg_title
@@ -408,9 +409,10 @@ router.get('/exams/attempts/:id', requireUser, asyncH(async (req, res) => {
   const units = (await loadUnits(unitIds, { full: true })).map((u) => ({ ...u, questions: u.questions.filter((x) => ans[x.id]) }));
   const own = a.user_id === req.user.id;
   const openQs = units.flatMap((u) => u.questions).filter((x) => x.kind === 'open' && !ans[x.id].self);
+  const st = a.canGrade && openQs.length ? await aiState(req.user) : { ready: false };
   let no = 0;
   await page(req, res, {
-    title: 'Тест нәтижесі', active: 'exams',
+    title: 'Тест нәтижесі', active: 'exams', ...(st.ready ? { scripts: ['/js/ai.js'], styles: ['/css/ai.css'] } : {}),
     body: html`
       <div class="view">
         <div class="crumbs">${own ? html`<a href="/cabinet">Кабинет</a>` : a.assignment_id ? html`<a href="/teacher/assignments/${a.assignment_id}">Тест нәтижелері</a>` : html`<a href="/teacher/classes/${a.class_id}">${a.class_grade}${a.class_letter} сынып</a>`}<span>/</span><span>Тест нәтижесі</span></div>
@@ -426,11 +428,16 @@ router.get('/exams/attempts/:id', requireUser, asyncH(async (req, res) => {
             <input type="hidden" name="_csrf" value="${req.csrfToken}">
             <h2>Ашық жауаптарды бағалау</h2>
             <p class="muted small">Оқушының жауабын критериймен салыстырып, ұпай қойыңыз. Сақтағаннан кейін оқушыға хабарлама барады.</p>
+            ${st.ready ? html`<div class="ai-gradebar" id="aiGrade" data-csrf="${req.csrfToken}" data-attempt="${a.id}">
+              <button class="btn ghost sm" type="button" id="aiGradeBtn">${icon('spark', 14)} ЖИ ұсынысын алу</button>
+              <span class="muted small">ЖИ критерий бойынша ұпай мен себебін ұсынады; ұпайлар төменде белгіленеді. Тексеріп, қажет болса өзгертіп, «Бағаны сақтау» батырмасын басыңыз. Оқушының аты ЖИ-ге жіберілмейді.</span>
+            </div>` : ''}
             ${openQs.map((x) => html`
               <fieldset class="gradeq">
                 <legend>${x.stem.split('\n').pop()}</legend>
                 <div class="q-open">${ans[x.id].a ? ans[x.id].a : html`<i class="muted">Жауап жазылмаған</i>`}</div>
                 <p class="q-fb"><b>Критерий.</b> ${x.rubric}</p>
+                <p class="ai-why" data-ai-why="${x.id}" hidden></p>
                 <div class="chips">${Array.from({ length: ans[x.id].m + 1 }, (_, p) => html`<label class="chip plain"><input type="radio" name="g${x.id}" value="${p}"${ans[x.id].p === p ? html` checked` : ''} required> ${p} балл</label>`)}</div>
               </fieldset>`)}
             <div class="formfoot"><button class="btn" type="submit">Бағаны сақтау</button></div>
