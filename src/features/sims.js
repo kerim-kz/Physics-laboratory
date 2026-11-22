@@ -96,6 +96,7 @@ router.get('/sims/:k', asyncH(async (req, res) => {
               <button class="btn ghost" type="button" id="simReset">${icon('reset', 15)} Қайта бастау</button>
               <button class="btn ghost" type="button" id="simFull">${icon('expand', 15)} <span>Толық экран</span></button>
               <button class="btn ghost" type="button" id="simShot">${icon('download', 15)} Сурет</button>
+              <a class="btn ghost" href="/ai?ctx=sim:${s.k}">${icon('spark', 15)} ЖИ-көмекші</a>
               <span class="grow"></span>
               <span class="muted small" id="simHint"></span>
             </div>

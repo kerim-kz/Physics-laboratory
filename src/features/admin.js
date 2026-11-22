@@ -14,13 +14,14 @@ import {
   asArray, asyncH, cleanMultiline, cleanText, fmtDate, fmtDateTime, fmtPrice, HttpError, LOGIN_RE, newTempPassword, setFlash, toCsv, toInt, validFullName,
 } from '../lib/util.js';
 import { statusPill } from './cabinet.js';
+import { AI_MODELS, aiConfigured, aiSettings, FEATURE_NAME, usageReport } from '../lib/ai.js';
 
 export const router = express.Router();
 router.use(requireAdmin);
 
 const TABS = [
   ['', 'Шолу'], ['teachers', 'Мұғалімдер'], ['users', 'Пайдаланушылар'], ['schools', 'Мектептер'], ['materials', 'Материалдар'],
-  ['orders', 'Төлемдер'], ['questions', 'Тест банкі'], ['admins', 'Әкімшілер'], ['settings', 'Баптаулар'],
+  ['orders', 'Төлемдер'], ['questions', 'Тест банкі'], ['admins', 'Әкімшілер'], ['ai', 'ЖИ'], ['settings', 'Баптаулар'],
 ];
 
 async function pendingCounts() {
@@ -565,6 +566,71 @@ router.post('/admins/:id/remove', requireOwner, asyncH(async (req, res) => {
   await q('DELETE FROM users WHERE id = $1', [a.id]);
   setFlash(res, 'ok', `${a.full_name} әкімшілер қатарынан алып тасталды.`);
   res.redirect('/admin/admins');
+}));
+
+// ---------------- ЖИ құралы ----------------
+const ROLE_SHORT = { admin: 'әкімші', teacher: 'мұғалім', student: 'оқушы' };
+const usd = (x) => `$${x < 0.01 && x > 0 ? x.toFixed(4) : x.toFixed(2)}`;
+
+router.get('/ai', asyncH(async (req, res) => {
+  const st = await aiSettings();
+  const r = await usageReport();
+  const ok = aiConfigured();
+  await adminPage(req, res, 'ai', 'ЖИ', html`
+    <section class="panel">
+      <h2>${icon('spark')} ЖИ құралының күйі</h2>
+      ${ok ? html`<p><span class="pill ok">API кілті қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>`
+        : html`<p><span class="pill pending">API кілті қосылмаған</span> — ЖИ функциялары «бапталмаған» күйінде көрсетіледі.</p>`}
+      <details class="op-d"${ok ? '' : html` open`}><summary>${icon('key', 15)} API кілтін алу және серверге қосу (қадамдық нұсқаулық)</summary>
+        <ol class="op-steps">
+          <li><b>console.anthropic.com</b> сайтына кіріп, тіркеліңіз (электрондық пошта арқылы).</li>
+          <li><b>Settings → Billing</b> бөлімінде төлем картасын қосып, балансты толтырыңыз (мысалы, 5–10 $). Шығынды шектеу үшін <b>Limits</b> бөлімінде айлық лимит қойыңыз.</li>
+          <li><b>Settings → API keys → Create key</b>: кілтке атау беріңіз (мысалы, «gylym-ordasy»), жасалған кілтті (<code>sk-ant-…</code>) бірден көшіріп алыңыз — ол қайта көрсетілмейді. Кілтті ешкімге жібермеңіз және чатқа қоймаңыз.</li>
+          <li><b>dashboard.render.com</b> → сайттың қызметі (Web Service) → <b>Environment</b> → <b>Add Environment Variable</b>: атауы <code>ANTHROPIC_API_KEY</code>, мәні — көшірген кілт. <b>Save changes</b> басыңыз.</li>
+          <li>Render қызметті өзі қайта іске қосады (болмаса, <b>Manual Deploy → Deploy latest commit</b>). Осы бетті жаңартқанда «API кілті қосылған» деп шығуы керек.</li>
+        </ol>
+      </details>
+    </section>
+    <form class="panel form" method="post" action="/admin/ai">
+      ${csrfField(req)}
+      <h2>Баптаулар</h2>
+      <label class="chip plain"><input type="checkbox" name="ai_enabled" value="1"${chk(st.enabled)}> ЖИ құралы қосулы</label>
+      <label class="fl">Модель<select name="ai_model">${AI_MODELS.map(([id, name, pin, pout]) => html`<option value="${id}"${sel(st.model === id)}>${name} · ${usd(pin)} / ${usd(pout)} (1 млн токен: кіріс / шығыс)</option>`)}</select></label>
+      <div class="ai-row">
+        <label class="fl">Оқушыға күнделікті лимит (сұраныс)<input type="number" name="ai_student_limit" min="0" max="500" value="${st.student}"></label>
+        <label class="fl">Мұғалімге күнделікті лимит (сұраныс)<input type="number" name="ai_teacher_limit" min="0" max="2000" value="${st.teacher}"></label>
+      </div>
+      <p class="hint">Лимит Алматы уақытымен түн ортасында жаңарады; 0 — ЖИ-ді осы рөл үшін өшіреді. Әкімшіге лимит жоқ. Шамамен: оқушының бір сұрағы ≈ 0,01–0,03 $, ҚМЖ жасау ≈ 0,1–0,3 $ (ең сапалы модельмен; арзан модельдерде бірнеше есе аз).</p>
+      <div class="formfoot"><button class="btn" type="submit">Сақтау</button></div>
+    </form>
+    <section class="block">
+      <div class="block-h"><h2>Соңғы 30 күндегі пайдалану</h2><span class="cnt">болжамды шығын: ${usd(r.cost)}</span></div>
+      <div class="ovgrid">
+        <div class="ov"><b>${r.today.n}</b><span>бүгінгі сұраныс</span></div>
+        <div class="ov"><b>${r.today.users}</b><span>бүгін қолданған адам</span></div>
+        <div class="ov"><b>${r.byModel.reduce((s, m) => s + m.n, 0)}</b><span>сұраныс (30 күн)</span></div>
+        <div class="ov${r.failed ? ' warn' : ''}"><b>${r.failed}</b><span>сәтсіз сұраныс</span></div>
+      </div>
+      ${r.byFeature.length ? html`<div class="tblwrap"><table><thead><tr><th>Функция</th><th>Кім</th><th class="num">Сұраныс</th></tr></thead>
+        <tbody>${r.byFeature.map((x) => html`<tr><td>${FEATURE_NAME[x.feature] || x.feature}</td><td>${ROLE_SHORT[x.role] || x.role}</td><td class="num">${x.n}</td></tr>`)}</tbody></table></div>
+        <div class="tblwrap"><table><thead><tr><th>Модель</th><th class="num">Сұраныс</th><th class="num">Кіріс токен</th><th class="num">Шығыс токен</th><th class="num">Шығын</th></tr></thead>
+        <tbody>${r.byModel.map((m) => html`<tr><td class="mono">${m.model}</td><td class="num">${m.n}</td><td class="num">${m.inp}</td><td class="num">${m.outp}</td><td class="num">${usd(m.cost)}</td></tr>`)}</tbody></table></div>
+        <div class="tblwrap"><table><thead><tr><th>Ең белсенді пайдаланушылар</th><th>Рөлі</th><th class="num">Сұраныс</th></tr></thead>
+        <tbody>${r.top.map((x) => html`<tr><td>${x.full_name}</td><td>${ROLE_SHORT[x.role] || x.role}</td><td class="num">${x.n}</td></tr>`)}</tbody></table></div>`
+        : emptyBox('Әзірге пайдаланылмаған', 'ЖИ құралына сұраныстар осында есептеледі. Сұраныстардың мәтіні сақталмайды.')}
+      <p class="hint">Шығын — токендер саны бойынша болжам; нақты сома Anthropic Console → Billing бетінде көрсетіледі.</p>
+    </section>`);
+}));
+router.post('/ai', asyncH(async (req, res) => {
+  const lim = (v, max) => String(Math.max(0, Math.min(max, toInt(v, 0))));
+  await saveSettings({
+    ai_enabled: req.body.ai_enabled === '1' ? '1' : '0',
+    ai_model: AI_MODELS.some(([id]) => id === req.body.ai_model) ? req.body.ai_model : AI_MODELS[0][0],
+    ai_student_limit: lim(req.body.ai_student_limit, 500),
+    ai_teacher_limit: lim(req.body.ai_teacher_limit, 2000),
+  });
+  setFlash(res, 'ok', 'ЖИ баптаулары сақталды.');
+  res.redirect('/admin/ai');
 }));
 
 // ---------------- Баптаулар ----------------

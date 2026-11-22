@@ -503,6 +503,114 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal((await student.get(`/results/export.csv?class=${classId}`)).status, 403);
   });
 
+  test('ЖИ құралы: кілтсіз — «бапталмаған»; модельмен — көмекші, лимит, талдау, бағалау, генератор', async () => {
+    const ai = await import('../src/lib/ai.js');
+    delete process.env.ANTHROPIC_API_KEY;
+    ai.setAiRunner(null);
+    // NDJSON ағынын оқу
+    const nd = async (c, url, body) => {
+      const token = await c.csrf('/games/quiz');
+      const r = await fetch(base + url, { method: 'POST', headers: { cookie: c.cookieHeader(), 'content-type': 'application/json', 'x-csrf-token': token }, body: JSON.stringify(body) });
+      const text = await r.text();
+      const lines = text.split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return { raw: l }; } });
+      return { status: r.status, lines, last: lines[lines.length - 1] || {}, text: lines.map((x) => x.t || '').join('') };
+    };
+    const ask = { messages: [{ role: 'user', content: 'Орташа жылдамдықты қалай табамын?' }], ctx: 'olymp:o7-1' };
+
+    // 1) API кілті жоқ: бет ашылады, бірақ сұраныс жіберілмейді
+    const p0 = await student.get('/ai');
+    assert.equal(p0.status, 200);
+    assert.match(p0.text, /бапталмаған/);
+    assert.match((await student.get('/sims/lens')).text, /\/ai\?ctx=sim:lens/);
+    assert.match((await student.get('/olympiad')).text, /\/ai\?ctx=olymp:/);
+    const r0 = await nd(student, '/api/ai/tutor', ask);
+    assert.match(r0.last.error, /бапталмаған/);
+    assert.equal((await new Client().get('/ai')).status, 200, 'қонақ бетті көреді (кіру ұсынылады)');
+
+    // 2) Жалған модель
+    const seen = [];
+    ai.setAiRunner(async (p, onText) => {
+      seen.push(p);
+      if (p.refuse) return { text: '', stop: 'refusal', usage: {}, model: p.model };
+      if (p.schema) {
+        const items = [...p.messages[0].content.matchAll(/id=(\d+) \(ең көбі (\d+)/g)].map(([, id]) => ({ id: +id, points: 99, reason: 'Толық жауап.' }));
+        return { text: JSON.stringify({ items: [...items, { id: 999999, points: 1, reason: 'бөтен' }] }), stop: 'end_turn', usage: { input_tokens: 50, output_tokens: 20 }, model: p.model };
+      }
+      onText('Қай '); onText(null); onText('Қандай '); onText('заң қолданылады?');
+      return { text: 'Қандай заң қолданылады?', stop: 'end_turn', usage: { input_tokens: 100, output_tokens: 10 }, model: p.model };
+    });
+    const r1 = await nd(student, '/api/ai/tutor', ask);
+    assert.equal(r1.status, 200);
+    assert.ok(r1.lines.some((x) => x.reset));
+    assert.equal(r1.lines.slice(r1.lines.findIndex((x) => x.reset) + 1).map((x) => x.t || '').join(''), 'Қандай заң қолданылады?');
+    assert.equal(r1.last.done, true);
+    assert.equal(r1.last.left, 19);
+    assert.match(seen[0].system, /сократтық/);
+    assert.match(seen[0].system, /<эталон>/);
+    assert.equal(seen[0].model, 'claude-opus-5-5');
+    assert.equal((await nd(student, '/api/ai/tutor', { messages: [{ role: 'assistant', content: 'x' }] })).status, 400);
+
+    // 3) Әкімші: модель мен лимит; лимит таусылса — сұраныс жіберілмейді
+    assert.match((await owner.get('/admin/ai')).text, /API кілті қосылған/);
+    assert.equal((await student.get('/admin/ai')).status, 403);
+    assert.equal((await owner.post('/admin/ai', { ai_enabled: '1', ai_model: 'claude-haiku-5-5', ai_student_limit: '1', ai_teacher_limit: '50' }, '/admin/ai')).status, 302);
+    const n = seen.length;
+    const r2 = await nd(student, '/api/ai/tutor', ask);
+    assert.match(r2.last.error, /лимиті таусылды/);
+    assert.equal(seen.length, n);
+
+    // 4) Оқушыға мұғалім функциялары жабық
+    assert.equal((await student.json('POST', '/api/ai/analyze', { class: 1 })).status, 403);
+    assert.equal((await student.json('POST', '/api/ai/generate', { topic: 'x' })).status, 403);
+    assert.equal((await student.get('/ai/teacher')).status, 403);
+
+    // 5) Мұғалім: талдау — оқушылардың аты-жөні жіберілмейді
+    const cab = await teacher.get('/cabinet');
+    const classId = cab.text.match(/\/teacher\/classes\/(\d+)"/)[1];
+    assert.match((await teacher.get(`/results?class=${classId}&exam=pisa`)).text, /id="aiAnalyze"/);
+    const ra = await nd(teacher, '/api/ai/analyze', { class: classId, exam: 'pisa', src: 'all' });
+    assert.equal(ra.last.done, true);
+    const sent = JSON.stringify(seen[seen.length - 1].messages);
+    assert.equal(seen[seen.length - 1].model, 'claude-haiku-5-5');
+    assert.doesNotMatch(sent, /Сейітов|Нұрлан|Басқа Оқушы/);
+    assert.match(sent, /№1/);
+    assert.equal((await teacher.json('POST', '/api/ai/analyze', { class: 999999 })).status, 404);
+
+    // 6) Ашық жауапқа ұсыныс: ұпай шектеледі, бөтен сұрақ алынып тасталады
+    const pool = new pg.Pool({ connectionString: DB });
+    const { rows: [att] } = await pool.query('SELECT id FROM exam_attempts WHERE assignment_id IS NOT NULL ORDER BY id DESC LIMIT 1');
+    const { rows: openQs } = await pool.query(`SELECT q.id, q.points FROM exam_attempts a, jsonb_object_keys(a.answers) k JOIN exam_questions q ON q.id = k::int WHERE a.id = $1 AND q.kind = 'open'`, [att.id]);
+    assert.match((await teacher.get(`/exams/attempts/${att.id}`)).text, /id="aiGradeBtn"/);
+    const rg = await teacher.json('POST', `/api/ai/grade/${att.id}`, {});
+    assert.equal(rg.status, 200);
+    assert.equal(rg.body.items.length, openQs.length);
+    for (const it of rg.body.items) assert.equal(it.points, it.max);
+    assert.doesNotMatch(JSON.stringify(seen[seen.length - 1].messages), /Сейітов/);
+    assert.equal((await student.json('POST', `/api/ai/grade/${att.id}`, {})).status, 403);
+
+    // 7) Генератор
+    const gp = await teacher.get('/ai/teacher');
+    assert.equal(gp.status, 200);
+    assert.match(gp.text, /id="aiTopicData"/);
+    const rgn = await nd(teacher, '/api/ai/generate', { type: 'pisa', grade: '9', topic: '§3. Үдеу', minutes: '45', level: 'high', notes: 'Тәжірибе қосылсын' });
+    assert.equal(rgn.last.done, true);
+    assert.match(seen[seen.length - 1].messages[0].content, /PISA[\s\S]*9-сынып[\s\S]*§3\. Үдеу[\s\S]*Тәжірибе қосылсын/);
+    assert.equal((await nd(teacher, '/api/ai/generate', { type: 'kmj', topic: '' })).status, 400);
+
+    // 8) Модель бас тартса — түсінікті хабар; есеп әкімші бетінде
+    ai.setAiRunner(async (p) => ({ text: '', stop: 'refusal', usage: {}, model: p.model }));
+    assert.match((await nd(teacher, '/api/ai/generate', { type: 'kmj', topic: 'x' })).last.error, /жауап бере алмады/);
+    const adm = await owner.get('/admin/ai');
+    assert.match(adm.text, /Оқушыға көмекші/);
+    assert.match(adm.text, /Тапсырма генераторы/);
+    const { rows: [u] } = await pool.query(`SELECT count(*)::int AS n FROM ai_usage WHERE ok`);
+    assert.ok(u.n >= 5);
+    await pool.end();
+
+    ai.setAiRunner(null);
+    await owner.post('/admin/ai', { ai_enabled: '1', ai_model: 'claude-opus-5-5', ai_student_limit: '20', ai_teacher_limit: '200' }, '/admin/ai');
+  });
+
   test('әкімші бағыт, сурет және жаңа сұрақ түрлерімен тапсырма қосады', async () => {
     const form = await owner.get('/admin/questions?exam=bbzhm&domain=math');
     assert.equal(form.status, 200);

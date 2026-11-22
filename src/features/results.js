@@ -9,19 +9,20 @@ import { icon } from '../lib/icons.js';
 import { emptyBox, page } from '../lib/layout.js';
 import { asyncH, fmtDate, fmtDateTime, HttpError, toCsv, toInt } from '../lib/util.js';
 import { attemptsTable } from './exams.js';
+import { aiState } from '../lib/ai.js';
 import { grade5, labByKey, LABS } from '../data/labs.js';
 import { OLYMPIAD_TEST } from '../data/olympiad-tests.js';
 
 export const router = express.Router();
 
-const pct = (a) => (a.max_score ? Math.round(100 * a.score / a.max_score) : 0);
+export const pct = (a) => (a.max_score ? Math.round(100 * a.score / a.max_score) : 0);
 const avg = (xs) => (xs.length ? Math.round(xs.reduce((s, x) => s + x, 0) / xs.length) : null);
 const level = (p) => (p === null || p === undefined ? '' : p >= 70 ? 'hi' : p >= 40 ? 'mid' : 'lo');
 const EXTRA = { labs: 'Зертханалар', olymp: 'Олимпиада' };
 const SOURCES = [['all', 'Барлығы'], ['assigned', 'Мұғалім тағайындаған'], ['self', 'Өзіндік жаттығу']];
 
 // Сүзгілер: емтихан түрі мен дереккөзі (URL параметрлерінен).
-function filters(req) {
+export function filters(req) {
   const exam = EXTRA[req.query.exam] || (EXAM[req.query.exam] && !EXAM[req.query.exam].survey) ? req.query.exam : 'all';
   const src = SOURCES.some(([k]) => k === req.query.src) ? req.query.src : 'all';
   return { exam, src };
@@ -94,7 +95,7 @@ function statCards(items) {
 }
 
 // ---------------- Мұғалім / әкімші ----------------
-async function viewerClasses(u) {
+export async function viewerClasses(u) {
   if (isAdmin(u)) {
     return many(`SELECT c.id, c.grade, c.letter, c.teacher_id, t.full_name AS teacher,
                         (SELECT count(*)::int FROM users s WHERE s.class_id = c.id AND s.role = 'student') AS n
@@ -105,7 +106,7 @@ async function viewerClasses(u) {
 }
 
 // Сынып бойынша деректер: оқушылар, сүзгіден өткен талпыныстар және тағайындалған тесттер.
-async function classData(cls, f) {
+export async function classData(cls, f) {
   const students = await many(`SELECT id, full_name FROM users WHERE class_id = $1 AND role = 'student' ORDER BY full_name`, [cls.id]);
   const params = [cls.id];
   const where = filterSql(f, params);
@@ -152,6 +153,7 @@ async function teacherView(req, res) {
   const cls = classes.find((c) => c.id === toInt(req.query.class)) || classes[0];
   if (EXTRA[f.exam]) return extraTeacherView(req, res, classes, cls, f);
   const d = await classData(cls, f);
+  const st = await aiState(u);
   const cols = matrixColumns(d, f);
   const byStudent = new Map(d.students.map((s) => [s.id, d.attempts.filter((t) => t.user_id === s.id)]));
   const pcts = d.attempts.map(pct);
@@ -160,7 +162,7 @@ async function teacherView(req, res) {
   const base = '/results';
   const keep = { class: cls.id };
   await page(req, res, {
-    title: 'Нәтижелер', active: 'results', styles: ['/css/results.css'],
+    title: 'Нәтижелер', active: 'results', styles: ['/css/results.css', '/css/ai.css'], katex: true, scripts: ['/vendor/katex/katex.min.js', '/js/ai.js'],
     body: html`<div class="view">
       ${header('Сыныптардың нәтижелері', 'Сыныпты және тест түрін таңдаңыз. Кестеде әр оқушының әр тесттегі нәтижесі (пайызбен) көрсетіледі; өзіндік жаттығулар үшін — ең жақсы нәтиже.',
         html`<a class="btn ghost" href="/results/export.csv${qs({ class: cls.id, exam: f.exam, src: f.src })}">${icon('download', 15)} Excel (CSV)</a>`)}
@@ -168,6 +170,7 @@ async function teacherView(req, res) {
       ${filterBar(base, f, keep)}
       ${statCards([[d.students.length, 'оқушы'], [`${participated}`, 'тест тапсырған оқушы'], [d.attempts.length, 'тапсырылған тест'], [pcts.length ? `${avg(pcts)}%` : null, 'орташа нәтиже'], [pending, 'тексеруді күтетін жауап']])}
       ${d.attempts.length ? html`
+        ${aiAnalyzePanel(req, st, cls, f)}
         ${domainBars(d.attempts, f)}
         ${progressChart(d.attempts, 'Сыныптың уақыт бойынша өсуі')}
         <section class="block">
@@ -194,6 +197,17 @@ async function teacherView(req, res) {
       <p class="muted small"><a href="/teacher/assignments/new?class=${cls.id}">${icon('exam', 14)} ${cls.grade}${cls.letter} сыныбына тест тағайындау</a></p>
     </div>`,
   });
+}
+
+// ЖИ талдауы: батырма және нәтиже орны (ЖИ бапталмаған болса — көрсетілмейді).
+function aiAnalyzePanel(req, st, cls, f) {
+  if (!st.ready) return '';
+  return html`<section class="panel ai-analyze" id="aiAnalyze" data-csrf="${req.csrfToken}" data-class="${cls.id}" data-exam="${f.exam}" data-src="${f.src}">
+    <div class="ai-outbar">${icon('spark', 17)}<div class="grow"><b>ЖИ талдауы</b><span class="muted small">Сынып нәтижелерін талдап, қиын тақырыптар мен келесі сабақтарға ұсыныстар береді. Оқушылардың аты-жөні ЖИ-ге жіберілмейді — олар кестедегі нөмірімен (№) аталады.</span></div>
+      <button class="btn sm" type="button" id="aiAnalyzeBtn">${icon('spark', 14)} Талдау жасау</button></div>
+    <div class="ai-md" id="aiAnalyzeOut" hidden></div>
+    ${st.quota && st.quota.limit !== null ? html`<p class="muted small">Бүгін қалған ЖИ сұраныстары: <b data-ai-left>${st.quota.left}</b> / ${st.quota.limit}</p>` : ''}
+  </section>`;
 }
 
 function header(title, lede, actions = '') {

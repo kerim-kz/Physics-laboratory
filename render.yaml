@@ -39,3 +39,5 @@ services:
         sync: false
       - key: ADMIN_NAME
         sync: false
+      - key: ANTHROPIC_API_KEY # ЖИ құралы үшін (міндетті емес; бос қалса, ЖИ «бапталмаған» күйде)
+        sync: false
