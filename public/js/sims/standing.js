@@ -49,9 +49,10 @@
       ctx.save(); ctx.strokeStyle = '#b8a070'; ctx.lineWidth = 3; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 3; ctx.beginPath();
       for (var x2 = x0; x2 <= x1; x2 += 2) { var y2 = cy - A * Math.sin(k * (x2 - x0)) * c; if (x2 === x0) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2); }
       ctx.stroke(); ctx.restore();
-      // түйіндер мен шоқтар
-      for (var i = 0; i <= P.n; i++) { var xn = x0 + i * (x1 - x0) / P.n; D.circle(ctx, xn, cy, 5, C.red, null, 0, true); D.text(ctx, 'Т', xn, cy + 22, { size: 10, align: 'center', color: C.red, weight: '700' }); }
-      for (var j = 0; j < P.n; j++) { var xa = x0 + (j + 0.5) * (x1 - x0) / P.n; D.text(ctx, 'Ш', xa, cy - A - 10, { size: 10, align: 'center', color: C.accent, weight: '700' }); }
+      // түйіндер мен шоқтар (бір әріпті белгілер тілге қарай: «Ш» компастағы «шығыспен» шатаспауы үшін сөздікке салынбайды)
+      var LG = document.documentElement.lang, LN = LG === 'en' ? 'N' : LG === 'ru' ? 'У' : 'Т', LA = LG === 'en' ? 'A' : LG === 'ru' ? 'П' : 'Ш';
+      for (var i = 0; i <= P.n; i++) { var xn = x0 + i * (x1 - x0) / P.n; D.circle(ctx, xn, cy, 5, C.red, null, 0, true); D.text(ctx, LN, xn, cy + 22, { size: 10, align: 'center', color: C.red, weight: '700' }); }
+      for (var j = 0; j < P.n; j++) { var xa = x0 + (j + 0.5) * (x1 - x0) / P.n; D.text(ctx, LA, xa, cy - A - 10, { size: 10, align: 'center', color: C.accent, weight: '700' }); }
       // λ белгісі
       var lamPx = 2 * (x1 - x0) / P.n;
       if (lamPx < W - 60) { var yb = H - 40; D.line(ctx, x0, yb, x0 + lamPx, yb, C.brass, 2); D.line(ctx, x0, yb - 6, x0, yb + 6, C.brass, 2); D.line(ctx, x0 + lamPx, yb - 6, x0 + lamPx, yb + 6, C.brass, 2); D.text(ctx, 'λ', x0 + lamPx / 2, yb - 8, { size: 13, align: 'center', color: C.brass, weight: '700' }); }

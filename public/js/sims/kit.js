@@ -1,6 +1,8 @@
 /* Симуляцияларға ортақ қозғалтқыш: canvas, басқару элементтері, өлшеулер, анимация, графиктер. */
 (function () {
   'use strict';
+  // Аударма (сайт тілі қазақша емес болса, public/js/i18n.js жүктеледі)
+  var TR = function (x) { return window.tr ? window.tr(x) : x; };
 
   function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   var C = {};
@@ -454,8 +456,8 @@
         '<div class="dplot"><div class="dplot-c"><label class="fl">X осі<select id="dX"></select></label><label class="fl">Y осі<select id="dY"></select></label><label class="ctl-check small"><input type="checkbox" id="dFit" checked> Түзу сызық (ең кіші квадраттар)</label><p class="small mono" id="dFitOut"></p></div><canvas id="dCanvas" height="260"></canvas></div>';
       var thead = dataBox.querySelector('thead'), tbody = dataBox.querySelector('tbody');
       var params = (o.controls || []).filter(function (c) { return c.type === 'range'; });
-      var cols = [{ k: '#', label: '№', digits: 0 }].concat(params.map(function (c) { return { k: 'p:' + c.key, label: c.label + (c.unit ? ', ' + c.unit : ''), digits: c.digits === undefined ? 1 : c.digits }; }))
-        .concat(numeric.map(function (r) { return { k: 'r:' + r.key, label: r.label + (r.unit ? ', ' + r.unit : ''), digits: r.digits }; }));
+      var cols = [{ k: '#', label: '№', digits: 0 }].concat(params.map(function (c) { return { k: 'p:' + c.key, label: TR(c.label) + (c.unit ? ', ' + TR(c.unit) : ''), digits: c.digits === undefined ? 1 : c.digits }; }))
+        .concat(numeric.map(function (r) { return { k: 'r:' + r.key, label: TR(r.label) + (r.unit ? ', ' + TR(r.unit) : ''), digits: r.digits }; }));
       thead.innerHTML = '<tr>' + cols.map(function (c) { return '<th>' + c.label + '</th>'; }).join('') + '</tr>';
       var selX = dataBox.querySelector('#dX'), selY = dataBox.querySelector('#dY');
       cols.forEach(function (c, i) {

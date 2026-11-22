@@ -134,7 +134,7 @@ export function questionHtml(qq, no, o = {}) {
     const chosen = new Set((Array.isArray(answer) ? answer : []).map(Number));
     body = html`<div class="q-opts">${order.map((i, pos) => {
       const mark = review && showKey ? (qq.correct.includes(i) ? ' right' : chosen.has(i) ? ' wrong' : '') : '';
-      return html`<label class="qopt${mark}"><input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${i}"${chosen.has(i) ? raw(' checked') : ''}${dis}><span class="q-l">${LETTERS[pos]}</span><span>${qq.options[i]}</span></label>`;
+      return html`<label class="qopt${mark}"><input type="${multi ? 'checkbox' : 'radio'}" name="${name}" value="${i}"${chosen.has(i) ? raw(' checked') : ''}${dis}><span class="q-l" translate="no">${LETTERS[pos]}</span><span>${qq.options[i]}</span></label>`;
     })}</div>`;
   }
   let fb = '';

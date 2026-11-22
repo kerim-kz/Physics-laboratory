@@ -32,7 +32,25 @@
       var mm = s.match(p.re);
       if (mm) { var vals = []; p.order.forEach(function (idx, j) { var v = mm[j + 1], r = HAS.test(v) ? look(v) : null; vals[idx] = r === null ? v : r; }); return fill(p.v, vals); }
     }
-    return null;
+    return unitWords(s);
+  }
+  // Шама жазуы («t = 5 с», «m₁: 2 кг»): 1–3 қазақша сөздің әрқайсысы сөздікте жеке тұрса, сөзбе-сөз ауыстырылады (серверде де солай).
+  var EDGE = /^([(«"]*)([\s\S]*?)([)»",.;:]*)$/;
+  function get(w) { return Object.prototype.hasOwnProperty.call(exact, w) ? exact[w] : undefined; }
+  function unitWords(s) {
+    if (!/[\d=]/.test(s)) return null;
+    var toks = s.split(/(\s+)/), n = 0, out = [];
+    toks.forEach(function (t) { if (HAS.test(t)) n++; });
+    if (!n || n > 3) return null;
+    for (var i = 0; i < toks.length; i++) {
+      var t = toks[i];
+      if (!HAS.test(t)) { out.push(t); continue; }
+      var r = get(t);
+      if (r === undefined) { var ns = [], k = t.replace(NUM, function (x) { return '{' + (ns.push(x) - 1) + '}'; }), h = ns.length ? get(k) : undefined; if (h !== undefined) r = fill(h, ns); }
+      if (r === undefined) { var m = t.match(EDGE), v = m[2] ? get(m[2]) : undefined; if (v === undefined) return null; r = m[1] + v + m[3]; }
+      out.push(r);
+    }
+    return out.join('');
   }
   // Мәтінді аудару; бастағы/соңғы бос орындар сақталады.
   function tr(text) {
