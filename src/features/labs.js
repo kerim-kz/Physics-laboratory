@@ -1,6 +1,6 @@
 import express from 'express';
 import { FAMILIES, SECTION } from '../data/catalog.js';
-import { grade5, LABS, labByKey, readCode, TOOLS } from '../data/labs.js';
+import { grade5, LABS, labByKey, readCode } from '../data/labs.js';
 import { SIMS } from '../data/sims.js';
 import { requireActiveTeacher } from '../lib/auth.js';
 import { many, q } from '../lib/db.js';
@@ -50,11 +50,6 @@ router.get('/labs', asyncH(async (req, res) => {
           <div class="grid">${sims.slice(0, 6).map((s) => html`<article class="card ${FAMILIES[SECTION[s.s].fam].css}"><div class="card-top"><span class="glyph">${icon('sim')}</span><span class="cls">${s.g}-сынып</span></div><h3><a href="/sims/${s.k}">${s.t}</a></h3><p>${s.d}</p></article>`)}</div>
         </section>
         ${uploaded.length ? html`<section class="shelf"><div class="shelf-h"><h2>Мұғалімдер жүктеген зертханалық жұмыстар</h2><span class="cnt">${uploaded.length}</span></div><div class="rule"></div><div class="mgrid">${uploaded.map((m) => materialCard(m))}</div></section>` : ''}
-        <section class="shelf">
-          <div class="shelf-h"><h2>Құралдар</h2><span class="cnt">сабақта пайдалануға</span></div>
-          <div class="rule"></div>
-          <div class="grid">${TOOLS.map((t) => html`<article class="card"><div class="card-top"><span class="glyph brass">${icon('ruler')}</span></div><h3><a href="${t.u}" target="_blank" rel="noopener">${t.t}</a></h3><p>${t.d}</p><div class="card-foot"><span class="open">Ашу ${icon('ext', 13)}</span></div></article>`)}</div>
-        </section>
       </div>`,
   });
 }));

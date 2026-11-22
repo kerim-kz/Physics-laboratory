@@ -21,6 +21,9 @@ const NAV = [
     ['/labs', 'Зертханалар', 'labs', 'lab'],
     ['/games', 'Ойындар', 'games', 'game'],
   ]],
+  ['Құралдар', [
+    ['/units', 'Бірліктер түрлендіргіші', 'units', 'swap'],
+  ]],
   ['Емтиханға дайындық', [
     ['/intl', 'Халықаралық зерттеулер', 'intl', 'globe'],
     ['/exams/bbzhm', 'ББЖМ', 'bbzhm', 'exam'],
@@ -69,7 +72,8 @@ export async function page(req, res, opts) {
   if (user) {
     nav.splice(1, 0, ['', [user.role === 'admin'
       ? ['/admin', 'Әкімші панелі', 'admin', 'shield']
-      : ['/cabinet', 'Жеке кабинет', 'cabinet', 'user']]]);
+      : ['/cabinet', 'Жеке кабинет', 'cabinet', 'user'],
+    ['/results', 'Нәтижелер', 'results', 'chart']]]);
   }
   const drawer = html`
 <nav class="drawer" id="drawer" aria-label="Бөлімдер" data-open="0">

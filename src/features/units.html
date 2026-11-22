@@ -1,0 +1,132 @@
+<div class="uc"><div class="uc-wrap">
+  <header class="uc-top">
+    <div class="uc-brand">
+      <div class="uc-eyebrow" data-t="eyebrow"></div>
+      <h1 data-t="title"></h1>
+      <p class="uc-sub" data-t="sub"></p>
+    </div>
+    <div class="uc-tools">
+      <div class="uc-seg" role="group" aria-label="Тіл / Язык">
+        <button type="button" id="lang-kk" aria-pressed="true">ҚАЗ</button>
+        <button type="button" id="lang-ru" aria-pressed="false">РУС</button>
+      </div>
+      <button type="button" class="uc-iconbtn" id="bigBtn" aria-pressed="false" data-tp="aria-label:bigFont">A+</button>
+    </div>
+  </header>
+
+  <nav class="modes" role="tablist">
+    <button type="button" role="tab" id="tab-conv" aria-selected="true" data-mode="conv" data-t="mConv"></button>
+    <button type="button" role="tab" id="tab-prac" aria-selected="false" data-mode="prac" data-t="mPrac"></button>
+    <button type="button" role="tab" id="tab-pref" aria-selected="false" data-mode="pref" data-t="mPref"></button>
+  </nav>
+
+  <section class="rail" id="rail" aria-label="Шамалар"></section>
+
+  <!-- CONVERTER -->
+  <section id="p-conv" class="grid2">
+    <div class="col">
+      <div class="uc-card instrument">
+        <div class="qtitle" id="qtitle"></div>
+        <div class="inrow">
+          <div class="uc-field valf">
+            <label for="val" data-t="value"></label>
+            <div class="valbox">
+              <input id="val" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" value="72">
+              <button type="button" class="uc-mini" id="insPow" data-tp="aria-label:insPow">·10ⁿ</button>
+            </div>
+          </div>
+          <div class="uc-field">
+            <label for="from" data-t="from"></label>
+            <select id="from"></select>
+          </div>
+          <button type="button" class="swap" id="swap" data-tp="aria-label:swap">⇄</button>
+          <div class="uc-field">
+            <label for="to" data-t="to"></label>
+            <select id="to"></select>
+          </div>
+        </div>
+        <div class="readout" aria-live="polite">
+          <div class="rlabel" data-t="result"></div>
+          <div class="rbig" id="rbig"></div>
+          <div class="rsmall" id="rsmall"></div>
+          <div class="rfoot">
+            <div class="sigsel">
+              <span data-t="sig"></span>
+              <div class="uc-seg" role="group" id="sigSeg">
+                <button type="button" data-sig="3" aria-pressed="false">3</button>
+                <button type="button" data-sig="4" aria-pressed="true">4</button>
+                <button type="button" data-sig="6" aria-pressed="false">6</button>
+              </div>
+            </div>
+            <button type="button" class="uc-btn" id="copyBtn" data-t="copy"></button>
+          </div>
+        </div>
+      </div>
+      <div class="uc-card uc-tip" id="tipCard" hidden>
+        <h3 data-t="tip"></h3>
+        <p id="tipText"></p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="uc-card" id="stepsCard">
+        <h3 data-t="steps"></h3>
+        <ol class="uc-steps" id="steps"></ol>
+      </div>
+      <div class="uc-card">
+        <h3 data-t="all"></h3>
+        <div class="allgrid" id="allgrid"></div>
+        <p class="hint-line" data-t="allHint"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRACTICE -->
+  <section id="p-prac" class="grid2" hidden>
+    <div class="col">
+      <div class="uc-card instrument">
+        <div class="task-head">
+          <label class="uc-mix"><input type="checkbox" id="mix"> <span data-t="mix"></span></label>
+          <div class="uc-score" id="score"></div>
+        </div>
+        <div class="task-q" id="taskQ"></div>
+        <div class="ans-row">
+          <div class="valbox">
+            <input id="ans" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" data-tp="placeholder:ansPh">
+            <button type="button" class="uc-mini" id="insPow2" data-tp="aria-label:insPow">·10ⁿ</button>
+          </div>
+          <span class="unitlab" id="ansUnit"></span>
+        </div>
+        <div class="ans-row" style="margin-top:10px">
+          <button type="button" class="uc-btn uc-primary" id="checkBtn" data-t="check"></button>
+          <button type="button" class="uc-btn" id="hintBtn" data-t="hint"></button>
+          <button type="button" class="uc-btn" id="nextBtn" data-t="next"></button>
+        </div>
+        <p class="uc-help" data-t="ansHelp"></p>
+        <div class="fb" id="fb" hidden></div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="uc-card" id="pStepsCard" hidden>
+        <h3 data-t="steps"></h3>
+        <ol class="uc-steps" id="pSteps"></ol>
+      </div>
+      <div class="uc-card uc-tip" id="pTipCard">
+        <h3 data-t="howPrac"></h3>
+        <p data-t="howPracText"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREFIXES -->
+  <section id="p-pref" class="col" hidden>
+    <div class="uc-card">
+      <h3 data-t="prefTitle"></h3>
+      <div class="tablewrap"><table id="prefT"></table></div>
+    </div>
+    <div class="uc-card">
+      <h3 data-t="rulesTitle"></h3>
+      <ul class="rules" id="rules"></ul>
+    </div>
+  </section>
+</div>
+</div>
