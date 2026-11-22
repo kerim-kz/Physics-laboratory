@@ -5,6 +5,7 @@
 import { SIMS_BOOK } from './sims-book.js';
 import { SIMS_BOOK9 } from './sims-book9.js';
 import { SIMS_BOOK10 } from './sims-book10.js';
+import { SIMS_BOOK11 } from './sims-book11.js';
 
 const BASE = [
   {
@@ -575,5 +576,5 @@ const BASE = [
 ];
 
 // 7–8-сынып оқулықтарының параграфтары бойынша қосылған симуляциялар (data/sims-book.js).
-export const SIMS = [...BASE, ...SIMS_BOOK, ...SIMS_BOOK9, ...SIMS_BOOK10];
+export const SIMS = [...BASE, ...SIMS_BOOK, ...SIMS_BOOK9, ...SIMS_BOOK10, ...SIMS_BOOK11];
 export const SIM = Object.fromEntries(SIMS.map((x) => [x.k, x]));
