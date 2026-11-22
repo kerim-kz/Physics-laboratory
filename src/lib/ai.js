@@ -33,7 +33,10 @@ export function compatConfig() {
   const base = String(process.env.AI_BASE_URL || '').trim().replace(/\/+$/, '').replace(/\/chat\/completions$/, '');
   const key = String(process.env.AI_API_KEY || '').trim();
   if (!base || !key) return null;
-  return { base, key, model: String(process.env.AI_MODEL || '').trim() || 'auto', host: (() => { try { return new URL(base).host; } catch { return base; } })() };
+  // AI_MODEL-ге үтір арқылы бірнеше модель жазуға болады: біріншісі бос болмаса, келесісі қолданылады.
+  const models = String(process.env.AI_MODEL || '').split(',').map((m) => m.trim().replace(/^models\//, '')).filter(Boolean);
+  if (!models.length) models.push('auto');
+  return { base, key, models, model: models[0], host: (() => { try { return new URL(base).host; } catch { return base; } })() };
 }
 // Қай провайдер қосулы: 'compat' (тегін / OpenAI-үйлесімді), 'anthropic' немесе null.
 export const aiProvider = () => (compatConfig() ? 'compat' : process.env.ANTHROPIC_API_KEY ? 'anthropic' : null);
@@ -110,11 +113,19 @@ async function callModel({ model, system, messages, maxTokens, effort, schema },
 const COMPAT_MAX_TOKENS = 8192; // тегін модельдердің көбінде шығыс шектеулі
 const JSON_HINT = (schema) => `\n\nЖауапты ТЕК жарамды JSON түрінде бер — алдында да, соңында да басқа мәтін, түсініктеме немесе \`\`\` белгісі болмасын. JSON схемасы:\n${JSON.stringify(schema)}`;
 
+let RETRY_MS = 2000;
+export function setRetryDelay(ms) { RETRY_MS = ms; } // тесттер үшін
 function compatError(status, body) {
+  const e = compatErrorMsg(status, body);
+  e.httpStatus = status === 400 && /api.?key/i.test(body) ? 401 : status;
+  return e;
+}
+function compatErrorMsg(status, body) {
   if (status === 401 || status === 403 || (status === 400 && /api.?key/i.test(body))) return new AiError(503, 'Тегін ЖИ провайдерінің кілті (AI_API_KEY) жарамсыз немесе рұқсаты жоқ. Әкімші кілтті тексеруі керек.');
   if (status === 429) return new AiError(429, 'Тегін ЖИ провайдерінің лимиті уақытша таусылды. Бірнеше минуттан кейін қайталап көріңіз.');
   if (status === 404) return new AiError(503, 'ЖИ моделі табылмады: AI_MODEL атауын немесе AI_BASE_URL мекенжайын тексеру керек.');
   if (status === 400 && /model/i.test(body)) return new AiError(503, 'ЖИ моделінің атауы (AI_MODEL) қате болуы мүмкін. Әкімші тексеруі керек.');
+  if (status === 503 || status === 500 || status === 502 || status === 504) return new AiError(503, 'Тегін ЖИ моделі қазір қатты жүктелген (Google жағында). Бір-екі минуттан кейін қайталаңыз.');
   return new AiError(502, 'Тегін ЖИ провайдері уақытша қолжетімсіз. Сәлден соң қайталаңыз.');
 }
 
@@ -123,25 +134,29 @@ const visibleText = (raw) => raw.replace(/<think>[\s\S]*?(<\/think>\s*|$)/g, '')
 
 async function callCompat({ system, messages, maxTokens, schema }, onText) {
   const c = compatConfig();
-  const body = {
-    model: c.model, stream: true, max_tokens: Math.min(maxTokens || 4000, COMPAT_MAX_TOKENS),
-    messages: [{ role: 'system', content: schema ? system + JSON_HINT(schema) : system }, ...messages],
-  };
-  let res;
-  try {
-    res = await fetch(`${c.base}/chat/completions`, {
-      method: 'POST', headers: { authorization: `Bearer ${c.key}`, 'content-type': 'application/json', accept: 'text/event-stream, application/json' },
-      body: JSON.stringify(body), signal: AbortSignal.timeout(4 * 60_000), // тегін сервер «ұйықтап» тұрса, оянуына уақыт керек
-    });
-  } catch {
-    throw new AiError(503, 'Тегін ЖИ провайдеріне қосылу мүмкін болмады. Сервер «ұйықтап» тұрған болуы мүмкін — бір минуттан кейін қайталаңыз.');
+  const msgs = [{ role: 'system', content: schema ? system + JSON_HINT(schema) : system }, ...messages];
+  const send = (model) => fetch(`${c.base}/chat/completions`, {
+    method: 'POST', headers: { authorization: `Bearer ${c.key}`, 'content-type': 'application/json', accept: 'text/event-stream, application/json' },
+    body: JSON.stringify({ model, stream: true, max_tokens: Math.min(maxTokens || 4000, COMPAT_MAX_TOKENS), messages: msgs }),
+    signal: AbortSignal.timeout(4 * 60_000), // тегін сервер «ұйықтап» тұрса, оянуына уақыт керек
+  });
+  // Уақытша қате (жүктеме, лимит) болса — сәл күтіп қайталаймыз, сосын тізімдегі келесі модельге көшеміз.
+  let res = null, used = c.models[0], lastErr = null;
+  outer: for (const m of c.models) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try { res = await send(m); } catch { lastErr = new AiError(503, 'Тегін ЖИ провайдеріне қосылу мүмкін болмады. Сервер «ұйықтап» тұрған болуы мүмкін — бір минуттан кейін қайталаңыз.'); res = null; break; }
+      if (res.ok) { used = m; break outer; }
+      const t = await res.text().catch(() => '');
+      console.error('ЖИ провайдерінің қатесі:', m, res.status, t.slice(0, 300));
+      lastErr = compatError(res.status, t);
+      res = null;
+      if (![429, 500, 502, 503, 504].includes(lastErr.httpStatus)) break; // 404 т.б. — бірден келесі модель
+      if (attempt === 0) await new Promise((r) => setTimeout(r, RETRY_MS));
+    }
+    if (lastErr && [401, 403].includes(lastErr.httpStatus)) break; // кілт қате — басқа модель көмектеспейді
   }
-  if (!res.ok) {
-    const t = await res.text().catch(() => '');
-    console.error('ЖИ провайдерінің қатесі:', res.status, t.slice(0, 300));
-    throw compatError(res.status, t);
-  }
-  let raw = '', sent = '', finish = null, usage = null, model = res.headers.get('x-routed-via') || c.model;
+  if (!res) throw lastErr;
+  let raw = '', sent = '', finish = null, usage = null, model = res.headers.get('x-routed-via') || used;
   const emit = () => {
     if (!onText) return;
     const vis = visibleText(raw);

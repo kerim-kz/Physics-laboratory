@@ -626,6 +626,7 @@ describe('тіркелу, рөлдер және сыныптар', () => {
         calls.push({ url: req.url, auth: req.headers.authorization, body: j });
         if (req.headers.authorization !== 'Bearer free-key') { res.writeHead(401, { 'content-type': 'application/json' }); return res.end('{"error":{"message":"bad key"}}'); }
         if (mode === 'limit') { res.writeHead(429, { 'content-type': 'application/json' }); return res.end('{"error":{"message":"quota"}}'); }
+        if (j.model === 'busy-model') { res.writeHead(503, { 'content-type': 'application/json' }); return res.end('[{"error":{"code":503,"message":"high demand","status":"UNAVAILABLE"}}]'); }
         res.writeHead(200, { 'content-type': 'text/event-stream', 'x-routed-via': 'google/free-flash' });
         const isJson = /JSON схемасы/.test(j.messages[0].content);
         const ids = isJson ? [...j.messages[1].content.matchAll(/id=(\d+) \(ең көбі (\d+)/g)].map(([, id]) => +id) : [];
@@ -640,6 +641,7 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     process.env.AI_BASE_URL = `http://127.0.0.1:${fake.address().port}/v1/`;
     process.env.AI_API_KEY = 'free-key';
     process.env.AI_MODEL = 'free-flash';
+    ai.setRetryDelay(5);
     const nd = async (c, url, body) => {
       const token = await c.csrf('/games/quiz');
       const r = await fetch(base + url, { method: 'POST', headers: { cookie: c.cookieHeader(), 'content-type': 'application/json', 'x-csrf-token': token }, body: JSON.stringify(body) });
@@ -685,6 +687,15 @@ describe('тіркелу, рөлдер және сыныптар', () => {
       assert.match((await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] })).last.error, /лимиті уақытша таусылды/);
       assert.equal((await pool.query(`SELECT count(*)::int AS n FROM ai_usage WHERE ok IS NOT FALSE`)).rows[0].n, before);
       mode = 'ok';
+      // Негізгі модель жүктелген (503): бір рет қайталап, қосалқы модельге көшеді
+      process.env.AI_MODEL = 'models/busy-model, free-flash';
+      const n0 = calls.length;
+      const rb = await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] });
+      assert.equal(rb.last.done, true, JSON.stringify(rb.last));
+      assert.deepEqual(calls.slice(n0).map((x) => x.body.model), ['busy-model', 'busy-model', 'free-flash']);
+      assert.match((await owner.get('/admin/ai')).text, /busy-model, free-flash/);
+      process.env.AI_MODEL = 'busy-model';
+      assert.match((await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] })).last.error, /қатты жүктелген/);
       process.env.AI_API_KEY = 'wrong';
       assert.match((await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] })).last.error, /AI_API_KEY/);
       await pool.end();
