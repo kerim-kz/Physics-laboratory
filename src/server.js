@@ -10,6 +10,7 @@ import { migrate, pool } from './lib/db.js';
 import { html } from './lib/html.js';
 import { page } from './lib/layout.js';
 import { parseCookies } from './lib/util.js';
+import { clientDict, collected, LANGS, pickLang, startCollect } from './lib/i18n.js';
 import { bootstrap } from './seed.js';
 import { router as adminRouter } from './features/admin.js';
 import { router as assignRouter } from './features/assign.js';
@@ -83,6 +84,33 @@ export function createApp() {
   });
 
   app.use((req, res, next) => { req.cookies = parseCookies(req.headers.cookie); next(); });
+  // Тіл: ?lang=ru сілтемесі немесе lang cookie (әдепкі — қазақша)
+  const langCookie = (res, l) => res.cookie('lang', l, { sameSite: 'lax', maxAge: 365 * 86400_000, path: '/' });
+  app.use((req, res, next) => {
+    req.lang = pickLang(req);
+    if (LANGS.includes(String(req.query.lang || '')) && req.cookies.lang !== req.lang) langCookie(res, req.lang);
+    next();
+  });
+  app.get('/lang/:code', (req, res) => {
+    const l = LANGS.includes(req.params.code) ? req.params.code : 'kk';
+    langCookie(res, l);
+    const next = String(req.query.next || '/');
+    res.redirect(next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/\\') ? next : '/');
+  });
+  // Браузерге арналған сөздік (public/js/i18n.js қолданады)
+  app.get('/i18n/:lang.js', (req, res) => {
+    const l = req.params.lang;
+    if (!LANGS.includes(l) || l === 'kk') return res.status(404).end();
+    const d = clientDict(l);
+    res.set({ 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'public, max-age=3600', ETag: d.etag });
+    if (req.headers['if-none-match'] === d.etag) return res.status(304).end();
+    res.send(d.body);
+  });
+  // Аудармасы жоқ мәтіндерді жинау (тек әзірлеу кезінде): I18N_COLLECT=1, нәтижесі /__i18n/missing
+  if (process.env.I18N_COLLECT === '1') {
+    startCollect();
+    app.get('/__i18n/missing', (req, res) => res.json(Object.fromEntries(collected())));
+  }
   app.use(express.urlencoded({ extended: true, limit: '200kb' }));
   app.use(express.json({ limit: '200kb' }));
   app.use(loadUser);

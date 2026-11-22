@@ -13,6 +13,7 @@ import { icon } from '../lib/icons.js';
 import { emptyBox, page } from '../lib/layout.js';
 import { asyncH, HttpError, toInt } from '../lib/util.js';
 import { attemptFor } from './exams.js';
+import { LANG_NAME } from '../lib/i18n.js';
 import { classData, filters, pct, viewerClasses } from './results.js';
 
 export const router = express.Router();
@@ -22,6 +23,9 @@ const clip = (s, n) => { const t = String(s ?? '').trim(); return t.length > n ?
 const avg = (xs) => (xs.length ? Math.round(xs.reduce((s, x) => s + x, 0) / xs.length) : null);
 
 const MATH = 'Формулаларды LaTeX-пен жаз: жол ішінде $...$, бөлек жолда $$...$$. Бірліктерді ХБЖ-да көрсет.';
+
+// Сайттың тілі қазақша болмаса, ЖИ жауабын сол тілде жазады.
+const langLine = (req) => (req.lang && req.lang !== 'kk' ? `Жауапты (материалды) ${LANG_NAME[req.lang]} тілінде (${req.lang === 'ru' ? 'на русском языке' : 'in English'}) жаз.\n\n` : '');
 
 // ---------------- Жауапты ағынмен (NDJSON) жіберу ----------------
 // Әр жол — бір JSON: {t: "мәтін бөлігі"}, {reset: true}, соңында {done: true, left} не {error: "..."}.
@@ -199,7 +203,7 @@ router.post('/api/ai/analyze', requireUser, asyncH(async (req, res) => {
   const scope = `${f.exam === 'all' ? 'Барлық тест түрлері' : examLabel(f.exam, '')}; дереккөзі: ${f.src === 'assigned' ? 'мұғалім тағайындаған тесттер' : f.src === 'self' ? 'өзіндік жаттығулар' : 'барлығы'}.`;
   await streamAi(req, res, 'analyze', {
     system: ANALYZE_SYSTEM, maxTokens: 12000, effort: 'medium',
-    messages: [{ role: 'user', content: `Сүзгі: ${scope}\nСынып деректері (JSON):\n${JSON.stringify(s.data)}` }],
+    messages: [{ role: 'user', content: `${langLine(req)}Сүзгі: ${scope}\nСынып деректері (JSON):\n${JSON.stringify(s.data)}` }],
   });
 }));
 
@@ -247,7 +251,7 @@ router.post('/api/ai/grade/:id', requireUser, asyncH(async (req, res) => {
   try {
     const r = await runAi(req.user, 'grade', {
       system: GRADE_SYSTEM, schema: GRADE_SCHEMA, maxTokens: 8000, effort: 'medium',
-      messages: [{ role: 'user', content: `${examLabel(a.exam, a.domain)} тестінің ашық жауаптарын бағала.\n\n${content}` }],
+      messages: [{ role: 'user', content: `${langLine(req)}${examLabel(a.exam, a.domain)} тестінің ашық жауаптарын бағала.\n\n${content}` }],
     });
     if (r.refused) return res.status(422).json({ error: 'ЖИ бұл жауаптарды бағалай алмады. Қолмен бағалаңыз.' });
     let parsed;
@@ -333,7 +337,7 @@ router.post('/api/ai/generate', requireUser, asyncH(async (req, res) => {
   const [title, spec] = GEN_TYPES[type];
   await streamAi(req, res, 'generate', {
     system: GEN_SYSTEM, maxTokens: 32000, effort: 'medium',
-    messages: [{ role: 'user', content: `Жасалатын материал: ${title}.\n${spec}\n\nСынып: ${grade}-сынып. Тақырып: ${topic}. Сабақ ұзақтығы: ${minutes} минут. Оқушылардың деңгейі: ${level}.\n<талаптар>\n${notes || 'жоқ'}\n</талаптар>` }],
+    messages: [{ role: 'user', content: `${langLine(req)}Жасалатын материал: ${title}.\n${spec}\n\nСынып: ${grade}-сынып. Тақырып: ${topic}. Сабақ ұзақтығы: ${minutes} минут. Оқушылардың деңгейі: ${level}.\n<талаптар>\n${notes || 'жоқ'}\n</талаптар>` }],
   });
 }));
 

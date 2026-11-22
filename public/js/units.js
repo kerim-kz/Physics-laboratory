@@ -210,6 +210,8 @@ const siOf=qid=>QM[qid].map[QM[qid].si];
 /* ---------- state ---------- */
 const st={lang:'kk',mode:'conv',q:'speed',a:'kmh',b:'ms',sig:4};
 try{const l=localStorage.getItem('pc-lang');if(l==='kk'||l==='ru')st.lang=l;}catch(e){}
+// Сайттың тілі орысша не қазақша болса, түрлендіргіш те сол тілде ашылады
+{const sl=document.documentElement.lang;if(sl==='ru'||sl==='kk')st.lang=sl;}
 try{if(localStorage.getItem('pc-big')==='1')document.documentElement.classList.add('big');}catch(e){}
 
 const L=x=>x==null?'':(typeof x==='string'?x:x[st.lang]);
@@ -331,7 +333,7 @@ function renderSteps(el,steps){
 
 /* ---------- static text ---------- */
 function applyI18n(){
-  document.documentElement.lang=st.lang==='kk'?'kk':'ru';
+  // html lang атрибутын сайт өзі қояды (тіл ауыстырғыш)
   document.querySelectorAll('[data-t]').forEach(el=>{el.textContent=t(el.dataset.t);});
   document.querySelectorAll('[data-tp]').forEach(el=>{const [a,k]=el.dataset.tp.split(':');el.setAttribute(a,t(k));});
   $('lang-kk').setAttribute('aria-pressed',st.lang==='kk');$('lang-ru').setAttribute('aria-pressed',st.lang==='ru');

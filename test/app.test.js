@@ -922,6 +922,81 @@ describe('бағалау және код ережелері', () => {
   });
 });
 
+describe('үш тіл: қазақша, орысша, ағылшынша', () => {
+  test('тіл ауыстырғыш, cookie және беттің аудармасы', async () => {
+    const c = new Client();
+    const kk = await c.get('/');
+    assert.match(kk.text, /<html lang="kk">/);
+    assert.match(kk.text, /class="langsw"/);
+    assert.match(kk.text, /Басты бет/);
+    assert.doesNotMatch(kk.text, /\/i18n\/ru\.js/);
+    // Ауыстыру: cookie қойылып, сол бетке қайта оралады; бөтен сайтқа бағыттамайды
+    const sw = await c.get('/lang/ru?next=%2Fexams');
+    assert.equal(sw.status, 302);
+    assert.equal(sw.location, '/exams');
+    assert.equal(c.jar.lang, 'ru');
+    assert.equal((await c.get('/lang/en?next=https%3A%2F%2Fevil.example')).location, '/');
+    assert.equal((await c.get('/lang/en?next=%2F%2Fevil.example')).location, '/');
+    const en = await c.get('/');
+    assert.match(en.text, /<html lang="en">/);
+    assert.match(en.text, />Home</);
+    assert.match(en.text, /\/i18n\/en\.js\?v=/);
+    assert.doesNotMatch(en.text, />Басты бет</);
+    await c.get('/lang/ru?next=%2F');
+    const ru = await c.get('/exams');
+    assert.match(ru.text, /<html lang="ru">/);
+    assert.match(ru.text, /Подготовка к экзаменам/);
+    // ?lang= параметрі де жұмыс істейді; белгісіз тіл — қазақша
+    assert.match((await new Client().get('/login?lang=en')).text, /Sign in/);
+    assert.match((await new Client().get('/login?lang=xx')).text, /<html lang="kk">/);
+    // Браузерге арналған сөздік
+    const d = await c.get('/i18n/ru.js');
+    assert.equal(d.status, 200);
+    assert.match(d.res.headers.get('content-type'), /javascript/);
+    assert.match(d.text, /^window\.I18N=/);
+    assert.match(d.text, /"Басты бет":"Главная"/);
+    assert.equal((await c.get('/i18n/kk.js')).status, 404);
+    assert.equal((await c.get('/i18n/de.js')).status, 404);
+    // Қазақша сөздік жоқ: қазақша беттер өзгеріссіз
+    await c.get('/lang/kk?next=%2F');
+    assert.match((await c.get('/')).text, /<html lang="kk">[\s\S]*Басты бет/);
+  });
+
+  test('аудару ережелері: сандар, тұтас сөйлем, сілтеме, translate="no", құрама жол', async () => {
+    const i18n = await import('../src/lib/i18n.js');
+    const T = (s) => i18n.translateHtml(s, 'en');
+    assert.equal(i18n.t('en', 'Басты бет'), 'Home');
+    assert.equal(i18n.t('ru', '7-сынып'), '7 класс');
+    assert.equal(i18n.t('en', '12 қараша 2026, 09:05'), '12 November 2026, 09:05');
+    assert.equal(i18n.t('en', 'PISA · Жаратылыстану сауаттылығы · 3 қараша 2026'), 'PISA · Science literacy · 3 November 2026');
+    assert.equal(i18n.t('en', 'Белгісіз мәтін'), 'Белгісіз мәтін', 'сөздікте жоқ мәтін өзгермейді');
+    assert.equal(i18n.t('ru', '8А сынып'), '8А класс', 'сынып әрпі — кез келген мәтін');
+    assert.equal(i18n.t('en', 'тест тапсырған оқушы'), 'students took a test', 'сан үлгісі басқа сөзге жабыспайды');
+    assert.equal(T('<p>Нәтижеңді сақтау үшін <a href="/login?next=/exams/ubt">кір</a> немесе <a href="/register">тіркел</a>.</p>'),
+      '<p>To save your result, <a href="/login?next=/exams/ubt">sign in</a> or <a href="/register">register</a>.</p>');
+    assert.equal(T('<div translate="no"><b>Басты бет</b></div><span>Басты бет</span>'), '<div translate="no"><b>Басты бет</b></div><span>Home</span>');
+    assert.equal(T('<input placeholder="Іздеу" title="Басты бет">'), '<input placeholder="Search" title="Home">');
+    assert.equal(T('<script>var x = "Басты бет";</script>'), '<script>var x = "Басты бет";</script>');
+    assert.equal(T('<p>Ғылым &amp; Басты бет</p>'), '<p>Ғылым &amp; Басты бет</p>');
+    assert.equal(T('<b> Басты бет </b>'), '<b> Home </b>', 'бос орындар сақталады');
+    // Сөздік файлы: әр жолда үш баған
+    const tsv = fs.readFileSync(new URL('../src/i18n/ui.tsv', import.meta.url), 'utf8').split('\n').filter((l) => l.trim() && !l.startsWith('#'));
+    for (const l of tsv) assert.equal(l.split('\t').length, 3, `TSV жолы бұзылған: ${l.slice(0, 80)}`);
+  });
+
+  test('барлық негізгі бет орысша және ағылшынша ашылады', async () => {
+    const c = new Client();
+    for (const lang of ['ru', 'en']) {
+      await c.get(`/lang/${lang}?next=%2F`);
+      for (const url of ['/', '/library', '/formulas', '/games', '/sims', '/sims/lens', '/labs', '/intl', '/exams/ubt', '/olympiad', '/scientists', '/units', '/ai', '/shop', '/schools', '/register', '/login', '/nope']) {
+        const r = await c.get(url);
+        assert.ok([200, 404].includes(r.status), `${lang} ${url}`);
+        assert.match(r.text, new RegExp(`<html lang="${lang}">`), `${lang} ${url}`);
+      }
+    }
+  });
+});
+
 describe('платформа иесін жасау', () => {
   test('баптау қате болса, себебі кіру бетінде көрінеді; түзетілгенде иесі жасалады', async () => {
     const { config } = await import('../src/config.js');
