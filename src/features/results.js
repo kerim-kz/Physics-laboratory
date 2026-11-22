@@ -9,17 +9,20 @@ import { icon } from '../lib/icons.js';
 import { emptyBox, page } from '../lib/layout.js';
 import { asyncH, fmtDate, fmtDateTime, HttpError, toCsv, toInt } from '../lib/util.js';
 import { attemptsTable } from './exams.js';
+import { grade5, labByKey, LABS } from '../data/labs.js';
+import { OLYMPIAD_TEST } from '../data/olympiad-tests.js';
 
 export const router = express.Router();
 
 const pct = (a) => (a.max_score ? Math.round(100 * a.score / a.max_score) : 0);
 const avg = (xs) => (xs.length ? Math.round(xs.reduce((s, x) => s + x, 0) / xs.length) : null);
 const level = (p) => (p === null || p === undefined ? '' : p >= 70 ? 'hi' : p >= 40 ? 'mid' : 'lo');
+const EXTRA = { labs: 'Зертханалар', olymp: 'Олимпиада' };
 const SOURCES = [['all', 'Барлығы'], ['assigned', 'Мұғалім тағайындаған'], ['self', 'Өзіндік жаттығу']];
 
 // Сүзгілер: емтихан түрі мен дереккөзі (URL параметрлерінен).
 function filters(req) {
-  const exam = EXAM[req.query.exam] && !EXAM[req.query.exam].survey ? req.query.exam : 'all';
+  const exam = EXTRA[req.query.exam] || (EXAM[req.query.exam] && !EXAM[req.query.exam].survey) ? req.query.exam : 'all';
   const src = SOURCES.some(([k]) => k === req.query.src) ? req.query.src : 'all';
   return { exam, src };
 }
@@ -38,10 +41,11 @@ function filterBar(base, f, extra = {}) {
     <div class="seg" role="group" aria-label="Тест түрі">
       <a class="${f.exam === 'all' ? 'on' : ''}" href="${base}${qs({ ...extra, src: f.src })}">Барлық тест</a>
       ${TEST_EXAMS.map((e) => html`<a class="${f.exam === e.k ? 'on' : ''}" href="${base}${qs({ ...extra, exam: e.k, src: f.src })}">${e.name}</a>`)}
+      ${Object.entries(EXTRA).map(([k, n]) => html`<a class="${f.exam === k ? 'on' : ''}" href="${base}${qs({ ...extra, exam: k })}">${n}</a>`)}
     </div>
-    <div class="seg" role="group" aria-label="Дереккөзі">
+    ${EXTRA[f.exam] ? '' : html`<div class="seg" role="group" aria-label="Дереккөзі">
       ${SOURCES.map(([k, n]) => html`<a class="${f.src === k ? 'on' : ''}" href="${base}${qs({ ...extra, exam: f.exam, src: k })}">${n}</a>`)}
-    </div>
+    </div>`}
   </div>`;
 }
 
@@ -70,7 +74,7 @@ function progressChart(attempts, title) {
   for (const a of attempts) { const k = week(a.created_at); if (!by.has(k)) by.set(k, []); by.get(k).push(pct(a)); }
   const pts = [...by.entries()].sort((x, y) => x[0] - y[0]).map(([t, xs]) => ({ t, p: avg(xs), n: xs.length }));
   if (pts.length < 2) return '';
-  const W = 900, H = 260, L = 44, R = 16, T = 16, B = 34;
+  const W = 900, H = 260, L = 72, R = 16, T = 16, B = 34;
   const t0 = pts[0].t, t1 = pts[pts.length - 1].t || t0 + 1;
   const X = (t) => L + (t1 === t0 ? 0 : (t - t0) / (t1 - t0)) * (W - L - R);
   const Y = (p) => T + (1 - p / 100) * (H - T - B);
@@ -92,11 +96,11 @@ function statCards(items) {
 // ---------------- Мұғалім / әкімші ----------------
 async function viewerClasses(u) {
   if (isAdmin(u)) {
-    return many(`SELECT c.id, c.grade, c.letter, t.full_name AS teacher,
+    return many(`SELECT c.id, c.grade, c.letter, c.teacher_id, t.full_name AS teacher,
                         (SELECT count(*)::int FROM users s WHERE s.class_id = c.id AND s.role = 'student') AS n
                    FROM classes c JOIN users t ON t.id = c.teacher_id ORDER BY c.grade, c.letter, t.full_name`);
   }
-  return many(`SELECT c.id, c.grade, c.letter, (SELECT count(*)::int FROM users s WHERE s.class_id = c.id AND s.role = 'student') AS n
+  return many(`SELECT c.id, c.grade, c.letter, c.teacher_id, (SELECT count(*)::int FROM users s WHERE s.class_id = c.id AND s.role = 'student') AS n
                  FROM classes c WHERE c.teacher_id = $1 ORDER BY c.grade, c.letter`, [u.id]);
 }
 
@@ -146,6 +150,7 @@ async function teacherView(req, res) {
     });
   }
   const cls = classes.find((c) => c.id === toInt(req.query.class)) || classes[0];
+  if (EXTRA[f.exam]) return extraTeacherView(req, res, classes, cls, f);
   const d = await classData(cls, f);
   const cols = matrixColumns(d, f);
   const byStudent = new Map(d.students.map((s) => [s.id, d.attempts.filter((t) => t.user_id === s.id)]));
@@ -199,6 +204,7 @@ function header(title, lede, actions = '') {
 async function studentView(req, res) {
   const u = req.user;
   const f = filters(req);
+  if (EXTRA[f.exam]) return extraStudentView(req, res, f);
   const params = [u.id];
   const where = filterSql(f, params);
   const attempts = await many(
@@ -235,6 +241,12 @@ router.get('/results/export.csv', requireUser, asyncH(async (req, res) => {
   const cls = isAdmin(u) ? await one('SELECT * FROM classes WHERE id = $1', [toInt(req.query.class)])
     : await one('SELECT * FROM classes WHERE id = $1 AND teacher_id = $2', [toInt(req.query.class), u.id]);
   if (!cls) throw new HttpError(404, 'Сынып табылмады.');
+  if (EXTRA[f.exam]) {
+    const x = await extraData(cls, f);
+    const rows = [['№', 'Оқушы', ...x.cols.map((c) => c.title), 'Орташа %']];
+    x.rows.forEach((r, i) => { const cells = x.cols.map((c) => r.cells[c.key]); rows.push([i + 1, r.name, ...cells.map((c) => (c ? c.label : '')), avg(cells.filter(Boolean).map((c) => c.p)) ?? '']); });
+    return res.type('text/csv; charset=utf-8').attachment(`natizhe-${cls.grade}${cls.letter}-${f.exam}.csv`).send(toCsv(rows));
+  }
   const d = await classData(cls, f);
   const cols = matrixColumns(d, f);
   const rows = [['№', 'Оқушы', ...cols.map((c) => `${c.title} (${c.sub})`), 'Орташа %']];
@@ -250,3 +262,122 @@ router.get('/results/export.csv', requireUser, asyncH(async (req, res) => {
   const tag = f.exam === 'all' ? 'barlyq' : f.exam;
   res.type('text/csv; charset=utf-8').attachment(`natizhe-${cls.grade}${cls.letter}-${tag}.csv`).send(toCsv(rows));
 }));
+
+// ---------------- Зертханалар және олимпиада ----------------
+const norm = (x) => String(x || '').toUpperCase().replace(/[^0-9A-ZА-ЯӘҒҚҢӨҰҮҺІЁ]/g, '');
+
+// Сынып бойынша зертхана (немесе олимпиада) нәтижелері: жолдар — оқушылар, бағандар — жұмыстар.
+async function extraData(cls, f) {
+  const students = await many(`SELECT id, full_name FROM users WHERE class_id = $1 AND role = 'student' ORDER BY full_name`, [cls.id]);
+  const byName = new Map(students.map((st) => [norm(st.full_name), st]));
+  const rowMap = new Map(students.map((st) => [`u${st.id}`, { name: st.full_name, cells: {}, items: [] }]));
+  const items = []; // { rowKey, name, key, title, p, label, at }
+  if (f.exam === 'labs') {
+    const label = norm(`${cls.grade}${cls.letter}`);
+    const ids = students.map((st) => st.id);
+    const lr = await many(`SELECT * FROM lab_results WHERE teacher_id = $1 OR student_id = ANY($2) ORDER BY created_at`, [cls.teacher_id, ids]);
+    const seen = new Set();
+    for (const r of lr) {
+      const st = r.student_id && ids.includes(r.student_id) ? students.find((x) => x.id === r.student_id) : byName.get(norm(r.student_name));
+      const inClass = st || norm(r.class_label) === label;
+      if (!inClass || (r.teacher_id !== cls.teacher_id && !st)) continue;
+      const rowKey = st ? `u${st.id}` : `n${norm(r.student_name)}`;
+      seen.add(`${rowKey}|${r.lab_key}`);
+      items.push({ rowKey, name: st ? st.full_name : r.student_name, key: r.lab_key, p: Math.round(Number(r.score) * 10), label: `${String(r.score).replace('.', ',')} / 10 (${grade5(r.score)})`, at: r.created_at, src: r.source === 'online' ? 'платформада' : 'код арқылы' });
+    }
+    // Оқушы сыныпқа кейін қосылса, журналда жоқ онлайн жұмыстары lab_subs-та қалады.
+    const subs = ids.length ? await many(`SELECT lab_key, user_id, score, updated_at FROM lab_subs WHERE user_id = ANY($1)`, [ids]) : [];
+    for (const r of subs) {
+      const rowKey = `u${r.user_id}`;
+      if (seen.has(`${rowKey}|${r.lab_key}`)) continue;
+      const st = students.find((x) => x.id === r.user_id);
+      items.push({ rowKey, name: st.full_name, key: r.lab_key, p: Math.round(Number(r.score) * 10), label: `${String(r.score).replace('.', ',')} / 10 (${grade5(r.score)})`, at: r.updated_at, src: 'платформада' });
+    }
+  } else {
+    const ids = students.map((st) => st.id);
+    const oa = ids.length ? await many(`SELECT * FROM olympiad_attempts WHERE user_id = ANY($1) ORDER BY created_at`, [ids]) : [];
+    for (const r of oa) {
+      const st = students.find((x) => x.id === r.user_id);
+      items.push({ rowKey: `u${r.user_id}`, name: st.full_name, key: r.test_key, p: r.max_score ? Math.round(100 * r.score / r.max_score) : 0, label: `${r.score} / ${r.max_score}`, at: r.created_at, src: 'онлайн тест' });
+    }
+  }
+  const title = (k) => {
+    if (f.exam === 'labs') { const L = labByKey(k); return L ? `${L.g}-сынып №${L.no}. ${L.t}` : k; }
+    const t = OLYMPIAD_TEST[k]; return t ? `${t.g}-сынып · ${t.stage} ${t.year}` : k;
+  };
+  const order = f.exam === 'labs' ? LABS.map((L) => L.k) : [];
+  const keys = [...new Set(items.map((x) => x.key))].sort((a, b) => (order.indexOf(a) - order.indexOf(b)) || a.localeCompare(b));
+  const cols = keys.map((k) => ({ key: k, title: title(k) }));
+  for (const it of items) {
+    if (!rowMap.has(it.rowKey)) rowMap.set(it.rowKey, { name: it.name, cells: {}, items: [], extra: true });
+    const row = rowMap.get(it.rowKey);
+    row.items.push(it);
+    const cur = row.cells[it.key];
+    if (!cur || it.p > cur.p) row.cells[it.key] = { ...it, n: (cur ? cur.n : 0) + 1 };
+    else cur.n += 1;
+  }
+  return { students, rows: [...rowMap.values()], cols, items };
+}
+
+async function extraTeacherView(req, res, classes, cls, f) {
+  const x = await extraData(cls, f);
+  const isLab = f.exam === 'labs';
+  const ps = x.items.map((i) => i.p);
+  const done = x.rows.filter((r) => r.items.length).length;
+  const asAttempts = x.items.map((i) => ({ score: i.p, max_score: 100, created_at: i.at }));
+  await page(req, res, {
+    title: 'Нәтижелер', active: 'results', styles: ['/css/results.css'],
+    body: html`<div class="view">
+      ${header('Сыныптардың нәтижелері', isLab ? 'Зертханалық жұмыстардың нәтижелері: платформада орындалғандары және мұғалім код арқылы журналға енгізгендері. Әр ұяшықта оқушының ең жақсы нәтижесі (10 балдық және 5 балдық баға).' : 'Ресми олимпиада тапсырмаларының онлайн тест нәтижелері.',
+        html`<a class="btn ghost" href="/results/export.csv${qs({ class: cls.id, exam: f.exam })}">${icon('download', 15)} Excel (CSV)</a>`)}
+      <div class="rs-classes chips">${classes.map((c) => html`<a class="chip plain ${c.id === cls.id ? 'on' : ''}" href="/results${qs({ class: c.id, exam: f.exam })}">${c.grade}${c.letter} сынып${c.teacher ? ` · ${c.teacher}` : ''} <span class="mono muted">${c.n}</span></a>`)}</div>
+      ${filterBar('/results', f, { class: cls.id })}
+      ${statCards([[x.students.length, 'оқушы'], [done, isLab ? 'жұмыс тапсырған оқушы' : 'олимпиадаға қатысқан'], [x.items.length, isLab ? 'тапсырылған жұмыс' : 'талпыныс'], [ps.length ? `${avg(ps)}%` : null, 'орташа нәтиже'], [x.cols.length, isLab ? 'зертханалық жұмыс' : 'олимпиада тесті']])}
+      ${x.items.length ? html`
+        <section class="block"><div class="block-h"><h2>${isLab ? 'Жұмыстар бойынша орташа нәтиже' : 'Тесттер бойынша орташа нәтиже'}</h2></div>
+          <div class="rs-bars">${x.cols.map((c) => { const xs = x.items.filter((i) => i.key === c.key).map((i) => i.p); const p = avg(xs); return html`<div class="rs-bar"><span class="rs-bn">${c.title}</span><span class="rs-track"><span class="rs-fill ${level(p)}" style="width:${p}%"></span></span><b class="rs-bv">${p}%</b><span class="rs-bc">${xs.length} нәтиже</span></div>`; })}</div></section>
+        ${progressChart(asAttempts, 'Сыныптың уақыт бойынша өсуі')}
+        <section class="block"><div class="block-h"><h2>Оқушылар × ${isLab ? 'жұмыстар' : 'тесттер'}</h2><span class="cnt">${x.cols.length} баған</span></div>
+          <p class="muted small rs-legend"><span class="rs-sw hi"></span> 70% және одан жоғары <span class="rs-sw mid"></span> 40–69% <span class="rs-sw lo"></span> 40%-дан төмен · «—» — тапсырмаған${x.rows.some((r) => r.extra) ? ' · * — сыныпқа тіркелмеген, журналға код арқылы енгізілген' : ''}</p>
+          <div class="tblwrap rs-matrix"><table>
+            <thead><tr><th>№</th><th>Оқушы</th>${x.cols.map((c) => html`<th class="rs-col">${c.title}</th>`)}<th class="num">Орташа</th></tr></thead>
+            <tbody>${x.rows.map((r, i) => { const cells = x.cols.map((c) => r.cells[c.key]); const ra = avg(cells.filter(Boolean).map((c) => c.p)); return html`<tr><td class="num">${i + 1}</td><td>${r.name}${r.extra ? ' *' : ''}</td>
+              ${cells.map((c) => (c ? html`<td class="num rs-cell ${level(c.p)}" title="${c.src} · ${fmtDateTime(c.at)}">${c.label}${c.n > 1 ? html`<small>×${c.n}</small>` : ''}</td>` : html`<td class="num muted">—</td>`))}
+              <td class="num"><b>${ra === null ? '—' : `${ra}%`}</b></td></tr>`; })}</tbody>
+          </table></div></section>`
+      : emptyBox(isLab ? 'Бұл сыныпта зертхана нәтижесі әзірге жоқ' : 'Бұл сыныпта олимпиада нәтижесі әзірге жоқ', isLab ? 'Оқушылар зертханалық жұмысты платформада орындағанда нәтиже осында өзі түседі. Код арқылы келген нәтижелерді «Зертхана журналы» бетінде енгізіңіз.' : 'Оқушылар «Олимпиада» бөліміндегі онлайн тестті тапсырғанда нәтижесі осында көрінеді.')}
+      ${isLab ? html`<p class="muted small"><a href="/teacher/labs">${icon('lab', 14)} Толық зертхана журналы (барлық сынып, код енгізу)</a></p>` : ''}
+    </div>`,
+  });
+}
+
+async function extraStudentView(req, res, f) {
+  const u = req.user;
+  const isLab = f.exam === 'labs';
+  let items;
+  if (isLab) {
+    const subs = await many('SELECT lab_key, score, updated_at AS at FROM lab_subs WHERE user_id = $1', [u.id]);
+    const lr = await many('SELECT lab_key, score, created_at AS at FROM lab_results WHERE student_id = $1', [u.id]);
+    const m = new Map();
+    for (const r of [...lr, ...subs]) if (!m.has(r.lab_key) || Number(r.score) > Number(m.get(r.lab_key).score)) m.set(r.lab_key, r);
+    items = [...m.values()].map((r) => { const L = labByKey(r.lab_key); return { title: L ? `${L.g}-сынып №${L.no}. ${L.t}` : r.lab_key, href: L ? `/labs/${L.k}` : '', p: Math.round(Number(r.score) * 10), label: `${String(r.score).replace('.', ',')} / 10 · баға ${grade5(r.score)}`, at: r.at }; });
+  } else {
+    const oa = await many('SELECT * FROM olympiad_attempts WHERE user_id = $1 ORDER BY created_at', [u.id]);
+    items = oa.map((r) => { const t = OLYMPIAD_TEST[r.test_key]; return { title: t ? `${t.g}-сынып · ${t.stage} ${t.year}` : r.test_key, href: '/olympiad', p: r.max_score ? Math.round(100 * r.score / r.max_score) : 0, label: `${r.score} / ${r.max_score}`, at: r.created_at }; });
+  }
+  items.sort((a, b) => new Date(a.at) - new Date(b.at));
+  const ps = items.map((i) => i.p);
+  await page(req, res, {
+    title: 'Нәтижелерім', active: 'results', styles: ['/css/results.css'],
+    body: html`<div class="view">
+      ${header('Менің нәтижелерім', isLab ? 'Платформада орындаған зертханалық жұмыстарыңның нәтижелері.' : 'Олимпиада тапсырмаларының онлайн тест нәтижелері.')}
+      ${filterBar('/results', f)}
+      ${statCards([[items.length, isLab ? 'орындалған жұмыс' : 'талпыныс'], [ps.length ? `${avg(ps)}%` : null, 'орташа нәтиже'], [ps.length ? `${Math.max(...ps)}%` : null, 'ең жақсы нәтиже']])}
+      ${items.length ? html`${progressChart(items.map((i) => ({ score: i.p, max_score: 100, created_at: i.at })), 'Менің уақыт бойынша өсуім')}
+        <section class="block"><div class="block-h"><h2>${isLab ? 'Зертханалық жұмыстар' : 'Олимпиада тесттері'}</h2><span class="cnt">${items.length}</span></div>
+        <div class="tblwrap"><table><thead><tr><th>Жұмыс</th><th class="num">Нәтиже</th><th class="num">%</th><th>Күні</th></tr></thead>
+        <tbody>${items.slice().reverse().map((i) => html`<tr><td>${i.href ? html`<a href="${i.href}">${i.title}</a>` : i.title}</td><td class="num">${i.label}</td><td class="num rs-cell ${level(i.p)}">${i.p}</td><td>${fmtDateTime(i.at)}</td></tr>`)}</tbody></table></div></section>`
+      : emptyBox('Әзірге нәтиже жоқ', isLab ? '«Зертханалар» бөліміндегі жұмысты платформаға кіріп орындасаң, нәтижең осында сақталады.' : '«Олимпиада» бөліміндегі онлайн тестті тапсырып көр.')}
+    </div>`,
+  });
+}
