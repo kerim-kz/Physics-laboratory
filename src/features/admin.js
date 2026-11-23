@@ -14,7 +14,7 @@ import {
   asArray, asyncH, cleanMultiline, cleanText, fmtDate, fmtDateTime, fmtPrice, HttpError, LOGIN_RE, newTempPassword, setFlash, toCsv, toInt, validFullName,
 } from '../lib/util.js';
 import { statusPill } from './cabinet.js';
-import { AI_MODELS, aiProvider, aiSettings, compatConfig, FEATURE_NAME, usageReport } from '../lib/ai.js';
+import { AI_MODELS, aiProvider, aiSettings, compatConfig, FEATURE_NAME, isOpenAI, usageReport } from '../lib/ai.js';
 
 export const router = express.Router();
 router.use(requireAdmin);
@@ -580,7 +580,10 @@ router.get('/ai', asyncH(async (req, res) => {
   await adminPage(req, res, 'ai', 'ЖИ', html`
     <section class="panel">
       <h2>${icon('spark')} ЖИ құралының күйі</h2>
-      ${prov === 'compat' ? html`<p><span class="pill ok">тегін провайдер қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>
+      ${prov === 'compat' && isOpenAI(cc) ? html`<p><span class="pill ok">OpenAI (ChatGPT) қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>
+          <p class="muted small">Модель: <code>${cc.models.join(', ')}</code></p>
+          <p class="muted small">Ақылы провайдер: нақты шығынды <b>platform.openai.com → Usage</b> бетінен қараңыз және <b>Limits</b> бөлімінде айлық шек қойыңыз.</p>`
+        : prov === 'compat' ? html`<p><span class="pill ok">тегін провайдер қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>
           <p class="muted small">Мекенжай: <code>${cc.host}</code> · модель: <code>${cc.models.join(', ')}</code>${cc.models.length > 1 ? ' (біріншісі жүктелсе, келесісі қолданылады)' : ''}. Шығын — 0 ₸, бірақ сапа мен лимит провайдерге байланысты.</p>`
         : prov === 'anthropic' ? html`<p><span class="pill ok">Anthropic API кілті қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>`
         : html`<p><span class="pill pending">ЖИ провайдері қосылмаған</span> — ЖИ функциялары «бапталмаған» күйінде көрсетіледі.</p>`}
@@ -599,14 +602,21 @@ router.get('/ai', asyncH(async (req, res) => {
           <li>Серверде <code>nano /opt/gylym/deploy/.env</code> файлына жазыңыз: <code>AI_BASE_URL</code> = FreeLLMAPI-дің HTTPS мекенжайы + <code>/v1</code>; <code>AI_API_KEY</code> = ортақ кілт; <code>AI_MODEL</code> = <code>auto</code>. Сосын: <code>cd /opt/gylym/deploy &amp;&amp; docker compose up -d app</code>.</li>
         </ol>
       </details>
-      <details class="op-d"><summary>${icon('key', 15)} 3-жол (ақылы, ең сапалы): Anthropic Claude</summary>
+      <details class="op-d"><summary>${icon('key', 15)} 3-жол (ақылы, арзан): OpenAI ChatGPT</summary>
+        <ol class="op-steps">
+          <li><b>platform.openai.com</b> → <b>Settings → Billing</b>: картаны қосып, балансты толтырыңыз; <b>Limits</b> бөлімінде айлық шек қойыңыз. ChatGPT Plus жазылымы API-ге кірмейді — API бөлек төленеді.</li>
+          <li><b>API keys → Create new secret key</b>: кілтті (<code>sk-…</code>) көшіріңіз.</li>
+          <li>Серверде: <code>bash /opt/gylym/deploy/set-ai.sh</code> → <b>2</b>-ні таңдап, кілтті қойыңыз. Скрипт кілтті тексеріп, арзан «mini» моделін өзі таңдайды.</li>
+        </ol>
+      </details>
+      <details class="op-d"><summary>${icon('key', 15)} 4-жол (ақылы, ең сапалы): Anthropic Claude</summary>
         <ol class="op-steps">
           <li><b>console.anthropic.com</b> → <b>Settings → Billing</b>: картаны қосып, балансты толтырыңыз; <b>Limits</b> бөлімінде айлық лимит қойыңыз.</li>
           <li><b>Settings → API keys → Create key</b>: кілтті (<code>sk-ant-…</code>) көшіріңіз.</li>
-          <li>Серверде: <code>bash /opt/gylym/deploy/set-ai.sh</code> → <b>2</b>-ні таңдап, кілтті қойыңыз. Скрипт кілтті тексеріп, тегін провайдердің баптауларын өзі алып тастайды.</li>
+          <li>Серверде: <code>bash /opt/gylym/deploy/set-ai.sh</code> → <b>3</b>-ті таңдап, кілтті қойыңыз. Скрипт кілтті тексеріп, басқа провайдердің баптауларын өзі алып тастайды.</li>
         </ol>
       </details>
-      <p class="hint">Кілттерді ешкімге жібермеңіз және чатқа қоймаңыз — оларды тек серверде скрипт сұрағанда енгізіңіз. ЖИ-ді өшіру: сол скриптте <b>3</b>.</p>
+      <p class="hint">Кілттерді ешкімге жібермеңіз және чатқа қоймаңыз — оларды тек серверде скрипт сұрағанда енгізіңіз. ЖИ-ді өшіру үшін сол скриптте 4-ті таңдаңыз.</p>
     </section>
     <form class="panel form" method="post" action="/admin/ai">
       ${csrfField(req)}
@@ -632,7 +642,7 @@ router.get('/ai', asyncH(async (req, res) => {
       ${r.byFeature.length ? html`<div class="tblwrap"><table><thead><tr><th>Функция</th><th>Кім</th><th class="num">Сұраныс</th></tr></thead>
         <tbody>${r.byFeature.map((x) => html`<tr><td>${FEATURE_NAME[x.feature] || x.feature}</td><td>${ROLE_SHORT[x.role] || x.role}</td><td class="num">${x.n}</td></tr>`)}</tbody></table></div>
         <div class="tblwrap"><table><thead><tr><th>Модель</th><th class="num">Сұраныс</th><th class="num">Кіріс токен</th><th class="num">Шығыс токен</th><th class="num">Шығын</th></tr></thead>
-        <tbody>${r.byModel.map((m) => html`<tr><td class="mono">${m.model}</td><td class="num">${m.n}</td><td class="num">${m.inp}</td><td class="num">${m.outp}</td><td class="num">${m.free ? 'тегін' : usd(m.cost)}</td></tr>`)}</tbody></table></div>
+        <tbody>${r.byModel.map((m) => html`<tr><td class="mono">${m.model}</td><td class="num">${m.n}</td><td class="num">${m.inp}</td><td class="num">${m.outp}</td><td class="num">${m.free ? 'тегін' : m.openai ? 'OpenAI-да' : usd(m.cost)}</td></tr>`)}</tbody></table></div>
         <div class="tblwrap"><table><thead><tr><th>Ең белсенді пайдаланушылар</th><th>Рөлі</th><th class="num">Сұраныс</th></tr></thead>
         <tbody>${r.top.map((x) => html`<tr><td>${x.full_name}</td><td>${ROLE_SHORT[x.role] || x.role}</td><td class="num">${x.n}</td></tr>`)}</tbody></table></div>`
         : emptyBox('Әзірге пайдаланылмаған', 'ЖИ құралына сұраныстар осында есептеледі. Сұраныстардың мәтіні сақталмайды.')}
