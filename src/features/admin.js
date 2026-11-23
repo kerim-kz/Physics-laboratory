@@ -587,30 +587,26 @@ router.get('/ai', asyncH(async (req, res) => {
       <details class="op-d"${prov ? '' : html` open`}><summary>${icon('key', 15)} 1-жол (тегін, ең оңай): Google AI Studio кілті</summary>
         <ol class="op-steps">
           <li><b>aistudio.google.com</b> сайтына Google аккаунтымен кіріп, <b>Get API key → Create API key</b> басыңыз. Кілтті (<code>AIza…</code>) көшіріп алыңыз. Төлем картасы керек емес.</li>
-          <li>Сол жерде тегін қолжетімді <b>Flash</b> моделінің атауын қараңыз (мысалы, <code>gemini-2.5-flash</code> — нақты атауын AI Studio-дан тексеріңіз).</li>
-          <li><b>dashboard.render.com</b> → сайттың қызметі → <b>Environment</b> → үш айнымалы қосыңыз:<br>
-            <code>AI_BASE_URL</code> = <code>https://generativelanguage.googleapis.com/v1beta/openai</code><br>
-            <code>AI_API_KEY</code> = көшірген кілт<br>
-            <code>AI_MODEL</code> = модель атауы. Бір модель жиі жүктеліп қалса, үтір арқылы қосалқы модель қосыңыз (мысалы, <code>негізгі-модель,қосалқы-модель</code> — атауларын AI Studio-дан алыңыз). Содан кейін <b>Save changes</b> басыңыз.</li>
+          <li>Серверге қосылып (<code>ssh root@сервердің-IP</code>), мына команданы орындаңыз: <code>bash /opt/gylym/deploy/set-ai.sh</code>. <b>1</b>-ді таңдап, кілтті қойыңыз (экранда көрінбейді). Скрипт кілтті тексереді, тегін Flash моделін өзі таңдайды және сайтты қайта іске қосады.</li>
           <li>Сайт қайта іске қосылған соң осы бетте «тегін провайдер қосылған» деп шығады.</li>
         </ol>
         <p class="hint">Ескерту: тегін тарифте Google жіберілген мәтінді өз қызметтерін жақсартуға пайдалануы мүмкін. Сондықтан оқушыларға ЖИ-ге жеке деректерін (аты-жөні, телефоны т.б.) жазбауды ескертіңіз. Сайт өзі оқушылардың аты-жөнін ЖИ-ге жібермейді.</p>
       </details>
       <details class="op-d"><summary>${icon('key', 15)} 2-жол (тегін): өз FreeLLMAPI серверіңіз</summary>
         <ol class="op-steps">
-          <li>FreeLLMAPI-ді үнемі қосулы тұратын компьютерге немесе тұрақты дискісі бар серверге Docker арқылы орнатыңыз (нұсқаулық: репозиторийдегі <code>docs/en/install/01-install.md</code>). Тегін Render-де дискі өшіп-жанған сайын тазаланады, сондықтан ол жерде кілттер мен баптаулар жоғалуы мүмкін.</li>
+          <li>FreeLLMAPI-ді үнемі қосулы тұратын компьютерге немесе тұрақты дискісі бар серверге Docker арқылы орнатыңыз (нұсқаулық: репозиторийдегі <code>docs/en/install/01-install.md</code>). Сайттың өз серверіне (1 ГБ) орнатпаған жөн — жады жетпей қалуы мүмкін.</li>
           <li>FreeLLMAPI панелінде <b>Keys</b> бетіне тегін провайдерлердің кілттерін қосыңыз (Google, Groq т.б.) және сол беттің жоғарғы жағындағы ортақ кілтті (<code>freellmapi-…</code>) көшіріңіз.</li>
-          <li>Render → <b>Environment</b>: <code>AI_BASE_URL</code> = серверіңіздің HTTPS мекенжайы + <code>/v1</code>; <code>AI_API_KEY</code> = ортақ кілт; <code>AI_MODEL</code> = <code>auto</code>.</li>
+          <li>Серверде <code>nano /opt/gylym/deploy/.env</code> файлына жазыңыз: <code>AI_BASE_URL</code> = FreeLLMAPI-дің HTTPS мекенжайы + <code>/v1</code>; <code>AI_API_KEY</code> = ортақ кілт; <code>AI_MODEL</code> = <code>auto</code>. Сосын: <code>cd /opt/gylym/deploy &amp;&amp; docker compose up -d app</code>.</li>
         </ol>
       </details>
       <details class="op-d"><summary>${icon('key', 15)} 3-жол (ақылы, ең сапалы): Anthropic Claude</summary>
         <ol class="op-steps">
           <li><b>console.anthropic.com</b> → <b>Settings → Billing</b>: картаны қосып, балансты толтырыңыз; <b>Limits</b> бөлімінде айлық лимит қойыңыз.</li>
           <li><b>Settings → API keys → Create key</b>: кілтті (<code>sk-ant-…</code>) көшіріңіз.</li>
-          <li>Render → <b>Environment</b>: <code>ANTHROPIC_API_KEY</code> = кілт. (<code>AI_BASE_URL</code> берілсе, тегін провайдер бірінші орында тұрады.)</li>
+          <li>Серверде: <code>bash /opt/gylym/deploy/set-ai.sh</code> → <b>2</b>-ні таңдап, кілтті қойыңыз. Скрипт кілтті тексеріп, тегін провайдердің баптауларын өзі алып тастайды.</li>
         </ol>
       </details>
-      <p class="hint">Кілттерді ешкімге жібермеңіз және чатқа қоймаңыз — оларды тек Render-дің Environment бетіне енгізіңіз.</p>
+      <p class="hint">Кілттерді ешкімге жібермеңіз және чатқа қоймаңыз — оларды тек серверде скрипт сұрағанда енгізіңіз. ЖИ-ді өшіру: сол скриптте <b>3</b>.</p>
     </section>
     <form class="panel form" method="post" action="/admin/ai">
       ${csrfField(req)}

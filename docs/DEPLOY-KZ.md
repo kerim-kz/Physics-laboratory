@@ -111,7 +111,8 @@ bash /opt/gylym/deploy/restore-from-render.sh
 | Қателерді көру | `cd /opt/gylym/deploy && docker compose logs --tail=100 app` |
 | Резервтік көшірмені қолмен алу | `bash /opt/gylym/deploy/backup.sh` |
 | Резервтік көшірмелер тізімі | `ls -lh /opt/gylym-backups` |
-| ЖИ кілтін немесе басқа баптауды өзгерту | `nano /opt/gylym/deploy/.env`, сосын `cd /opt/gylym/deploy && docker compose up -d` |
+| ЖИ кілтін қосу, ауыстыру немесе өшіру | `bash /opt/gylym/deploy/set-ai.sh` |
+| Басқа баптауды өзгерту | `nano /opt/gylym/deploy/.env`, сосын `cd /opt/gylym/deploy && docker compose up -d` |
 
 `update.sh` жаңартар алдында өзі резервтік көшірме алады.
 
