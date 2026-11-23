@@ -631,8 +631,8 @@ describe('тіркелу, рөлдер және сыныптар', () => {
       req.on('data', (d) => { body += d; });
       req.on('end', () => {
         const j = JSON.parse(body || '{}');
-        calls.push({ url: req.url, auth: req.headers.authorization, body: j });
-        if (req.headers.authorization !== 'Bearer free-key') { res.writeHead(401, { 'content-type': 'application/json' }); return res.end('{"error":{"message":"bad key"}}'); }
+        calls.push({ url: req.url, auth: req.headers.authorization, goog: req.headers['x-goog-api-key'], body: j });
+        if (req.headers.authorization !== 'Bearer free-key' && req.headers['x-goog-api-key'] !== 'free-key') { res.writeHead(401, { 'content-type': 'application/json' }); return res.end('{"error":{"message":"bad key"}}'); }
         if (mode === 'limit') { res.writeHead(429, { 'content-type': 'application/json' }); return res.end('{"error":{"message":"quota"}}'); }
         if (j.model === 'busy-model') { res.writeHead(503, { 'content-type': 'application/json' }); return res.end('[{"error":{"code":503,"message":"high demand","status":"UNAVAILABLE"}}]'); }
         res.writeHead(200, { 'content-type': 'text/event-stream', 'x-routed-via': 'google/free-flash' });
@@ -709,13 +709,22 @@ describe('тіркелу, рөлдер және сыныптар', () => {
       const co = calls[calls.length - 1].body;
       assert.equal(co.model, 'gpt-5-mini');
       assert.ok(co.max_completion_tokens > 0 && co.max_tokens === undefined, JSON.stringify(co));
+      // Google-дың жаңа AQ.… кілттері: AI_KEY_HEADER=x-goog-api-key болса, кілт сол тақырыппен жіберіледі (Bearer-сіз)
+      process.env.AI_MODEL = 'free-flash';
+      process.env.AI_KEY_HEADER = 'x-goog-api-key';
+      const rk = await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] });
+      assert.equal(rk.last.done, true, JSON.stringify(rk.last));
+      const ck = calls[calls.length - 1];
+      assert.equal(ck.goog, 'free-key');
+      assert.equal(ck.auth, undefined);
+      delete process.env.AI_KEY_HEADER;
       process.env.AI_MODEL = 'busy-model';
       assert.match((await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] })).last.error, /қатты жүктелген/);
       process.env.AI_API_KEY = 'wrong';
       assert.match((await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] })).last.error, /AI_API_KEY/);
       await pool.end();
     } finally {
-      delete process.env.AI_BASE_URL; delete process.env.AI_API_KEY; delete process.env.AI_MODEL;
+      delete process.env.AI_BASE_URL; delete process.env.AI_API_KEY; delete process.env.AI_MODEL; delete process.env.AI_KEY_HEADER;
       fake.close();
     }
     assert.equal(ai.aiProvider(), null);
