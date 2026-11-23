@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" width="560" height="300" font-family="Arial, Helvetica, sans-serif">
+  <rect width="560" height="300" fill="#f6f8fa"/>
+  <!-- таңғыш -->
+  <rect x="60" y="90" width="300" height="110" rx="40" fill="#f1d9b5" stroke="#c9a679" stroke-width="2"/>
+  <g fill="#d9bb8f"><circle cx="95" cy="120" r="3"/><circle cx="95" cy="145" r="3"/><circle cx="95" cy="170" r="3"/><circle cx="325" cy="120" r="3"/><circle cx="325" cy="145" r="3"/><circle cx="325" cy="170" r="3"/></g>
+  <rect x="150" y="105" width="120" height="80" rx="8" fill="#ffffff" stroke="#bbb" stroke-width="2"/>
+  <g fill="#9aa7b4"><circle cx="170" cy="122" r="2.5"/><circle cx="190" cy="135" r="2.5"/><circle cx="215" cy="120" r="2.5"/><circle cx="240" cy="140" r="2.5"/><circle cx="252" cy="118" r="2.5"/><circle cx="175" cy="160" r="2.5"/><circle cx="205" cy="170" r="2.5"/><circle cx="230" cy="162" r="2.5"/><circle cx="255" cy="172" r="2.5"/><circle cx="200" cy="150" r="2.5"/></g>
+  <!-- белгілер -->
+  <line x1="245" y1="135" x2="420" y2="70" stroke="#333"/><text x="425" y="66" font-size="14" fill="#222">күміс иондары бар</text><text x="425" y="84" font-size="14" fill="#222">жастықша</text>
+  <line x1="320" y1="180" x2="420" y2="215" stroke="#333"/><text x="425" y="220" font-size="14" fill="#222">жабысқақ қабат</text>
+  <!-- үлкейтілген бөлігі -->
+  <circle cx="470" cy="150" r="0" fill="none"/>
+  <text x="60" y="250" font-size="13" fill="#555">Сұр нүктелер – мата талшықтарына бекітілген күміс бөлшектері (үлкейтіп көрсетілген)</text>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 120" width="760" height="120" font-family="Arial, Helvetica, sans-serif">
+  <rect width="760" height="120" fill="#f4f7f9"/>
+  <line x1="60" y1="60" x2="520" y2="60" stroke="#0a76a6" stroke-width="10" stroke-linecap="round"/>
+  <line x1="520" y1="60" x2="640" y2="60" stroke="#0a76a6" stroke-width="6" stroke-dasharray="10 7"/>
+  <g fill="#fff" stroke="#0f2432" stroke-width="3">
+    <circle cx="60" cy="60" r="10"/><circle cx="220" cy="60" r="10"/><circle cx="370" cy="60" r="10"/><circle cx="520" cy="60" r="10"/><circle cx="640" cy="60" r="10"/>
+  </g>
+  <g font-size="15" font-weight="bold" fill="#0f2432" text-anchor="middle">
+    <text x="60" y="35">Қарағанды</text><text x="220" y="35">Көктерек</text><text x="370" y="35">Сарыбел</text><text x="520" y="35">Ақбұлақ</text><text x="640" y="35">Тасбұлақ</text>
+  </g>
+  <line x1="60" y1="98" x2="100" y2="98" stroke="#0a76a6" stroke-width="8"/><text x="108" y="103" font-size="13" fill="#333">тегін автобус</text>
+  <line x1="230" y1="98" x2="270" y2="98" stroke="#0a76a6" stroke-width="5" stroke-dasharray="10 7"/><text x="278" y="103" font-size="13" fill="#333">алдын ала брондау арқылы</text>
+</svg>

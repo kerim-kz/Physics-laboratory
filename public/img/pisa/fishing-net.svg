@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" width="560" height="320" font-family="Arial, Helvetica, sans-serif">
+  <rect width="560" height="320" fill="#eef5f8"/>
+  <g stroke="#3d6b85" stroke-width="3" fill="none">
+    <path d="M40 60 L330 50"/><path d="M40 130 L330 122"/><path d="M40 200 L330 194"/><path d="M40 270 L330 266"/>
+    <path d="M60 40 L64 290"/><path d="M130 38 L132 290"/><path d="M200 36 L202 290"/><path d="M270 34 L271 290"/>
+  </g>
+  <g fill="#3d6b85">
+    <circle cx="61" cy="59" r="5"/><circle cx="131" cy="57" r="5"/><circle cx="200" cy="55" r="5"/><circle cx="270" cy="53" r="5"/>
+    <circle cx="62" cy="129" r="5"/><circle cx="131" cy="127" r="5"/><circle cx="201" cy="125" r="5"/><circle cx="270" cy="124" r="5"/>
+    <circle cx="63" cy="199" r="5"/><circle cx="132" cy="197" r="5"/><circle cx="201" cy="196" r="5"/><circle cx="271" cy="195" r="5"/>
+    <circle cx="64" cy="269" r="5"/><circle cx="132" cy="268" r="5"/><circle cx="202" cy="267" r="5"/><circle cx="271" cy="266" r="5"/>
+  </g>
+  <!-- ау көзі -->
+  <path d="M133 160 L199 160" stroke="#c0392b" stroke-width="2"/><path d="M133 154 L133 166 M199 154 L199 166" stroke="#c0392b" stroke-width="2"/>
+  <line x1="170" y1="160" x2="360" y2="215" stroke="#333"/>
+  <text x="365" y="210" font-size="15" fill="#222">ау көзі (жіптердің</text><text x="365" y="228" font-size="15" fill="#222">арасындағы қашықтық)</text>
+  <line x1="300" y1="122" x2="365" y2="80" stroke="#333"/><line x1="272" y1="90" x2="365" y2="80" stroke="#333"/>
+  <text x="370" y="78" font-size="15" fill="#222">ау жіптері</text>
+</svg>

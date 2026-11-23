@@ -36,32 +36,65 @@ export async function ensureOwner() {
   console.log(`Платформа иесі жасалды: ${login}`);
 }
 
-// Емтихан сұрақтарының бастапқы банкі (seed_key бойынша бір рет қана қосылады).
+// Емтихан сұрақтарының бастапқы банкі: жаңа блок seed_key бойынша бір рет қосылады;
+// деректер файлындағы rev дерекқордағы seed_rev-тен үлкен болса, блоктың мәтіні мен сұрақтары жаңартылады
+// (сұрақтар ord бойынша орнында жаңартылады, сондықтан бұрынғы тапсыру нәтижелері сақталады).
+const qRow = (qn) => {
+  const kind = qn.kind || (qn.correct.length > 1 ? 'multi' : 'single');
+  return [kind, qn.stem, JSON.stringify(qn.options), JSON.stringify(qn.correct), qn.explain || '',
+    qn.points || (kind === 'multi' ? 2 : 1), qn.image || '', qn.rubric || ''];
+};
+
 export async function seedQuestions() {
-  const existing = new Set((await many('SELECT seed_key FROM exam_units WHERE seed_key IS NOT NULL')).map((r) => r.seed_key));
+  const existing = new Map((await many('SELECT id, seed_key, seed_rev FROM exam_units WHERE seed_key IS NOT NULL')).map((r) => [r.seed_key, r]));
   let added = 0;
+  let updated = 0;
   for (const u of SEED_UNITS) {
-    if (existing.has(u.key)) continue;
+    const rev = u.rev || 1;
+    // Бағыт: PISA мен ББЖМ-де көрсетілмесе — жаратылыстану (бұрынғы физика тапсырмалары).
+    const domain = u.domain || (u.exam === 'ubt' ? '' : 'science');
+    const ex = existing.get(u.key);
+    if (ex) {
+      if (ex.seed_rev >= rev) continue;
+      await tx(async (c) => {
+        await c.query(
+          `UPDATE exam_units SET title = $2, grade = $3, section = $4, context = $5, domain = $6, image = $7, source = $8, seed_rev = $9
+            WHERE id = $1`,
+          [ex.id, u.title || '', u.grade || 0, u.section || '', u.context || '', domain, u.image || '', u.source || '', rev]);
+        let ord = 0;
+        for (const qn of u.questions) {
+          const row = qRow(qn);
+          const r = await c.query(
+            `UPDATE exam_questions SET kind = $3, stem = $4, options = $5, correct = $6, explanation = $7, points = $8, image = $9, rubric = $10
+              WHERE unit_id = $1 AND ord = $2`, [ex.id, ord, ...row]);
+          if (!r.rowCount) {
+            await c.query(
+              `INSERT INTO exam_questions(unit_id, ord, kind, stem, options, correct, explanation, points, image, rubric)
+               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [ex.id, ord, ...row]);
+          }
+          ord++;
+        }
+        await c.query('DELETE FROM exam_questions WHERE unit_id = $1 AND ord >= $2', [ex.id, ord]);
+      });
+      updated++;
+      continue;
+    }
     await tx(async (c) => {
-      // Бағыт: PISA мен ББЖМ-де көрсетілмесе — жаратылыстану (бұрынғы физика тапсырмалары).
-      const domain = u.domain || (u.exam === 'ubt' ? '' : 'science');
       const unit = await c.query(
-        `INSERT INTO exam_units(exam, title, grade, section, context, seed_key, domain, image, source)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
-        [u.exam, u.title || '', u.grade || 0, u.section || '', u.context || '', u.key, domain, u.image || '', u.source || '']);
+        `INSERT INTO exam_units(exam, title, grade, section, context, seed_key, domain, image, source, seed_rev)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id`,
+        [u.exam, u.title || '', u.grade || 0, u.section || '', u.context || '', u.key, domain, u.image || '', u.source || '', rev]);
       let ord = 0;
       for (const qn of u.questions) {
-        const kind = qn.kind || (qn.correct.length > 1 ? 'multi' : 'single');
         await c.query(
           `INSERT INTO exam_questions(unit_id, ord, kind, stem, options, correct, explanation, points, image, rubric)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-          [unit.rows[0].id, ord++, kind, qn.stem, JSON.stringify(qn.options), JSON.stringify(qn.correct), qn.explain || '',
-            qn.points || (kind === 'multi' ? 2 : 1), qn.image || '', qn.rubric || '']);
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [unit.rows[0].id, ord++, ...qRow(qn)]);
       }
     });
     added++;
   }
   if (added) console.log(`Емтихан банкіне ${added} блок қосылды.`);
+  if (updated) console.log(`Емтихан банкінде ${updated} блок жаңартылды.`);
 }
 
 export async function bootstrap() {

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" width="640" height="420" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="aw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#c0392b"/></marker>
+    <marker id="ac" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1f5fa8"/></marker>
+  </defs>
+  <rect width="640" height="420" fill="#dcebf5"/>
+  <!-- Солтүстік Америка -->
+  <path d="M0 40 L120 30 L175 70 L190 120 L160 160 L175 200 L150 240 L120 250 L95 290 L60 300 L40 340 L0 350 Z" fill="#e8dcc2" stroke="#b9a988"/>
+  <!-- Гренландия -->
+  <path d="M230 10 L300 8 L320 40 L290 75 L250 70 L230 40 Z" fill="#f2efe8" stroke="#b9a988"/>
+  <!-- Еуропа -->
+  <path d="M640 30 L520 40 L490 80 L505 105 L470 130 L480 165 L455 190 L470 215 L520 225 L560 240 L640 230 Z" fill="#e8dcc2" stroke="#b9a988"/>
+  <!-- Британия -->
+  <path d="M440 95 L462 90 L470 120 L455 145 L438 132 Z" fill="#e8dcc2" stroke="#b9a988"/>
+  <!-- Африка -->
+  <path d="M470 260 L560 255 L640 270 L640 420 L540 420 L520 360 L480 320 Z" fill="#e8dcc2" stroke="#b9a988"/>
+  <!-- Оңтүстік Америка -->
+  <path d="M140 360 L200 350 L240 380 L250 420 L150 420 Z" fill="#e8dcc2" stroke="#b9a988"/>
+  <!-- Жылы тұйық айналым -->
+  <ellipse cx="300" cy="275" rx="120" ry="58" fill="none" stroke="#c0392b" stroke-width="3"/>
+  <path d="M190 260 L186 252" stroke="#c0392b" stroke-width="3" marker-end="url(#aw)"/>
+  <path d="M410 292 L414 300" stroke="#c0392b" stroke-width="3" marker-end="url(#aw)"/>
+  <path d="M300 333 L290 333" stroke="#c0392b" stroke-width="3" marker-end="url(#aw)"/>
+  <path d="M300 217 L312 217" stroke="#c0392b" stroke-width="3" marker-end="url(#aw)"/>
+  <!-- Жылы ағыс солтүстік-шығысқа, Р аймағына -->
+  <path d="M330 220 C370 190 400 170 430 160 C450 152 455 140 448 150" fill="none" stroke="#c0392b" stroke-width="3"/>
+  <path d="M420 165 C450 150 470 160 478 172" fill="none" stroke="#c0392b" stroke-width="3" marker-end="url(#aw)"/>
+  <path d="M400 175 C430 120 470 90 500 60" fill="none" stroke="#c0392b" stroke-width="3" marker-end="url(#aw)"/>
+  <!-- Суық ағыс солтүстіктен -->
+  <path d="M215 60 C200 110 210 160 245 205" fill="none" stroke="#1f5fa8" stroke-width="3" stroke-dasharray="9 6" marker-end="url(#ac)"/>
+  <path d="M330 60 C340 90 325 110 300 120" fill="none" stroke="#1f5fa8" stroke-width="3" stroke-dasharray="9 6" marker-end="url(#ac)"/>
+  <!-- Р аймағы -->
+  <ellipse cx="488" cy="172" rx="26" ry="20" fill="none" stroke="#333" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="481" y="178" font-size="18" font-weight="bold" fill="#222">Р</text>
+  <!-- Шартты белгілер -->
+  <rect x="14" y="368" width="200" height="44" rx="6" fill="#fff" stroke="#999"/>
+  <line x1="24" y1="382" x2="58" y2="382" stroke="#c0392b" stroke-width="3"/><text x="64" y="387" font-size="13" fill="#222">жылы ағыс</text>
+  <line x1="24" y1="401" x2="58" y2="401" stroke="#1f5fa8" stroke-width="3" stroke-dasharray="9 6"/><text x="64" y="406" font-size="13" fill="#222">суық ағыс</text>
+  <!-- Компас -->
+  <g transform="translate(590 340)"><circle r="22" fill="#fff" stroke="#666"/><path d="M0 -18 L5 0 L0 18 L-5 0Z" fill="#555"/><text x="-4" y="-26" font-size="12">С</text><text x="-4" y="36" font-size="12">О</text><text x="26" y="4" font-size="12">Ш</text><text x="-36" y="4" font-size="12">Б</text></g>
+  <text x="250" y="282" font-size="13" fill="#7a2a20">Атлант мұхиты</text>
+</svg>
