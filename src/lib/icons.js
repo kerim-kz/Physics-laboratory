@@ -25,6 +25,7 @@ const P = {
   play: '<path d="M7 4v16l13-8z"/>',
   pause: '<path d="M7 4h4v16H7zM14 4h4v16h-4z"/>',
   reset: '<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>',
+  plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
   check: '<path d="m5 12 5 5 9-10"/>',
   x: '<path d="M6 6l12 12M18 6 6 18"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',

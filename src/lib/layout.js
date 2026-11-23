@@ -6,7 +6,10 @@ import { asset } from './assets.js';
 import { icon } from './icons.js';
 import { getSettings } from './settings.js';
 import { takeFlash } from './util.js';
+import { SIMS } from '../data/sims.js';
 import { clientDict, LANG_LABEL, LANG_NAME, LANGS, translateHtml } from './i18n.js';
+
+const SIM_COUNT = SIMS.length;
 
 // Бүйір мәзірдің бөлімдері: [мекенжай, атауы, белсенді кілт, белгіше]
 const NAV = [
@@ -91,11 +94,15 @@ export async function page(req, res, opts) {
   const drawer = html`
 <nav class="drawer" id="drawer" aria-label="Бөлімдер" data-open="0">
   <div class="drawer-h">
-    <span class="eyebrow">Бөлімдер</span>
-    <button class="iconbtn" type="button" id="drawerClose" aria-label="Мәзірді жабу">${icon('x')}</button>
+    <a class="brand" href="/">
+      <span class="mark" aria-hidden="true">Фз</span>
+      <span class="brand-t"><b>${siteName}</b><span>физика пәнінің платформасы</span></span>
+    </a>
+    <button class="iconbtn drawer-x" type="button" id="drawerClose" aria-label="Мәзірді жабу">${icon('x')}</button>
   </div>
   ${nav.map(([group, links]) => html`<div class="dgroup">${group ? html`<span class="dgroup-t">${group}</span>` : ''}${links.map((l) => navLink(l, active))}</div>`)}
   ${user ? '' : html`<div class="dgroup dgroup-auth"><a class="btn" href="/register">Тіркелу</a><a class="btn ghost" href="/login">Кіру</a></div>`}
+  <div class="side-note"><b>7–11-сынып · ${SIM_COUNT} симуляция</b><span>Қазақша, орысша және ағылшынша</span></div>
 </nav>
 <div class="scrim" id="drawerScrim" hidden></div>`;
 
@@ -111,6 +118,7 @@ export async function page(req, res, opts) {
 <link rel="stylesheet" href="/vendor/fonts/sans/400.css">
 <link rel="stylesheet" href="/vendor/fonts/sans/500.css">
 <link rel="stylesheet" href="/vendor/fonts/sans/600.css">
+<link rel="stylesheet" href="/vendor/fonts/sans/700.css">
 <link rel="stylesheet" href="/vendor/fonts/serif/600.css">
 <link rel="stylesheet" href="/vendor/fonts/mono/400.css">
 <link rel="stylesheet" href="/vendor/fonts/mono/600.css">
@@ -121,13 +129,22 @@ ${styles.map((s) => raw(`<link rel="stylesheet" href="${asset(s)}">`))}
 </head>
 <body>
 <a class="skip" href="#main">Негізгі мазмұнға өту</a>
+<div class="shell">
+${drawer}
+<div class="shell-main">
 <header class="bar">
-  <div class="bar-in gutter">
+  <div class="bar-in">
     <button class="iconbtn menubtn" type="button" id="menuBtn" aria-controls="drawer" aria-expanded="false" aria-label="Мәзір">${icon('menu', 20)}<span>Мәзір</span></button>
-    <a class="brand" href="/">
+    <a class="brand bar-brand" href="/">
       <span class="mark" aria-hidden="true">Фз</span>
       <span class="brand-t"><b>${siteName}</b><span>физика пәнінің платформасы</span></span>
     </a>
+    <form class="gsearch" method="get" action="/search" role="search">
+      ${icon('search', 18)}
+      <label class="sr" for="gq">Іздеу</label>
+      <input id="gq" type="search" name="q" placeholder="Симуляция, формула, зертхана немесе ғалым іздеу…" value="${active === 'search' ? String(req.query.q || '') : ''}" autocomplete="off">
+      <kbd aria-hidden="true">/</kbd>
+    </form>
     <div class="bar-act">
       ${langSwitch(req)}
       <button class="iconbtn" id="themeBtn" type="button" title="Жарық / қараңғы тақырып" aria-label="Тақырыпты ауыстыру">${icon('sun')}</button>
@@ -135,14 +152,13 @@ ${styles.map((s) => raw(`<link rel="stylesheet" href="${asset(s)}">`))}
     </div>
   </div>
 </header>
-${drawer}
-<noscript><nav class="nav-ns gutter" aria-label="Бөлімдер">${nav.flatMap(([, links]) => links).map(([href, label]) => html`<a href="${href}">${label}</a>`)}</nav></noscript>
-${settings.announcement ? html`<div class="gutter"><div class="announce"><b>Хабарландыру</b><span>${settings.announcement}</span></div></div>` : ''}
-${flash ? html`<div class="gutter"><div class="flash ${flash.type}" role="status">${flash.text}</div></div>` : ''}
-<main id="main" class="wrap gutter">
+<noscript><nav class="nav-ns" aria-label="Бөлімдер">${nav.flatMap(([, links]) => links).map(([href, label]) => html`<a href="${href}">${label}</a>`)}</nav></noscript>
+${settings.announcement ? html`<div class="announce"><b>Хабарландыру</b><span>${settings.announcement}</span></div>` : ''}
+${flash ? html`<div class="flash ${flash.type}" role="status">${flash.text}</div>` : ''}
+<main id="main" class="sheet">
 ${body}
 </main>
-<footer class="foot gutter">
+<footer class="foot">
   <b>${siteName}</b>
   <span>Физика · 7–11 сыныптар</span>
   ${settings.contact ? html`<span>Байланыс: ${settings.contact}</span>` : ''}
@@ -153,6 +169,8 @@ ${body}
   <a href="/schools">Мектептер</a>
   <p class="credit">Құрастырушы: <b>Әбілқасым Керім Шәмшитұлы</b>, №54 орта мектептің физика пәні мұғалімі</p>
 </footer>
+</div>
+</div>
 ${lang !== 'kk' ? raw(`<script src="/i18n/${lang}.js?v=${encodeURIComponent(clientDict(lang).etag.replace(/"/g, ''))}" defer></script><script src="${asset('/js/i18n.js')}" defer></script>`) : ''}
 <script src="${asset('/js/app.js')}" defer></script>
 ${scripts.map((s) => raw(`<script src="${asset(s)}" defer></script>`))}

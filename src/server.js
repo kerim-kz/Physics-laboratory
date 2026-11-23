@@ -30,6 +30,7 @@ import { router as simsRouter } from './features/sims.js';
 import { router as unitsRouter } from './features/units.js';
 import { router as resultsRouter } from './features/results.js';
 import { router as aiRouter } from './features/ai.js';
+import { router as searchRouter } from './features/search.js';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const nm = (p) => path.join(root, 'node_modules', p);
@@ -126,6 +127,7 @@ export function createApp() {
   });
 
   app.use(homeRouter);
+  app.use(searchRouter);
   app.use(authRouter);
   app.use(cabinetRouter);
   app.use(schoolsRouter);
