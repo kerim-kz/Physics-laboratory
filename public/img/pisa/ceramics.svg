@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" width="640" height="260" font-family="Arial, Helvetica, sans-serif">
+  <rect width="640" height="260" fill="#f7f4ee"/>
+  <!-- кесе -->
+  <path d="M40 90 L160 90 C158 150 135 180 100 182 C65 180 42 150 40 90Z" fill="#2f6fb0" stroke="#1f4f80" stroke-width="2"/>
+  <path d="M48 105 C80 112 120 112 152 105" stroke="#fff" stroke-width="3" fill="none"/>
+  <g fill="#fff"><circle cx="70" cy="135" r="5"/><circle cx="100" cy="140" r="5"/><circle cx="130" cy="135" r="5"/></g>
+  <rect x="75" y="182" width="50" height="10" rx="3" fill="#1f4f80"/>
+  <text x="60" y="225" font-size="15" fill="#333">кесе</text>
+  <!-- кірпіш қабырға -->
+  <g stroke="#7a3b22" stroke-width="2" fill="#c5623a">
+    <rect x="230" y="80" width="60" height="28"/><rect x="290" y="80" width="60" height="28"/><rect x="350" y="80" width="40" height="28"/>
+    <rect x="230" y="108" width="30" height="28"/><rect x="260" y="108" width="60" height="28"/><rect x="320" y="108" width="60" height="28"/><rect x="380" y="108" width="10" height="28"/>
+    <rect x="230" y="136" width="60" height="28"/><rect x="290" y="136" width="60" height="28"/><rect x="350" y="136" width="40" height="28"/>
+    <rect x="230" y="164" width="30" height="28"/><rect x="260" y="164" width="60" height="28"/><rect x="320" y="164" width="60" height="28"/><rect x="380" y="164" width="10" height="28"/>
+  </g>
+  <text x="275" y="225" font-size="15" fill="#333">кірпіш</text>
+  <!-- плитка -->
+  <g transform="translate(450 80)" stroke="#8a97a3" stroke-width="2">
+    <rect width="50" height="50" fill="#e4ebf1"/><rect x="50" width="50" height="50" fill="#cfdbe5"/><rect x="100" width="50" height="50" fill="#e4ebf1"/>
+    <rect y="50" width="50" height="50" fill="#cfdbe5"/><rect x="50" y="50" width="50" height="50" fill="#e4ebf1"/><rect x="100" y="50" width="50" height="50" fill="#cfdbe5"/>
+    <path d="M0 0 L50 50 M50 0 L0 50 M100 50 L150 100 M150 50 L100 100" stroke="#b5c2cd" stroke-width="1"/>
+  </g>
+  <text x="490" y="225" font-size="15" fill="#333">плитка</text>
+</svg>

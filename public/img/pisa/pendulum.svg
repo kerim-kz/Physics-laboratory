@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" width="600" height="340" font-family="Arial, Helvetica, sans-serif">
+  <rect width="600" height="340" fill="#f6f4ef"/>
+  <!-- қабырға сағаты -->
+  <rect x="50" y="30" width="140" height="280" rx="14" fill="#8a5a36" stroke="#5c3a22" stroke-width="3"/>
+  <circle cx="120" cy="95" r="48" fill="#fffdf6" stroke="#5c3a22" stroke-width="3"/>
+  <g stroke="#333" stroke-width="2"><line x1="120" y1="55" x2="120" y2="62"/><line x1="120" y1="128" x2="120" y2="135"/><line x1="80" y1="95" x2="87" y2="95"/><line x1="153" y1="95" x2="160" y2="95"/></g>
+  <line x1="120" y1="95" x2="120" y2="66" stroke="#222" stroke-width="3"/><line x1="120" y1="95" x2="140" y2="104" stroke="#222" stroke-width="3"/>
+  <rect x="70" y="155" width="100" height="140" rx="6" fill="#f3e7d2" stroke="#5c3a22" stroke-width="2"/>
+  <line x1="120" y1="160" x2="135" y2="255" stroke="#b08a2e" stroke-width="3"/><circle cx="137" cy="262" r="14" fill="#d4a933" stroke="#8a6a1c" stroke-width="2"/>
+  <!-- сызба -->
+  <circle cx="420" cy="50" r="5" fill="#222"/><text x="432" y="46" font-size="18" font-style="italic">P</text>
+  <text x="440" y="26" font-size="14" fill="#444">бекітілген нүкте</text>
+  <line x1="420" y1="50" x2="330" y2="250" stroke="#333" stroke-width="2"/>
+  <line x1="420" y1="50" x2="510" y2="250" stroke="#333" stroke-width="2"/>
+  <line x1="420" y1="50" x2="420" y2="270" stroke="#999" stroke-width="1" stroke-dasharray="5 5"/>
+  <text x="472" y="150" font-size="18" font-style="italic">L</text>
+  <path d="M330 250 Q420 300 510 250" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="7 5"/>
+  <circle cx="330" cy="250" r="11" fill="#555"/><circle cx="510" cy="250" r="11" fill="#555"/>
+  <text x="300" y="248" font-size="18" font-style="italic">B</text><text x="527" y="248" font-size="18" font-style="italic">A</text>
+  <text x="485" y="300" font-size="14" fill="#444">жүк</text><line x1="505" y1="288" x2="510" y2="264" stroke="#444"/>
+</svg>

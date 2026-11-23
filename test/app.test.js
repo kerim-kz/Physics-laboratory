@@ -385,10 +385,10 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal(read.status, 200);
     assert.match(read.text, /data-kind="matrix"/);
     assert.match(read.text, /data-kind="open"/);
-    assert.match(read.text, /Автобус кестесі/);
+    assert.match(read.text, /Қала маңындағы тегін автобус/);
     const math = await c.get('/exams/pisa/test?domain=math&mode=exam&n=0');
     assert.match(math.text, /data-kind="number"/);
-    assert.match(math.text, /\/img\/pisa\/[a-z-]+\.(jpg|png)\?v=/);
+    assert.match(math.text, /\/img\/pisa\/[a-z-]+\.svg\?v=/);
     assert.doesNotMatch(math.text, /Мұнайдың төгілуі/, 'математика бағытында жаратылыстану тапсырмасы болмауы керек');
     assert.equal((await c.get('/exams/pisa/test?domain=xxx&mode=practice')).status, 404);
   });
@@ -1049,6 +1049,48 @@ describe('шыны дизайн: қаңқа, іздеу, кабинет тақт
     const pie = d.donut([{ name: 'PISA', n: 3 }, { name: 'ҰБТ', n: 1 }]).toString();
     assert.match(pie, /conic-gradient/);
     assert.match(pie, /PISA 75%/);
+  });
+});
+
+describe('PISA тапсырмалары: бейімделген нұсқа және банкті жаңарту', () => {
+  test('23 блок жаңа нұсқада: суреттері бар, жауаптары дұрыс аралықта', async () => {
+    const { SEED_UNITS_PISA_DOC } = await import('../src/data/questions-pisa.js');
+    assert.equal(SEED_UNITS_PISA_DOC.length, 23);
+    const root = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'public');
+    for (const u of SEED_UNITS_PISA_DOC) {
+      assert.ok(u.rev >= 2, u.key);
+      for (const img of [u.image, ...u.questions.map((x) => x.image)].filter(Boolean)) {
+        assert.ok(img.endsWith('.svg'), `${u.key}: ${img}`);
+        assert.ok(fs.existsSync(path.join(root, img)), `${u.key}: ${img} жоқ`);
+      }
+      for (const x of u.questions) {
+        if (x.kind === 'single') assert.ok(x.correct[0] >= 0 && x.correct[0] < x.options.length, `${u.key}: ${x.stem.slice(0, 30)}`);
+        if (x.kind === 'matrix') {
+          assert.equal(x.correct.length, x.options.rows.length, u.key);
+          assert.ok(x.correct.every((c) => c >= 0 && c < x.options.cols.length), u.key);
+        }
+      }
+    }
+    const text = JSON.stringify(SEED_UNITS_PISA_DOC);
+    for (const old of ['Зедланд', 'Мачу-Пикчу', 'Аски', 'Шрофф', 'Нур-Сұлтан']) assert.ok(!text.includes(old), old);
+  });
+
+  test('дерекқордағы ескі нұсқа іске қосылғанда жаңартылады, сұрақ id-лері сақталады', async () => {
+    const db = await import('../src/lib/db.js');
+    const { seedQuestions } = await import('../src/seed.js');
+    const u = await db.one("SELECT id FROM exam_units WHERE seed_key = 'pisa-doc-math-pendulum'");
+    const before = await db.many('SELECT id FROM exam_questions WHERE unit_id = $1 ORDER BY ord', [u.id]);
+    await db.q("UPDATE exam_units SET seed_rev = 1, title = 'Маятник', context = 'ескі мәтін' WHERE id = $1", [u.id]);
+    await db.q("UPDATE exam_questions SET stem = 'ескі сұрақ', correct = '[0.25]' WHERE unit_id = $1", [u.id]);
+    await seedQuestions();
+    const after = await db.one('SELECT title, context, seed_rev, image FROM exam_units WHERE id = $1', [u.id]);
+    assert.equal(after.seed_rev, 2);
+    assert.equal(after.title, 'Қабырға сағатының маятнигі');
+    assert.equal(after.image, '/img/pisa/pendulum.svg');
+    const qs = await db.many('SELECT id, stem, correct FROM exam_questions WHERE unit_id = $1 ORDER BY ord', [u.id]);
+    assert.deepEqual(qs.map((x) => x.id), before.map((x) => x.id));
+    assert.match(qs[0].stem, /3 секунд/);
+    assert.deepEqual(qs[0].correct, [2.25]);
   });
 });
 
