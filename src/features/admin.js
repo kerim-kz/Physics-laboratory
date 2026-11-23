@@ -14,7 +14,7 @@ import {
   asArray, asyncH, cleanMultiline, cleanText, fmtDate, fmtDateTime, fmtPrice, HttpError, LOGIN_RE, newTempPassword, setFlash, toCsv, toInt, validFullName,
 } from '../lib/util.js';
 import { statusPill } from './cabinet.js';
-import { AI_MODELS, aiProvider, aiSettings, compatConfig, FEATURE_NAME, isOpenAI, usageReport } from '../lib/ai.js';
+import { AI_MODELS, aiProvider, aiSettings, AiError, compatConfig, envAi, FEATURE_NAME, isOpenAI, PROVIDER_NAME, setStoredAi, storedAi, usageReport, verifyAiKey } from '../lib/ai.js';
 
 export const router = express.Router();
 router.use(requireAdmin);
@@ -577,6 +577,7 @@ router.get('/ai', asyncH(async (req, res) => {
   const r = await usageReport();
   const prov = aiProvider();
   const cc = compatConfig();
+  const sk = storedAi();
   await adminPage(req, res, 'ai', 'ЖИ', html`
     <section class="panel">
       <h2>${icon('spark')} ЖИ құралының күйі</h2>
@@ -587,10 +588,23 @@ router.get('/ai', asyncH(async (req, res) => {
           <p class="muted small">Мекенжай: <code>${cc.host}</code> · модель: <code>${cc.models.join(', ')}</code>${cc.models.length > 1 ? ' (біріншісі жүктелсе, келесісі қолданылады)' : ''}. Шығын — 0 ₸, бірақ сапа мен лимит провайдерге байланысты.</p>`
         : prov === 'anthropic' ? html`<p><span class="pill ok">Anthropic API кілті қосылған</span> ${st.enabled ? html`<span class="pill ok">қосулы</span>` : html`<span class="pill pending">өшірулі</span>`}</p>`
         : html`<p><span class="pill pending">ЖИ провайдері қосылмаған</span> — ЖИ функциялары «бапталмаған» күйінде көрсетіледі.</p>`}
+      ${req.user.is_owner ? (envAi()
+        ? html`<p class="hint">ЖИ кілті сервердің баптауларында (.env) берілген — төмендегі өріс қолданылмайды.</p>`
+        : html`<form class="form ai-key" method="post" action="/admin/ai/key" autocomplete="off">
+            ${csrfField(req)}
+            <h3>ЖИ кілтін қосу</h3>
+            ${sk.provider ? html`<p><span class="pill ok">${PROVIDER_NAME[sk.provider]}</span> кілт: <code>…${sk.tail}</code></p>` : ''}
+            <div class="seg">
+              ${['openai', 'google', 'anthropic'].map((p) => html`<label class="chip plain"><input type="radio" name="provider" value="${p}"${(sk.provider || 'openai') === p ? ' checked' : ''}> ${PROVIDER_NAME[p]}</label>`)}
+            </div>
+            <label class="fl">Кілт (сайтта жасырын сақталады, ешкімге көрсетілмейді)<input type="password" name="key" required minlength="20" maxlength="300" autocomplete="new-password" spellcheck="false" placeholder="sk-…"></label>
+            <div class="formfoot"><button class="btn" type="submit">Тексеріп, сақтау</button></div>
+          </form>
+          ${sk.provider ? html`<form method="post" action="/admin/ai/key/delete">${csrfField(req)}<button class="btn ghost" type="submit">Кілтті өшіру</button></form>` : ''}`) : ''}
       <details class="op-d"${prov ? '' : html` open`}><summary>${icon('key', 15)} 1-жол (тегін, ең оңай): Google AI Studio кілті</summary>
         <ol class="op-steps">
           <li><b>aistudio.google.com</b> сайтына Google аккаунтымен кіріп, <b>Get API key → Create API key</b> басыңыз. Кілтті (<code>AIza…</code>) көшіріп алыңыз. Төлем картасы керек емес.</li>
-          <li>Серверге қосылып (<code>ssh root@сервердің-IP</code>), мына команданы орындаңыз: <code>bash /opt/gylym/deploy/set-ai.sh</code>. <b>1</b>-ді таңдап, кілтті қойыңыз (экранда көрінбейді). Скрипт кілтті тексереді, тегін Flash моделін өзі таңдайды және сайтты қайта іске қосады.</li>
+          <li>Жоғарыдағы «ЖИ кілтін қосу» өрісінде <b>Google Gemini</b>-ді таңдап, кілтті қойып, «Тексеріп, сақтау» басыңыз. Сайт кілтті тексеріп, тегін Flash моделін өзі таңдайды.</li>
           <li>Сайт қайта іске қосылған соң осы бетте «тегін провайдер қосылған» деп шығады.</li>
         </ol>
         <p class="hint">Ескерту: тегін тарифте Google жіберілген мәтінді өз қызметтерін жақсартуға пайдалануы мүмкін. Сондықтан оқушыларға ЖИ-ге жеке деректерін (аты-жөні, телефоны т.б.) жазбауды ескертіңіз. Сайт өзі оқушылардың аты-жөнін ЖИ-ге жібермейді.</p>
@@ -606,17 +620,17 @@ router.get('/ai', asyncH(async (req, res) => {
         <ol class="op-steps">
           <li><b>platform.openai.com</b> → <b>Settings → Billing</b>: картаны қосып, балансты толтырыңыз; <b>Limits</b> бөлімінде айлық шек қойыңыз. ChatGPT Plus жазылымы API-ге кірмейді — API бөлек төленеді.</li>
           <li><b>API keys → Create new secret key</b>: кілтті (<code>sk-…</code>) көшіріңіз.</li>
-          <li>Серверде: <code>bash /opt/gylym/deploy/set-ai.sh</code> → <b>2</b>-ні таңдап, кілтті қойыңыз. Скрипт кілтті тексеріп, арзан «mini» моделін өзі таңдайды.</li>
+          <li>Жоғарыдағы «ЖИ кілтін қосу» өрісінде <b>OpenAI ChatGPT</b>-ді таңдап, кілтті қойып, «Тексеріп, сақтау» басыңыз. Сайт кілтті тексеріп, арзан «mini» моделін өзі таңдайды.</li>
         </ol>
       </details>
       <details class="op-d"><summary>${icon('key', 15)} 4-жол (ақылы, ең сапалы): Anthropic Claude</summary>
         <ol class="op-steps">
           <li><b>console.anthropic.com</b> → <b>Settings → Billing</b>: картаны қосып, балансты толтырыңыз; <b>Limits</b> бөлімінде айлық лимит қойыңыз.</li>
           <li><b>Settings → API keys → Create key</b>: кілтті (<code>sk-ant-…</code>) көшіріңіз.</li>
-          <li>Серверде: <code>bash /opt/gylym/deploy/set-ai.sh</code> → <b>3</b>-ті таңдап, кілтті қойыңыз. Скрипт кілтті тексеріп, басқа провайдердің баптауларын өзі алып тастайды.</li>
+          <li>Жоғарыдағы «ЖИ кілтін қосу» өрісінде <b>Anthropic Claude</b>-ты таңдап, кілтті қойып, «Тексеріп, сақтау» басыңыз.</li>
         </ol>
       </details>
-      <p class="hint">Кілттерді ешкімге жібермеңіз және чатқа қоймаңыз — оларды тек серверде скрипт сұрағанда енгізіңіз. ЖИ-ді өшіру үшін сол скриптте 4-ті таңдаңыз.</p>
+      <p class="hint">Кілттерді ешкімге жібермеңіз, чатқа және скриншотқа түсірмеңіз — оларды тек осы беттегі өріске қойыңыз.</p>
     </section>
     <form class="panel form" method="post" action="/admin/ai">
       ${csrfField(req)}
@@ -658,6 +672,26 @@ router.post('/ai', asyncH(async (req, res) => {
     ai_teacher_limit: lim(req.body.ai_teacher_limit, 2000),
   });
   setFlash(res, 'ok', 'ЖИ баптаулары сақталды.');
+  res.redirect('/admin/ai');
+}));
+
+// ЖИ кілтін сайттың өзінде сақтау (тек платформа иесі). Кілт провайдерде тексеріледі, қайтадан көрсетілмейді.
+router.post('/ai/key', requireOwner, asyncH(async (req, res) => {
+  try {
+    const v = await verifyAiKey(String(req.body.provider || ''), req.body.key);
+    await saveSettings({ ai_provider: String(req.body.provider), ai_key: v.key, ai_key_header: v.header, ai_models: v.models, ai_enabled: '1' });
+    setStoredAi(await getSettings());
+    setFlash(res, 'ok', `${PROVIDER_NAME[req.body.provider]} кілті тексеріліп, сақталды.`);
+  } catch (e) {
+    if (!(e instanceof AiError)) throw e;
+    setFlash(res, 'error', e.message);
+  }
+  res.redirect('/admin/ai');
+}));
+router.post('/ai/key/delete', requireOwner, asyncH(async (req, res) => {
+  await saveSettings({ ai_provider: '', ai_key: '', ai_key_header: '', ai_models: '' });
+  setStoredAi(await getSettings());
+  setFlash(res, 'ok', 'ЖИ кілті өшірілді.');
   res.redirect('/admin/ai');
 }));
 
