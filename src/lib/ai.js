@@ -36,7 +36,10 @@ export function compatConfig() {
   // AI_MODEL-ге үтір арқылы бірнеше модель жазуға болады: біріншісі бос болмаса, келесісі қолданылады.
   const models = String(process.env.AI_MODEL || '').split(',').map((m) => m.trim().replace(/^models\//, '')).filter(Boolean);
   if (!models.length) models.push('auto');
-  return { base, key, models, model: models[0], host: (() => { try { return new URL(base).host; } catch { return base; } })() };
+  // Кілт қай тақырыпта жіберіледі: әдетте Authorization: Bearer; Google-дың жаңа AQ.… кілттеріне AI_KEY_HEADER=x-goog-api-key.
+  const hdr = String(process.env.AI_KEY_HEADER || '').trim().toLowerCase();
+  const auth = /^[a-z0-9-]+$/.test(hdr) && hdr !== 'authorization' ? { [hdr]: key } : { authorization: `Bearer ${key}` };
+  return { base, key, auth, models, model: models[0], host: (() => { try { return new URL(base).host; } catch { return base; } })() };
 }
 // OpenAI (ChatGPT) API: ақылы, шығыны platform.openai.com-да есептеледі.
 export const isOpenAI = (c = compatConfig()) => !!c && /(^|\.)openai\.com$/i.test(c.host);
@@ -140,7 +143,7 @@ async function callCompat({ system, messages, maxTokens, schema }, onText) {
   const c = compatConfig();
   const msgs = [{ role: 'system', content: schema ? system + JSON_HINT(schema) : system }, ...messages];
   const send = (model) => fetch(`${c.base}/chat/completions`, {
-    method: 'POST', headers: { authorization: `Bearer ${c.key}`, 'content-type': 'application/json', accept: 'text/event-stream, application/json' },
+    method: 'POST', headers: { ...c.auth, 'content-type': 'application/json', accept: 'text/event-stream, application/json' },
     body: JSON.stringify({
       model, stream: true, messages: msgs,
       [usesCompletionTokens(c, model) ? 'max_completion_tokens' : 'max_tokens']: Math.min(maxTokens || 4000, COMPAT_MAX_TOKENS),
