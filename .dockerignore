@@ -1,0 +1,10 @@
+node_modules
+.git
+test
+tools
+docs
+deploy
+data/uploads
+*.log
+.env
+.env.*

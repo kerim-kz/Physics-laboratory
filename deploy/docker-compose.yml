@@ -1,0 +1,62 @@
+# Ғылым Ордасы: сайт + PostgreSQL + Caddy (HTTPS сертификатын өзі алады және жаңартады).
+# Іске қосу: /opt/gylym/deploy қалтасында  docker compose up -d --build
+# Баптаулар .env файлында (үлгісі: .env.example).
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fizika
+      POSTGRES_USER: fizika
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD .env-те жоқ}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fizika -d fizika"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: ..
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: postgres://fizika:${POSTGRES_PASSWORD}@db:5432/fizika
+      FILE_STORAGE: ${FILE_STORAGE:-db}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-20}
+      SITE_NAME: ${SITE_NAME:-Ғылым Ордасы}
+      ADMIN_LOGIN: ${ADMIN_LOGIN:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_NAME: ${ADMIN_NAME:-Платформа иесі}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    volumes:
+      - uploads:/app/data/uploads
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?DOMAIN .env-те жоқ}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pgdata:
+  uploads:
+  caddy_data:
+  caddy_config:
