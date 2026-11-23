@@ -3,14 +3,15 @@
 # Баптаулар .env файлында (үлгісі: .env.example).
 services:
   db:
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: fizika
       POSTGRES_USER: fizika
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD .env-те жоқ}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      # PostgreSQL 18 бейнесі деректерді /var/lib/postgresql/18/docker ішінде сақтайды.
+      - pgdata18:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U fizika -d fizika"]
       interval: 10s
@@ -56,7 +57,7 @@ services:
       - caddy_config:/config
 
 volumes:
-  pgdata:
+  pgdata18:
   uploads:
   caddy_data:
   caddy_config:

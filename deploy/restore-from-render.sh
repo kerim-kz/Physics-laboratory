@@ -27,7 +27,7 @@ TMP=$(mktemp /tmp/render-dump-XXXX.sql)
 trap 'rm -f "$TMP"' EXIT
 # Қате хабарламасында мекенжай (ішінде құпиясөз бар) экранға шықпасын.
 hide() { sed -E 's#postgres(ql)?://[^" ]*#[мекенжай жасырылды]#g'; }
-if ! docker run --rm -e SRC="$SRC" postgres:17-alpine sh -c 'pg_dump "$SRC" --no-owner --no-privileges' 2> >(hide >&2) \
+if ! docker run --rm -e SRC="$SRC" postgres:18-alpine sh -c 'pg_dump "$SRC" --no-owner --no-privileges' 2> >(hide >&2) \
      | sed '/^SET transaction_timeout/d' > "$TMP" || [ ! -s "$TMP" ]; then
   echo "Жүктеу сәтсіз аяқталды. Мекенжайды Render-ден қайта көшіріп, скриптті қайта іске қосыңыз."
   exit 1
