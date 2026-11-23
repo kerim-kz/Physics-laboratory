@@ -17,6 +17,20 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y ca-certificates curl git ufw openssl cron
 
+# 1–2 ГБ жадылы арзан серверлерге қосымша жады (swap): құрастыру мен жүктеме кезінде жады жетпей қалмауы үшін.
+if [ "$(swapon --noheadings | wc -l)" = 0 ] && [ ! -f /swapfile ]; then
+  echo "Қосымша жады (swap, 2 ГБ) жасалуда..."
+  if { fallocate -l 2G /swapfile || dd if=/dev/zero of=/swapfile bs=1M count=2048; } \
+     && chmod 600 /swapfile && mkswap /swapfile >/dev/null && swapon /swapfile; then
+    grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+    echo 'vm.swappiness=10' > /etc/sysctl.d/99-gylym-swap.conf
+    sysctl -q vm.swappiness=10 || true
+  else
+    rm -f /swapfile
+    echo "Ескерту: бұл серверде swap қосылмады — орнату жалғаса береді."
+  fi
+fi
+
 say "2/7. Docker орнату"
 if ! command -v docker >/dev/null 2>&1; then
   curl -fsSL https://get.docker.com | sh
