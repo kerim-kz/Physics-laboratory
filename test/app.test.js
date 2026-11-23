@@ -104,7 +104,15 @@ describe('ашық беттер', () => {
     const home = await c.get('/');
     assert.match(home.text, /id="drawer"/);
     assert.match(home.text, /id="heroSim"/);
-    assert.match(home.text, /data-game="scientist"/);
+    assert.doesNotMatch(home.text, /data-game="scientist"|class="quick"|Күннің ғалымы/, 'мәзірдегі бөлімдер басты бетте қайталанбайды');
+    assert.match(home.text, /id="simCanvas"/, 'күннің симуляциясы бетте тікелей жұмыс істейді');
+    assert.match(home.text, /\/js\/sims\/kit\.js\?v=/);
+    assert.match(home.text, /id="catalog"/);
+    assert.equal((home.text.match(/class="gpanel"/g) || []).length, 5, '7–11-сынып қойындылары');
+    assert.match((await c.get('/?g=10')).text, /class="gpanel" role="tabpanel" data-g="10">/, '?g=10 — 10-сынып ашық тұрады');
+    const { simOfDay } = await import('../src/features/home.js');
+    assert.equal(simOfDay(9, { y: 2026, m: 10, d: 23 }).g, 9, 'оқушыға өз сыныбының симуляциясы');
+    assert.equal(simOfDay(0, { y: 2026, m: 10, d: 23 }).k, simOfDay(0, { y: 2026, m: 10, d: 23 }).k);
     assert.match(home.text, /\/js\/hero\.js\?v=[0-9a-f]{10}/);
     assert.match(home.text, /\/css\/app\.css\?v=[0-9a-f]{10}/); // нұсқасы бар сілтеме: ескі стиль кэштен алынбайды
     const { SIMS } = await import('../src/data/sims.js');
