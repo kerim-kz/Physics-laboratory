@@ -702,6 +702,13 @@ describe('тіркелу, рөлдер және сыныптар', () => {
       assert.equal(rb.last.done, true, JSON.stringify(rb.last));
       assert.deepEqual(calls.slice(n0).map((x) => x.body.model), ['busy-model', 'busy-model', 'free-flash']);
       assert.match((await owner.get('/admin/ai')).text, /busy-model, free-flash/);
+      // OpenAI-дің жаңа модельдері (gpt-5…) max_tokens орнына max_completion_tokens қабылдайды
+      process.env.AI_MODEL = 'gpt-5-mini';
+      const ro = await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] });
+      assert.equal(ro.last.done, true, JSON.stringify(ro.last));
+      const co = calls[calls.length - 1].body;
+      assert.equal(co.model, 'gpt-5-mini');
+      assert.ok(co.max_completion_tokens > 0 && co.max_tokens === undefined, JSON.stringify(co));
       process.env.AI_MODEL = 'busy-model';
       assert.match((await nd(student, '/api/ai/tutor', { messages: [{ role: 'user', content: 'сәлем' }] })).last.error, /қатты жүктелген/);
       process.env.AI_API_KEY = 'wrong';

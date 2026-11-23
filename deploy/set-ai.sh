@@ -8,6 +8,7 @@ ENV_FILE=.env
 [ -f "$ENV_FILE" ] || { echo ".env табылмады. Алдымен install.sh орындаңыз."; exit 1; }
 GOOGLE_BASE=${GOOGLE_BASE:-https://generativelanguage.googleapis.com/v1beta/openai}
 ANTHROPIC_BASE=${ANTHROPIC_BASE:-https://api.anthropic.com}
+OPENAI_BASE=${OPENAI_BASE:-https://api.openai.com/v1}
 TMP=$(mktemp)
 trap 'rm -f "$TMP" "$ENV_FILE.tmp"' EXIT
 
@@ -22,7 +23,7 @@ setvar() {
 readkey() {
   read -r -s -p "$1" KEY; echo
   KEY=$(printf '%s' "$KEY" | tr -d '[:space:]')
-  if ! printf '%s' "$KEY" | grep -Eq '^[A-Za-z0-9_-]{20,200}$'; then
+  if ! printf '%s' "$KEY" | grep -Eq '^[A-Za-z0-9_-]{20,300}$'; then
     echo "Кілт дұрыс емес сияқты (бос немесе артық таңбалар бар). Кілтті қайта көшіріп, скриптті қайта іске қосыңыз."
     exit 1
   fi
@@ -34,10 +35,11 @@ restart() {
 }
 
 echo "ЖИ провайдерін таңдаңыз:"
-echo "  1 — Google AI Studio (тегін, ұсынылады)"
-echo "  2 — Anthropic Claude (ақылы, ең сапалы)"
-echo "  3 — ЖИ-ді өшіру (кілттерді серверден алып тастау)"
-read -r -p "Нөмірін жазыңыз (1/2/3): " CHOICE
+echo "  1 — Google Gemini (тегін, ұсынылады)"
+echo "  2 — OpenAI ChatGPT (ақылы, арзан)"
+echo "  3 — Anthropic Claude (ақылы, ең сапалы)"
+echo "  4 — ЖИ-ді өшіру (кілттерді серверден алып тастау)"
+read -r -p "Нөмірін жазыңыз (1/2/3/4): " CHOICE
 
 case "$CHOICE" in
 1)
@@ -46,7 +48,7 @@ case "$CHOICE" in
   CODE=$(curl -s -m 30 -o "$TMP" -w '%{http_code}' -H "Authorization: Bearer $KEY" "$GOOGLE_BASE/models" || echo 000)
   if [ "$CODE" != 200 ]; then
     if grep -qi 'location is not supported' "$TMP"; then
-      echo "Google бұл сервердің елінен тегін API-ге рұқсат бермейді. 2-жолды (Anthropic) таңдаңыз."
+      echo "Google бұл сервердің елінен тегін API-ге рұқсат бермейді. 2 немесе 3-жолды таңдаңыз."
     elif [ "$CODE" = 000 ]; then
       echo "Google-ға қосылу мүмкін болмады. Интернетті тексеріп, кейінірек қайталаңыз."
     else
@@ -84,6 +86,50 @@ case "$CHOICE" in
   restart
   ;;
 2)
+  readkey "OpenAI кілті (sk-…, экранда көрінбейді): "
+  case "$KEY" in sk-*) ;; *) echo "OpenAI кілті sk- деп басталуы керек."; exit 1 ;; esac
+  echo "Кілт тексерілуде..."
+  CODE=$(curl -s -m 30 -o "$TMP" -w '%{http_code}' -H "Authorization: Bearer $KEY" "$OPENAI_BASE/models" || echo 000)
+  if [ "$CODE" != 200 ]; then
+    if grep -qi 'unsupported_country\|not supported' "$TMP"; then
+      echo "OpenAI бұл сервердің елінен API-ге рұқсат бермейді. 1 немесе 3-жолды таңдаңыз."
+    elif [ "$CODE" = 000 ]; then
+      echo "OpenAI-ға қосылу мүмкін болмады. Интернетті тексеріп, кейінірек қайталаңыз."
+    else
+      echo "OpenAI кілтті қабылдамады (код $CODE). Кілтті platform.openai.com-нан қайта көшіріңіз."
+    fi
+    exit 1
+  fi
+  # Арзан «mini» модельдерінің ең жаңасы (мысалы, gpt-5-mini), болмаса gpt-4o-mini.
+  IDS=$(grep -o '"id": *"[^"]*"' "$TMP" | sed -E 's/.*"([^"]*)"$/\1/')
+  MAIN=$(printf '%s\n' "$IDS" | grep -E '^gpt-[0-9.]+-mini$' | sort -Vr | head -1 || true)
+  [ -n "$MAIN" ] || MAIN=$(printf '%s\n' "$IDS" | grep -E '^gpt-[0-9.]+o-mini$' | sort -Vr | head -1 || true)
+  if [ -z "$MAIN" ]; then
+    echo "Қолжетімді модельдер:"
+    printf '%s\n' "$IDS" | grep -E '^gpt-' | sort -V | head -30 | sed 's/^/  /'
+    read -r -p "Модель атауын жазыңыз: " MAIN
+    MAIN=$(printf '%s' "$MAIN" | tr -d '[:space:]')
+    printf '%s' "$MAIN" | grep -Eq '^[A-Za-z0-9._-]+$' || { echo "Модель атауы дұрыс емес."; exit 1; }
+  fi
+  echo "Модель: $MAIN. Сынақ сұраныс жіберілуде..."
+  CODE=$(curl -s -m 60 -o "$TMP" -w '%{http_code}' -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' \
+    -d "{\"model\":\"$MAIN\",\"messages\":[{\"role\":\"user\",\"content\":\"Тек бір сөзбен жауап бер: сәлем\"}],\"max_completion_tokens\":300}" \
+    "$OPENAI_BASE/chat/completions" || echo 000)
+  if [ "$CODE" = 429 ] && grep -q 'insufficient_quota' "$TMP"; then
+    echo "Ескерту: OpenAI балансында қаражат жоқ. platform.openai.com → Billing бетінде балансты толтырыңыз. Кілт сақталады."
+  elif [ "$CODE" = 429 ]; then
+    echo "Ескерту: OpenAI лимиті уақытша таусылған (429). Кілт сақталады."
+  elif [ "$CODE" != 200 ]; then
+    echo "Сынақ сұраныс сәтсіз аяқталды (код $CODE). Кілт сақталмады."
+    exit 1
+  fi
+  setvar AI_BASE_URL "$OPENAI_BASE"
+  setvar AI_API_KEY "$KEY"
+  setvar AI_MODEL "$MAIN"
+  echo "OpenAI (ChatGPT) кілті сақталды. Шығынды platform.openai.com → Usage бетінен бақылаңыз, Limits бөлімінде айлық шек қойыңыз."
+  restart
+  ;;
+3)
   readkey "Anthropic кілті (sk-ant-…, экранда көрінбейді): "
   case "$KEY" in sk-ant-*) ;; *) echo "Anthropic кілті sk-ant- деп басталуы керек."; exit 1 ;; esac
   echo "Кілт тексерілуде..."
@@ -93,18 +139,18 @@ case "$CHOICE" in
     exit 1
   fi
   setvar ANTHROPIC_API_KEY "$KEY"
-  # Тегін провайдер бірінші орында тұратындықтан, оның баптауларын тазалаймыз.
+  # OpenAI-үйлесімді провайдер (Gemini/ChatGPT) бірінші орында тұратындықтан, оның баптауларын тазалаймыз.
   setvar AI_BASE_URL ""
   setvar AI_API_KEY ""
   setvar AI_MODEL ""
   echo "Anthropic кілті сақталды. Модельді сайттағы Әкімші → ЖИ бетінде таңдайсыз."
   restart
   ;;
-3)
+4)
   for v in AI_BASE_URL AI_API_KEY AI_MODEL ANTHROPIC_API_KEY; do setvar "$v" ""; done
   echo "ЖИ кілттері серверден алынып тасталды."
   restart
   ;;
 *)
-  echo "1, 2 немесе 3 деп жазыңыз."; exit 1 ;;
+  echo "1, 2, 3 немесе 4 деп жазыңыз."; exit 1 ;;
 esac

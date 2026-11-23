@@ -38,6 +38,10 @@ export function compatConfig() {
   if (!models.length) models.push('auto');
   return { base, key, models, model: models[0], host: (() => { try { return new URL(base).host; } catch { return base; } })() };
 }
+// OpenAI (ChatGPT) API: ақылы, шығыны platform.openai.com-да есептеледі.
+export const isOpenAI = (c = compatConfig()) => !!c && /(^|\.)openai\.com$/i.test(c.host);
+// OpenAI-дің жаңа (ойлайтын) модельдері max_tokens орнына max_completion_tokens қабылдайды.
+const usesCompletionTokens = (c, model) => isOpenAI(c) || /^(gpt-5|o\d)/i.test(model);
 // Қай провайдер қосулы: 'compat' (тегін / OpenAI-үйлесімді), 'anthropic' немесе null.
 export const aiProvider = () => (compatConfig() ? 'compat' : process.env.ANTHROPIC_API_KEY ? 'anthropic' : null);
 export const aiConfigured = () => !!runner || !!aiProvider();
@@ -121,12 +125,12 @@ function compatError(status, body) {
   return e;
 }
 function compatErrorMsg(status, body) {
-  if (status === 401 || status === 403 || (status === 400 && /api.?key/i.test(body))) return new AiError(503, 'Тегін ЖИ провайдерінің кілті (AI_API_KEY) жарамсыз немесе рұқсаты жоқ. Әкімші кілтті тексеруі керек.');
-  if (status === 429) return new AiError(429, 'Тегін ЖИ провайдерінің лимиті уақытша таусылды. Бірнеше минуттан кейін қайталап көріңіз.');
+  if (status === 401 || status === 403 || (status === 400 && /api.?key/i.test(body))) return new AiError(503, 'ЖИ провайдерінің кілті (AI_API_KEY) жарамсыз немесе рұқсаты жоқ. Әкімші кілтті тексеруі керек.');
+  if (status === 429) return new AiError(429, 'ЖИ провайдерінің лимиті уақытша таусылды. Бірнеше минуттан кейін қайталап көріңіз.');
   if (status === 404) return new AiError(503, 'ЖИ моделі табылмады: AI_MODEL атауын немесе AI_BASE_URL мекенжайын тексеру керек.');
   if (status === 400 && /model/i.test(body)) return new AiError(503, 'ЖИ моделінің атауы (AI_MODEL) қате болуы мүмкін. Әкімші тексеруі керек.');
-  if (status === 503 || status === 500 || status === 502 || status === 504) return new AiError(503, 'Тегін ЖИ моделі қазір қатты жүктелген (Google жағында). Бір-екі минуттан кейін қайталаңыз.');
-  return new AiError(502, 'Тегін ЖИ провайдері уақытша қолжетімсіз. Сәлден соң қайталаңыз.');
+  if (status === 503 || status === 500 || status === 502 || status === 504) return new AiError(503, 'ЖИ моделі қазір қатты жүктелген (провайдер жағында). Бір-екі минуттан кейін қайталаңыз.');
+  return new AiError(502, 'ЖИ провайдері уақытша қолжетімсіз. Сәлден соң қайталаңыз.');
 }
 
 // <think>…</think> ойлау бөлігін көрсетпейміз (кейбір ашық модельдер оны мәтінге қосады).
@@ -137,14 +141,18 @@ async function callCompat({ system, messages, maxTokens, schema }, onText) {
   const msgs = [{ role: 'system', content: schema ? system + JSON_HINT(schema) : system }, ...messages];
   const send = (model) => fetch(`${c.base}/chat/completions`, {
     method: 'POST', headers: { authorization: `Bearer ${c.key}`, 'content-type': 'application/json', accept: 'text/event-stream, application/json' },
-    body: JSON.stringify({ model, stream: true, max_tokens: Math.min(maxTokens || 4000, COMPAT_MAX_TOKENS), messages: msgs }),
+    body: JSON.stringify({
+      model, stream: true, messages: msgs,
+      [usesCompletionTokens(c, model) ? 'max_completion_tokens' : 'max_tokens']: Math.min(maxTokens || 4000, COMPAT_MAX_TOKENS),
+      ...(isOpenAI(c) ? { stream_options: { include_usage: true } } : {}), // OpenAI ағында токен есебін тек сұрағанда береді
+    }),
     signal: AbortSignal.timeout(4 * 60_000), // тегін сервер «ұйықтап» тұрса, оянуына уақыт керек
   });
   // Уақытша қате (жүктеме, лимит) болса — сәл күтіп қайталаймыз, сосын тізімдегі келесі модельге көшеміз.
   let res = null, used = c.models[0], lastErr = null;
   outer: for (const m of c.models) {
     for (let attempt = 0; attempt < 2; attempt++) {
-      try { res = await send(m); } catch { lastErr = new AiError(503, 'Тегін ЖИ провайдеріне қосылу мүмкін болмады. Сервер «ұйықтап» тұрған болуы мүмкін — бір минуттан кейін қайталаңыз.'); res = null; break; }
+      try { res = await send(m); } catch { lastErr = new AiError(503, 'ЖИ провайдеріне қосылу мүмкін болмады. Бір минуттан кейін қайталаңыз.'); res = null; break; }
       if (res.ok) { used = m; break outer; }
       const t = await res.text().catch(() => '');
       console.error('ЖИ провайдерінің қатесі:', m, res.status, t.slice(0, 300));
@@ -195,7 +203,7 @@ async function callCompat({ system, messages, maxTokens, schema }, onText) {
       }
     } catch (e) {
       if (e instanceof AiError) throw e;
-      throw new AiError(502, 'Тегін ЖИ провайдерімен байланыс үзілді. Қайталап көріңіз.');
+      throw new AiError(502, 'ЖИ провайдерімен байланыс үзілді. Қайталап көріңіз.');
     }
   }
   const text = visibleText(raw).trim();
@@ -251,10 +259,11 @@ export async function usageReport() {
                            WHERE a.ok AND a.created_at > now() - interval '30 days' GROUP BY u.id ORDER BY n DESC LIMIT 10`);
   let cost = 0;
   for (const m of byModel) {
-    // Тізімде жоқ модель — тегін провайдердікі, шығыны 0.
+    // Тізімде жоқ модель — тегін провайдердікі, шығыны 0. OpenAI модельдерінің бағасы мұнда белгісіз (platform.openai.com-да).
     const [, , pin, pout] = MODEL[m.model] || Object.values(MODEL).find((x) => m.model.startsWith(x[0])) || [0, 0, 0, 0];
     m.cost = (Number(m.inp) * pin + Number(m.outp) * pout) / 1e6;
-    m.free = !pin;
+    m.openai = !pin && /^(gpt|o\d|chatgpt)/i.test(m.model);
+    m.free = !pin && !m.openai;
     cost += m.cost;
   }
   return { byModel, byFeature, today, failed: failed.n, top, cost };
