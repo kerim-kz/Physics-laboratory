@@ -730,6 +730,74 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal(ai.aiProvider(), null);
   });
 
+  test('ЖИ кілтін сайттың өзінде (Әкімші → ЖИ) қосу: ChatGPT және Google AQ.… кілті', async () => {
+    const ai = await import('../src/lib/ai.js');
+    ai.setAiRunner(null);
+    const seen = [];
+    const fake = http.createServer((req, res) => {
+      let body = '';
+      req.on('data', (d) => { body += d; });
+      req.on('end', () => {
+        seen.push({ url: req.url, auth: req.headers.authorization, goog: req.headers['x-goog-api-key'], body: body ? JSON.parse(body) : null });
+        const json = (code, o) => { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(o)); };
+        if (req.url === '/o/models') return req.headers.authorization === 'Bearer sk-proj-good-key-1234567890'
+          ? json(200, { data: ['gpt-4o-mini', 'gpt-5-mini', 'gpt-5.1-mini', 'gpt-5'].map((id) => ({ id })) }) : json(401, { error: { message: 'bad' } });
+        if (req.url === '/g/models') return req.headers['x-goog-api-key'] === 'AQ.Ab8-test_key-1234567890'
+          ? json(200, { data: ['models/gemini-flash-latest', 'models/gemini-flash-lite-latest', 'models/gemini-3-flash-image'].map((id) => ({ id })) })
+          : json(400, { error: { message: 'API key not valid' } });
+        res.writeHead(200, { 'content-type': 'text/event-stream' });
+        res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: 'Жауап' } }] })}\n\n`);
+        res.write(`data: ${JSON.stringify({ choices: [{ delta: {}, finish_reason: 'stop' }], usage: { prompt_tokens: 10, completion_tokens: 2 } })}\n\n`);
+        res.end('data: [DONE]\n\n');
+      });
+    });
+    await new Promise((r) => fake.listen(0, '127.0.0.1', r));
+    const root = `http://127.0.0.1:${fake.address().port}`;
+    process.env.AI_OPENAI_BASE = `${root}/o`;
+    process.env.AI_GOOGLE_BASE = `${root}/g`;
+    try {
+      assert.equal(ai.aiProvider(), null);
+      const page = await owner.get('/admin/ai');
+      assert.match(page.text, /ЖИ кілтін қосу/);
+      assert.match(page.text, /value="openai" checked/, 'ChatGPT әдепкі таңдалған');
+
+      // Қате кілт — сақталмайды
+      await owner.post('/admin/ai/key', { provider: 'openai', key: 'sk-proj-wrong-key-123456789' }, '/admin/ai');
+      assert.equal(ai.aiProvider(), null);
+      assert.match((await owner.get('/admin/ai')).text, /OpenAI кілтті қабылдамады/);
+
+      // ChatGPT: кілт тексеріледі, ең жаңа mini моделі таңдалады, кілттің өзі бетте көрсетілмейді
+      await owner.post('/admin/ai/key', { provider: 'openai', key: ' sk-proj-good-key-1234567890 ' }, '/admin/ai');
+      assert.equal(ai.aiProvider(), 'compat');
+      assert.equal(ai.compatConfig().model, 'gpt-5.1-mini');
+      const p2 = (await owner.get('/admin/ai')).text;
+      assert.match(p2, /OpenAI \(ChatGPT\) қосылған/);
+      assert.match(p2, /…7890/);
+      assert.doesNotMatch(p2, /sk-proj-good-key-1234567890/);
+      const token = await student.csrf('/games/quiz');
+      const r = await fetch(base + '/api/ai/tutor', { method: 'POST', headers: { cookie: student.cookieHeader(), 'content-type': 'application/json', 'x-csrf-token': token }, body: JSON.stringify({ messages: [{ role: 'user', content: 'сәлем' }] }) });
+      assert.match(await r.text(), /Жауап/);
+      const last = seen[seen.length - 1];
+      assert.equal(last.url, '/o/chat/completions');
+      assert.equal(last.auth, 'Bearer sk-proj-good-key-1234567890');
+      assert.ok(last.body.max_completion_tokens > 0 && last.body.max_tokens === undefined);
+
+      // Google-дың жаңа AQ.… кілті: Bearer өтпесе, x-goog-api-key қолданылады
+      await owner.post('/admin/ai/key', { provider: 'google', key: 'AQ.Ab8-test_key-1234567890' }, '/admin/ai');
+      const cg = ai.compatConfig();
+      assert.deepEqual(cg.models, ['gemini-flash-latest', 'gemini-flash-lite-latest']);
+      assert.deepEqual(cg.auth, { 'x-goog-api-key': 'AQ.Ab8-test_key-1234567890' });
+
+      // Кілтті өшіру
+      await owner.post('/admin/ai/key/delete', {}, '/admin/ai');
+      assert.equal(ai.aiProvider(), null);
+    } finally {
+      delete process.env.AI_OPENAI_BASE; delete process.env.AI_GOOGLE_BASE;
+      ai.setStoredAi({});
+      fake.close();
+    }
+  });
+
   test('әкімші бағыт, сурет және жаңа сұрақ түрлерімен тапсырма қосады', async () => {
     const form = await owner.get('/admin/questions?exam=bbzhm&domain=math');
     assert.equal(form.status, 200);

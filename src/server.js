@@ -12,6 +12,7 @@ import { page } from './lib/layout.js';
 import { parseCookies } from './lib/util.js';
 import { clientDict, collected, LANGS, pickLang, startCollect } from './lib/i18n.js';
 import { bootstrap } from './seed.js';
+import { loadStoredAi } from './lib/ai.js';
 import { router as adminRouter } from './features/admin.js';
 import { router as assignRouter } from './features/assign.js';
 import { router as authRouter } from './features/auth.js';
@@ -192,6 +193,7 @@ export async function start() {
   await waitForDatabase();
   await migrate();
   await bootstrap();
+  await loadStoredAi();
   const app = createApp();
   const server = app.listen(config.port, () => {
     console.log(`Платформа іске қосылды: http://localhost:${config.port}`);

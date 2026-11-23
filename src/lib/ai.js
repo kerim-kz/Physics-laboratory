@@ -27,30 +27,103 @@ export class AiError extends Error {
 let runner = null;
 export function setAiRunner(fn) { runner = fn; }
 
-// Тегін / басқа провайдер: OpenAI-үйлесімді кез келген API (FreeLLMAPI, Google AI Studio, Groq, OpenRouter т.б.).
+// Кілт екі жерде болуы мүмкін: сервердің орта айнымалыларында (.env / Render Environment) немесе
+// сайттың өзінде (Әкімші → ЖИ, settings кестесі). Орта айнымалылары берілсе, солар басым.
+let stored = { provider: '', key: '', header: '', models: '' };
+export function setStoredAi(s = {}) {
+  stored = { provider: s.ai_provider || '', key: s.ai_key || '', header: s.ai_key_header || '', models: s.ai_models || '' };
+  client = null;
+}
+export async function loadStoredAi() { setStoredAi(await getSettings()); }
+// Әкімші бетіне: қай провайдер және кілттің соңғы 4 таңбасы ғана (кілттің өзі ешқашан көрсетілмейді).
+export const storedAi = () => ({ provider: stored.key ? stored.provider : '', tail: stored.key ? stored.key.slice(-4) : '' });
+export const envAi = () => !!(String(process.env.AI_BASE_URL || '').trim() && String(process.env.AI_API_KEY || '').trim()) || !!process.env.ANTHROPIC_API_KEY;
+const BASES = {
+  google: () => process.env.AI_GOOGLE_BASE || 'https://generativelanguage.googleapis.com/v1beta/openai',
+  openai: () => process.env.AI_OPENAI_BASE || 'https://api.openai.com/v1',
+  anthropic: () => process.env.AI_ANTHROPIC_BASE || 'https://api.anthropic.com',
+};
+export const PROVIDER_NAME = { google: 'Google Gemini', openai: 'OpenAI ChatGPT', anthropic: 'Anthropic Claude' };
+
+function makeCompat(baseRaw, keyRaw, modelsRaw, hdrRaw, provider = '') {
+  const base = String(baseRaw || '').trim().replace(/\/+$/, '').replace(/\/chat\/completions$/, '');
+  const key = String(keyRaw || '').trim();
+  if (!base || !key) return null;
+  // Модельдер үтір арқылы: біріншісі бос болмаса, келесісі қолданылады.
+  const models = String(modelsRaw || '').split(',').map((m) => m.trim().replace(/^models\//, '')).filter(Boolean);
+  if (!models.length) models.push('auto');
+  // Кілт қай тақырыпта жіберіледі: әдетте Authorization: Bearer; Google-дың жаңа AQ.… кілттеріне x-goog-api-key.
+  const hdr = String(hdrRaw || '').trim().toLowerCase();
+  const auth = /^[a-z0-9-]+$/.test(hdr) && hdr !== 'authorization' ? { [hdr]: key } : { authorization: `Bearer ${key}` };
+  return { provider, base, key, auth, models, model: models[0], host: (() => { try { return new URL(base).host; } catch { return base; } })() };
+}
+
+// Тегін / басқа провайдер: OpenAI-үйлесімді кез келген API (Google AI Studio, OpenAI, FreeLLMAPI, Groq, OpenRouter т.б.).
 // AI_BASE_URL (мысалы, https://…/v1), AI_API_KEY және AI_MODEL берілсе, Anthropic-тің орнына соны қолданамыз.
 export function compatConfig() {
-  const base = String(process.env.AI_BASE_URL || '').trim().replace(/\/+$/, '').replace(/\/chat\/completions$/, '');
-  const key = String(process.env.AI_API_KEY || '').trim();
-  if (!base || !key) return null;
-  // AI_MODEL-ге үтір арқылы бірнеше модель жазуға болады: біріншісі бос болмаса, келесісі қолданылады.
-  const models = String(process.env.AI_MODEL || '').split(',').map((m) => m.trim().replace(/^models\//, '')).filter(Boolean);
-  if (!models.length) models.push('auto');
-  // Кілт қай тақырыпта жіберіледі: әдетте Authorization: Bearer; Google-дың жаңа AQ.… кілттеріне AI_KEY_HEADER=x-goog-api-key.
-  const hdr = String(process.env.AI_KEY_HEADER || '').trim().toLowerCase();
-  const auth = /^[a-z0-9-]+$/.test(hdr) && hdr !== 'authorization' ? { [hdr]: key } : { authorization: `Bearer ${key}` };
-  return { base, key, auth, models, model: models[0], host: (() => { try { return new URL(base).host; } catch { return base; } })() };
+  if (envAi()) return makeCompat(process.env.AI_BASE_URL, process.env.AI_API_KEY, process.env.AI_MODEL, process.env.AI_KEY_HEADER);
+  if (!BASES[stored.provider] || stored.provider === 'anthropic') return null;
+  return makeCompat(BASES[stored.provider](), stored.key, stored.models, stored.header, stored.provider);
 }
 // OpenAI (ChatGPT) API: ақылы, шығыны platform.openai.com-да есептеледі.
-export const isOpenAI = (c = compatConfig()) => !!c && /(^|\.)openai\.com$/i.test(c.host);
+export const isOpenAI = (c = compatConfig()) => !!c && (c.provider === 'openai' || /(^|\.)openai\.com$/i.test(c.host));
 // OpenAI-дің жаңа (ойлайтын) модельдері max_tokens орнына max_completion_tokens қабылдайды.
 const usesCompletionTokens = (c, model) => isOpenAI(c) || /^(gpt-5|o\d)/i.test(model);
+const anthropicKey = () => (envAi() ? process.env.ANTHROPIC_API_KEY : stored.provider === 'anthropic' ? stored.key : '') || '';
 // Қай провайдер қосулы: 'compat' (тегін / OpenAI-үйлесімді), 'anthropic' немесе null.
-export const aiProvider = () => (compatConfig() ? 'compat' : process.env.ANTHROPIC_API_KEY ? 'anthropic' : null);
+export const aiProvider = () => (compatConfig() ? 'compat' : anthropicKey() ? 'anthropic' : null);
 export const aiConfigured = () => !!runner || !!aiProvider();
 
 let client = null;
-const getClient = () => (client ||= new Anthropic({ maxRetries: 2, timeout: 5 * 60_000 }));
+const getClient = () => (client ||= new Anthropic({ apiKey: anthropicKey(), maxRetries: 2, timeout: 5 * 60_000 }));
+
+// Әкімші сайтта енгізген кілтті провайдерде тексеріп, қолайлы модельді таңдайды. Қате болса — AiError.
+export async function verifyAiKey(provider, keyRaw) {
+  const key = String(keyRaw || '').replace(/\s+/g, '');
+  if (!PROVIDER_NAME[provider]) throw new AiError(400, 'Провайдерді таңдаңыз.');
+  if (!/^[A-Za-z0-9._-]{20,300}$/.test(key)) throw new AiError(400, 'Кілт дұрыс емес сияқты: оны қайта көшіріп, бос орынсыз қойыңыз.');
+  const get = async (url, headers) => {
+    try {
+      const r = await fetch(url, { headers, signal: AbortSignal.timeout(30_000) });
+      return { status: r.status, body: await r.text().catch(() => '') };
+    } catch { return { status: 0, body: '' }; }
+  };
+  const ids = (body) => { try { return (JSON.parse(body).data || []).map((m) => String(m.id || '').replace(/^models\//, '')).filter(Boolean); } catch { return []; } };
+  const byVersion = (a, b) => b.localeCompare(a, 'en', { numeric: true });
+  const fail = (r, name) => {
+    if (r.status === 0) return new AiError(502, `${name} сервисіне қосылу мүмкін болмады. Сәлден соң қайталаңыз.`);
+    if (/location is not supported|unsupported_country/i.test(r.body)) return new AiError(400, `${name} бұл сервердің елінен API-ге рұқсат бермейді. Басқа провайдерді таңдаңыз.`);
+    return new AiError(400, `${name} кілтті қабылдамады (код ${r.status}). Кілтті қайта көшіріп көріңіз.`);
+  };
+  if (provider === 'anthropic') {
+    if (!key.startsWith('sk-ant-')) throw new AiError(400, 'Anthropic кілті sk-ant- деп басталуы керек.');
+    const r = await get(`${BASES.anthropic()}/v1/models`, { 'x-api-key': key, 'anthropic-version': '2023-06-01' });
+    if (r.status !== 200) throw fail(r, 'Anthropic');
+    return { key, header: '', models: '' };
+  }
+  if (provider === 'openai') {
+    if (!key.startsWith('sk-')) throw new AiError(400, 'OpenAI кілті sk- деп басталуы керек.');
+    const r = await get(`${BASES.openai()}/models`, { authorization: `Bearer ${key}` });
+    if (r.status !== 200) throw fail(r, 'OpenAI');
+    const all = ids(r.body);
+    const main = all.filter((m) => /^gpt-[0-9.]+-mini$/.test(m)).sort(byVersion)[0]
+      || all.filter((m) => /^gpt-[0-9.]+o-mini$/.test(m)).sort(byVersion)[0] || 'gpt-4o-mini';
+    return { key, header: '', models: main };
+  }
+  // Google: ескі AIza… кілттері Bearer арқылы, жаңа AQ.… кілттері x-goog-api-key арқылы өтеді.
+  let header = '';
+  let r = await get(`${BASES.google()}/models`, { authorization: `Bearer ${key}` });
+  if (r.status !== 200 && r.status !== 0) {
+    const r2 = await get(`${BASES.google()}/models`, { 'x-goog-api-key': key });
+    if (r2.status === 200) { r = r2; header = 'x-goog-api-key'; }
+  }
+  if (r.status !== 200) throw fail(r, 'Google');
+  const flash = ids(r.body).filter((m) => /flash/i.test(m) && !/image|tts|audio|live|embed|vision|thinking|exp|preview/i.test(m)).sort(byVersion);
+  const main = flash.find((m) => !/lite/i.test(m)) || flash[0];
+  const spare = flash.find((m) => /lite/i.test(m) && m !== main);
+  if (!main) throw new AiError(400, 'Бұл кілтке тегін Flash моделі қолжетімсіз. AI Studio-да басқа жоба кілтін жасап көріңіз.');
+  return { key, header, models: spare ? `${main},${spare}` : main };
+}
 
 export async function aiSettings() {
   const s = await getSettings();
