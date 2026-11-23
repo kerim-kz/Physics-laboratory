@@ -6,11 +6,12 @@ import { GRADES, ROLE_NAME } from '../data/catalog.js';
 import { many, one, q } from '../lib/db.js';
 import { html } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { csrfField, emptyBox, initials, page } from '../lib/layout.js';
+import { csrfField, emptyBox, page } from '../lib/layout.js';
 import {
   asyncH, cleanText, fmtDate, fmtDateTime, fmtPrice, HttpError, newJoinCode, newTempPassword, setFlash, toCsv, toInt,
 } from '../lib/util.js';
 import { materialCard } from './materials.js';
+import { barChart, dashHead, donut, examShares, kpi, monthDelta, monthlyAverages } from '../lib/dash.js';
 import { assignedBlock, assignedFor, attemptsTable } from './exams.js';
 
 export const router = express.Router();
@@ -29,15 +30,25 @@ const gameName = (k) => (GAMES.find((g) => g.k === k) || { name: k }).name;
 function profileCard(user, extra = '') {
   const where = [user.school_name, user.role === 'student' && user.class_grade ? `${user.class_grade}${user.class_letter} сынып` : '']
     .filter(Boolean).join(' · ');
-  return html`
-    <section class="pcard">
-      <span class="ava">${initials(user.full_name)}</span>
-      <div class="grow">
-        <h1>${user.full_name}</h1>
-        <div class="sub">${ROLE_NAME[user.role]}${where ? ` · ${where}` : ''} · логин: <span class="mono">${user.login}</span></div>
-      </div>
-      <div class="vhead-act">${extra}<a class="btn ghost sm" href="/password">${icon('key', 15)} Құпиясөз</a></div>
-    </section>`;
+  return dashHead(user, html`<span>${ROLE_NAME[user.role]}</span>${where ? html` · <span>${where}</span>` : ''} · логин: <span class="mono" translate="no">${user.login}</span>`,
+    html`<a class="btn ghost" href="/password">${icon('key', 15)} Құпиясөз</a>${extra}`);
+}
+
+// Оқушының немесе мұғалім сыныптарының тест нәтижелері: бағанды диаграмма + бағыттар.
+async function chartsRow(joinWhere, param, title, sub, emptyText) {
+  const months = await monthlyAverages(joinWhere, param);
+  const shares = await examShares(joinWhere, param);
+  return { months, html: html`
+    <div class="dash-grid">
+      <section class="dcard">
+        <div class="dcard-h"><div><h2>${title}</h2><p>${sub}</p></div><a class="more" href="/results">Толығырақ</a></div>
+        ${barChart(months, emptyText)}
+      </section>
+      <section class="dcard">
+        <div class="dcard-h"><div><h2>Бағыттар бойынша</h2><p>Тапсырылған тесттер үлесі</p></div></div>
+        ${donut(shares)}
+      </section>
+    </div>` };
 }
 
 async function ordersBlock(userId) {
@@ -72,11 +83,25 @@ async function studentCabinet(req, res) {
   const mats = u.class_grade ? await many(
     `SELECT * FROM materials WHERE status = 'published' AND (grade = $1 OR grade = 0) ORDER BY created_at DESC LIMIT 6`, [u.class_grade]) : [];
 
+  const stat = await one(
+    `SELECT count(*)::int AS n, round(avg(score * 100.0 / nullif(max_score, 0)))::int AS avg FROM exam_attempts WHERE user_id = $1`, [u.id]);
+  const plays = best.reduce((n, b) => n + Number(b.plays), 0);
+  const todo = assigned.filter((a) => !a.attempt_id).length;
+  const charts = await chartsRow('WHERE t.user_id = $1', u.id, 'Менің нәтижелерім', 'Соңғы 6 айдағы тесттердің орташа пайызы',
+    'Тест тапсырғаннан кейін мұнда айлар бойынша нәтижең көрінеді.');
+
   await page(req, res, {
     title: 'Кабинет', active: 'cabinet',
     body: html`
       <div class="view">
-        ${profileCard(u)}
+        ${profileCard(u, html`<a class="btn" href="/exams">${icon('exam', 15)} Тест тапсыру</a>`)}
+        <div class="kpis">
+          ${kpi({ value: stat.n, label: 'Тапсырылған тест', note: todo ? `${todo} тапсырма күтуде` : 'барлық тапсырма орындалған', ic: 'exam', href: '/results' })}
+          ${kpi({ value: stat.avg === null ? '—' : `${stat.avg}%`, label: 'Орташа нәтиже', note: 'барлық тест бойынша', ic: 'chart', tone: 'k4', delta: monthDelta(charts.months) })}
+          ${kpi({ value: labsDone.length, label: 'Зертханалық жұмыс', note: 'платформада орындалған', ic: 'lab', tone: 'k3', href: '/labs' })}
+          ${kpi({ value: plays, label: 'Ойын', note: 'формула ойындары', ic: 'game', tone: 'k2', href: '/games' })}
+        </div>
+        ${charts.html}
         ${!u.class_id ? html`
           <section class="panel">
             <h2>Сыныпқа қосылу</h2>
@@ -143,11 +168,25 @@ async function teacherCabinet(req, res) {
     `SELECT count(DISTINCT a.id)::int AS n, coalesce(sum(t.pending), 0)::int AS pending
        FROM exam_assignments a LEFT JOIN exam_attempts t ON t.assignment_id = a.id WHERE a.teacher_id = $1`, [u.id]);
 
+  const nStudents = classes.reduce((n, c) => n + Number(c.n), 0);
+  const charts = active ? await chartsRow(
+    'JOIN users s ON s.id = t.user_id JOIN classes c ON c.id = s.class_id WHERE c.teacher_id = $1', u.id,
+    'Оқушыларымның орташа нәтижесі', 'Сыныптарыңыздағы тесттердің соңғы 6 айдағы орташа пайызы',
+    'Оқушыларыңыз тест тапсыра бастағанда мұнда айлар бойынша орташа нәтиже көрінеді.') : null;
+
   await page(req, res, {
     title: 'Мұғалім кабинеті', active: 'cabinet',
     body: html`
       <div class="view">
-        ${profileCard(u, active ? html`<a class="btn sm" href="/materials/new">${icon('upload', 15)} Материал жүктеу</a>` : '')}
+        ${profileCard(u, active ? html`<a class="btn" href="/teacher/assignments">${icon('plus', 15)} Тапсырма беру</a>` : '')}
+        ${active ? html`
+          <div class="kpis">
+            ${kpi({ value: nStudents, label: 'Оқушылар', note: `${classes.length} сыныпта`, ic: 'user' })}
+            ${kpi({ value: asg.pending, label: 'Тексеруді күтуде', note: 'ашық жауаптар', ic: 'exam', tone: 'k2', href: '/teacher/assignments' })}
+            ${kpi({ value: asg.n, label: 'Берілген тапсырма', note: 'PISA, ББЖМ, ҰБТ тесттері', ic: 'check', tone: 'k3', href: '/teacher/assignments' })}
+            ${kpi({ value: labsCount.n, label: 'Зертхана журналы', note: 'тексерілген нәтиже коды', ic: 'lab', tone: 'k4', href: '/teacher/labs' })}
+          </div>
+          ${charts.html}` : ''}
         ${!active ? html`<div class="notice warn"><div><b>Аккаунтыңыз әкімшінің растауын күтуде.</b> Расталғаннан кейін сынып ашып, оқушыларды тіркеп, материал жүктей аласыз. Әзірге платформаның барлық ашық бөлімдері қолжетімді.</div></div>` : ''}
         ${active ? html`
           <section class="block">

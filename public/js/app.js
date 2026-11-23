@@ -105,3 +105,16 @@ document.querySelectorAll('[data-expand-all]').forEach(function (b) {
     document.querySelectorAll('details.langsw[open]').forEach(function (d) { if (!d.contains(e.target)) d.removeAttribute('open'); });
   });
 })();
+
+// «/» пернесі жоғарғы іздеу өрісіне апарады (мәтін енгізіп жатпаған кезде).
+(function () {
+  var q = document.getElementById('gq');
+  if (!q) return;
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target;
+    if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    e.preventDefault();
+    q.focus();
+  });
+})();

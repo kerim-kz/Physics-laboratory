@@ -1003,6 +1003,47 @@ describe('үш тіл: қазақша, орысша, ағылшынша', () => 
   });
 });
 
+describe('шыны дизайн: қаңқа, іздеу, кабинет тақтасы', () => {
+  test('бет қаңқасы: бүйір мәзір, жоғарғы іздеу, мазмұн панелі', async () => {
+    const r = await new Client().get('/sims');
+    assert.equal(r.status, 200);
+    assert.match(r.text, /class="shell"/);
+    assert.match(r.text, /<nav class="drawer" id="drawer"/);
+    assert.match(r.text, /<form class="gsearch" method="get" action="\/search"/);
+    assert.match(r.text, /<main id="main" class="sheet">/);
+    assert.match(r.text, /class="on" aria-current="page"[^>]*>.*Симуляциялар/s);
+  });
+
+  test('жалпы іздеу: симуляция, формула, ғалым; аудармасы бойынша да табады', async () => {
+    const { searchAll } = await import('../src/features/search.js');
+    const kk = searchAll('маятник');
+    assert.ok(kk.sims.length > 0 && kk.formulas.length > 0);
+    assert.equal(searchAll('   '), null);
+    assert.ok(searchAll('Ньютон').scientists.some((x) => /Ньютон/.test(x.title)));
+    assert.ok(searchAll('pendulum', 'en').sims.length > 0, 'ағылшынша атауы бойынша');
+    const c = new Client();
+    const r = await c.get('/search?q=' + encodeURIComponent('линза'));
+    assert.equal(r.status, 200);
+    assert.match(r.text, /class="sres" href="\/sims\//);
+    assert.match((await c.get('/search?q=zzzqqq')).text, /Ештеңе табылмады/);
+    assert.equal((await c.get('/search')).status, 200);
+  });
+
+  test('кабинет тақтасы: сәлемдесу уақытқа қарай, бос диаграмма', async () => {
+    const d = await import('../src/lib/dash.js');
+    assert.equal(d.greeting(3), 'Қайырлы түн');
+    assert.equal(d.greeting(9), 'Қайырлы таң');
+    assert.equal(d.greeting(14), 'Қайырлы күн');
+    assert.equal(d.greeting(20), 'Қайырлы кеш');
+    const empty = Array.from({ length: 6 }, (_, i) => ({ label: String(i), p: null, n: 0 }));
+    assert.match(d.barChart(empty, 'дерек жоқ').toString(), /bars-empty/);
+    assert.equal(d.monthDelta([...empty.slice(0, 4), { p: 60 }, { p: 70 }]), 10);
+    const pie = d.donut([{ name: 'PISA', n: 3 }, { name: 'ҰБТ', n: 1 }]).toString();
+    assert.match(pie, /conic-gradient/);
+    assert.match(pie, /PISA 75%/);
+  });
+});
+
 describe('платформа иесін жасау', () => {
   test('баптау қате болса, себебі кіру бетінде көрінеді; түзетілгенде иесі жасалады', async () => {
     const { config } = await import('../src/config.js');
