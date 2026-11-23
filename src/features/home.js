@@ -39,7 +39,6 @@ export function simTile(s, hidden = false) {
         ${HAS_THUMB.has(s.k)
           ? html`<img src="/img/sims/${s.k}.jpg" alt="" loading="lazy" decoding="async">`
           : html`<span class="tcard-ph" aria-hidden="true">${icon('sim', 34)}</span>`}
-        <span class="tchip">${s.g}-сынып</span>
       </div>
       <div class="tcard-b">
         <span class="tsec">${sec.name}</span>

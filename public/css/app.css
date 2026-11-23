@@ -963,3 +963,4 @@ a.kpi:hover{border-color:var(--accent)}
 .tcard-f{display:flex;justify-content:flex-end;padding:0 4px 2px;margin-top:auto}
 .gmore{display:flex;justify-content:center;margin-top:16px}
 @media (max-width:560px){ .tgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} .tcard{padding:8px;border-radius:16px} .tcard p{display:none} .tcard h3{font-size:14px} .tcard-f{display:none} }
+@media (max-width:640px){ .gtabs{display:flex;flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none} .gtabs::-webkit-scrollbar{display:none} .gtabs a{flex:none;padding:8px 13px} }
