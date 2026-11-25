@@ -989,3 +989,35 @@ a.og-card:hover{border-color:var(--accent)}
 .og-photo{max-width:100%;border-radius:10px;border:1px solid var(--line);display:block}
 .og-grade{margin-top:14px;padding-top:12px;border-top:1px solid var(--line-soft)}
 @media (max-width:900px){.og-review{grid-template-columns:1fr}}
+
+/* Олимпиаданың теориялық туры */
+.th-prob{display:flex;flex-direction:column;gap:12px}
+.th-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.th-h h2{margin:0;font-size:18px;flex:1;min-width:180px}
+.th-got{font-weight:600}
+.th-cond{max-width:100%;height:auto;border-radius:10px;background:#fff;border:1px solid var(--line);padding:6px}
+.th-answers{display:flex;flex-direction:column;gap:12px}
+.th-ans{padding:12px 14px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line-soft)}
+.th-ans.th-ok{border-color:color-mix(in srgb,var(--ok, #2e9e6a) 55%,transparent)}
+.th-ans.th-wrong,.th-ans.th-empty{border-color:color-mix(in srgb,var(--bad, #d9573b) 50%,transparent)}
+.th-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.th-label{min-width:70px;font-size:17px}
+.th-row input{flex:1;min-width:200px;font-family:var(--fm);font-size:15px}
+.th-unit{color:var(--muted);font-size:14px}
+.th-vars{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px;color:var(--muted)}
+.th-var{font-family:var(--fm);font-size:13px;padding:2px 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.th-var:hover{border-color:var(--accent)}
+.th-preview{min-height:1.4em;margin-top:6px;font-size:16px;overflow-x:auto}
+.th-preview.th-perr{color:var(--bad, #c0392b);font-size:13px}
+.th-res{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;font-size:14px}
+.th-msg{color:var(--muted)}
+.th-self{display:flex;flex-direction:column;gap:6px;padding:10px 14px;border-radius:12px;border:1px dashed var(--line)}
+.th-selfitem{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.th-selfitem input{margin-top:3px}
+.th-selfpts{white-space:nowrap;margin-left:auto}
+.th-mistake{margin:10px 0 0;font-size:14px}
+.th-note{display:flex;gap:8px;margin-top:10px;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,#f2a33a 14%,var(--surface));font-size:14px}
+.th-sol{display:flex;flex-direction:column;gap:8px}
+.th-sol img{max-width:100%;height:auto;background:#fff;border-radius:8px;border:1px solid var(--line)}
+.th-help ul{margin:6px 0 0;padding-left:1.2em;font-size:14px}
+.th-help code{font-size:13px}

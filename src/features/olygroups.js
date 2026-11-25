@@ -8,7 +8,7 @@ import multer from 'multer';
 import { config } from '../config.js';
 import { FAMILIES, GRADES, SECTION } from '../data/catalog.js';
 import { OLYMPIAD, OLYMPIAD_BY_KEY } from '../data/olympiad.js';
-import { OLYMPIAD_TEST, OLYMPIAD_TESTS, testMax } from '../data/olympiad-tests.js';
+import { ROUND, ROUNDS, roundHref, roundMax, roundSize, roundTitle } from '../data/olympiad-rounds.js';
 import { csrfAfterUpload, isActiveTeacher, isAdmin, requireActiveTeacher, requireUser } from '../lib/auth.js';
 import { many, one, q } from '../lib/db.js';
 import { html } from '../lib/html.js';
@@ -53,7 +53,7 @@ function problemTitle(k) {
   const o = OLYMPIAD_BY_KEY[k];
   return o ? `${o.g}-сынып · ${o.t}` : k;
 }
-const testTitle = (k) => { const t = OLYMPIAD_TEST[k]; return t ? `${t.g}-сынып · ${t.stage} ${t.year}` : k; };
+const testTitle = (k) => (ROUND[k] ? roundTitle(ROUND[k]) : k);
 
 const crumbs = (...items) => html`<div class="crumbs">${items.map(([href, label], i) => html`${i ? html`<span>/</span>` : ''}${href ? html`<a href="${href}">${label}</a>` : html`<span>${label}</span>`}`)}</div>`;
 
@@ -213,7 +213,7 @@ router.get('/olympiad/groups/:id/tasks/new', requireActiveTeacher, asyncH(async 
           </fieldset>` : ''; })}
         <h2>Ресми онлайн тесттер</h2>
         <fieldset class="checks"><legend>Автоматты тексеріледі</legend>
-          ${OLYMPIAD_TESTS.map((t) => html`<label><input type="checkbox" name="tests" value="${t.k}"> ${t.g}-сынып · ${t.stage} ${t.year} <span class="muted small">· ${t.questions.length} тапсырма, ${testMax(t)} ұпай</span></label>`)}
+          ${ROUNDS.map((t) => html`<label><input type="checkbox" name="tests" value="${t.k}"> ${roundTitle(t)} <span class="muted small">· ${roundSize(t)}, ${roundMax(t)} ұпай</span></label>`)}
         </fieldset>
         <div class="formfoot"><a class="linkbtn" href="/olympiad/groups/${g.id}">Бас тарту</a><button class="btn" type="submit">Тапсырманы беру</button></div>
       </form>
@@ -225,7 +225,7 @@ router.post('/olympiad/groups/:id/tasks', requireActiveTeacher, asyncH(async (re
   const g = await ownGroup(req);
   const title = cleanText(req.body.title, 120);
   const problems = [...new Set(asArray(req.body.problems))].filter((k) => OLYMPIAD_BY_KEY[k]);
-  const tests = [...new Set(asArray(req.body.tests))].filter((k) => OLYMPIAD_TEST[k]);
+  const tests = [...new Set(asArray(req.body.tests))].filter((k) => ROUND[k]);
   const due = /^\d{4}-\d{2}-\d{2}$/.test(req.body.due || '') ? `${req.body.due}T23:59:00+05:00` : null;
   if (title.length < 2 || (!problems.length && !tests.length)) {
     setFlash(res, 'error', 'Атауын жазып, кемінде бір есеп немесе тест таңдаңыз.');
@@ -251,7 +251,7 @@ router.get('/olympiad/tasks/:tid/results', requireActiveTeacher, asyncH(async (r
   const solOf = (uid, k) => sols.find((s) => s.user_id === uid && s.problem_key === k);
   const testOf = (uid, k) => best.find((b) => b.user_id === uid && b.test_key === k);
   const total = (uid) => t.problems.reduce((s, k) => s + (solOf(uid, k)?.score || 0), 0) + t.tests.reduce((s, k) => s + (testOf(uid, k)?.score || 0), 0);
-  const maxTotal = t.problems.length * PROBLEM_MAX + t.tests.reduce((s, k) => s + (OLYMPIAD_TEST[k] ? testMax(OLYMPIAD_TEST[k]) : 0), 0);
+  const maxTotal = t.problems.length * PROBLEM_MAX + t.tests.reduce((s, k) => s + (ROUND[k] ? roundMax(ROUND[k]) : 0), 0);
   await page(req, res, {
     title: t.title, active: 'olympiad',
     body: html`<div class="view">
@@ -366,10 +366,10 @@ router.get('/olympiad/tasks/:tid', requireUser, asyncH(async (req, res) => {
             </form>`}
         </article>`; })}
       ${t.tests.length ? html`<section class="block"><div class="block-h"><h2>Ресми онлайн тесттер</h2></div>
-        <div class="og-grid">${t.tests.map((k) => { const tt = OLYMPIAD_TEST[k]; if (!tt) return ''; const b = best.find((x) => x.test_key === k); return html`
-          <div class="panel og-card"><h3>${tt.g}-сынып · ${tt.stage}</h3><p class="muted small">${tt.year} · ${tt.questions.length} тапсырма, ${testMax(tt)} ұпай</p>
+        <div class="og-grid">${t.tests.map((k) => { const tt = ROUND[k]; if (!tt) return ''; const b = best.find((x) => x.test_key === k); return html`
+          <div class="panel og-card"><h3>${roundTitle(tt)}</h3><p class="muted small">${roundSize(tt)}, ${roundMax(tt)} ұпай</p>
             <div class="og-stats">${b ? html`<span class="pill ok">ең жақсы нәтиже: ${b.score} / ${b.max_score}</span>` : html`<span class="muted">әлі тапсырылмады</span>`}</div>
-            <a class="btn sm" href="/olympiad/test/${k}">${icon('play', 14)} ${b ? 'Қайта тапсыру' : 'Тестті бастау'}</a></div>`; })}</div></section>` : ''}
+            <a class="btn sm" href="${roundHref(tt)}">${icon('play', 14)} ${b ? 'Қайта тапсыру' : 'Тестті бастау'}</a></div>`; })}</div></section>` : ''}
     </div>`,
   });
 }));
