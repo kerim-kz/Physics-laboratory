@@ -1442,3 +1442,22 @@ OpenAI кілті sk- деп басталуы керек.	Ключ OpenAI дол
 {0} бұл сервердің елінен API-ге рұқсат бермейді. Басқа провайдерді таңдаңыз.	{0} не даёт доступ к API из страны этого сервера. Выберите другого провайдера.	{0} does not allow API access from this server's country. Choose another provider.
 {0} кілтті қабылдамады (код {1}). Кілтті қайта көшіріп көріңіз.	{0} не принял ключ (код {1}). Попробуйте скопировать ключ заново.	{0} rejected the key (code {1}). Try copying the key again.
 Бұл кілтке тегін Flash моделі қолжетімсіз. AI Studio-да басқа жоба кілтін жасап көріңіз.	Для этого ключа бесплатная модель Flash недоступна. Создайте ключ другого проекта в AI Studio.	No free Flash model is available for this key. Try creating a key for another project in AI Studio.
+Бөлім:	Раздел:	Unit:
+Педагогтің тегі, аты, әкесінің аты (болған жағдайда)	Фамилия, имя, отчество (при наличии) педагога	Teacher’s full name
+Күні:	Дата:	Date:
+Сынып:	Класс:	Grade:
+Қатысушылар саны:	Количество присутствующих:	Present:
+Қатыспағандар саны:	Количество отсутствующих:	Absent:
+Сабақтың тақырыбы	Тема урока	Lesson topic
+Оқу бағдарламасына сәйкес оқыту мақсаттары	Цели обучения в соответствии с учебной программой	Learning objectives (curriculum)
+Сабақтың мақсаты	Цель урока	Lesson aim
+Сабақтың барысы	Ход урока	Lesson procedure
+Сабақтың кезеңі/ уақыт	Этап урока/ время	Lesson stage/ time
+Педагогтің әрекеті	Действия педагога	Teacher’s actions
+Оқушының әрекеті	Действия ученика	Student’s actions
+Бағалау	Оценивание	Assessment
+Ресурстар	Ресурсы	Resources
+Педагогтің аты-жөні	ФИО педагога	Teacher’s name
+Мысалы: 8 «А»	Например: 8 «А»	For example: 8A
+Кестедегі кез келген мәтінді басып, түзете аласыз. Word батырмасы түзетілген нұсқаны жүктейді.	Любой текст в таблице можно исправить, нажав на него. Кнопка Word скачает исправленный вариант.	Click any text in the table to edit it. The Word button downloads the edited version.
+ЖИ ҚМЖ-ны жасап жатыр…	ИИ составляет КСП…	AI is writing the lesson plan…

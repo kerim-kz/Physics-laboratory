@@ -58,3 +58,18 @@
   .ai-genform,.ai-outbar,.drawer,.vhead,.crumbs,.ai-note,.view > p.muted{display:none!important}
   .ai-out{border:0;box-shadow:none;padding:0}
 }
+
+/* ҚМЖ: ресми үлгідегі кесте */
+.kmj table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.45}
+.kmj table{table-layout:fixed}
+.kmj td,.kmj th{border:1px solid var(--line);padding:9px 11px;vertical-align:top;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.kmj-head td.l{text-align:center;color:var(--ink)}
+.kmj-head tr.alt td{background:var(--surface-2)}
+.kmj-flow th{text-align:center;font-weight:500;background:var(--surface);text-transform:none;letter-spacing:normal;font-size:14px;color:var(--ink);font-family:inherit}
+.kmj-flow tbody tr:nth-child(even) td{background:var(--surface-2)}
+.kmj-flow{min-width:760px}
+.kmj-cap{margin:20px 0 10px 12px;font-size:16px}
+.kmj-tip{margin:0 0 10px}
+.ai-md[contenteditable=true]{outline:none}
+.ai-md[contenteditable=true] td:focus-within,.ai-md[contenteditable=true] td:hover{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+@media print{.kmj-tip{display:none}.kmj td,.kmj th{border-color:#444}}
