@@ -964,3 +964,28 @@ a.kpi:hover{border-color:var(--accent)}
 .gmore{display:flex;justify-content:center;margin-top:16px}
 @media (max-width:560px){ .tgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px} .tcard{padding:8px;border-radius:16px} .tcard p{display:none} .tcard h3{font-size:14px} .tcard-f{display:none} }
 @media (max-width:640px){ .gtabs{display:flex;flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none} .gtabs::-webkit-scrollbar{display:none} .gtabs a{flex:none;padding:8px 13px} }
+
+/* Олимпиадаға дайындық топтары */
+.og-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.og-card{display:flex;flex-direction:column;gap:6px;color:inherit;text-decoration:none}
+a.og-card:hover{border-color:var(--accent)}
+.og-card h3{margin:0;font-size:17px}
+.og-stats{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+.og-stats span{display:inline-flex;align-items:center;gap:5px}
+.og-new,.og-join{max-width:720px}
+.og-join-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.og-join-row .fl{flex:1;min-width:200px}
+.og-entry{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.og-entry-st{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.og-entry-st .og-join{width:100%}
+.og-del{margin-top:8px}
+.og-probs label{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.og-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:-4px 0 12px}
+.og-matrix td.num a{text-decoration:none}
+.og-upload{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.og-sent{margin:10px 0 0;color:var(--muted);font-size:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.og-graded{margin-top:12px;padding:10px 14px;border-radius:10px;background:var(--surface-2);display:flex;flex-direction:column;gap:4px}
+.og-review{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+.og-photo{max-width:100%;border-radius:10px;border:1px solid var(--line);display:block}
+.og-grade{margin-top:14px;padding-top:12px;border-top:1px solid var(--line-soft)}
+@media (max-width:900px){.og-review{grid-template-columns:1fr}}
