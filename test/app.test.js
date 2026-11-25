@@ -605,6 +605,15 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal(rgn.last.done, true);
     assert.match(seen[seen.length - 1].messages[0].content, /PISA[\s\S]*9-сынып[\s\S]*§3\. Үдеу[\s\S]*Тәжірибе қосылсын/);
     assert.equal((await nd(teacher, '/api/ai/generate', { type: 'kmj', topic: '' })).status, 400);
+    // ҚМЖ: ресми үлгіге арналған JSON сұралады, оқулықтан таңдалған тақырыптың бөлімі (тарауы) беріледі; бетте педагог өрістері бар
+    assert.match(gp.text, /data-kmj-only/);
+    assert.match(gp.text, /name="teacher"[^>]*value="[^"]+"/);
+    const rk = await nd(teacher, '/api/ai/generate', { type: 'kmj', grade: '8', topic: '§10. Қатты денелердің балқуы', minutes: '45', level: 'mid' });
+    assert.equal(rk.last.done, true);
+    const km = seen[seen.length - 1];
+    assert.match(km.system, /тек JSON/);
+    assert.doesNotMatch(km.system, /Пішімі — Markdown/);
+    assert.match(km.messages[0].content, /"stages"[\s\S]*Бөлім \(оқулық тарауы\): II\. Заттың агрегаттық күйлерінің өзгеруі/);
 
     // 8) Модель бас тартса — түсінікті хабар; есеп әкімші бетінде
     ai.setAiRunner(async (p) => ({ text: '', stop: 'refusal', usage: {}, model: p.model }));

@@ -183,13 +183,77 @@
   }
 
   // ---------- 4. Генератор ----------
+
+  // ---------- ҚМЖ: ресми үлгідегі кесте ----------
+  var TR = function (x) { return window.tr ? window.tr(x) : x; };
+  function parseJsonLoose(text) {
+    var t = String(text || '').replace(/```(?:json)?/gi, '');
+    try { return JSON.parse(t); } catch (e) { /* төменде */ }
+    var a = t.indexOf('{'), b = t.lastIndexOf('}');
+    if (a < 0 || b <= a) throw new Error('no json');
+    return JSON.parse(t.slice(a, b + 1));
+  }
+  // Ұяшық мәтіні: жаңа жолдар, «• » тізімдер, формулалар
+  function cell(v) {
+    if (Array.isArray(v)) v = v.join('\n');
+    return String(v == null ? '' : v).split(/\n/).map(function (l) { return inline(l.trim()); }).filter(function (l) { return l; }).join('<br>');
+  }
+  function fmtDate(d) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? m[3] + '.' + m[2] + '.' + m[1] : (d || ''); }
+  function kmjHtml(p, q) {
+    var klass = (q.klass || '').trim() || TR(q.grade + '-сынып');
+    var row = function (label, value, alt) { return '<tr' + (alt ? ' class="alt"' : '') + '><td class="l">' + esc(TR(label)) + '</td><td colspan="2">' + value + '</td></tr>'; };
+    var objectives = Array.isArray(p.objectives) ? p.objectives.map(function (o) { return inline(String(o)); }).join('<br>') : cell(p.objectives);
+    var head = '<table class="kmj-head"><colgroup><col style="width:50%"><col style="width:25%"><col style="width:25%"></colgroup><tbody>'
+      + row('Бөлім:', cell(p.section))
+      + row('Педагогтің тегі, аты, әкесінің аты (болған жағдайда)', esc(q.teacher || ''), true)
+      + row('Күні:', esc(fmtDate(q.date)))
+      + '<tr class="alt"><td class="l">' + esc(TR('Сынып:')) + ' ' + esc(klass) + '</td><td class="l">' + esc(TR('Қатысушылар саны:')) + ' </td><td class="l">' + esc(TR('Қатыспағандар саны:')) + ' </td></tr>'
+      + row('Сабақтың тақырыбы', cell(p.topic || q.topic))
+      + row('Оқу бағдарламасына сәйкес оқыту мақсаттары', objectives, true)
+      + row('Сабақтың мақсаты', cell(p.lessonGoal))
+      + '</tbody></table>';
+    var cols = ['Сабақтың кезеңі/ уақыт', 'Педагогтің әрекеті', 'Оқушының әрекеті', 'Бағалау', 'Ресурстар'];
+    var flow = '<table class="kmj-flow"><colgroup><col style="width:17%"><col style="width:26%"><col style="width:26%"><col style="width:15%"><col style="width:16%"></colgroup><thead><tr>'
+      + cols.map(function (c) { return '<th>' + esc(TR(c)) + '</th>'; }).join('') + '</tr></thead><tbody>'
+      + p.stages.map(function (st) {
+        return '<tr><td><b>' + cell(st.stage) + '</b>' + (st.time ? '<br>' + cell(st.time) : '') + '</td><td>' + cell(st.teacher) + '</td><td>' + cell(st.student) + '</td><td>' + cell(st.assessment) + '</td><td>' + cell(st.resources) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+    return '<div class="kmj">' + head + '<p class="kmj-cap">' + esc(TR('Сабақтың барысы')) + '</p><div class="tblwrap">' + flow + '</div></div>';
+  }
+  // Ағын кезінде JSON-ды көрсетпей, тек жылжуын көрсетеміз
+  function progress(el) {
+    return function (text) {
+      el.innerHTML = '<p class="muted">' + esc(TR('ЖИ ҚМЖ-ны жасап жатыр…')) + ' ' + Math.round((text || '').length / 100) / 10 + ' k</p>';
+    };
+  }
   var gf = $('aiGenForm');
   if (gf) {
     var topics = {}; try { topics = JSON.parse($('aiTopicData').textContent); } catch (e) { /* */ }
     var dl = $('aiTopics'), gsel = $('aiGenGrade');
     var fill = function () { dl.innerHTML = (topics[gsel.value] || []).map(function (t) { return '<option value="' + esc(t) + '">'; }).join(''); };
     gsel.addEventListener('change', fill); fill();
-    var out = $('aiOut'), body = $('aiOutBody'), title = $('aiOutTitle'), last = '';
+    var out = $('aiOut'), body = $('aiOutBody'), title = $('aiOutTitle'), last = '', kmj = false;
+    // ҚМЖ таңдалса ғана: педагогтің аты-жөні, күні, сынып өрістері
+    var kmjOnly = gf.querySelector('[data-kmj-only]');
+    var syncType = function () { if (kmjOnly) kmjOnly.hidden = gf.type.value !== 'kmj'; };
+    gf.type.addEventListener('change', syncType); syncType();
+    // Word / көшіру үшін — мұғалім түзеткен нұсқа (кеңес жолынсыз)
+    var docClone = function () {
+      var c = body.cloneNode(true);
+      c.querySelectorAll('.kmj-tip, .ai-err').forEach(function (x) { x.remove(); });
+      c.removeAttribute('contenteditable');
+      // Word-та формулалар LaTeX мәтіні түрінде қалады (KaTeX белгілері Word-та бұзылады)
+      c.querySelectorAll('.katex').forEach(function (k) { var a = k.querySelector('annotation'); k.replaceWith(document.createTextNode(a ? a.textContent : k.textContent)); });
+      // Word / LibreOffice кесте сызықтарын тек ұяшықтың өз стилінен оқиды
+      c.querySelectorAll('.kmj table').forEach(function (t) { t.setAttribute('border', '1'); t.setAttribute('cellspacing', '0'); t.setAttribute('cellpadding', '6'); t.setAttribute('style', 'border-collapse:collapse;width:100%'); });
+      c.querySelectorAll('.kmj td, .kmj th').forEach(function (td) {
+        var center = td.classList.contains('l') || td.tagName === 'TH';
+        td.setAttribute('style', 'border:1px solid #000;padding:5pt;vertical-align:top;font-weight:normal;text-align:' + (center ? 'center' : 'left'));
+      });
+      return c;
+    };
+    var docHtml = function () { return docClone().innerHTML; };
+    var docText = function () { return docClone().innerText; };
     gf.addEventListener('submit', async function (e) {
       e.preventDefault();
       if (gf.dataset.ready !== '1') return;
@@ -199,24 +263,41 @@
       out.hidden = false; title.textContent = gf.type.options[gf.type.selectedIndex].text + ' · ' + q.grade + '-сынып · ' + q.topic;
       body.innerHTML = '<p class="muted">ЖИ материалды жасап жатыр, бұл 1–2 минут алуы мүмкін…</p>';
       out.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      var r = await stream('/api/ai/generate', gf.dataset.csrf, q, painter(body));
-      if (r.error) { if (!r.text) body.innerHTML = ''; note(body, '', r.error); }
+      kmj = q.type === 'kmj';
+      body.removeAttribute('contenteditable');
+      var onText = kmj ? progress(body) : painter(body);
+      var r = await stream('/api/ai/generate', gf.dataset.csrf, q, onText);
+      if (r.error) { if (!r.text || kmj) body.innerHTML = ''; note(body, '', r.error); }
+      else if (kmj) {
+        var plan = null; try { plan = parseJsonLoose(r.text); } catch (err) { /* төменде */ }
+        if (plan && Array.isArray(plan.stages)) {
+          last = r.text;
+          body.innerHTML = kmjHtml(plan, q);
+          body.setAttribute('contenteditable', 'true'); // мұғалім кез келген ұяшықты түзете алады
+          var tip = document.createElement('p'); tip.className = 'muted small kmj-tip'; tip.setAttribute('contenteditable', 'false');
+          tip.textContent = TR('Кестедегі кез келген мәтінді басып, түзете аласыз. Word батырмасы түзетілген нұсқаны жүктейді.');
+          body.insertBefore(tip, body.firstChild);
+        } else { kmj = false; last = r.text; body.innerHTML = md(r.text); }
+        if (r.truncated) note(body, '', 'Жауап тым ұзақ болып, соңы қиылды. Тақырыпты тарылтып, қайталап көріңіз.');
+      }
       else { last = r.text; requestAnimationFrame(function () { body.innerHTML = md(r.text); if (r.truncated) note(body, '', 'Жауап тым ұзақ болып, соңы қиылды. Тақырыпты тарылтып, қайталап көріңіз.'); }); }
       setLeft(r.left);
       btn.disabled = false; btn.lastChild.textContent = ' Қайта жасау';
     });
     $('aiCopy').addEventListener('click', function () {
       if (!last) return;
-      navigator.clipboard.writeText(last).then(function () { $('aiCopy').lastChild.textContent = ' Көшірілді'; setTimeout(function () { $('aiCopy').lastChild.textContent = ' Көшіру'; }, 1500); });
+      navigator.clipboard.writeText(kmj ? docText() : last).then(function () { $('aiCopy').lastChild.textContent = ' Көшірілді'; setTimeout(function () { $('aiCopy').lastChild.textContent = ' Көшіру'; }, 1500); });
     });
     $('aiWord').addEventListener('click', function () {
       if (!last) return;
       var saved = window.katex; window.katex = null; // Word-та формулалар LaTeX мәтіні түрінде қалады
-      var htmlDoc = '<html><head><meta charset="utf-8"><title>' + esc(title.textContent) + '</title><style>body{font-family:"Times New Roman",serif;font-size:12pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #444;padding:4px;vertical-align:top}</style></head><body><h1>' + esc(title.textContent) + '</h1>' + md(last) + '</body></html>';
+      var content = kmj ? docHtml() : '<h1>' + esc(title.textContent) + '</h1>' + md(last);
+      var htmlDoc = '<html><head><meta charset="utf-8"><title>' + esc(title.textContent) + '</title><style>body{font-family:"Times New Roman",serif;font-size:12pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #444;padding:4px 6px;vertical-align:top}'
+        + '.kmj-head td.l{text-align:center}.kmj-flow th{text-align:center;font-weight:normal}.kmj-cap{margin:14pt 0 6pt}</style></head><body>' + content + '</body></html>';
       window.katex = saved;
       var a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob(['﻿' + htmlDoc], { type: 'application/msword' }));
-      a.download = 'zhi-material.doc'; document.body.appendChild(a); a.click();
+      a.download = kmj ? 'kmzh.doc' : 'zhi-material.doc'; document.body.appendChild(a); a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
     });
     $('aiPrint').addEventListener('click', function () { if (last) window.print(); });
