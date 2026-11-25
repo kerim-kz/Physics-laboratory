@@ -26,6 +26,7 @@ import { router as labRunRouter } from './features/labrun.js';
 import { router as materialsRouter } from './features/materials.js';
 import { router as schoolsRouter } from './features/schools.js';
 import { router as olympiadRouter } from './features/olympiad.js';
+import { router as olyGroupsRouter } from './features/olygroups.js';
 import { router as scientistsRouter } from './features/scientists.js';
 import { router as simsRouter } from './features/sims.js';
 import { router as unitsRouter } from './features/units.js';
@@ -140,6 +141,7 @@ export function createApp() {
   app.use(labRunRouter);
   app.use(examsRouter);
   app.use(assignRouter);
+  app.use(olyGroupsRouter);
   app.use(olympiadRouter);
   app.use(scientistsRouter);
   app.use(unitsRouter);

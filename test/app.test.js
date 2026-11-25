@@ -512,6 +512,98 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal((await student.get(`/results/export.csv?class=${classId}`)).status, 403);
   });
 
+  test('олимпиадаға дайындық тобы: мұғалім оқушыны қосады, тапсырма береді, оқушы шешім суретін жүктейді, мұғалім бағалайды', async () => {
+    // Топ ашу (тек мұғалім)
+    assert.equal((await student.get('/olympiad/groups')).status, 403);
+    const r0 = await teacher.post('/olympiad/groups', { title: '9-сынып олимпиадашылары' }, '/olympiad/groups');
+    assert.equal(r0.status, 302);
+    const gid = r0.location.match(/\/olympiad\/groups\/(\d+)$/)[1];
+    const gp = await teacher.get(`/olympiad/groups/${gid}`);
+    const code = gp.text.match(/class="code-big">([A-Z0-9]+)</)[1];
+    const sid = gp.text.match(/name="students" value="(\d+)"> Сейітов Нұрлан/)[1];
+    // Өз сыныбынан қосу → оқушыға хабарлама
+    await teacher.post(`/olympiad/groups/${gid}/members`, { students: sid }, `/olympiad/groups/${gid}`);
+    const after = (await teacher.get(`/olympiad/groups/${gid}`)).text;
+    assert.match(after, /1 оқушы топқа қосылды/);
+    assert.doesNotMatch(after, new RegExp(`name="students" value="${sid}"`), 'қосылған оқушы тізімнен шығады');
+    assert.match((await student.get('/notifications')).text, /олимпиадаға дайындық тобына қосты/);
+
+    // Тапсырма: 2 есеп + 1 ресми тест
+    const { OLYMPIAD } = await import('../src/data/olympiad.js');
+    const { OLYMPIAD_TESTS } = await import('../src/data/olympiad-tests.js');
+    const [p1, p2] = OLYMPIAD.filter((o) => o.g === 9).slice(0, 2).map((o) => o.k);
+    const form = await teacher.get(`/olympiad/groups/${gid}/tasks/new`);
+    assert.match(form.text, new RegExp(`name="problems" value="${p1}"`));
+    const body = new URLSearchParams([['_csrf', await teacher.csrf(`/olympiad/groups/${gid}/tasks/new`)], ['title', '1-апта'], ['problems', p1], ['problems', p2], ['tests', OLYMPIAD_TESTS[0].k], ['due', '2026-12-01']]);
+    const r1 = await teacher.req('POST', `/olympiad/groups/${gid}/tasks`, { headers: { 'content-type': 'application/x-www-form-urlencoded' }, multipart: body.toString() });
+    assert.equal(r1.status, 302);
+    const tid = r1.location.match(/\/olympiad\/tasks\/(\d+)\/results$/)[1];
+    const pool = new pg.Pool({ connectionString: DB });
+    const { rows: [task] } = await pool.query('SELECT problems, tests FROM olympiad_tasks WHERE id = $1', [tid]);
+    assert.deepEqual(task.problems, [p1, p2]);
+
+    // Оқушы: тапсырманы көреді, шешім суретін жүктейді
+    assert.match((await student.get('/olympiad')).text, /Менің олимпиада тапсырмаларым/);
+    assert.match((await student.get('/olympiad/my')).text, /1-апта/);
+    const tp = await student.get(`/olympiad/tasks/${tid}`);
+    assert.equal(tp.status, 200);
+    assert.match(tp.text, /Шешімді жүктеу/);
+    assert.doesNotMatch(tp.text, /Эталон шешім/);
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+    const upload = async (file, name, answer) => {
+      const token = await student.csrf(`/olympiad/tasks/${tid}`);
+      const fd = new FormData();
+      fd.append('_csrf', token);
+      fd.append('answer', answer);
+      if (file) fd.append('photo', new Blob([file]), name);
+      return student.req('POST', `/olympiad/tasks/${tid}/solve/${p1}`, { multipart: fd });
+    };
+    assert.match((await upload(Buffer.from('MZ'), 'virus.exe', '')).location, new RegExp(`/olympiad/tasks/${tid}`));
+    assert.match((await student.get(`/olympiad/tasks/${tid}`)).text, /Тек сурет немесе PDF/);
+    assert.equal((await upload(png, 'sheshim.png', 'v = 4,8 км/сағ')).status, 302);
+    const { rows: [sol] } = await pool.query('SELECT * FROM olympiad_solutions WHERE task_id = $1', [tid]);
+    assert.equal(sol.problem_key, p1);
+    assert.equal(sol.answer, 'v = 4,8 км/сағ');
+    assert.match((await teacher.get('/notifications')).text, /шешім жүктеді/);
+
+    // Мұғалім: нәтиже кестесі, шешімді қарау, файл, бағалау
+    const rp = await teacher.get(`/olympiad/tasks/${tid}/results`);
+    assert.match(rp.text, /тексеру/);
+    assert.match(rp.text, new RegExp(`/olympiad/solutions/${sol.id}`));
+    const sp = await teacher.get(`/olympiad/solutions/${sol.id}`);
+    assert.match(sp.text, /Эталон шешім/);
+    assert.match(sp.text, /Бағалау/);
+    const f = await fetch(`${base}/olympiad/solutions/${sol.id}/file`, { headers: { cookie: teacher.cookieHeader() } });
+    assert.equal(f.status, 200);
+    assert.equal(f.headers.get('content-type'), 'image/png');
+    assert.equal(Buffer.compare(Buffer.from(await f.arrayBuffer()), png), 0);
+    assert.equal((await fetch(`${base}/olympiad/solutions/${sol.id}/file`, { redirect: 'manual' })).status, 302, 'қонақ файлды көре алмайды');
+    await teacher.post(`/olympiad/solutions/${sol.id}/grade`, { score: '7', comment: 'Үйкеліс ескерілмеген.' }, `/olympiad/solutions/${sol.id}`);
+    assert.match((await teacher.get(`/olympiad/tasks/${tid}/results`)).text, /7\/10/);
+    // Оқушы: бағасы, пікірі және эталон шешім; бағаланған шешімді қайта жүктей алмайды
+    assert.match((await student.get('/notifications')).text, /бағаланды: 7 \/ 10/);
+    const sv = await student.get(`/olympiad/solutions/${sol.id}`);
+    assert.match(sv.text, /Бағаң: 7 \/ 10/);
+    assert.match(sv.text, /Үйкеліс ескерілмеген/);
+    assert.match(sv.text, /Эталон шешім/);
+    assert.doesNotMatch(sv.text, /name="score"/);
+    await upload(png, 'jana.png', 'x');
+    assert.equal((await pool.query('SELECT answer FROM olympiad_solutions WHERE id = $1', [sol.id])).rows[0].answer, 'v = 4,8 км/сағ');
+
+    // Топтан шығарылса — тапсырма жабық; кодпен қайта қосылады
+    await teacher.post(`/olympiad/groups/${gid}/members/${sid}/remove`, {}, `/olympiad/groups/${gid}`);
+    assert.equal((await student.get(`/olympiad/tasks/${tid}`)).status, 404);
+    assert.match((await student.post('/olympiad/join', { code: 'WRONG1' }, '/olympiad')).location, /\/olympiad$/);
+    assert.match((await student.post('/olympiad/join', { code: code.toLowerCase() }, '/olympiad')).location, /\/olympiad\/my$/);
+    assert.equal((await student.get(`/olympiad/tasks/${tid}`)).status, 200);
+    assert.equal((await teacher.post('/olympiad/join', { code }, '/olympiad')).location, '/olympiad', 'мұғалім топқа оқушы ретінде қосылмайды');
+
+    // Топты өшіру шешімдерін де өшіреді
+    await teacher.post(`/olympiad/groups/${gid}/delete`, {}, `/olympiad/groups/${gid}`);
+    assert.equal((await pool.query('SELECT count(*)::int AS n FROM olympiad_solutions')).rows[0].n, 0);
+    await pool.end();
+  });
+
   test('ЖИ құралы: кілтсіз — «бапталмаған»; модельмен — көмекші, лимит, талдау, бағалау, генератор', async () => {
     const ai = await import('../src/lib/ai.js');
     delete process.env.ANTHROPIC_API_KEY;

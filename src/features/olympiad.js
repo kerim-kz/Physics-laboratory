@@ -4,12 +4,14 @@ import { OLYMPIAD } from '../data/olympiad.js';
 import { OLYMPIAD_TEST, OLYMPIAD_TESTS, testMax } from '../data/olympiad-tests.js';
 import { SIM } from '../data/sims.js';
 import { asset } from '../lib/assets.js';
-import { many, q } from '../lib/db.js';
+import { isActiveTeacher, isAdmin } from '../lib/auth.js';
+import { many, one, q } from '../lib/db.js';
 import { html, raw } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { csrfField, emptyBox, page, vhead } from '../lib/layout.js';
 import { texText } from '../lib/tex.js';
 import { asyncH, fmtDateTime, HttpError, toInt } from '../lib/util.js';
+import { joinForm } from './olygroups.js';
 
 export const router = express.Router();
 
@@ -65,6 +67,9 @@ router.get('/olympiad', asyncH(async (req, res) => {
   };
   const groups = GRADES.map((g) => ({ g, items: list.filter((o) => o.g === g) })).filter((x) => x.items.length);
   const tests = OLYMPIAD_TESTS.filter((t) => !grade || t.g === grade);
+  const myGroups = req.user && req.user.role === 'student' ? await one(
+    `SELECT count(*)::int AS n, (SELECT count(*) FROM olympiad_tasks t JOIN olympiad_group_members m ON m.group_id = t.group_id WHERE m.user_id = $1)::int AS tasks
+       FROM olympiad_group_members WHERE user_id = $1`, [req.user.id]).then((r) => (r && r.n ? r : null)) : null;
 
   await page(req, res, {
     title: 'Олимпиадалық есептер', active: 'olympiad', katex: true,
@@ -83,6 +88,8 @@ router.get('/olympiad', asyncH(async (req, res) => {
             <a class="${level === 'hard' ? 'on' : ''}" href="${qs({ level: 'hard' })}">Күрделі</a>
           </div>
         </div>
+        ${req.user && (isActiveTeacher(req.user) || isAdmin(req.user)) ? html`<div class="notice og-entry no-print"><div><b>Олимпиадаға дайындық топтары.</b> Оқушыларды топқа жинап, есептер мен ресми тесттерді тапсырма етіп беріңіз; олар шешімін суретке түсіріп жүктейді, сіз бағалайсыз.</div><a class="btn" href="/olympiad/groups">${icon('trophy', 15)} Дайындық топтары</a></div>`
+          : req.user && req.user.role === 'student' ? html`<div class="og-entry-st no-print">${myGroups ? html`<a class="btn" href="/olympiad/my">${icon('trophy', 15)} Менің олимпиада тапсырмаларым${myGroups.tasks ? html` <span class="pill ok">${myGroups.tasks}</span>` : ''}</a>` : ''}${joinForm(req)}</div>` : ''}
         ${tests.length ? html`<section class="shelf">
           <div class="shelf-h"><h2>Ресми олимпиада тапсырмалары: онлайн тест</h2><span class="cnt">${tests.length} тест</span></div>
           <div class="rule"></div>

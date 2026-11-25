@@ -1461,3 +1461,96 @@ OpenAI кілті sk- деп басталуы керек.	Ключ OpenAI дол
 Мысалы: 8 «А»	Например: 8 «А»	For example: 8A
 Кестедегі кез келген мәтінді басып, түзете аласыз. Word батырмасы түзетілген нұсқаны жүктейді.	Любой текст в таблице можно исправить, нажав на него. Кнопка Word скачает исправленный вариант.	Click any text in the table to edit it. The Word button downloads the edited version.
 ЖИ ҚМЖ-ны жасап жатыр…	ИИ составляет КСП…	AI is writing the lesson plan…
+«Тапсырма беру» батырмасымен есептер мен тесттерді таңдаңыз.	Нажмите «Дать задание» и выберите задачи и тесты.	Press “Assign task” and choose problems and tests.
+Автоматты тексеріледі	Проверяется автоматически	Checked automatically
+Алдымен топқа оқушыларды қосыңыз.	Сначала добавьте учеников в группу.	Add students to the group first.
+Атауын жазып, кемінде бір есеп немесе тест таңдаңыз.	Напишите название и выберите хотя бы одну задачу или тест.	Enter a title and choose at least one problem or test.
+Баға сақталды, оқушыға хабарлама жіберілді.	Оценка сохранена, ученику отправлено уведомление.	Grade saved, the student has been notified.
+Бағалауға рұқсат жоқ.	Нет доступа к оцениванию.	You are not allowed to grade this.
+Бұл есепке шешім жүктеуге болмайды.	Для этой задачи нельзя загрузить решение.	You cannot upload a solution for this problem.
+Дайындық топтары	Группы подготовки	Training groups
+Есептің шарты	Условие задачи	Problem statement
+Жауабың (міндетті емес)	Твой ответ (необязательно)	Your answer (optional)
+Жаңа топ ашу	Создать группу	Create a group
+Жүктеген шешімім және эталон шешім	Моё решение и эталонное решение	My solution and the reference solution
+Жүктелген шешім	Загружено решений	Solutions uploaded
+Код жасау мүмкін болмады, қайталаңыз.	Не удалось создать код, повторите.	Could not create a code, please try again.
+Код:	Код:	Code:
+Менің олимпиада тапсырмаларым	Мои олимпиадные задания	My olympiad tasks
+Менің тапсырмаларым	Мои задания	My tasks
+Мерзімі (міндетті емес)	Срок (необязательно)	Due date (optional)
+Мысалы: {#}-апта. Кинематика	Например: Неделя {#}. Кинематика	For example: Week {#}. Kinematics
+Мысалы: {#}-сынып, облыстық кезеңге дайындық	Например: {#} класс, подготовка к областному этапу	For example: Grade {#}, regional round preparation
+Мысалы: v = {#} км/сағ	Например: v = {#} км/ч	For example: v = {#} km/h
+Мысалы: Энергияның сақталу заңы дұрыс жазылған, бірақ үйкеліс ескерілмеген.	Например: Закон сохранения энергии записан верно, но трение не учтено.	For example: Energy conservation is written correctly, but friction is ignored.
+Мұндай кодпен топ табылмады. Кодты мұғаліміңізден тексеріңіз.	Группа с таким кодом не найдена. Уточните код у учителя.	No group with this code. Check the code with your teacher.
+Мұғалім тапсырма бергенде хабарлама келеді.	Когда учитель даст задание, придёт уведомление.	You will be notified when the teacher assigns a task.
+Мұғалім әлі тексерген жоқ. Эталон шешім бағаланғаннан кейін ашылады.	Учитель ещё не проверил. Эталонное решение откроется после оценивания.	Not graded yet. The reference solution opens after grading.
+Мұғалімнен топ кодын алып, «Олимпиада» бетіндегі «Топқа қосылу» өрісіне енгіз.	Получи код группы у учителя и введи его в поле «Вступить в группу» на странице «Олимпиада».	Get the group code from your teacher and enter it in the “Join a group” field on the Olympiad page.
+Мұғалімің берген есептер мен тесттер. Есептің шешімін дәптерге жазып, суретке түсіріп жүкте — мұғалім ұпай мен пікір қояды.	Задачи и тесты от твоего учителя. Реши задачу в тетради, сфотографируй и загрузи — учитель поставит баллы и оставит комментарий.	Problems and tests from your teacher. Solve the problem in your notebook, take a photo and upload it — the teacher will give points and feedback.
+Олимпиадалық тапсырма	Олимпиадное задание	Olympiad task
+Олимпиадаға дайындық	Подготовка к олимпиаде	Olympiad training
+Олимпиадаға дайындық тобы	Группа подготовки к олимпиаде	Olympiad training group
+Олимпиадаға дайындық топтары	Группы подготовки к олимпиаде	Olympiad training groups
+Олимпиадаға дайындық тобына қосылу	Вступить в группу подготовки к олимпиаде	Join an olympiad training group
+Оқушы «Олимпиада» бетіндегі «Топқа қосылу» өрісіне осы кодты енгізеді.	Ученик вводит этот код в поле «Вступить в группу» на странице «Олимпиада».	Students enter this code in the “Join a group” field on the Olympiad page.
+Оқушы топтан шығарылды.	Ученик исключён из группы.	Student removed from the group.
+Оқушының шешімі	Решение ученика	Student’s solution
+Пікір оқушыға (міндетті емес)	Комментарий ученику (необязательно)	Feedback to the student (optional)
+Ресми онлайн тесттер	Официальные онлайн-тесты	Official online tests
+Сақтап, келесісіне өту	Сохранить и перейти к следующему	Save and go to the next
+Сен әлі ешбір топта емессің	Ты пока не состоишь ни в одной группе	You are not in any group yet
+Тапсырма өшірілді.	Задание удалено.	Task deleted.
+Тапсырманы беру	Дать задание	Assign
+Тапсырманың атауы	Название задания	Task title
+Топ ашылды. Оқушыларды қосыңыз немесе топ кодын беріңіз.	Группа создана. Добавьте учеников или раздайте код группы.	Group created. Add students or share the group code.
+Топ ашып, оқушыларды өз сыныптарыңыздан қосыңыз немесе топ кодын беріңіз (басқа сыныптағы оқушылар да кодпен қосыла алады). Топқа олимпиадалық есептер мен ресми онлайн тесттерді тапсырма етіп беріңіз: оқушылар шешімін суретке түсіріп жүктейді, сіз ұпай мен пікір қоясыз.	Создайте группу и добавьте учеников из своих классов или раздайте код группы (по коду могут вступить и ученики других классов). Давайте группе олимпиадные задачи и официальные онлайн-тесты: ученики фотографируют и загружают решения, вы ставите баллы и комментарии.	Create a group and add students from your classes or share the group code (students from other classes can join with it too). Assign olympiad problems and official online tests: students photograph and upload their solutions, you give points and feedback.
+Топ коды (мұғалімнен аласың)	Код группы (получишь у учителя)	Group code (ask your teacher)
+Топ коды:	Код группы:	Group code:
+Топ мүшелері	Участники группы	Group members
+Топ табылмады.	Группа не найдена.	Group not found.
+Топ өшірілді.	Группа удалена.	Group deleted.
+Топта оқушы жоқ	В группе нет учеников	No students in the group
+Топта әзірге оқушы жоқ	В группе пока нет учеников	No students in the group yet
+Топтың атауы	Название группы	Group name
+Топтың атауын жазыңыз.	Напишите название группы.	Enter the group name.
+Топқа тек оқушы аккаунтымен қосылуға болады.	Вступить в группу можно только с аккаунтом ученика.	Only student accounts can join a group.
+Топқа қосу	Добавить в группу	Add to group
+Төменде алғашқы топты ашыңыз.	Создайте первую группу ниже.	Create your first group below.
+Төменде өз сыныптарыңыздан қосыңыз немесе топ кодын беріңіз.	Добавьте учеников из своих классов ниже или раздайте код группы.	Add students from your classes below or share the group code.
+Файл жоқ.	Файла нет.	No file.
+Файл серверде табылмады.	Файл не найден на сервере.	File not found on the server.
+Шешім	Решение	Solution
+Шешім бағаланып қойған, енді өзгертуге болмайды.	Решение уже оценено, изменить его нельзя.	The solution has already been graded and cannot be changed.
+Шешім табылмады.	Решение не найдено.	Solution not found.
+Шешімді жүктеу	Загрузить решение	Upload solution
+Шешімнің суретін немесе PDF файлын таңдаңыз.	Выберите фото решения или PDF-файл.	Choose a photo of the solution or a PDF file.
+Шешімнің суреті	Фото решения	Photo of the solution
+Шешімім	Моё решение	My solution
+Шешімің жүктелді. Мұғалім тексергенде хабарлама келеді.	Решение загружено. Когда учитель проверит, придёт уведомление.	Your solution was uploaded. You will be notified when it is graded.
+тексеру	проверить	to grade
+Қайта жүктеу	Загрузить заново	Upload again
+Қайта тапсыру	Пройти заново	Retake
+Қосылу	Вступить	Join
+Қосылған күні	Дата вступления	Joined
+Құрамы	Состав	Contents
+Әзірге тапсырма берілмеген	Заданий пока нет	No tasks assigned yet
+Әзірге тапсырма жоқ	Заданий пока нет	No tasks yet
+Әзірге топ жоқ	Групп пока нет	No groups yet
+әлі тапсырылмады	ещё не пройден	not taken yet
+Өз сыныптарымнан қосу	Добавить из моих классов	Add from my classes
+{#} оқушы топқа қосылды.	Добавлено учеников: {#}.	{#} students added to the group.
+{#} тапсырма, {#} ұпай	{0} заданий, {1} баллов	{0} questions, {1} points
+· {#} тапсырма, {#} ұпай	· {0} заданий, {1} баллов	· {0} questions, {1} points
+Есептер мен тесттерді таңдаңыз. Топ мүшелеріне хабарлама барады. Әр есеп — {#} ұпай: оқушы шешімін суретке түсіріп жүктейді, сіз бағалайсыз. Тесттер автоматты түрде тексеріледі.	Выберите задачи и тесты. Участники группы получат уведомление. Каждая задача — {#} баллов: ученик фотографирует и загружает решение, вы оцениваете. Тесты проверяются автоматически.	Choose problems and tests. Group members will be notified. Each problem is worth {#} points: the student photographs and uploads the solution, you grade it. Tests are checked automatically.
+Әр есеп — {#} ұпай. Шешімді дәптерге толық жаз (сызба, формулалар, есептеу), суретке түсіріп жүкте. Мұғалім бағалағанша шешімді қайта жүктей аласың.	Каждая задача — {#} баллов. Запиши полное решение в тетради (рисунок, формулы, вычисления), сфотографируй и загрузи. Пока учитель не оценил, решение можно загрузить заново.	Each problem is worth {#} points. Write the full solution in your notebook (diagram, formulas, calculations), take a photo and upload it. You can re-upload until the teacher grades it.
+<><b>Олимпиадаға дайындық топтары.</b> Оқушыларды топқа жинап, есептер мен ресми тесттерді тапсырма етіп беріңіз; олар шешімін суретке түсіріп жүктейді, сіз бағалайсыз.	<b>Группы подготовки к олимпиаде.</b> Соберите учеников в группу и давайте им задачи и официальные тесты; они фотографируют и загружают решения, вы оцениваете.	<b>Olympiad training groups.</b> Gather students into a group and assign problems and official tests; they photograph and upload their solutions, you grade them.
+Ұпай (0–{#})	Баллы (0–{#})	Points (0–{#})
+PDF-ті ашу	Открыть PDF	Open PDF
+Топты өшіру	Удалить группу	Delete group
+Тапсырма мен оқушылардың жүктеген шешімдері өшірілсін бе?	Удалить задание и загруженные учениками решения?	Delete the task and the students’ uploaded solutions?
+Топ, оның тапсырмалары мен оқушылардың жүктеген шешімдері өшірілсін бе?	Удалить группу, её задания и загруженные учениками решения?	Delete the group, its tasks and the students’ uploaded solutions?
+Тапсырмалар	Задания	Tasks
+Топ ашу	Создать группу	Create group
+Мерзімі	Срок	Due
+Эталон шешім	Эталонное решение	Reference solution
