@@ -1074,6 +1074,81 @@ describe('тіркелу, рөлдер және сыныптар', () => {
   });
 });
 
+describe('олимпиаданың теориялық туры (9–11-сынып): сан/формула жауап, бірден тексеру, талдау', () => {
+  const RIGHT = {
+    v2: ['14.14', '10*(3*cos(pi/4)-sin(pi/4))'], h2: ['(m1(l1-l2)-m2(l1+l2))/(m1-m2)'], t: ['sqrt(4l2/g)+2(m1+m2)/(m1-m2)*sqrt(l2/g)', 'pi*sqrt(eps*e0*S*L/d)', 'π√(LC)'],
+    R: ['1,6'], x1: ['dR(2R+d)/((d-R)(R+2d))', 'd*R/(d-R)-d*R/(R+2d)'], x2: ['dR/(R-d)+dR/(R+2d)'], a1: ['8'], U: ['2,16·10^3'],
+    Vx: ['√(V1·V3)', 'V1*sqrt(T2/T1)'], I1: ['E/R'], Cx: ['C(1+(n-1)x/a)', 'ε0 a (n x + a - x)/d'], v: ['a/(3RC(n-1))', 'd/(3*R*e0*a*(n-1))'],
+    Q: ['2(q0-C U0)', '2q0-2εε0SU0/d'],
+  };
+  test('әр жауап: дұрыс жазулардың бәрі қабылданады, ресми шешімдегі баспа қателері мен жиі қателер қабылданбайды', async () => {
+    const { THEORY_ROUNDS } = await import('../src/data/olympiad-theory.js');
+    const { checkAnswer } = await import('../src/features/olytheory.js');
+    assert.equal(THEORY_ROUNDS.length, 3);
+    for (const r of THEORY_ROUNDS) {
+      assert.equal(r.problems.reduce((s, p) => s + p.pts, 0), 25, `${r.k}: барлығы 25 ұпай`);
+      for (const p of r.problems) {
+        assert.equal(p.answers.reduce((s, a) => s + a.pts, 0) + p.self.reduce((s, x) => s + x.pts, 0), p.pts, `${r.k} №${p.n}: ұпай бөлінісі`);
+        assert.ok(p.analysis.length >= 4 && p.hint && p.sol.length, `${r.k} №${p.n}: талдау, кеңес, ресми шешім`);
+        for (const a of p.answers) {
+          const ok = RIGHT[a.id].filter((x) => checkAnswer(a, x).status === 'ok');
+          assert.ok(ok.length >= 1, `${r.k} №${p.n} ${a.id}: дұрыс жауап қабылданбады`);
+          assert.equal(checkAnswer(a, '').status, 'empty');
+        }
+      }
+    }
+    const A = (g, n, id) => THEORY_ROUNDS.find((r) => r.g === g).problems.find((p) => p.n === n).answers.find((a) => a.id === id);
+    // Ресми шешімдегі қателер: 9-сынып №3 (R = 1 кОм), №2 (t-да ·g), 11-сынып №4 (Q-да артық 2)
+    const trap = checkAnswer(A(9, 3, 'R'), '1');
+    assert.equal(trap.status, 'wrong');
+    assert.match(trap.msg, /ресми шешімдегі жауап/);
+    assert.match(checkAnswer(A(9, 3, 'R'), '1600').msg, /өлшем бірлігін/);
+    assert.equal(checkAnswer(A(9, 2, 't'), 'sqrt(4l2/g)+2sqrt(gl2)(m1+m2)/(m1-m2)*g').status, 'wrong');
+    assert.equal(checkAnswer(A(11, 4, 'Q'), '2q0-2εε0SU0/(2d)').status, 'wrong');
+    assert.equal(checkAnswer(A(11, 4, 't'), '2pi*sqrt(L*C)').status, 'wrong');
+    assert.equal(checkAnswer(A(9, 4, 'x2'), 'dR(2R+d)/((d-R)(R+2d))').status, 'wrong', 'таңба қатесі');
+    // Жазу қатесі — түсінікті хабар
+    const bad = checkAnswer(A(9, 4, 'x1'), 'd*R/(d-F)');
+    assert.equal(bad.status, 'error');
+    assert.match(bad.msg, /Белгісіз шама: «F»/);
+    assert.match(checkAnswer(A(9, 4, 'x1'), 'dR/(d-R').msg, /Жақша жабылмаған/);
+  });
+
+  test('тур беті: шарттар, тексеру, ұпай сақталады, талдау мен ресми шешім ашылады', async () => {
+    const { THEORY_ROUND, autoMax } = await import('../src/data/olympiad-theory.js');
+    const r = THEORY_ROUND['2025-audan-10-t'];
+    const c = new Client();
+    assert.match((await c.get('/olympiad?grade=10')).text, /\/olympiad\/round\/2025-audan-10-t/);
+    const pg0 = await c.get('/olympiad/round/2025-audan-10-t');
+    assert.equal(pg0.status, 200);
+    assert.match(pg0.text, /\/img\/olympiad\/2025-audan-10-t\/q1-kk\.png/);
+    assert.match(pg0.text, /data-vars="E,R"/);
+    assert.doesNotMatch(pg0.text, /2160|Талдау: қадамдап|s1-1\.png/, 'жауап мен шешім тексергенге дейін көрінбейді');
+    assert.match((await c.get('/olympiad/round/2025-audan-10-t?lang=ru')).status === 200 ? 'ok' : '', /ok/);
+    assert.equal((await c.get('/olympiad/round/nope')).status, 404);
+
+    // Кірген оқушы: бәрі дұрыс → автоматты ұпай толық
+    const s = new Client();
+    await s.login(OWNER.login, OWNER.password);
+    const form = { a_1_a1: '8', a_1_U: '2160', a_2_Vx: 'sqrt(V1*V3)', a_3_I1: 'E/R', a_3_Cx: 'C(1+(n-1)x/a)', a_3_v: 'a/(3RC(n-1))', a_4_x1: 'dR(2R+d)/((d-R)(R+2d))', a_4_x2: 'dR/(R-d)+dR/(R+2d)' };
+    const res = await s.post('/olympiad/round/2025-audan-10-t', form, '/olympiad/round/2025-audan-10-t');
+    assert.equal(res.status, 200);
+    assert.match(res.text, new RegExp(`data-th-score="${autoMax(r)}"`));
+    assert.match(res.text, /Талдау: қадамдап шешу/);
+    assert.match(res.text, /s1-1\.png/);
+    assert.match(res.text, /data-self="1"/, 'сызба/график — өзін-өзі тексеру');
+    // Бір қате: U = 216 → U ұпайы алынбайды, дұрыс жауабы көрсетіледі
+    const res2 = await s.post('/olympiad/round/2025-audan-10-t', { ...form, a_1_U: '216' }, '/olympiad/round/2025-audan-10-t');
+    assert.match(res2.text, new RegExp(`data-th-score="${autoMax(r) - 5}"`));
+    assert.match(res2.text, /Дұрыс жауап/);
+    const pool = new pg.Pool({ connectionString: DB });
+    const { rows } = await pool.query(`SELECT score, max_score FROM olympiad_attempts WHERE test_key = '2025-audan-10-t' ORDER BY id`);
+    await pool.end();
+    assert.deepEqual(rows.map((x) => x.score), [autoMax(r), autoMax(r) - 5]);
+    assert.equal(rows[0].max_score, autoMax(r));
+  });
+});
+
 describe('бағалау және код ережелері', () => {
   test('бірнеше дұрыс жауапты тапсырма: 2 / 1 / 0 балл', () => {
     const q = { kind: 'multi', options: [1, 2, 3, 4, 5, 6], correct: [1, 3, 5] };

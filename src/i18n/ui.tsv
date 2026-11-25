@@ -1554,3 +1554,48 @@ PDF-ті ашу	Открыть PDF	Open PDF
 Топ ашу	Создать группу	Create group
 Мерзімі	Срок	Due
 Эталон шешім	Эталонное решение	Reference solution
+{#} сағат	{#} ч	{#} h
+{#}-есептің шарты	Условие задачи {#}	Problem {#} statement
+{#}-сынып: теориялық тур	{#} класс: теоретический тур	Grade {#}: theoretical round
+Аудандық кезең	Районный этап	District round
+Аудандық кезең, {#}-сынып, теориялық тур	Районный этап, {#} класс, теоретический тур	District round, grade {#}, theoretical round
+Олимпиада {#}–{#}: {#}-сынып, теориялық тур	Олимпиада {#}–{#}: {#} класс, теоретический тур	Olympiad {#}–{#}: grade {#}, theoretical round
+Барлық есептің жауабын жазып болған соң «Тексеру» батырмасын бас. Жауап берілмеген сұрақ {#} ұпай. Жауапсыз тексерсең де, әр есептің талдауы ашылады.	Когда запишешь ответы ко всем задачам, нажми «Проверить». Вопрос без ответа — {#} баллов. Разбор каждой задачи откроется, даже если проверить без ответов.	When you have written answers to all problems, press “Check”. An unanswered question scores {#}. The analysis of each problem opens even if you check without answers.
+Жауапты қалай жазу керек?	Как записывать ответ?	How do I write an answer?
+Кеңес (шешімді ашпайды)	Подсказка (не раскрывает решение)	Hint (does not reveal the solution)
+Олимпиадада ұпай шешімнің әр қадамына беріледі. Тексергеннен кейін ресми шешімдегі бағалау кестесін қарап, өз шешіміңнің қай қадамына қанша ұпай алатыныңды есепте.	На олимпиаде баллы ставятся за каждый шаг решения. После проверки посмотри таблицу оценивания в официальном решении и посчитай, сколько баллов получит каждый шаг твоего решения.	At the olympiad, points are given for each step of the solution. After checking, look at the marking scheme in the official solution and work out how many points each step of your solution earns.
+Физикадан Республикалық олимпиаданың аудандық (қалалық) кезеңі, теориялық тур. {#} есеп, барлығы {#} ұпай. Әр есептің соңғы жауабын сан немесе формула түрінде жаз — «Тексеру» басқанда сайт бірден тексереді, содан кейін әр есептің талдауы мен ресми шешімі ашылады. Сызба мен шарттарды ({#} ұпай) ресми шешіммен өзің салыстырасың.	Районный (городской) этап Республиканской олимпиады по физике, теоретический тур. {#} задачи, всего {#} баллов. Запиши окончательный ответ каждой задачи числом или формулой — после нажатия «Проверить» сайт сразу проверит его, затем откроются разбор и официальное решение каждой задачи. Рисунки и условия ({#} баллов) сравниваешь с официальным решением сам.	District (city) round of the National Physics Olympiad, theoretical round. {#} problems, {#} points in total. Write the final answer to each problem as a number or a formula — when you press “Check” the site checks it at once, then the analysis and official solution of each problem open. You compare drawings and conditions ({#} points) with the official solution yourself.
+Формула өрістің астында математикалық түрде көрсетіледі — дұрыс түсінілгенін тексер.	Под полем формула показывается в математическом виде — проверь, что она понята правильно.	The formula is shown in math form under the field — check that it was understood correctly.
+Шамалар:	Величины:	Quantities:
+<><b>Сан:</b> <code>{#}</code>, <code>{#}·{#}^{#}</code> — өлшем бірлігі өрістің жанында жазылған.	<b>Число:</b> <code>{#}</code>, <code>{#}·{#}^{#}</code> — единица измерения указана рядом с полем.	<b>Number:</b> <code>{#}</code>, <code>{#}·{#}^{#}</code> — the unit is shown next to the field.
+<><b>Формула:</b> берілген шамалармен: <code>d*R/(d-R)</code>, <code>{#}(m{#}+m{#})/(m{#}-m{#})</code>, <code>sqrt(V{#}*V{#})</code>, <code>pi*sqrt(L*C)</code>. Көбейту белгісін жазбауға болады: <code>dR</code> = <code>d*R</code>. ε — <code>eps</code>, ε₀ — <code>e{#}</code>.	<b>Формула:</b> через данные величины: <code>d*R/(d-R)</code>, <code>{#}(m{#}+m{#})/(m{#}-m{#})</code>, <code>sqrt(V{#}*V{#})</code>, <code>pi*sqrt(L*C)</code>. Знак умножения можно не писать: <code>dR</code> = <code>d*R</code>. ε — <code>eps</code>, ε₀ — <code>e{#}</code>.	<b>Formula:</b> in terms of the given quantities: <code>d*R/(d-R)</code>, <code>{#}(m{#}+m{#})/(m{#}-m{#})</code>, <code>sqrt(V{#}*V{#})</code>, <code>pi*sqrt(L*C)</code>. You may omit the multiplication sign: <code>dR</code> = <code>d*R</code>. ε — <code>eps</code>, ε₀ — <code>e{#}</code>.
+· амалдар: + − * / ^ ( ), sqrt( ), pi	· операции: + − * / ^ ( ), sqrt( ), pi	· operations: + − * / ^ ( ), sqrt( ), pi
+сан, мысалы {#} немесе {#}·{#}^{#}	число, например {#} или {#}·{#}^{#}	a number, e.g. {#} or {#}·{#}^{#}
+формула	формула	formula
+Екі тастың соқтығысуы	Столкновение двух камней	Collision of two stones
+Альпинист жүйесі (екі білікше)	Система альпиниста (два блока)	Climber's system (two pulleys)
+Тетраэдр түріндегі резисторлар	Резисторы в форме тетраэдра	Resistors in a tetrahedron
+Линзаның екі кескіні	Два изображения линзы	Two images from a lens
+Зымыран және жерсеріктің «салмағы»	Ракета и «вес» спутника	A rocket and the “weight” of a satellite
+Циклдегі тең көлемдер	Равные объёмы в цикле	Equal volumes in a cycle
+Диэлектрикті конденсаторға енгізу	Внесение диэлектрика в конденсатор	Inserting a dielectric into a capacitor
+Диод, конденсатор және катушка	Диод, конденсатор и катушка	Diode, capacitor and coil
+Линзаның фокусы	Фокус линзы	Focal length of the lens
+Толық тетраэдрде	В полном тетраэдре	In the full tetrahedron
+Екі тас та бірдей	Оба камня одинаковы	Both stones are identical
+«Салмақ»	«Вес»	“Weight”
+{#} және {#} күйлер	состояния {#} и {#}	states {#} and {#}
+Айнаның фокусын	Фокус зеркала	The mirror's focal length
+Барлығы:	Всего:	Total:
+Дұрыс жауап: {#} / {#}. Автоматты тексерілген ұпай: {#} / {#}. Төменде әр есептің талдауын оқып, өз жауабыңмен салыстыр.	Верных ответов: {#} / {#}. Баллы автопроверки: {#} / {#}. Ниже прочитай разбор каждой задачи и сравни со своим ответом.	Correct answers: {#} / {#}. Auto-checked points: {#} / {#}. Read the analysis of each problem below and compare it with your answer.
+Жазуында қате	Ошибка в записи	Input error
+Жауап жоқ	Нет ответа	No answer
+Жиі кездесетін қате:	Частая ошибка:	Common mistake:
+Ресми шешім	Официальное решение	Official solution
+Ресми шешім және бағалау кестесі («Дарын»)	Официальное решение и таблица оценивания («Дарын»)	Official solution and marking scheme (“Daryn”)
+Ресми шешім туралы ескерту.	Замечание об официальном решении.	Note on the official solution.
+Талдау: қадамдап шешу	Разбор: решение по шагам	Analysis: step-by-step solution
+Қайта шешу	Решить заново	Solve again
+Өзіңді тексер (автоматты тексерілмейді):	Проверь себя (не проверяется автоматически):	Check yourself (not auto-checked):
+<>Өзің бағалаған сызба мен шарттармен: <b data-th-total>{#}</b> / {#} ұпай	С учётом рисунков и условий, оценённых тобой: <b data-th-total>{#}</b> / {#} баллов	Including the drawings and conditions you assessed: <b data-th-total>{#}</b> / {#} points
+Сенің жауабың:	Твой ответ:	Your answer:

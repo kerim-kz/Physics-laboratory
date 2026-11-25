@@ -11,7 +11,7 @@ import { asyncH, fmtDate, fmtDateTime, HttpError, toCsv, toInt } from '../lib/ut
 import { attemptsTable } from './exams.js';
 import { aiState } from '../lib/ai.js';
 import { grade5, labByKey, LABS } from '../data/labs.js';
-import { OLYMPIAD_TEST } from '../data/olympiad-tests.js';
+import { ROUND, roundHref, roundTitle } from '../data/olympiad-rounds.js';
 
 export const router = express.Router();
 
@@ -317,7 +317,7 @@ async function extraData(cls, f) {
   }
   const title = (k) => {
     if (f.exam === 'labs') { const L = labByKey(k); return L ? `${L.g}-сынып №${L.no}. ${L.t}` : k; }
-    const t = OLYMPIAD_TEST[k]; return t ? `${t.g}-сынып · ${t.stage} ${t.year}` : k;
+    const t = ROUND[k]; return t ? roundTitle(t) : k;
   };
   const order = f.exam === 'labs' ? LABS.map((L) => L.k) : [];
   const keys = [...new Set(items.map((x) => x.key))].sort((a, b) => (order.indexOf(a) - order.indexOf(b)) || a.localeCompare(b));
@@ -377,7 +377,7 @@ async function extraStudentView(req, res, f) {
     items = [...m.values()].map((r) => { const L = labByKey(r.lab_key); return { title: L ? `${L.g}-сынып №${L.no}. ${L.t}` : r.lab_key, href: L ? `/labs/${L.k}` : '', p: Math.round(Number(r.score) * 10), label: `${String(r.score).replace('.', ',')} / 10 · баға ${grade5(r.score)}`, at: r.at }; });
   } else {
     const oa = await many('SELECT * FROM olympiad_attempts WHERE user_id = $1 ORDER BY created_at', [u.id]);
-    items = oa.map((r) => { const t = OLYMPIAD_TEST[r.test_key]; return { title: t ? `${t.g}-сынып · ${t.stage} ${t.year}` : r.test_key, href: '/olympiad', p: r.max_score ? Math.round(100 * r.score / r.max_score) : 0, label: `${r.score} / ${r.max_score}`, at: r.created_at }; });
+    items = oa.map((r) => { const t = ROUND[r.test_key]; return { title: t ? roundTitle(t) : r.test_key, href: t ? roundHref(t) : '/olympiad', p: r.max_score ? Math.round(100 * r.score / r.max_score) : 0, label: `${r.score} / ${r.max_score}`, at: r.created_at }; });
   }
   items.sort((a, b) => new Date(a.at) - new Date(b.at));
   const ps = items.map((i) => i.p);

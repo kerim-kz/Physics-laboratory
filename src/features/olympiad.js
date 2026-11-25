@@ -1,7 +1,9 @@
 import express from 'express';
 import { FAMILIES, GRADES, SECTION } from '../data/catalog.js';
 import { OLYMPIAD } from '../data/olympiad.js';
-import { OLYMPIAD_TEST, OLYMPIAD_TESTS, testMax } from '../data/olympiad-tests.js';
+import { OLYMPIAD_TEST, testMax } from '../data/olympiad-tests.js';
+import { isTheory, ROUNDS } from '../data/olympiad-rounds.js';
+import { autoMax, fullMax } from '../data/olympiad-theory.js';
 import { SIM } from '../data/sims.js';
 import { asset } from '../lib/assets.js';
 import { isActiveTeacher, isAdmin } from '../lib/auth.js';
@@ -23,6 +25,17 @@ const SOURCES = [
   ['https://cdn.bc-pf.org/olympiads/physics/national/final/2024/9/phys9-1-sol-kaz.pdf', 'Республикалық олимпиада 2024, қорытынды кезең: 9-сынып шешімдері (PDF)'],
   ['https://cdn.bc-pf.org/olympiads/physics/national/final/2024/10/phys10-1-sol-kaz.pdf', 'Республикалық олимпиада 2024, қорытынды кезең: 10-сынып шешімдері (PDF)'],
 ];
+
+// Ресми олимпиаданың теориялық туры: сан/формула жауап, бірден тексеру, әр есептің талдауы.
+function theoryCard(r) {
+  return html`
+    <article class="ofile">
+      <div class="ofile-h"><span class="pill">${r.stage}</span><span class="pill ok">теориялық тур</span><span class="mc-grade">${r.year} оқу жылы</span></div>
+      <h3>${r.g}-сынып</h3>
+      <p>${r.problems.length} есеп, ${fullMax(r)} ұпай (${autoMax(r)} ұпай автоматты тексеріледі). Жауапты сан немесе формула түрінде жаз — сайт бірден тексереді, содан кейін әр есептің қадамдық талдауы мен ресми шешімі ашылады.</p>
+      <div class="ofile-acts"><a class="btn sm" href="/olympiad/round/${r.k}">${icon('play', 14)} Шешуді бастау</a></div>
+    </article>`;
+}
 
 // Ресми олимпиада тапсырмаларының онлайн тест карточкасы.
 function testCard(t) {
@@ -66,7 +79,7 @@ router.get('/olympiad', asyncH(async (req, res) => {
     return p.toString() ? `/olympiad?${p}` : '/olympiad';
   };
   const groups = GRADES.map((g) => ({ g, items: list.filter((o) => o.g === g) })).filter((x) => x.items.length);
-  const tests = OLYMPIAD_TESTS.filter((t) => !grade || t.g === grade);
+  const tests = ROUNDS.filter((t) => !grade || t.g === grade);
   const myGroups = req.user && req.user.role === 'student' ? await one(
     `SELECT count(*)::int AS n, (SELECT count(*) FROM olympiad_tasks t JOIN olympiad_group_members m ON m.group_id = t.group_id WHERE m.user_id = $1)::int AS tasks
        FROM olympiad_group_members WHERE user_id = $1`, [req.user.id]).then((r) => (r && r.n ? r : null)) : null;
@@ -91,9 +104,9 @@ router.get('/olympiad', asyncH(async (req, res) => {
         ${req.user && (isActiveTeacher(req.user) || isAdmin(req.user)) ? html`<div class="notice og-entry no-print"><div><b>Олимпиадаға дайындық топтары.</b> Оқушыларды топқа жинап, есептер мен ресми тесттерді тапсырма етіп беріңіз; олар шешімін суретке түсіріп жүктейді, сіз бағалайсыз.</div><a class="btn" href="/olympiad/groups">${icon('trophy', 15)} Дайындық топтары</a></div>`
           : req.user && req.user.role === 'student' ? html`<div class="og-entry-st no-print">${myGroups ? html`<a class="btn" href="/olympiad/my">${icon('trophy', 15)} Менің олимпиада тапсырмаларым${myGroups.tasks ? html` <span class="pill ok">${myGroups.tasks}</span>` : ''}</a>` : ''}${joinForm(req)}</div>` : ''}
         ${tests.length ? html`<section class="shelf">
-          <div class="shelf-h"><h2>Ресми олимпиада тапсырмалары: онлайн тест</h2><span class="cnt">${tests.length} тест</span></div>
+          <div class="shelf-h"><h2>Ресми олимпиада тапсырмалары: онлайн тест</h2><span class="cnt">${tests.length}</span></div>
           <div class="rule"></div>
-          <div class="ofgrid">${tests.map(testCard)}</div>
+          <div class="ofgrid">${tests.map((t) => (isTheory(t) ? theoryCard(t) : testCard(t)))}</div>
         </section>` : ''}
         <div class="notice small"><div><b>Төмендегі есептерді қалай қолдану керек?</b> Алдымен есепті өзің шығарып көр. Қиналсаң — «Физикалық мағынасы» деген кеңесті аш, содан кейін ғана шешімді қара. Бұл бөлімдегі есептер олимпиадалардың типтік тақырыптары бойынша құрастырылған авторлық есептер; ресми тапсырмалар жоғарыдағы онлайн тесттерде және беттің соңындағы мұрағаттарда.</div></div>
         ${groups.length ? groups.map(({ g, items }) => html`
