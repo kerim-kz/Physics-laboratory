@@ -13,7 +13,7 @@
     hint: 'Тірек ауданы азайса, сол күштің қысымы артады — дене тереңірек батады.',
     controls: [
       { type: 'select', key: 'obj', label: 'Дене', value: 'brick', options: Object.keys(OBJ).map(function (k) { return [k, OBJ[k].name]; }) },
-      { type: 'select', key: 'face', label: 'Кірпіштің қыры (тек кірпіш үшін)', value: 'big', options: [['big', 'Жалпақ қыры'], ['side', 'Бүйір қыры'], ['end', 'Ұшымен (тік)']] },
+      { type: 'select', key: 'face', when: function (P) { return P.obj === 'brick'; }, label: 'Кірпіштің қыры', value: 'big', options: [['big', 'Жалпақ қыры'], ['side', 'Бүйір қыры'], ['end', 'Ұшымен (тік)']] },
     ],
     readouts: [
       { key: 'F', label: 'Қысым күші F = mg', unit: 'Н', digits: 0 },

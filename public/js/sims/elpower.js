@@ -45,7 +45,9 @@
       ctx.save(); ctx.translate(mx, my + 120); ctx.scale(1, 0.3); ctx.rotate(S.t * Pw * 0.05);
       ctx.fillStyle = '#c9ced3'; ctx.beginPath(); ctx.arc(0, 0, 50, 0, 7); ctx.fill(); ctx.fillStyle = '#c62f22'; ctx.fillRect(40, -6, 10, 12); ctx.restore();
       R.txt(ctx, '220 В · 50 Гц', mx, my + 170, { size: 10, color: '#555' });
-      R.meter(ctx, mx, my + 300, 40, Pw / 220, 10, { letter: 'A', step: 2 });
+      // амперметр — розетканың үстінде (бұрын санауыштың астында, экраннан шығып кететін)
+      var am = R.meter(ctx, sx + 14, H * 0.2, 30, Pw / 220, 10, { letter: 'A', step: 2 });
+      R.tag(ctx, Sim.fmt(Pw / 220, 2) + ' А', sx + 14, H * 0.2 + 42, { size: 10.5, mono: true, color: '#0b6b78' });
     },
   });
 })();

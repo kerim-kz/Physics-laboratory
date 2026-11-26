@@ -67,6 +67,18 @@ router.get('/sims', asyncH(async (req, res) => {
   });
 }));
 
+const CIRCUIT_TASK = { meters: 2, resistors: 4, ohm: 7, rheostat: 6, fuse: 8, elpower: 1, joulelenz: 8, cell: 1 };
+const NUCLEAR = ['radiation', 'decay', 'nreaction', 'binding', 'chain', 'reactor', 'fusion', 'shielding', 'rutherford'];
+function buildLink(s) {
+  if (s.k !== 'circuitlab' && s.g === 8 && s.s === 'dc' && SIM.circuitlab) {
+    return { href: `/sims/circuitlab?task=${CIRCUIT_TASK[s.k] || 1}`, icon: 'bolt', t: 'Өзің құрастырып көр: электр тізбегінің конструкторы', d: 'Элементтерді тақтаға сүйреп қойып, тізбекті өзің жина — сайт оны есептеп, тапсырманың орындалғанын тексереді.' };
+  }
+  if (s.g === 9 && NUCLEAR.includes(s.k)) {
+    if (SIM.decaybuilder && s.k !== 'decaybuilder' && s.k !== 'nucleusbuilder') return { href: s.k === 'binding' ? '/sims/nucleusbuilder' : '/sims/decaybuilder', icon: 'sim', t: s.k === 'binding' ? 'Өзің құрастырып көр: ядроны жина' : 'Өзің құрастырып көр: ыдырау теңдеуі', d: s.k === 'binding' ? 'Протон мен нейтронды өзің қосып, ядроның тұрақты не тұрақсыз екенін, ыдырау түрін анықта.' : 'Ыдырау түріне қарап, туынды ядроның массалық және зарядтық санын, таңбасын өзің жаз — сайт бірден тексереді.' };
+  }
+  return null;
+}
+
 router.get('/sims/:k', asyncH(async (req, res) => {
   const s = SIM[req.params.k];
   if (!s) throw new HttpError(404, 'Симуляция табылмады.');
@@ -81,15 +93,18 @@ router.get('/sims/:k', asyncH(async (req, res) => {
       for (const [n, t, keys] of ch.labs || []) if (keys.includes(s.k)) book.push([`/sims?book=${g}`, `${g}-сынып · №${n} зерт. жұмыс`, t]);
     }
   }
+  // Оқушы өзі құрастыратын симуляцияға сілтеме (8-сынып тұрақты ток → тізбек конструкторы; 9-сынып ядро → ядро/ыдырау конструкторы)
+  const build = buildLink(s);
   await page(req, res, {
     title: s.t, active: 'sims', katex: true,
-    scripts: ['/js/sims/kit.js', '/js/sims/real.js', `/js/sims/${s.k}.js`, '/js/formulas.js'],
+    scripts: ['/js/sims/kit.js', '/js/sims/real.js', ...(s.js || []).map((x) => `/js/sims/${x}.js`), `/js/sims/${s.k}.js`, '/js/formulas.js'],
     body: html`
       <div class="view">
         <div class="crumbs"><a href="/sims">Симуляциялар</a><span>/</span><span>${sec.name}</span></div>
         <div class="vhead"><div><p class="eyebrow">${sec.name} · ${s.g}-сынып</p><h1>${s.t}</h1><p>${s.d}</p></div></div>
         <div class="simwrap">
           <section class="panel simstage">
+            <p class="simhint" id="simHint" hidden>${icon('target', 15)}<span></span></p>
             <div class="simcanvas"><canvas id="simCanvas" aria-label="${s.t}: модель" role="img"></canvas></div>
             <div class="simbar">
               <button class="btn" type="button" id="simPlay">${icon('play', 15)} <span>Бастау</span></button>
@@ -97,8 +112,6 @@ router.get('/sims/:k', asyncH(async (req, res) => {
               <button class="btn ghost" type="button" id="simFull">${icon('expand', 15)} <span>Толық экран</span></button>
               <button class="btn ghost" type="button" id="simShot">${icon('download', 15)} Сурет</button>
               <a class="btn ghost" href="/ai?ctx=sim:${s.k}">${icon('spark', 15)} ЖИ-көмекші</a>
-              <span class="grow"></span>
-              <span class="muted small" id="simHint"></span>
             </div>
           </section>
           <aside class="panel simside">
@@ -110,6 +123,7 @@ router.get('/sims/:k', asyncH(async (req, res) => {
           </aside>
         </div>
         <section class="panel simdata" id="simData" hidden></section>
+        ${build ? html`<a class="panel buildcta" href="${build.href}"><span class="glyph">${icon(build.icon, 22)}</span><span class="grow"><b>${build.t}</b><span>${build.d}</span></span>${icon('arrow', 16)}</a>` : ''}
         <div class="detail">
           <section class="stack">
             <div class="block-h"><h2>Теория</h2></div>

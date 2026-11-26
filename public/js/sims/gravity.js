@@ -13,10 +13,10 @@
     hint: 'Қашықтықты 2 есе арттыр: тартылыс күші неше есе азаяды? Массаны 2 есе арттырсаң ше?',
     controls: [
       { type: 'select', key: 'mode', label: 'Режим', value: 'pair', options: [['pair', 'Екі дененің тартылысы'], ['height', 'Еркін түсу үдеуінің биіктікке тәуелділігі']] },
-      { type: 'select', key: 'pair', label: 'Денелер', value: 'em', options: Object.keys(PAIRS).map(function (k) { return [k, PAIRS[k][0]]; }) },
-      { type: 'range', key: 'kr', label: 'Қашықтық (бастапқыдан неше есе)', min: 0.5, max: 4, step: 0.25, value: 1, digits: 2, format: function (v) { return '× ' + String(v).replace('.', ','); } },
-      { type: 'range', key: 'km', label: 'Бірінші дененің массасы (неше есе)', min: 0.5, max: 4, step: 0.5, value: 1, digits: 1, format: function (v) { return '× ' + String(v).replace('.', ','); } },
-      { type: 'range', key: 'h', label: 'Жер бетінен биіктік h', min: 0, max: 36000, step: 400, value: 400, unit: 'км', digits: 0 },
+      { type: 'select', key: 'pair', when: function (P) { return P.mode === 'pair'; }, label: 'Денелер', value: 'em', options: Object.keys(PAIRS).map(function (k) { return [k, PAIRS[k][0]]; }) },
+      { type: 'range', key: 'kr', when: function (P) { return P.mode === 'pair'; }, label: 'Қашықтық (бастапқыдан неше есе)', min: 0.5, max: 4, step: 0.25, value: 1, digits: 2, format: function (v) { return '× ' + String(v).replace('.', ','); } },
+      { type: 'range', key: 'km', when: function (P) { return P.mode === 'pair'; }, label: 'Бірінші дененің массасы (неше есе)', min: 0.5, max: 4, step: 0.5, value: 1, digits: 1, format: function (v) { return '× ' + String(v).replace('.', ','); } },
+      { type: 'range', key: 'h', when: function (P) { return P.mode === 'height'; }, label: 'Жер бетінен биіктік h', min: 0, max: 36000, step: 400, value: 400, unit: 'км', digits: 0 },
     ],
     readouts: [
       { key: 'F', label: 'Тартылыс күші F', unit: 'Н', digits: 3 },

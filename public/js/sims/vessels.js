@@ -7,7 +7,7 @@
     hint: 'Оң жақ түтікке басқа сұйық құйып көр. Шекара деңгейінен бастап өлшенген бағандардың биіктіктері қандай?',
     controls: [
       { type: 'select', key: 'shape', label: 'Ыдыстар', value: 'u', options: [['u', 'U тәрізді түтік'], ['forms', 'Әртүрлі пішінді ыдыстар'], ['teapot', 'Шәйнек']] },
-      { type: 'select', key: 'top', label: 'Оң жаққа құйылған сұйық (U түтік)', value: 'oil', options: [['none', 'Ештеңе (тек су)']].concat(Object.keys(LQ).filter(function (k) { return k !== 'water'; }).map(function (k) { return [k, LQ[k][0]]; })) },
+      { type: 'select', key: 'top', when: function (P) { return P.shape === 'u'; }, label: 'Оң жаққа құйылған сұйық', value: 'oil', options: [['none', 'Ештеңе (тек су)']].concat(Object.keys(LQ).filter(function (k) { return k !== 'water'; }).map(function (k) { return [k, LQ[k][0]]; })) },
       { type: 'range', key: 'h2', label: 'Құйылған бағанның биіктігі h₂', min: 2, max: 18, step: 1, value: 12, unit: 'см', digits: 0 },
     ],
     readouts: [

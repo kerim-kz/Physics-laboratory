@@ -7,10 +7,10 @@
     hint: '«Бастау» батырмасын бас: дене суға баяу батырылады. Мензурканың бөлік құны — 2 мл.',
     controls: [
       { type: 'select', key: 'mode', label: 'Тәсіл', value: 'beaker', options: [['block', 'Дұрыс пішінді дене (сызғышпен)'], ['beaker', 'Мензурка (су ығыстыру)'], ['overflow', 'Құйылу ыдысы']] },
-      { type: 'select', key: 'stone', label: 'Дене', value: 's2', options: Object.keys(STONES).map(function (k) { return [k, STONES[k][0]]; }) },
-      { type: 'range', key: 'a', label: 'Бруссок: ұзындығы a', min: 2, max: 8, step: 0.5, value: 5, unit: 'см' },
-      { type: 'range', key: 'b', label: 'ені b', min: 2, max: 6, step: 0.5, value: 3, unit: 'см' },
-      { type: 'range', key: 'c', label: 'биіктігі c', min: 1, max: 5, step: 0.5, value: 2, unit: 'см' },
+      { type: 'select', key: 'stone', when: function (P) { return P.mode !== 'block'; }, label: 'Дене', value: 's2', options: Object.keys(STONES).map(function (k) { return [k, STONES[k][0]]; }) },
+      { type: 'range', key: 'a', when: function (P) { return P.mode === 'block'; }, label: 'Бруссок: ұзындығы a', min: 2, max: 8, step: 0.5, value: 5, unit: 'см' },
+      { type: 'range', key: 'b', when: function (P) { return P.mode === 'block'; }, label: 'ені b', min: 2, max: 6, step: 0.5, value: 3, unit: 'см' },
+      { type: 'range', key: 'c', when: function (P) { return P.mode === 'block'; }, label: 'биіктігі c', min: 1, max: 5, step: 0.5, value: 2, unit: 'см' },
     ],
     readouts: [
       { key: 'v1', label: 'V₁ (дене батырылғанға дейін)', unit: 'мл', digits: 0 },
