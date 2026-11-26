@@ -14,7 +14,7 @@
     ctx.save(); ctx.translate(x, y); if (vertical) ctx.rotate(Math.PI / 2);
     R.resistor(ctx, 0, 0, w + 20, {});
     ctx.restore();
-    R.tag(ctx, label, vertical ? x + 62 : x, vertical ? y : y - 22, { size: 11 });
+    R.tag(ctx, label, vertical ? x - 64 : x, vertical ? y : y - 22, { size: 11 });
   }
   // Стрелкалы амперметр/вольтметр, шкаласы көрсетуіне сай таңдалады
   function meter(ctx, x, y, letter, val, unit, C, D, api) {

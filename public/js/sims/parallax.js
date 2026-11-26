@@ -8,9 +8,9 @@
     hint: 'Жер Күнді айналғанда жақын жұлдыз алыстағы жұлдыздардың фонында жылжиды. Жарты жылдағы ығысудың жартысы — жылдық параллакс p.',
     controls: [
       { type: 'select', key: 'mode', label: 'Әдіс', value: 'annual', options: [['annual', 'Жылдық параллакс (жұлдыздар)'], ['horiz', 'Горизонталь параллакс (Күн жүйесі)']] },
-      { type: 'select', key: 'star', label: 'Жұлдыз', value: 'proxima', options: Object.keys(STARS).map(function (k) { return [k, STARS[k][0]]; }) },
-      { type: 'range', key: 'p', label: 'Өз жұлдызымның параллаксы p', min: 0.05, max: 1, step: 0.05, value: 0.5, unit: '″', digits: 2 },
-      { type: 'select', key: 'body', label: 'Күн жүйесіндегі дене', value: 'moon', options: Object.keys(BODIES).map(function (k) { return [k, BODIES[k][0]]; }) },
+      { type: 'select', key: 'star', when: function (P) { return P.mode === 'annual'; }, label: 'Жұлдыз', value: 'proxima', options: Object.keys(STARS).map(function (k) { return [k, STARS[k][0]]; }) },
+      { type: 'range', key: 'p', when: function (P) { return P.mode === 'annual'; }, label: 'Өз жұлдызымның параллаксы p', min: 0.05, max: 1, step: 0.05, value: 0.5, unit: '″', digits: 2 },
+      { type: 'select', key: 'body', when: function (P) { return P.mode === 'horiz'; }, label: 'Күн жүйесіндегі дене', value: 'moon', options: Object.keys(BODIES).map(function (k) { return [k, BODIES[k][0]]; }) },
     ],
     readouts: [
       { key: 'p', label: 'Параллакс p', unit: '″', digits: 3 },

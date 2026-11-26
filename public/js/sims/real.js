@@ -511,14 +511,20 @@
     ctx.fillStyle = '#f8f6ee'; ctx.fill();
     var cx = x, cy = y + r * 0.22, R = r * 0.78, a0 = Math.PI * 1.18, a1 = Math.PI * 1.82;
     var step = o.step || niceStep(max, 5), minor = step / 5;
+    // Сандар бір-біріне жабыспауы үшін: қаріп өлшемі мен әр нешінші белгіге сан жазылатыны доғаның ұзындығына қарай таңдалады.
+    var fs = Math.max(7, Math.min(12, r * 0.16)), rl = R * 0.7, nBig = Math.max(1, Math.round(max / step));
+    var chars = Math.max(fmtShort(max).length, fmtShort(step).length), every = 1;
+    while (rl * (a1 - a0) / nBig * every < fs * 0.62 * chars + 3 && every < nBig) every++;
+    var tick = Math.max(3, Math.min(8, R * 0.22));
     ctx.strokeStyle = '#222';
     for (var v = 0; v <= max + 1e-9; v += minor) {
       var a = a0 + (a1 - a0) * v / max, isBig = Math.abs(v / step - Math.round(v / step)) < 1e-6;
       ctx.lineWidth = isBig ? 1.2 : 0.6;
-      ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); ctx.lineTo(cx + Math.cos(a) * (R - (isBig ? 8 : 4)), cy + Math.sin(a) * (R - (isBig ? 8 : 4))); ctx.stroke();
-      if (isBig) txt(ctx, fmtShort(v), cx + Math.cos(a) * (R - 15), cy + Math.sin(a) * (R - 15), { size: Math.max(7.5, r * 0.15), mono: true, color: '#222', weight: '500' });
+      ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); ctx.lineTo(cx + Math.cos(a) * (R - (isBig ? tick : tick / 2)), cy + Math.sin(a) * (R - (isBig ? tick : tick / 2))); ctx.stroke();
+      var bi = Math.round(v / step);
+      if (isBig && (bi % every === 0 || bi === nBig)) txt(ctx, fmtShort(v), cx + Math.cos(a) * rl, cy + Math.sin(a) * rl, { size: fs, mono: true, color: '#222', weight: '500' });
     }
-    txt(ctx, letter, cx, cy - R * 0.28, { size: r * 0.32, color: '#222', weight: '700' });
+    txt(ctx, letter, cx, cy - R * 0.24, { size: Math.max(8, r * 0.24), color: '#222', weight: '700' });
     var frac = Math.max(-0.03, Math.min(1.05, value / max)), an = a0 + (a1 - a0) * frac;
     ctx.strokeStyle = '#c62f22'; ctx.lineWidth = 1.6;
     ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(an) * (R - 2), cy + Math.sin(an) * (R - 2)); ctx.stroke();

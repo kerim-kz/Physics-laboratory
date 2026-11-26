@@ -172,7 +172,7 @@
     var api = { P: P, S: S, C: C, D: D, fmt: fmt, ctx: ctx, canvas: canvas };
 
     // параметрлер
-    var inputs = {};
+    var inputs = {}, whens = [];
     (o.controls || []).forEach(function (c) {
       P[c.key] = c.value;
       var wrap = document.createElement('label');
@@ -200,8 +200,12 @@
         cb.addEventListener('change', function () { P[c.key] = cb.checked; changed(c); });
         inputs[c.key] = { el: cb };
       }
+      if (c.when) whens.push([c, wrap]);
       controlsBox.appendChild(wrap);
     });
+    // when(P) — параметр тек сол шарт орындалғанда ғана көрінеді (басқа режимде әсері жоқ)
+    function syncWhen() { whens.forEach(function (x) { x[1].hidden = !x[0].when(P); }); }
+    syncWhen();
     (o.buttons || []).forEach(function (b) {
       var btn = document.createElement('button');
       btn.type = 'button'; btn.className = 'btn ghost sm'; btn.textContent = b.label;
@@ -229,22 +233,32 @@
       });
     }
 
+    // Параметр өзгергенде: «live» болса күйі сақталады, әйтпесе модель қайта басталады.
+    // Симуляция жүріп тұрса, тоқтамайды — оқушы өзгерісті бірден көреді.
     function changed(c) {
+      syncWhen();
       if (c.live || o.static) { if (o.onLive) o.onLive(api, c.key); }
-      else reset();
+      else reset(true);
       draw();
     }
 
+    // Телефонда сурет кесілмеуі үшін: экран minW-дан тар болса, модель minW енінде салынып, экранға сыйғызылады.
+    var K = 1; // экран пикселі / модель пикселі
+    var minW = o.minW === undefined ? 470 : o.minW;
     function resize() {
       var box = canvas.parentElement;
       var w = box.clientWidth;
-      var maxH = document.fullscreenElement ? window.innerHeight - 90 : 560;
-      var h = Math.round(Math.min(maxH, Math.max(260, w * ((w < 600 && o.aspectNarrow) || o.aspect || 0.62))));
+      if (!w) return;
+      var fs = !!document.fullscreenElement;
+      var maxH = fs ? window.innerHeight - 90 : 560;
+      K = minW && w < minW ? w / minW : 1;
+      var lw = w / K;
+      var h = Math.round(Math.min(maxH, Math.max(K < 1 ? 240 : 260, w * ((lw < 600 && o.aspectNarrow) || o.aspect || 0.62))));
       var dpr = window.devicePixelRatio || 1;
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      W = w; H = h; api.W = W; api.H = H;
+      ctx.setTransform(dpr * K, 0, 0, dpr * K, 0, 0);
+      W = Math.round(lw); H = Math.round(h / K); api.W = W; api.H = H; api.K = K;
       if (o.onResize) o.onResize(api);
       draw();
     }
@@ -296,29 +310,31 @@
       playBtn.classList.remove('ghost');
       updateReadouts();
     }
-    function reset() {
+    function reset(keep) {
       var was = running;
       pause();
       for (var k in S) delete S[k];
       o.init(api);
       draw();
-      if (was && o.keepRunning) play();
+      if (was && (keep === true || o.keepRunning)) play();
     }
     api.play = play; api.pause = pause; api.reset = reset;
     api.running = function () { return running; };
 
     playBtn.addEventListener('click', function () { if (running) pause(); else play(); });
-    resetBtn.addEventListener('click', reset);
+    resetBtn.addEventListener('click', function () { reset(); });
     if (o.static) { playBtn.hidden = true; if (o.resetLabel === false) resetBtn.hidden = true; }
-    if (hint && o.hint) hint.textContent = o.hint;
+    if (hint && o.hint) { (hint.querySelector('span') || hint).textContent = o.hint; hint.hidden = false; }
 
     // Тінтуір/саусақ: алдымен өлшеу құралдарының тұтқалары, содан кейін симуляцияның өз өңдегіштері.
-    var pos = function (e) { var r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-    var down = false, toolDrag = null;
+    var pos = function (e) { var r = canvas.getBoundingClientRect(); return { x: (e.clientX - r.left) / K, y: (e.clientY - r.top) / K }; };
+    var down = false, toolDrag = null, touchR = 14;
     if (o.pointer || (o.tools && o.tools.length)) {
       canvas.addEventListener('pointerdown', function (e) {
         var p = pos(e);
         canvas.setPointerCapture(e.pointerId);
+        touchR = e.pointerType === 'touch' || e.pointerType === 'pen' ? 26 : 14;
+        api.touch = e.pointerType === 'touch' || e.pointerType === 'pen';
         toolDrag = hitTool(p);
         if (toolDrag) { draw(); return; }
         down = true;
@@ -331,6 +347,7 @@
         canvas.style.cursor = hitTool(p) ? 'grab' : '';
         if (o.pointer && o.pointer.move) { o.pointer.move(api, p, down, e); if (!running) draw(); }
       });
+      canvas.addEventListener('pointercancel', function (e) { toolDrag = null; down = false; if (o.pointer && o.pointer.up) o.pointer.up(api, pos(e), e); draw(); });
       canvas.addEventListener('pointerup', function (e) {
         if (toolDrag) { toolDrag = null; draw(); return; }
         down = false;
@@ -354,7 +371,7 @@
       if (T.angle) hs.push(['angle', 'v'], ['angle', 'a'], ['angle', 'b']);
       for (var i = 0; i < hs.length; i++) {
         var h = T[hs[i][0]][hs[i][1]];
-        if (Math.hypot(p.x - h.x, p.y - h.y) < 14) {
+        if (Math.hypot(p.x - h.x, p.y - h.y) < touchR / K) {
           var tool = T[hs[i][0]], key = hs[i][1];
           if (hs[i][0] === 'angle' && key === 'v') {
             // төбесін сүйрегенде бүкіл бұрыш өлшегіш бірге жылжиды
@@ -536,7 +553,13 @@
     var fullBtn = document.getElementById('simFull'), shotBtn = document.getElementById('simShot');
     var stage = canvas.closest('.simstage');
     if (fullBtn && stage && stage.requestFullscreen) {
-      fullBtn.addEventListener('click', function () { if (document.fullscreenElement) document.exitFullscreen(); else stage.requestFullscreen().catch(function () {}); });
+      fullBtn.addEventListener('click', function () {
+        if (document.fullscreenElement) { document.exitFullscreen(); return; }
+        stage.requestFullscreen().then(function () {
+          // Телефонда толық экранды көлденең бұрамыз (қолдайтын браузерлерде)
+          if (window.innerWidth < 700 && screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(function () {});
+        }).catch(function () {});
+      });
       document.addEventListener('fullscreenchange', function () { fullBtn.querySelector('span').textContent = document.fullscreenElement ? 'Шығу' : 'Толық экран'; setTimeout(resize, 50); });
     } else if (fullBtn) fullBtn.hidden = true;
     if (shotBtn) shotBtn.addEventListener('click', function () {

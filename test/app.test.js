@@ -1074,6 +1074,92 @@ describe('тіркелу, рөлдер және сыныптар', () => {
   });
 });
 
+describe('оқушы өзі құрастыратын симуляциялар: тізбек конструкторы, ядро, ыдырау теңдеуі', () => {
+  // Браузерге арналған IIFE файлын Node-та window нысанымен орындау
+  async function loadNuc() {
+    const vm = await import('node:vm');
+    const ctx = { window: {} };
+    vm.createContext(ctx);
+    vm.runInContext(fs.readFileSync(new URL('../public/js/sims/nuclides.js', import.meta.url), 'utf8'), ctx);
+    return ctx.window.Nuc;
+  }
+  test('беттер ашылады, қосымша скрипттер қосылады, байланысты симуляциялардан сілтеме бар', async () => {
+    const c = new Client();
+    const cl = await c.get('/sims/circuitlab');
+    assert.equal(cl.status, 200);
+    assert.match(cl.text, /\/js\/sims\/circuitlab\.js/);
+    assert.doesNotMatch(cl.text, /nuclides\.js/);
+    for (const k of ['nucleusbuilder', 'decaybuilder']) {
+      const r = await c.get(`/sims/${k}`);
+      assert.equal(r.status, 200, k);
+      // нуклидтер дерегі симуляция скриптінен бұрын жүктеледі
+      assert.match(r.text, /\/js\/sims\/nuclides\.js[^"]*"[^<]*<\/script>\s*<script[^>]*\/js\/sims\/(nucleusbuilder|decaybuilder)\.js/);
+    }
+    // 8-сыныптың электр симуляцияларынан конструкторға, тиісті тапсырмамен
+    assert.match((await c.get('/sims/meters')).text, /href="\/sims\/circuitlab\?task=2"/);
+    assert.match((await c.get('/sims/resistors')).text, /href="\/sims\/circuitlab\?task=4"/);
+    assert.match((await c.get('/sims/radiation')).text, /href="\/sims\/decaybuilder"/);
+    assert.match((await c.get('/sims/binding')).text, /href="\/sims\/nucleusbuilder"/);
+    assert.doesNotMatch((await c.get('/sims/lens')).text, /class="panel buildcta"/);
+    // оқулықта: 8-сынып §23, 9-сынып §35, §37
+    const b8 = await c.get('/sims?book=8');
+    assert.match(b8.text, /href="\/sims\/circuitlab"/);
+    const b9 = await c.get('/sims?book=9');
+    assert.match(b9.text, /href="\/sims\/decaybuilder"/);
+    assert.match(b9.text, /href="\/sims\/nucleusbuilder"/);
+    // сайт тілі орысша болса — тақырып аударылған
+    assert.match((await c.get('/sims/circuitlab?lang=ru')).text, /Конструктор электрических цепей/);
+  });
+
+  test('ядро дерегі: тұрақтылық, ыдырау түрі, ығысу ережесі', async () => {
+    const Nuc = await loadNuc();
+    assert.equal(Nuc.sym(92), 'U'); assert.equal(Nuc.sym(82), 'Pb'); assert.equal(Nuc.sym(6), 'C');
+    assert.equal(Nuc.info(6, 6).mode, 's');      // C-12 тұрақты
+    assert.equal(Nuc.info(6, 8).mode, 'b-');     // C-14 → β⁻
+    assert.equal(Nuc.info(6, 5).mode, 'b+');     // C-11 → β⁺
+    assert.equal(Nuc.info(4, 4).mode, 'a');      // Be-8 → 2α
+    assert.equal(Nuc.info(20, 20).mode, 's');    // Ca-40
+    assert.equal(Nuc.info(1, 3).known, false);   // H-4 байланыспайды
+    assert.equal(Nuc.info(1, 3).mode, 'n');
+    assert.equal(Nuc.info(3, 1).mode, 'p');      // Li-4 — протон ұшып шығады
+    assert.deepEqual([...Nuc.after('b-', 6, 8)], [7, 7]);
+    assert.deepEqual([...Nuc.after('a', 92, 146)], [90, 144]);
+    assert.deepEqual([...Nuc.after('b+', 6, 5)], [5, 6]);
+    // Кестедегі әр жеңіл тұрақсыз ядро ыдырағаннан кейін кестеге не тұрақты ядроға жетеді, тұйық айналым жоқ
+    for (let z = 0; z <= 20; z++) for (let n = 0; n <= 28; n++) {
+      let cur = Nuc.info(z, n), zz = z, nn = n, steps = 0;
+      if (!cur.known) continue;
+      while (cur.mode !== 's' && steps < 12) { [zz, nn] = Nuc.after(cur.mode, zz, nn); cur = Nuc.info(zz, nn); steps++; }
+      assert.ok(cur.mode === 's' || zz + nn <= 1, `${z}-${z + n}: ${steps} қадамда тұрақты ядроға жетпеді`);
+    }
+    // Жартылай ыдырау периодын оқуға ыңғайлы жазу (10-ның дәрежесінсіз)
+    const Y = 365.25 * 86400;
+    assert.match(Nuc.fmtT(4.468e9 * Y), /млрд жыл$/);
+    assert.match(Nuc.fmtT(5730 * Y), /^5730 жыл$/);
+    assert.doesNotMatch(Nuc.fmtT(2.455e5 * Y), /·/);
+  });
+
+  test('U-238 тізбегі: әр қадамның туынды ядросы — келесі қадамның аналық ядросы, соңы Pb-206', async () => {
+    const Nuc = await loadNuc();
+    const src = fs.readFileSync(new URL('../public/js/sims/decaybuilder.js', import.meta.url), 'utf8');
+    const Y = 365.25 * 86400, D = 86400, H = 3600, M = 60;
+    const CHAIN = Function('Y', 'D', 'H', 'M', `return ${src.match(/var CHAIN = (\[[\s\S]*?\]\]);/)[1]};`)(Y, D, H, M);
+    const SINGLE = Function('Y', 'D', 'H', 'M', `return ${src.match(/var SINGLE = (\[[\s\S]*?\]\]);/)[1]};`)(Y, D, H, M);
+    assert.equal(CHAIN.length, 14);
+    const mode = { a: 'a', 'b-': 'b-' };
+    let [Z, A] = [92, 238], na = 0, nb = 0;
+    for (const [z, a, m] of CHAIN) {
+      assert.deepEqual([z, a], [Z, A], `тізбек үзілді: ${Nuc.sym(Z)}-${A}`);
+      const [z2, n2] = Nuc.after(mode[m], z, a - z);
+      Z = z2; A = z2 + n2;
+      if (m === 'a') na++; else nb++;
+    }
+    assert.deepEqual([Z, A, na, nb], [82, 206, 8, 6]);
+    // Жеке есептер: түрлері белгілі, A мен Z шегінде
+    for (const [z, a, m] of SINGLE) { assert.ok(['a', 'b-', 'b+', 'g'].includes(m)); assert.ok(z >= 1 && z <= 95 && a >= z); }
+  });
+});
+
 describe('олимпиаданың теориялық туры (9–11-сынып): сан/формула жауап, бірден тексеру, талдау', () => {
   const RIGHT = {
     v2: ['14.14', '10*(3*cos(pi/4)-sin(pi/4))'], h2: ['(m1(l1-l2)-m2(l1+l2))/(m1-m2)'], t: ['sqrt(4l2/g)+2(m1+m2)/(m1-m2)*sqrt(l2/g)', 'pi*sqrt(eps*e0*S*L/d)', 'π√(LC)'],

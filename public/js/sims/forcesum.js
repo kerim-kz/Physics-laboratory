@@ -31,7 +31,10 @@
       return { R: Math.abs(Rr), dir: Rr > 0 ? 'оңға' : Rr < 0 ? 'солға' : '—', st: Rr === 0 ? 'тыныштықта (күштер теңгерілген)' : 'тең әсерлі күш бағытымен жылдамдайды' };
     },
     draw: function (api, ctx, W, H) {
-      var P = api.P, S = api.S, table = H * 0.6, cx = W / 2 + S.x * 260;
+      var P = api.P, S = api.S, table = H * 0.6;
+      // Брусок пен динамометрлер экраннан шықпауы үшін: тар экранда жүру жолы қысқарады, «бір бағытта» күйінде сахна солға ығысады
+      var base = P.mode === 'same' ? W * 0.3 : W / 2, room = P.mode === 'same' ? W - base - 230 : W / 2 - 215;
+      var cx = base + S.x * Math.max(0, Math.min(260, room / 0.3));
       R.scene(ctx, W, H, 'lab', { table: table });
       var by = table - 50;
       R.block(ctx, cx - 50, by, 100, 40, 'oak', { depth: 12 });
