@@ -14,6 +14,7 @@
   }
 
   Sim.create({
+    hint: 'Дене материалын немесе сұйықты ауыстыр: дене қашан батады, қашан қалқиды? Тығыздықтарды салыстыр.',
     grid: false,
     tools: ['ruler'],
     scale: function (api) { return api._sc || null; },

@@ -180,12 +180,16 @@
       if (c.type === 'range') {
         wrap.innerHTML = '<span class="ctl-h"><span>' + c.label + '</span><b class="mono"></b></span><input type="range">';
         var inp = wrap.querySelector('input');
-        inp.min = c.min; inp.max = c.max; inp.step = c.step; inp.value = c.value;
+        // log: true — логарифмдік шкала (мысалы, 0,1-ден 1000-ға дейінгі жұлдыз радиусы): сырғытпа 0…1000 позициясымен жұмыс істейді
+        var toPos = c.log ? function (v) { return Math.round(1000 * Math.log(v / c.min) / Math.log(c.max / c.min)); } : null;
+        var fromPos = c.log ? function (q) { var v = c.min * Math.pow(c.max / c.min, q / 1000), st = c.step || 0; v = st ? Math.round(v / st) * st : v; return Math.min(c.max, Math.max(c.min, +v.toPrecision(3))); } : null;
+        if (c.log) { inp.min = 0; inp.max = 1000; inp.step = 1; inp.value = toPos(c.value); inp.dataset.log = '1'; }
+        else { inp.min = c.min; inp.max = c.max; inp.step = c.step; inp.value = c.value; }
         var out = wrap.querySelector('b');
         var show = function () { out.textContent = (c.format ? c.format(P[c.key]) : fmt(P[c.key], c.digits === undefined ? 1 : c.digits)) + (c.unit ? ' ' + c.unit : ''); };
         show();
-        inp.addEventListener('input', function () { P[c.key] = parseFloat(inp.value); show(); changed(c); });
-        inputs[c.key] = { el: inp, show: show };
+        inp.addEventListener('input', function () { P[c.key] = c.log ? fromPos(parseFloat(inp.value)) : parseFloat(inp.value); show(); changed(c); });
+        inputs[c.key] = { el: inp, show: show, toPos: toPos };
       } else if (c.type === 'select') {
         wrap.innerHTML = '<span class="ctl-h"><span>' + c.label + '</span></span><select></select>';
         var s = wrap.querySelector('select');
@@ -213,7 +217,7 @@
       controlsBox.appendChild(btn);
     });
 
-    api.set = function (key, v) { P[key] = v; var i = inputs[key]; if (i) { if (i.el.type === 'checkbox') i.el.checked = !!v; else i.el.value = v; if (i.show) i.show(); } };
+    api.set = function (key, v) { P[key] = v; var i = inputs[key]; if (i) { if (i.el.type === 'checkbox') i.el.checked = !!v; else i.el.value = i.toPos ? i.toPos(v) : v; if (i.show) i.show(); } };
 
     // өлшеулер
     var rows = {};

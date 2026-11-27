@@ -441,6 +441,34 @@ input[type=file]{font-size:13px;max-width:100%}
 .ro span{color:var(--muted)}
 .ro b{text-align:right}
 .tasks{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14px}
+.tasks.checkable{list-style:none;padding-left:0}
+.tasks.checkable li{display:flex;gap:10px;align-items:flex-start;padding:6px 8px;border-radius:8px;transition:background .2s}
+.tasks.checkable li:hover{background:var(--accent-soft)}
+.tasks.checkable input{width:18px;height:18px;flex:none;margin-top:1px;accent-color:var(--good);cursor:pointer}
+.tasks.checkable li.done{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--good)}
+.tasks-prog{margin:10px 0 0;font-size:13px}
+.tasks-prog.all{color:var(--good);font-weight:600}
+/* «Болжа → тексер → түсіндір» */
+.predict{margin-bottom:16px;border-left:4px solid var(--accent);display:grid;gap:12px}
+.predict.done{border-left-color:var(--good)}
+.pr-head{display:flex;gap:6px;flex-wrap:wrap}
+.pr-step{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--line-soft);color:var(--muted)}
+.pr-step.on{background:var(--accent-soft);color:var(--accent-ink)}
+.pr-q{margin:0;display:flex;gap:8px;align-items:flex-start;font-size:16px;line-height:1.45}
+.pr-q svg{flex:none;margin-top:4px;color:var(--accent)}
+.pr-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:8px}
+.pr-opt{font:inherit;font-size:14.5px;text-align:left;padding:11px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel,transparent);color:var(--ink);cursor:pointer;transition:border-color .15s,transform .15s}
+.pr-opt:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+.pr-opt:disabled{cursor:default}
+.pr-opt.picked{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.pr-opt.right{border-color:var(--good);background:var(--good-soft);color:var(--ink)}
+.pr-opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.pr-wait,.pr-ans{display:grid;gap:10px;justify-items:start}
+.pr-wait p,.pr-ans p{margin:0}
+.pr-verdict{font-weight:700}
+.pr-verdict.ok{color:var(--good)}
+.pr-verdict.no{color:var(--bad)}
+.pr-why{line-height:1.5}
 
 /* ---- exams ---- */
 .exinfo{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px}

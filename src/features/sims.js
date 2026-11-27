@@ -2,6 +2,7 @@ import express from 'express';
 import { FAMILIES, SECTION, SECTIONS } from '../data/catalog.js';
 import { FORMULAS } from '../data/formulas.js';
 import { LABS } from '../data/labs.js';
+import { PREDICT } from '../data/sim-predict.js';
 import { SIM, SIMS } from '../data/sims.js';
 import { TEXTBOOK, TEXTBOOK_GRADES, chapterTitle } from '../data/textbook.js';
 import { html } from '../lib/html.js';
@@ -13,6 +14,25 @@ import { formulaCard } from './formulas.js';
 export const router = express.Router();
 
 const byName = new Map(FORMULAS.map((f) => [f.name, f]));
+
+// «Болжа → тексер»: жауап нұсқаларын симуляция кілті бойынша тұрақты түрде араластырамыз (дұрыс жауап әрдайым бірінші болмасын)
+function predictBlock(s) {
+  const p = PREDICT[s.k];
+  if (!p) return '';
+  const [q, opts, why] = p;
+  let h = 0;
+  for (const ch of s.k) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const order = opts.map((o, i) => [o, i]);
+  for (let i = order.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); [order[i], order[j]] = [order[j], order[i]]; }
+  return html`
+    <section class="panel predict" id="simPredict" data-sim="${s.k}">
+      <div class="pr-head"><span class="pr-step on">1 · Болжа</span><span class="pr-step">2 · Тексер</span><span class="pr-step">3 · Түсіндір</span></div>
+      <p class="pr-q">${icon('spark', 16)}<b>${q}</b></p>
+      <div class="pr-opts">${order.map(([o, i]) => html`<button type="button" class="pr-opt" data-ok="${i === 0 ? '1' : '0'}">${o}</button>`)}</div>
+      <div class="pr-wait" hidden><p>Болжамың сақталды. Енді симуляцияда параметрлерді өзгертіп, <b>өзің тексер</b>.</p><button type="button" class="btn" id="prReveal">Тексердім — жауабын көрсет</button></div>
+      <div class="pr-ans" hidden><p class="pr-verdict"></p><p class="pr-why">${why}</p><button type="button" class="btn ghost sm" id="prAgain">Қайта болжау</button></div>
+    </section>`;
+}
 
 function simCard(s) {
   const sec = SECTION[s.s];
@@ -97,11 +117,12 @@ router.get('/sims/:k', asyncH(async (req, res) => {
   const build = buildLink(s);
   await page(req, res, {
     title: s.t, active: 'sims', katex: true,
-    scripts: ['/js/sims/kit.js', '/js/sims/real.js', ...(s.js || []).map((x) => `/js/sims/${x}.js`), `/js/sims/${s.k}.js`, '/js/formulas.js'],
+    scripts: ['/js/sims/kit.js', '/js/sims/real.js', ...(s.js || []).map((x) => `/js/sims/${x}.js`), `/js/sims/${s.k}.js`, '/js/formulas.js', '/js/simguide.js'],
     body: html`
       <div class="view">
         <div class="crumbs"><a href="/sims">Симуляциялар</a><span>/</span><span>${sec.name}</span></div>
         <div class="vhead"><div><p class="eyebrow">${sec.name} · ${s.g}-сынып</p><h1>${s.t}</h1><p>${s.d}</p></div></div>
+        ${(req.lang || 'kk') === 'kk' ? predictBlock(s) : ''}
         <div class="simwrap">
           <section class="panel simstage">
             <p class="simhint" id="simHint" hidden>${icon('target', 15)}<span></span></p>
@@ -132,7 +153,8 @@ router.get('/sims/:k', asyncH(async (req, res) => {
           <aside class="stack">
             <div class="panel">
               <h2>Зерттеу тапсырмалары</h2>
-              <ol class="tasks">${s.tasks.map((t) => html`<li>${t}</li>`)}</ol>
+              <ol class="tasks" id="simTasks" data-sim="${s.k}">${s.tasks.map((t) => html`<li>${t}</li>`)}</ol>
+              <p class="tasks-prog muted" id="simTasksProg" hidden></p>
             </div>
             <div class="panel">
               <h2>Мұғалімге</h2>

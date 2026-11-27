@@ -2,13 +2,14 @@
 (function () {
   var R = window.Real;
   var BOX_H = 0.7;           // ыдыс биіктігі (шартты бірлік)
-  var WIN = 1.5;             // қысымды орташалау терезесі, с
+  var WIN = 4;               // қысымды орташалау терезесі, с (ұзағырақ — флуктуация азырақ)
   function sigma(T) { return 0.25 * Math.sqrt(T / 300); } // жылдамдық құраушысының стандартты ауытқуы
   function gauss() { var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
   // Салыстыру үшін: N = 100, T = 300 К, V = V₀ кезіндегі теориялық қысым = 1 шартты бірлік.
   function pTheory(N, T, V) { return (N * sigma(T) * sigma(T)) / (V * BOX_H) / ((100 * sigma(300) * sigma(300)) / (1 * BOX_H)); }
 
   Sim.create({
+    hint: 'Температураны не көлемді өзгерт: бөлшектердің қабырғаға соғылуы мен қысым қалай өзгереді?',
     grid: false,
     aspect: 0.6,
     autoplay: true,
@@ -39,6 +40,9 @@
       S.T = P.T; S.t = 0; S.t0 = 0; S.imp = [];
       S.ps = [];
       for (var i = 0; i < P.N; i++) S.ps.push({ x: Math.random() * P.V, y: Math.random() * BOX_H, vx: gauss() * sigma(P.T), vy: gauss() * sigma(P.T) });
+      // аз бөлшекте кездейсоқ іріктеудің орташа v²-і T-ге сәйкес келмеуі мүмкін — дәл ⟨v²⟩ = 2σ² болатындай масштабтаймыз
+      var v2 = S.ps.reduce(function (a, p) { return a + p.vx * p.vx + p.vy * p.vy; }, 0) / S.ps.length, f = Math.sqrt(2 * sigma(P.T) * sigma(P.T) / v2);
+      S.ps.forEach(function (p) { p.vx *= f; p.vy *= f; });
     },
     substeps: 2,
     step: function (api, dt) {
@@ -60,7 +64,7 @@
       var total = S.imp.reduce(function (a, r) { return a + r[1]; }, 0);
       // 2D қысым = күш / периметр; салыстыру үшін сол бірлікке келтіреміз.
       var perim = 2 * (P.V + BOX_H);
-      var pRaw = span > 0.3 ? total / span / perim : null;
+      var pRaw = span > 1 ? total / span / perim : null;
       var ref = (100 * sigma(300) * sigma(300)) / (1 * BOX_H);
       var pm = pRaw === null ? null : pRaw / ref;
       var v2 = S.ps.reduce(function (a, p) { return a + p.vx * p.vx + p.vy * p.vy; }, 0) / S.ps.length;

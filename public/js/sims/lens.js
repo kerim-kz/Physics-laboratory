@@ -9,6 +9,7 @@
   }
 
   Sim.create({
+    hint: 'Нәрсені линзадан алыстатып-жақындат: кескін қай кезде нақты, қай кезде жалған болады?',
     grid: false,
     tools: ['ruler', 'angle'],
     scale: function (api) { return api._sc || null; },

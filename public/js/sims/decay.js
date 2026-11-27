@@ -12,6 +12,7 @@
     return (SPR[key] = cv);
   }
   Sim.create({
+    hint: '«Бастау» бас: әр жартылай ыдырау периоды T сайын ыдырамаған ядролар саны қалай өзгереді?',
     grid: false,
     aspect: 0.66,
     controls: [
