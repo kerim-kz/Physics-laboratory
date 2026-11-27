@@ -1599,3 +1599,307 @@ PDF-ті ашу	Открыть PDF	Open PDF
 Өзіңді тексер (автоматты тексерілмейді):	Проверь себя (не проверяется автоматически):	Check yourself (not auto-checked):
 <>Өзің бағалаған сызба мен шарттармен: <b data-th-total>{#}</b> / {#} ұпай	С учётом рисунков и условий, оценённых тобой: <b data-th-total>{#}</b> / {#} баллов	Including the drawings and conditions you assessed: <b data-th-total>{#}</b> / {#} points
 Сенің жауабың:	Твой ответ:	Your answer:
+# --- Ойындар: интерфейс ---
+тақтайшаларды осында жина	собери плитки здесь	assemble the tiles here
+Келесі	Далее	Next
+Дұрыс формула көрсетілді.	Показана правильная формула.	The correct formula is shown.
+Қате, тағы байқап көр	Неверно, попробуй ещё	Wrong, try again
+Ойын аяқталды!	Игра окончена!	Game over!
+Ойын аяқталды	Игра окончена	Game over
+Жиналған формула	Собранных формул	Formulas built
+Формуланы жина	Собери формулу	Build the formula
+Атауы бойынша формуланы тақтайшалардан жина. Абайла, кейбір тақтайшалар артық!	Собери формулу из плиток по её названию. Осторожно: некоторые плитки лишние!	Build the formula from tiles by its name. Careful: some tiles are extra!
+Алғашқы ату	Первый выстрел	First shot
+Алысырақ	Подальше	Further
+Мұнарада	На башне	On a tower
+Қабырға	Стена	Wall
+Шұңқырда	В яме	In a pit
+Айда	На Луне	On the Moon
+Жылдамдық тұрақты	Скорость задана	Fixed speed
+Биік қабырға	Высокая стена	High wall
+Қозғалатын нысана	Движущаяся мишень	Moving target
+Шебер	Мастер	Master
+Атулар	Выстрелы	Shots
+Нысана	Мишень	Target
+Бұрыш α	Угол α	Angle α
+Жылдамдық v₀	Скорость v₀	Speed v₀
+Ат!	Огонь!	Fire!
+Айда ауа жоқ, ал g Жердегіден 6 есе аз — снаряд әлдеқайда алысқа ұшады.	На Луне нет воздуха, а g в 6 раз меньше, чем на Земле, — снаряд летит гораздо дальше.	The Moon has no air and g is 6 times smaller than on Earth — the shell flies much further.
+Жылдамдық тұрақты — тек бұрышты таңда. Бір қашықтыққа екі түрлі бұрыш сәйкес келуі мүмкін!	Скорость задана — выбирай только угол. Одной дальности могут соответствовать два разных угла!	The speed is fixed — choose only the angle. Two different angles can give the same range!
+Қабырғадан асу үшін бұрышты үлкейт, бірақ жылдамдықты да арттыр.	Чтобы перелететь стену, увеличь угол, но и скорость тоже.	To clear the wall, raise the angle — and the speed too.
+Кеңес: тегіс жерде ұшу қашықтығы L = v₀² · sin2α / g. Ең алысқа — 45°.	Подсказка: на ровной земле дальность L = v₀² · sin2α / g. Дальше всего — при 45°.	Tip: on flat ground the range is L = v₀² · sin2α / g. The longest range is at 45°.
+Жетпеді: {#} м	Недолёт: {0} м	Short by {0} m
+Асып кетті: {#} м	Перелёт: {0} м	Over by {0} m
+Қабырғаға тиді!	Попал в стену!	Hit the wall!
+Бірінші атқанда тигіздің!	Попал с первого выстрела!	Hit with the first shot!
+Нысана құлады!	Мишень сбита!	Target down!
+жорық ұпайы	очков кампании	campaign points
+Атулар саны	Число выстрелов	Shots fired
+Нысанаға тигіз	Попади в цель	Hit the target
+Бұрыш пен жылдамдықты таңдап, нысанаға тигіз. Деңгейді таңда.	Подбери угол и скорость и попади в мишень. Выбери уровень.	Choose the angle and speed and hit the target. Pick a level.
+Сөз	Слова	Words
+Көмек	Подсказки	Hints
+Көлденең	По горизонтали	Across
+Тігінен	По вертикали	Down
+Әріп ашу	Открыть букву	Reveal a letter
+Қате әріп: {#}	Неверных букв: {0}	Wrong letters: {0}
+Қате жоқ!	Ошибок нет!	No mistakes!
+Сөзжұмбақ шешілді!	Кроссворд разгадан!	Crossword solved!
+Ашылған әріп	Открыто букв	Letters revealed
+Физикалық сөзжұмбақ	Физический кроссворд	Physics crossword
+Анықтамасы бойынша терминді тап. Әр жолы жаңа сөзжұмбақ құрылады.	Найди термин по определению. Каждый раз строится новый кроссворд.	Find the term from its definition. A new crossword is built every time.
+Қаныққан тұзды су	Насыщенный солевой раствор	Saturated salt water
+Тығын	Пробка	Cork
+Емен	Дуб	Oak
+Парафин шам	Парафиновая свеча	Paraffin candle
+Темір шеге	Железный гвоздь	Iron nail
+Полиэтилен	Полиэтилен	Polyethylene
+Жұмыртқа	Яйцо	Egg
+Кірпіш	Кирпич	Brick
+Гранит	Гранит	Granite
+Бамбук	Бамбук	Bamboo
+Резеңке	Резина	Rubber
+Пенопласт	Пенопласт	Polystyrene foam
+Қалқиды	Плавает	Floats
+Батады	Тонет	Sinks
+Қалқиды!	Плавает!	Floats!
+Батады!	Тонет!	Sinks!
+қалқиды	плавает	floats
+уақыт бітті	время вышло	time is up
+Ереже: дене сұйықтан тығыз болса — батады, аз болса — қалқиды.	Правило: если тело плотнее жидкости — тонет, если менее плотное — плавает.	Rule: if a body is denser than the liquid it sinks; if less dense it floats.
+батқан	погружено	submerged
+Батады ма, қалқиды ма?	Утонет или всплывёт?	Sink or float?
+Дене мен сұйықтың тығыздығын салыстыр. 15 дене, әр жауапқа 7 секунд.	Сравни плотности тела и жидкости. 15 тел, на каждый ответ 7 секунд.	Compare the densities of the body and the liquid. 15 bodies, 7 seconds per answer.
+Бір шам	Одна лампа	One lamp
+Ұзын сым	Длинный провод	Long wire
+Тізбектей екі шам	Две лампы последовательно	Two lamps in series
+Бұралаң жол	Извилистый путь	Winding path
+Үш шам	Три лампы	Three lamps
+Параллель және тізбектей	Параллельно и последовательно	Parallel and series
+Тығыз тақта	Плотная доска	Crowded board
+Үлкен тізбек	Большая цепь	Big circuit
+Шебер электрик	Мастер-электрик	Master electrician
+Жанған шам	Горит ламп	Lamps on
+Жүріс	Ходы	Moves
+Бұл деңгейде шамдардың бірі параллель тармақта. Екі тармақта да шам болмаса, біреуі тұйықталып қалады!	На этом уровне одна из ламп в параллельной ветви. Если в обеих ветвях нет ламп, одна из них окажется замкнутой накоротко!	On this level one lamp is in a parallel branch. If both branches don't have a lamp, one gets shorted out!
+Тақтайшаны түрт — 90°-қа бұрылады. Ток «+» қысқыштан шығып, шамдар арқылы «−» қысқышқа оралуы керек.	Нажми на плитку — она повернётся на 90°. Ток должен выйти из клеммы «+», пройти через лампы и вернуться к «−».	Tap a tile to turn it 90°. The current must leave the “+” terminal, pass through the lamps and return to “−”.
+Барлық шам жанды!	Все лампы горят!	All lamps are on!
+Жүріс саны	Число ходов	Moves
+Параллель тармақтардағы шамдар бір-біріне тәуелсіз жанады.	Лампы в параллельных ветвях горят независимо друг от друга.	Lamps in parallel branches glow independently of each other.
+Тізбектей жалғанған шамдар арқылы бірдей ток өтеді.	Через последовательно соединённые лампы идёт одинаковый ток.	The same current flows through lamps in series.
+Шамды жақ	Зажги лампу	Light the lamp
+Сым тақтайшаларын бұрап, тұйық тізбек құрастыр және барлық шамды жақ.	Поворачивай плитки с проводами, собери замкнутую цепь и зажги все лампы.	Turn the wire tiles, build a closed circuit and light every lamp.
+Айға алғашқы қону	Первая посадка на Луну	First Moon landing
+Тезірек құлау	Падение быстрее	Faster fall
+Бүйірге ауытқу	Боковой снос	Sideways drift
+Марс: тар алаң	Марс: узкая площадка	Mars: narrow pad
+Отын аз	Мало топлива	Low fuel
+Жерге қайту	Возвращение на Землю	Back to Earth
+Жер: жел соғады	Земля: дует ветер	Earth: windy
+Шебер ұшқыш	Ас-пилот	Ace pilot
+Биіктік	Высота	Altitude
+Тарту	Тяга	Thrust
+Пернетақта: бос орын / ↑ — тарту, ← → — бүйірлік қозғалтқыштар. Қону жылдамдығы 2 м/с-тан аспасын!	Клавиатура: пробел / ↑ — тяга, ← → — боковые двигатели. Скорость посадки — не больше 2 м/с!	Keyboard: Space / ↑ — thrust, ← → — side thrusters. Landing speed must not exceed 2 m/s!
+Зымыран алаңнан тыс қонды.	Ракета села мимо площадки.	The rocket landed off the pad.
+Тік жылдамдық тым үлкен	Слишком большая вертикальная скорость	Vertical speed too high
+Көлденең жылдамдық тым үлкен	Слишком большая горизонтальная скорость	Horizontal speed too high
+Сәтті қону!	Удачная посадка!	Safe landing!
+Апат!	Авария!	Crash!
+Қону жылдамдығы	Скорость посадки	Landing speed
+Қалған отын	Осталось топлива	Fuel left
+Кеңес: тартуды ерте қос — үдеу a = F/m − g, тежеуге уақыт керек.	Подсказка: включай тягу раньше — ускорение a = F/m − g, на торможение нужно время.	Tip: fire the engine earlier — the acceleration is a = F/m − g and braking takes time.
+Айға қон	Посади на Луну	Moon lander
+Қозғалтқышты басқарып, зымыранды ақырын қондыр. Қай аспан денесінде қону оңай?	Управляй двигателем и мягко посади ракету. На каком небесном теле садиться легче?	Control the engine and land the rocket gently. On which body is landing easier?
+Ұтыс	Выигрыш	Winnings
+Сыныптан сұра	Помощь класса	Ask the class
+Сен — физик-миллионерсің!	Ты — физик-миллионер!	You are a physics millionaire!
+Келесі сұрақ	Следующий вопрос	Next question
+Ұтысты алып кету	Забрать выигрыш	Take the winnings
+Ұтысты алып кеттің!	Ты забрал выигрыш!	You took the winnings!
+Қате жауап.	Неверный ответ.	Wrong answer.
+Келесі жолы сәттілік!	Удачи в следующий раз!	Better luck next time!
+Дж ұтыс	Дж выигрыша	J won
+12 сұрақтың бәріне дұрыс жауап бердің!	Ты верно ответил на все 12 вопросов!	You answered all 12 questions correctly!
+Сұрақтар	Вопросы	Questions
+Физик-миллионер	Физик-миллионер	Physics millionaire
+12 сұрақ, үш көмек, әр сұраққа 30 секунд. 5 және 10-сұрақтан кейінгі ұтыс сақталады.	12 вопросов, три подсказки, 30 секунд на вопрос. Выигрыш после 5-го и 10-го вопросов несгораемый.	12 questions, three lifelines, 30 seconds each. Winnings after questions 5 and 10 are safe.
+Бір айна	Одно зеркало	One mirror
+Екі бұрылыс	Два поворота	Two turns
+Қабырғаны айналып	В обход стены	Around the wall
+Екі кристал	Два кристалла	Two crystals
+Өзің қой	Поставь сам	Place it yourself
+Лабиринт	Лабиринт	Maze
+Екі айна қой	Поставь два зеркала	Place two mirrors
+Үш кристал	Три кристалла	Three crystals
+Шиыршық	Спираль	Spiral
+Қақпалар	Ворота	Gates
+Шағылу шебері	Мастер отражений	Reflection master
+Финал	Финал	Finale
+Кристал	Кристаллы	Crystals
+Қоймадағы айна	Зеркал в запасе	Mirrors in stock
+Айнаны түрт — 45°-қа бұрылады. Бос ұяшықты түртсең, қоймадан айна қойылады; оны қайта түртіп бұра аласың, үшінші рет түртсең — алынады.	Нажми на зеркало — оно повернётся на 45°. Нажми на пустую клетку — поставишь зеркало из запаса; повторное нажатие поворачивает его, третье — убирает.	Tap a mirror to turn it 45°. Tap an empty cell to place a mirror from stock; tap again to turn it, a third time to remove it.
+Айнаны түрт — 45°-қа бұрылады. Барлық кристалды сәулемен жандыр.	Нажми на зеркало — оно повернётся на 45°. Зажги лучом все кристаллы.	Tap a mirror to turn it 45°. Light every crystal with the beam.
+Қоймада айна жоқ	Зеркал больше нет	No mirrors left
+Барлық кристал жанды!	Все кристаллы горят!	All crystals lit!
+Әр шағылуда түсу бұрышы шағылу бұрышына тең болды.	При каждом отражении угол падения был равен углу отражения.	At every reflection the angle of incidence equalled the angle of reflection.
+Сәулені бағытта	Направь луч	Guide the beam
+Айналарды бұрып, лазер сәулесін барлық кристалға жеткіз.	Поворачивай зеркала и доведи лазерный луч до всех кристаллов.	Turn the mirrors and get the laser beam to every crystal.
+Раунд	Раунд	Round
+Қайсысы артық?	Что лишнее?	Which one is the odd one out?
+Артығын тап	Найди лишнее	Odd one out
+Төрт нұсқаның қайсысы артық? Тез ойлан — жылдам жауап бонус береді.	Какой из четырёх вариантов лишний? Думай быстро — за скорость бонус.	Which of the four is the odd one out? Think fast — quick answers earn a bonus.
+Сыныбың	Твой класс	Your grade
+Алдыңғы деңгейді өт	Пройди предыдущий уровень	Complete the previous level
+Деңгейді таңда. Келесі деңгей алдыңғысын өткенде ашылады.	Выбери уровень. Следующий открывается после прохождения предыдущего.	Pick a level. The next one unlocks when you complete the previous one.
+Дыбыс	Звук	Sound
+Ұпайды сақтап, XP жинау үшін платформаға кір.	Войди на платформу, чтобы сохранять очки и копить XP.	Log in to save your score and earn XP.
+Келесі деңгей	Следующий уровень	Next level
+Деңгейлер	Уровни	Levels
+{#}-деңгей	{0} уровень	Level {0}
+Жаңа деңгей!	Новый уровень!	New level!
+Жаңа белгіше	Новый значок	New badge
+Ньютон	Ньютон	Newton
+Эйнштейн	Эйнштейн	Einstein
+Фарадей	Фарадей	Faraday
+Сәтбаев	Сатпаев	Satpayev
+Командалық сайыс	Командная игра	Team contest
+Сыныпты командаларға бөліп, интерактивті тақтада ойнаңыз. Командалардың атын өзгертуге болады.	Разделите класс на команды и играйте на интерактивной доске. Названия команд можно изменить.	Split the class into teams and play on the interactive board. Team names can be changed.
+Команда саны	Число команд	Number of teams
+Сайысты бастау	Начать игру	Start the contest
+Қай команда жауап береді? Команданы түртіңіз, сосын жауапты таңдаңыз.	Какая команда отвечает? Нажмите на команду, затем выберите ответ.	Which team answers? Tap the team, then choose the answer.
+Ешкім білмейді — жауапты көрсету	Никто не знает — показать ответ	Nobody knows — show the answer
+Жеңімпаз	Победитель	Winner
+Жаңа сайыс	Новая игра	New contest
+Формуланы алдымен өзің есіңе түсір, сосын карточканы аударып тексер.	Сначала вспомни формулу сам, затем переверни карточку и проверь.	First recall the formula yourself, then flip the card to check.
+Алты формула мен олардың атауын тез әрі қатесіз жұптастыр.	Быстро и без ошибок сопоставь шесть формул и их названия.	Match six formulas and their names quickly and without mistakes.
+Формуладағы әріп қандай шаманы білдіреді? 10 сұрақ.	Какую величину обозначает буква в формуле? 10 вопросов.	What quantity does the letter in the formula stand for? 10 questions.
+Шаманың ХБЖ-дағы өлшем бірлігін тап. 10 сұрақ.	Найди единицу величины в СИ. 10 вопросов.	Find the SI unit of the quantity. 10 questions.
+Шамаларды ХБЖ бірліктеріне аудар. 10 сұрақ.	Переведи величины в единицы СИ. 10 вопросов.	Convert the quantities to SI units. 10 questions.
+Жаңалығы бойынша ғалымды тап. 10 сұрақ.	Найди учёного по его открытию. 10 вопросов.	Find the scientist by their discovery. 10 questions.
+# --- Ойындар: беттер, сипаттамалар, жетістіктер ---
+{#} ойын: зеңбіректен атып, сәулені бағыттап, тізбек жинап, зымыран қондырып, миллион джоульге таласып — физика заңдарын ойнай отырып меңгер. Әр ойын үшін XP жинап, деңгейіңді көтер, белгішелер ал!	{0} игр: стреляй из пушки, направляй луч, собирай цепи, сажай ракету, борись за миллион джоулей — осваивай законы физики в игре. Копи XP за каждую игру, повышай уровень, получай значки!	{0} games: fire a cannon, steer a beam, build circuits, land a rocket, play for a million joules — master the laws of physics by playing. Earn XP in every game, level up and collect badges!
+<><a href="{H}">Кір</a> немесе <a href="{H}">тіркел</a> — ұпайың сақталып, деңгейің мен белгішелерің жиналады, сыныптастарыңмен рейтингте жарысасың.	<a href="{H}">Войди</a> или <a href="{H}">зарегистрируйся</a> — очки сохранятся, накопятся уровень и значки, а в рейтинге можно соревноваться с одноклассниками.	<a href="{H}">Log in</a> or <a href="{H}">sign up</a> — your score is saved, you earn levels and badges and compete with classmates in the ranking.
+<>Ұпайыңды сақтап, деңгей жинау үшін <a href="{H}">кір</a> немесе <a href="{H}">тіркел</a>.	Чтобы сохранять очки и повышать уровень, <a href="{H}">войди</a> или <a href="{H}">зарегистрируйся</a>.	<a href="{H}">Log in</a> or <a href="{H}">sign up</a> to save your score and level up.
+{#} секунд бар.	Есть {0} секунд.	You have {0} seconds.
+{#} сұрақ, әрқайсысы алдыңғысынан қиын. Үш көмек: {#}:{#}, «Кеңес», «Сыныптан сұра». Миллион джоульге жет!	{0} вопросов, каждый сложнее предыдущего. Три подсказки: {1}:{2}, «Подсказка», «Помощь класса». Дойди до миллиона джоулей!	{0} questions, each harder than the last. Three lifelines: {1}:{2}, “Hint”, “Ask the class”. Reach a million joules!
+{#} сұрақ.	{0} вопросов.	{0} questions.
+{#} формула, қатесіз жинасаң — көп ұпай.	{0} формул; без ошибок — больше очков.	{0} formulas; no mistakes — more points.
+«Ат!» бас. Снарядтың жолы сақталады — келесі атуды түзет.	Нажми «Огонь!». След снаряда сохраняется — поправь следующий выстрел.	Press “Fire!”. The shell's path stays on screen — adjust your next shot.
+«Тарту» батырмасын (немесе бос орын пернесін) басып тұрсаң, қозғалтқыш жұмыс істейді.	Пока нажата кнопка «Тяга» (или пробел), двигатель работает.	While you hold “Thrust” (or Space), the engine fires.
+«Қайталау» деген карточка топтаманың соңына қайта қосылады.	Карточка «Повторить» снова попадает в конец колоды.	A card marked “Repeat” goes back to the end of the deck.
+«Әріп ашу» көмегі ұпайды азайтады.	Подсказка «Открыть букву» уменьшает очки.	The “Reveal a letter” hint costs points.
+Аз жүріс пен аз уақыт — көп ұпай.	Меньше ходов и времени — больше очков.	Fewer moves and less time — more points.
+Айналарды бұрып, лазер сәулесін барлық кристалға жеткіз. Түсу бұрышы шағылу бұрышына тең — осыны пайдалан!	Поворачивай зеркала и доведи лазерный луч до всех кристаллов. Угол падения равен углу отражения — используй это!	Turn the mirrors and get the laser beam to every crystal. The angle of incidence equals the angle of reflection — use it!
+Айнаны түртсең, ол {#}°-қа бұрылады.	Нажми на зеркало — оно повернётся на {0}°.	Tap a mirror to turn it {0}°.
+Анықтамасы бойынша физикалық терминді тап да, сөзжұмбақты толтыр. Әр жолы жаңа сөзжұмбақ құрылады.	Найди физический термин по определению и заполни кроссворд. Каждый раз строится новый кроссворд.	Find the physics term from its definition and fill in the crossword. A new one is built every time.
+Апта көшбасшылары (барлық ойын, XP)	Лидеры недели (все игры, XP)	Leaders of the week (all games, XP)
+Артық деп ойлаған нұсқаны таңда.	Выбери вариант, который считаешь лишним.	Pick the option you think doesn't belong.
+Атауын оқып, формуланы есіңе түсір.	Прочитай название и вспомни формулу.	Read the name and recall the formula.
+Атауына сәйкес формуланы таңда.	Выбери формулу, соответствующую названию.	Choose the formula that matches the name.
+Барлық бөлім, сынып бойынша	Все разделы, по классам	All topics, by grade
+Барлық кристал жанса — деңгей өтті. Айна аз жұмсасаң, жұлдыз көп.	Все кристаллы горят — уровень пройден. Меньше зеркал — больше звёзд.	All crystals lit — level complete. Fewer mirrors — more stars.
+Барлық сөз дұрыс болса — жеңіс!	Все слова верны — победа!	All words right — you win!
+Барлық шам жанса — деңгей өтті. Жүріс аз болса, жұлдыз көп.	Все лампы горят — уровень пройден. Меньше ходов — больше звёзд.	All lamps on — level complete. Fewer moves — more stars.
+Берілген шаманы ХБЖ-ға аудар.	Переведи величину в СИ.	Convert the quantity to SI.
+Бірліктерді түрлендіру	Перевод единиц	Unit conversion
+Бірінші атқанда тигізсең — {#} жұлдыз. Формула: L = v₀² sin{#}α / g.	Попал с первого выстрела — {0} звезды. Формула: L = v₀² sin{1}α / g.	Hit with the first shot — {0} stars. Formula: L = v₀² sin{1}α / g.
+Бүгін осы ойынды ойнап, «Күнделікті» белгішесін ал.	Сыграй сегодня в эту игру и получи значок «Ежедневный».	Play this game today to earn the “Daily” badge.
+Дене суға (сосын тұзды суға, майға, сынапқа) түседі. Тығыздығына қарап, батады ма, қалқиды ма — тез шеш!	Тело падает в воду (потом в солёную воду, масло, ртуть). По плотности быстро реши: утонет или всплывёт!	A body drops into water (then salt water, oil, mercury). Decide quickly from its density: will it sink or float?
+Дене сұйықтан тығыз болса — батады, аз болса — қалқиды.	Если тело плотнее жидкости — тонет, если менее плотное — плавает.	If a body is denser than the liquid it sinks; if less dense it floats.
+Дененің тығыздығын сұйықтың тығыздығымен салыстыр.	Сравни плотность тела с плотностью жидкости.	Compare the density of the body with that of the liquid.
+Дұрыс жауапты таңда.	Выбери правильный ответ.	Choose the right answer.
+Дұрыс: +{#}, қате: −{#} және сұрақ келесі командаға өтеді.	Верно: +{0}, неверно: −{1}, и вопрос переходит к следующей команде.	Correct: +{0}, wrong: −{1} and the question passes to the next team.
+Жаңалықты оқы.	Прочитай об открытии.	Read about the discovery.
+Зеңбіректің бұрышы мен жылдамдығын таңда да, снарядты нысанаға тигіз. {#} деңгей: тосқауыл, биік мұнара, Ай, қозғалатын нысана.	Выбери угол и скорость пушки и попади снарядом в мишень. {0} уровней: препятствия, высокая башня, Луна, движущаяся мишень.	Choose the cannon's angle and speed and hit the target. {0} levels: obstacles, a tall tower, the Moon, a moving target.
+Интерактивті тақтаға арналған сынып сайысы	Классное соревнование для интерактивной доски	A class contest for the interactive board
+Карточканы аударып тексер.	Переверни карточку и проверь.	Flip the card to check.
+Кейбір деңгейде айнаны бос ұяшыққа өзің қоясың (қоймада неше айна бар екенін қара).	На некоторых уровнях зеркала ставишь сам в пустые клетки (смотри, сколько их в запасе).	On some levels you place mirrors in empty cells yourself (check how many are in stock).
+Кейбір тақтайшалар артық — абай бол!	Некоторые плитки лишние — будь внимателен!	Some tiles are extra — be careful!
+Кинематика: көкжиекке бұрыш жасай лақтыру	Кинематика: бросок под углом к горизонту	Kinematics: projectile at an angle
+Командалар санын, атауын және сыныпты таңда.	Выбери число команд, их названия и класс.	Choose the number of teams, their names and the grade.
+Күннің тапсырмасы	Задание дня	Daily challenge
+Күннің тапсырмасы: «{0}»	Задание дня: «{0}»	Daily challenge: “{0}”
+Көмектерді дұрыс сәтте пайдалан.	Используй подсказки в нужный момент.	Use the lifelines at the right moment.
+Логикалық жұмбақтар	Логические головоломки	Logic puzzles
+Ньютонның II заңы, еркін түсу үдеуі	Второй закон Ньютона, ускорение свободного падения	Newton's second law, free-fall acceleration
+Ойна да, үйрен	Играй и учись	Play and learn
+Оны ашқан ғалымды таңда.	Выбери учёного, который его сделал.	Choose the scientist who made it.
+Оның ХБЖ-дағы бірлігін таңда.	Выбери её единицу в СИ.	Choose its SI unit.
+Оның мағынасын таңда.	Выбери её смысл.	Choose its meaning.
+Оптика: жарықтың шағылу заңы	Оптика: закон отражения света	Optics: the law of reflection
+Отынды үнемдесең, жұлдыз көп.	Сэкономишь топливо — получишь больше звёзд.	Save fuel to earn more stars.
+Оқпанды сүйреп бұрышын, «жылдамдық» сырғытпасымен v₀-ді таңда.	Тяни ствол, чтобы задать угол, а ползунком «скорость» — v₀.	Drag the barrel to set the angle and use the “speed” slider to set v₀.
+Сайыс	Соревнование	Contests
+Сол жақтан формуланы, оң жақтан атауын таңда.	Выбери формулу слева и её название справа.	Pick a formula on the left and its name on the right.
+Сым бөліктерін бұрап, ток көзінен шамдарға тұйық тізбек құрастыр. Абайла: қысқа тұйықталу шамдарды сөндіреді!	Поворачивай куски провода и собери замкнутую цепь от источника через лампы. Осторожно: короткое замыкание гасит лампы!	Turn the wire pieces to build a closed circuit from the source through the lamps. Careful: a short circuit turns the lamps off!
+Сыныбыңды таңда. Әр сұраққа {#} секунд.	Выбери свой класс. На каждый вопрос {0} секунд.	Choose your grade. {0} seconds per question.
+Сыныппен бірге интерактивті тақтада немесе жеке: уақытқа, ұпайға, командамен.	Всем классом на интерактивной доске или в одиночку: на время, на очки, командами.	With the whole class on the interactive board or on your own: against the clock, for points, in teams.
+Сыныпты {#}–{#} командаға бөл. Сұрақ тақтада шығады, қай команда бірінші жауап берсе, сол ұпай алады. Соңында — жеңімпаздар тұғыры.	Раздели класс на {0}–{1} команды. Вопрос появляется на доске, очки получает команда, ответившая первой. В конце — пьедестал победителей.	Split the class into {0}–{1} teams. The question appears on the board and the first team to answer scores. At the end — the winners' podium.
+Сұрақ шыққанда жауап берген команданы, сосын жауапты таңда.	Когда появится вопрос, выбери ответившую команду, затем ответ.	When the question appears, choose the team that answered, then the answer.
+Сөзжұмбақ, артығын тап, формуланы жина — ойлан, байланыс тап.	Кроссворд, «найди лишнее», «собери формулу» — думай и ищи связи.	Crosswords, odd one out, build the formula — think and find the links.
+Тарту күші ауырлық күшінен үлкен болса, зымыран тежеледі: a = F/m − g.	Если сила тяги больше силы тяжести, ракета тормозит: a = F/m − g.	If the thrust is greater than the weight, the rocket slows down: a = F/m − g.
+Тақтайшаны түртсең, ол {#}°-қа бұрылады.	Нажми на плитку — она повернётся на {0}°.	Tap a tile to turn it {0}°.
+Тақтайшаны түртсең, ол формулаға қосылады; формуладағысын түртсең — қайтады.	Нажми на плитку — она добавится в формулу; нажми на плитку в формуле — она вернётся.	Tap a tile to add it to the formula; tap one in the formula to send it back.
+Тез жауап берсең, ұпай көп.	Быстрый ответ — больше очков.	Answer fast for more points.
+Терминдер мен ұғымдар	Термины и понятия	Terms and concepts
+Ток «+» қысқыштан шығып, шамдар арқылы «−» қысқышқа оралуы керек.	Ток должен выйти из клеммы «+» и через лампы вернуться к «−».	The current must leave the “+” terminal and return to “−” through the lamps.
+Тығыздық, Архимед күші	Плотность, сила Архимеда	Density, buoyancy
+Түсіндірмені оқы — ол келесі раундқа көмектеседі.	Читай объяснение — оно поможет в следующем раунде.	Read the explanation — it helps in the next round.
+Төрт нәрсенің біреуі артық. Қайсысы және неліктен? {#} раунд, әр жауаптан кейін түсіндірме.	Одно из четырёх лишнее. Какое и почему? {0} раундов, после каждого ответа — объяснение.	One of four doesn't belong. Which one and why? {0} rounds, with an explanation after each answer.
+Физика заңдарымен жүретін ойындар: есептеп ат, сәулені бағытта, тізбекті жина, зымыранды қондыр.	Игры по законам физики: стреляй с расчётом, направляй луч, собирай цепь, сажай ракету.	Games driven by the laws of physics: aim by calculation, steer the beam, build the circuit, land the rocket.
+Физика ойындары	Игры по физике	Physics games
+Физика тарихы	История физики	History of physics
+Физикалық аркада	Физическая аркада	Physics arcade
+Формула жаттау	Запоминание формул	Formula practice
+Формула мен атауы	Формула и её название	Formula and its name
+Формуладағы белгіленген әріпке қара.	Посмотри на выделенную букву в формуле.	Look at the highlighted letter in the formula.
+Формуладағы әріптердің мағынасы	Смысл букв в формулах	What the letters in formulas mean
+Формулаларды жаттау	Запоминание формул	Memorising formulas
+Формулаларды тану	Узнавание формул	Recognising formulas
+Формулаларды, шамаларды, бірліктерді және ғалымдарды есте сақтауға арналған ойындар.	Игры для запоминания формул, величин, единиц и учёных.	Games for remembering formulas, quantities, units and scientists.
+Формулалардың құрылымы	Строение формул	How formulas are built
+Формуланың атауы берілген. Шамалар мен амалдардың тақтайшаларын дұрыс ретпен қойып, формуланы жина.	Дано название формулы. Расставь плитки величин и действий в правильном порядке и собери формулу.	You get the formula's name. Put the tiles of quantities and operations in the right order to build it.
+ХБЖ бірліктері	Единицы СИ	SI units
+Шаманың атауын оқы.	Прочитай название величины.	Read the name of the quantity.
+Электр тізбегі: тұйық тізбек, тізбектей және параллель жалғау	Электрическая цепь: замкнутая цепь, последовательное и параллельное соединение	Electric circuits: closed circuit, series and parallel
+жаттығу	тренировка	practice
+командамен	командная	teams
+Қалай ойнау керек?	Как играть?	How to play
+Қатарынан дұрыс жауап бонус береді.	Серия верных ответов даёт бонус.	A streak of right answers earns a bonus.
+Қатарынан дұрыс жауап — бонус.	Серия верных ответов — бонус.	Answer streak — bonus.
+Қате жауап берсең, соңғы «сенімді» деңгейдің ұпайымен шығасың ({#} және {#}-сұрақ).	При ошибке уходишь с выигрышем последней «несгораемой» ступени (вопросы {0} и {1}).	A wrong answer leaves you with the last “safe” amount (questions {0} and {1}).
+Қате жұп қайта жабылады.	Неверная пара снова закрывается.	A wrong pair closes again.
+Қозғалтқышты басқарып, зымыранды Айға, Марсқа және Жерге ақырын қондыр. Жылдамдық {#} м/с-тан аспасын!	Управляя двигателем, мягко посади ракету на Луну, Марс и Землю. Скорость — не больше {0} м/с!	Control the engine and land the rocket gently on the Moon, Mars and Earth. Keep the speed under {0} m/s!
+Ұяшықты түртіп, әріптерді тер.	Нажми на клетку и вводи буквы.	Tap a cell and type the letters.
+Ұғымдарды, бірліктерді, құбылыстарды топтау	Группировка понятий, единиц и явлений	Grouping concepts, units and phenomena
+деңгей	уровень	level
+Келесі деңгей — «{0}»: тағы {1} XP	Следующий уровень — «{0}»: ещё {1} XP	Next level — “{0}”: {1} XP to go
+Ең жоғары деңгей!	Высший уровень!	Top level!
+Бүгінгі тапсырма орындалды! Ертең жаңасы шығады.	Сегодняшнее задание выполнено! Завтра будет новое.	Today's challenge is done! A new one comes tomorrow.
+Осы ойындағы ең жақсы ұпайың	Твой лучший результат в этой игре	Your best score in this game
+ойналды	сыграно	played
+Зерттеуші	Исследователь	Explorer
+Тәжірибеші	Экспериментатор	Experimenter
+Өлшеуші	Измеритель	Measurer
+Инженер	Инженер	Engineer
+Ғалым	Учёный	Scientist
+Галилей	Галилей	Galileo
+Алғашқы қадам	Первый шаг	First step
+Алғашқы ойынды аяқта	Закончи первую игру	Finish your first game
+Қызығушы	Любопытный	Curious
+{#} рет ойна	Сыграй {0} раз	Play {0} times
+Табанды	Упорный	Persistent
+Жан-жақты	Разносторонний	All-rounder
+{#} түрлі ойын ойна	Сыграй в {0} разных игр	Play {0} different games
+Барлығын көрдім	Видел всё	Seen it all
+Ұпайлы ойындардың бәрін ойна	Сыграй во все игры на очки	Play every scored game
+Мінсіз	Безупречный	Flawless
+Кез келген ойында ең жоғары ұпай жина	Набери максимум очков в любой игре	Get the top score in any game
+Аркада шебері	Мастер аркады	Arcade master
+Әр аркада ойынында {#} %-дан көп ұпай жина	Набери больше {0} % очков в каждой аркаде	Score over {0} % in every arcade game
+Миллионер	Миллионер	Millionaire
+«Физик-миллионерде» {#} {#} {#} Дж ұт	Выиграй {0} {1} {2} Дж в «Физике-миллионере»	Win {0} {1} {2} J in “Physics millionaire”
+Күнделікті	Ежедневный	Daily
+Күннің тапсырмасын орында	Выполни задание дня	Complete the daily challenge
+Апта бойы	Всю неделю	All week
+Соңғы {#} күннің {#} күнінде ойна	Играй {1} дней из последних {0}	Play on {1} of the last {0} days
