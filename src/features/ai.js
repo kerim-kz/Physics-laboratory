@@ -1,6 +1,7 @@
 // ЖИ құралы: оқушыға сократтық көмекші, мұғалімге нәтижелерді талдау, ашық жауаптарды бағалау ұсынысы
 // және ҚМЖ / тапсырма генераторы. Оқушылардың аты-жөні ЖИ-ге жіберілмейді (талдауда «Оқушы №3» түрінде).
 import express from 'express';
+import { THEMES, buildPptx } from '../lib/pptx.js';
 import { examLabel, GRADES, SECTION } from '../data/catalog.js';
 import { OLYMPIAD_BY_KEY } from '../data/olympiad.js';
 import { SIM } from '../data/sims.js';
@@ -287,6 +288,29 @@ const GEN_TYPES = {
   pisa: ['PISA типті контекстік тапсырма', `PISA жаратылыстану сауаттылығы форматындағы тапсырма блогын жаса: шынайы өмірлік жағдаят (Қазақстан контекстін қолдан), мәтін-стимул, қажет болса кесте немесе деректер; 4–6 сұрақ әр түрлі құзыреттерге (құбылыстарды ғылыми түсіндіру; ғылыми зерттеуді бағалау және жоспарлау; деректер мен дәлелдерді ғылыми интерпретациялау) және әр түрлі форматта (таңдау, күрделі таңдау, ашық жауап). Әр сұрақ үшін: құзырет, қиындық деңгейі, толық/жартылай/ұпайсыз кодтау нұсқаулығы.`],
   olymp: ['Олимпиадалық есептер', `2–3 олимпиадалық есеп құрастыр (қиындығы өсе береді). Әр есепке: шарты; физикалық идея (оқушыға кеңес ретінде); қадамдық толық шешім математикалық түрлендірулерімен; жауабы және оның физикалық мағынасын тексеру (өлшем бірлігі, шекті жағдайлар); мұғалімге әдістемелік нұсқау — есепті оқушыларға қалай түсіндіруге болады, типтік қателер.`],
 };
+GEN_TYPES.pres = ['Сабаққа арналған презентация (PowerPoint)', `Сабаққа арналған слайд-презентацияның мазмұнын жаса. Жауапты ТЕК жарамды JSON түрінде бер (алдында да, соңында да басқа мәтін, түсініктеме немесе \`\`\` белгісі болмасын):
+{
+  "title": "Презентацияның атауы (сабақ тақырыбы)",
+  "subtitle": "Сынып · Физика · Бөлім",
+  "slides": [
+    { "type": "goals", "title": "Сабақтың мақсаты", "bullets": ["...", "..."], "notes": "мұғалімге: не айту керек" },
+    { "type": "hook", "title": "Ойлан!", "text": "Проблемалық сұрақ немесе таңғаларлық факт", "notes": "..." },
+    { "type": "content", "title": "...", "bullets": ["қысқа тезис", "..."], "notes": "..." },
+    { "type": "formula", "title": "...", "latex": "F_A = \\rho g V", "plain": "Fₐ = ρ · g · V", "legend": [["ρ", "сұйықтың тығыздығы", "кг/м³"]], "notes": "..." },
+    { "type": "example", "title": "Есеп шығару үлгісі", "problem": "Есептің шарты сандарымен", "steps": ["1-қадам", "2-қадам"], "answer": "20 Н", "notes": "..." },
+    { "type": "table", "title": "...", "headers": ["...", "..."], "rows": [["...", "..."]], "notes": "..." },
+    { "type": "experiment", "title": "Тәжірибе / зерттеу", "bullets": ["қадам", "..."], "notes": "қажетті құрал-жабдық" },
+    { "type": "quiz", "title": "Өзіңді тексер", "questions": [{ "q": "...", "options": ["A", "B", "C", "D"], "answer": 0 }] },
+    { "type": "summary", "title": "Қорытынды", "bullets": ["..."] },
+    { "type": "reflection", "title": "Рефлексия", "bullets": ["..."] }
+  ]
+}
+Талаптар:
+- Слайдтардың реті сабақтың логикасына сай: мақсат → проблемалық сұрақ → жаңа білім (теория, формула, тәжірибе) → есеп шығару → тексеру → қорытынды, рефлексия. Бір слайдта — бір идея.
+- bullets: 2–5 қысқа тезис (әрқайсысы ≤ 15 сөз), ұзын абзац жазба. Түсіндірмені "notes"-ке (мұғалімнің жазбасы) жаз.
+- Слайд мәтінінде LaTeX ($…$) ҚОЛДАНБА: формулаларды Unicode-пен жаз (ρ, ², ³, ·, √, Δ, ₁, ₂, →). Тек "formula" слайдының "latex" өрісі — LaTeX.
+- "example": шарты нақты сандармен, шешімі қадамдап, жауабы бірлігімен — есептеп тексер. "quiz": 3–5 сұрақ, 4 нұсқа, "answer" — дұрыс нұсқаның индексі (0–3).
+- Физикалық тұрғыдан қатесіз, ХБЖ бірліктерімен; сынып деңгейіне сай.`];
 const LEVELS = { base: 'базалық', mid: 'орта', high: 'жоғары' };
 
 const GEN_SYSTEM = `Сен — физика пәнінің тәжірибелі әдіскерісің, педагогикалық дизайн және бағалау маманысың. Қазақстан мектептерінің мұғалімдеріне арналған оқу-әдістемелік материалдарды қазақ тілінде жасайсың.
@@ -299,6 +323,7 @@ const GEN_SYSTEM = `Сен — физика пәнінің тәжірибелі 
 - Мұғалімнің қосымша талаптары <талаптар> тегінде берілген — оларды ескер.`;
 
 const KMJ_SYSTEM = GEN_SYSTEM.replace(/- Пішімі — Markdown[^\n]*\n/, '- Пішімі — тек JSON (төмендегі құрылым бойынша). Мәтін ішінде формулаларды LaTeX-пен жаз: $...$.\n');
+const PRES_SYSTEM = GEN_SYSTEM.replace(/- Пішімі — Markdown[^\n]*\n/, '- Пішімі — тек JSON (төмендегі құрылым бойынша). Слайд мәтінінде формулаларды Unicode таңбаларымен жаз (LaTeX тек formula слайдының latex өрісінде).\n');
 // Тақырып оқулықтан таңдалса, оның тарауы (Бөлім) белгілі.
 function sectionOf(grade, topic) {
   const m = String(topic).match(/§\s*(\d+)/);
@@ -315,8 +340,8 @@ router.get('/ai/teacher', requireUser, asyncH(async (req, res) => {
     title: 'ЖИ: тапсырма генераторы', active: 'ai', katex: true, styles: ['/css/ai.css'], scripts: ['/vendor/katex/katex.min.js', '/js/ai.js'],
     body: html`<div class="view">
       <div class="crumbs"><a href="/ai">ЖИ-көмекші</a><span>/</span><span>Мұғалімге</span></div>
-      <div class="vhead"><div><p class="eyebrow">ЖИ құралы · мұғалімге</p><h1>ҚМЖ және тапсырма генераторы</h1>
-        <p>Сынып пен тақырыпты таңдап, ҚМЖ, бақылау жұмысы, рубрика, PISA типті тапсырма немесе олимпиадалық есептердің жобасын жасаңыз. Нәтиже — жоба: оны тексеріп, өз сыныбыңызға бейімдеңіз.</p></div></div>
+      <div class="vhead"><div><p class="eyebrow">ЖИ құралы · мұғалімге</p><h1>ҚМЖ, презентация және тапсырма генераторы</h1>
+        <p>Сынып пен тақырыпты таңдап, ҚМЖ, PowerPoint презентация, бақылау жұмысы, рубрика, PISA типті тапсырма немесе олимпиадалық есептердің жобасын жасаңыз. Нәтиже — жоба: оны тексеріп, өз сыныбыңызға бейімдеңіз.</p></div></div>
       ${stateNote(st, req.user)}
       <div class="ai-gen">
         <form class="panel form ai-genform" id="aiGenForm" data-csrf="${req.csrfToken}" data-ready="${st.ready ? '1' : ''}">
@@ -331,6 +356,10 @@ router.get('/ai/teacher', requireUser, asyncH(async (req, res) => {
             <label class="fl">Күні<input type="date" name="date" value="${new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10)}"></label>
             <label class="fl">Сынып<input type="text" name="klass" maxlength="20" placeholder="Мысалы: 8 «А»"></label>
           </div>
+          <div class="ai-row" data-pres-only hidden>
+            <label class="fl">Слайд саны<select name="slides"><option value="8">8</option><option value="10" selected>10</option><option value="12">12</option><option value="15">15</option></select></label>
+            <label class="fl">Түсі<select name="theme">${Object.entries(THEMES).map(([k, t]) => html`<option value="${k}">${t.name}</option>`)}</select></label>
+          </div>
           <label class="fl">Тақырып (оқулықтан таңдаңыз немесе өзіңіз жазыңыз)<input type="text" name="topic" list="aiTopics" maxlength="200" required placeholder="Мысалы: §12. Архимед заңы"></label>
           <datalist id="aiTopics"></datalist>
           <label class="fl">Қосымша талаптар (міндетті емес)<textarea name="notes" rows="3" maxlength="1000" placeholder="Мысалы: зертханалық тәжірибе қосылсын; қолда тек сызғыш, динамометр және су бар; сыныпта ерекше білім беру қажеттілігі бар 2 оқушы бар"></textarea></label>
@@ -339,6 +368,7 @@ router.get('/ai/teacher', requireUser, asyncH(async (req, res) => {
         <section class="panel ai-out" id="aiOut" hidden>
           <div class="ai-outbar"><b id="aiOutTitle">Нәтиже</b><span class="grow"></span>
             <button class="btn ghost sm" type="button" id="aiCopy">${icon('copy', 14)} Көшіру</button>
+            <button class="btn sm" type="button" id="aiPptx" hidden>${icon('download', 14)} PowerPoint</button>
             <button class="btn ghost sm" type="button" id="aiWord">${icon('download', 14)} Word</button>
             <button class="btn ghost sm" type="button" id="aiPrint">${icon('print', 14)} Басып шығару</button></div>
           <div class="ai-md" id="aiOutBody"></div>
@@ -360,11 +390,29 @@ router.post('/api/ai/generate', requireUser, asyncH(async (req, res) => {
   const level = LEVELS[req.body.level] || LEVELS.mid;
   const notes = clip(req.body.notes, 1000);
   const [title, spec] = GEN_TYPES[type];
-  const section = type === 'kmj' ? sectionOf(grade, topic) : '';
+  const section = type === 'kmj' || type === 'pres' ? sectionOf(grade, topic) : '';
+  const slides = [8, 10, 12, 15].includes(toInt(req.body.slides)) ? toInt(req.body.slides) : 10;
+  const extra = type === 'pres' ? ` Слайд саны (титулдан басқа): ${slides}.` : '';
   await streamAi(req, res, 'generate', {
-    system: type === 'kmj' ? KMJ_SYSTEM : GEN_SYSTEM, maxTokens: 32000, effort: 'medium',
-    messages: [{ role: 'user', content: `${langLine(req)}Жасалатын материал: ${title}.\n${spec}\n\nСынып: ${grade}-сынып. Тақырып: ${topic}.${section ? ` Бөлім (оқулық тарауы): ${section}.` : ''} Сабақ ұзақтығы: ${minutes} минут. Оқушылардың деңгейі: ${level}.\n<талаптар>\n${notes || 'жоқ'}\n</талаптар>` }],
+    system: type === 'kmj' ? KMJ_SYSTEM : type === 'pres' ? PRES_SYSTEM : GEN_SYSTEM, maxTokens: 32000, effort: 'medium',
+    messages: [{ role: 'user', content: `${langLine(req)}Жасалатын материал: ${title}.\n${spec}\n\nСынып: ${grade}-сынып. Тақырып: ${topic}.${section ? ` Бөлім (оқулық тарауы): ${section}.` : ''} Сабақ ұзақтығы: ${minutes} минут. Оқушылардың деңгейі: ${level}.${extra}\n<талаптар>\n${notes || 'жоқ'}\n</талаптар>` }],
   });
+}));
+
+// ЖИ жасаған (мұғалім түзеткен) слайдтар құрылымынан .pptx файлы
+router.post('/api/ai/pptx', requireUser, asyncH(async (req, res) => {
+  if (!canTeach(req.user)) throw new HttpError(403, 'Бұл мүмкіндік тек мұғалімдерге арналған.');
+  const deck = req.body && req.body.deck;
+  if (!deck || !Array.isArray(deck.slides) || !deck.slides.length) return res.status(400).json({ error: 'Слайдтар жоқ.' });
+  const theme = THEMES[req.body.theme] ? req.body.theme : 'blue';
+  const byline = clip(req.body.byline, 160) || `Мұғалім: ${req.user.full_name || ''}`;
+  const buf = await buildPptx(deck, theme, { author: req.user.full_name || 'Ғылым Ордасы', byline, footer: 'Ғылым Ордасы · gylymordasy.com.kz' });
+  const name = (clip(deck.title, 80) || 'prezentatsiya').replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'prezentatsiya';
+  res.set({
+    'Content-Type': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'Content-Disposition': `attachment; filename="prezentatsiya.pptx"; filename*=UTF-8''${encodeURIComponent(name)}.pptx`,
+  });
+  res.send(buf);
 }));
 
 // JSON сұраныстарына қатені JSON түрінде қайтару (HTML қате беті емес).

@@ -549,7 +549,7 @@ I(U) және I(R) тәуелділігін өлшеп, график тұрғы�
 Сынып ашып, кодын оқушыларға беріңіз. Оқушы тіркелгенде сіздің сыныбыңызға автоматты түрде қосылады. Тіркеу аяқталса, кодты жауып қойыңыз.	Создайте класс и дайте код ученикам. При регистрации ученик автоматически попадёт в ваш класс. Когда регистрация закончится, закройте код.	Create a class and give the code to your students. When a student registers, they join your class automatically. Close the code when registration is over.
 Сынып бойынша	По классам	By grade
 Сынып коды	Код класса	Class code
-Сынып пен тақырыпты таңдап, ҚМЖ, бақылау жұмысы, рубрика, PISA типті тапсырма немесе олимпиадалық есептердің жобасын жасаңыз. Нәтиже — жоба: оны тексеріп, өз сыныбыңызға бейімдеңіз.	Выберите класс и тему и создайте черновик КСП, контрольной работы, рубрики, задания формата PISA или олимпиадных задач. Результат — черновик: проверьте его и адаптируйте под свой класс.	Choose a grade and topic and generate a draft lesson plan, assessment test, rubric, PISA-style task or olympiad problems. The result is a draft: check it and adapt it to your class.
+Сынып пен тақырыпты таңдап, ҚМЖ, PowerPoint презентация, бақылау жұмысы, рубрика, PISA типті тапсырма немесе олимпиадалық есептердің жобасын жасаңыз. Нәтиже — жоба: оны тексеріп, өз сыныбыңызға бейімдеңіз.	Выберите класс и тему и создайте черновик КСП, презентации PowerPoint, контрольной работы, рубрики, задания формата PISA или олимпиадных задач. Результат — черновик: проверьте его и адаптируйте под свой класс.	Choose a grade and topic and generate a draft lesson plan, a PowerPoint presentation, assessment test, rubric, PISA-style task or olympiad problems. The result is a draft: check it and adapt it to your class.
 Сыныптардың нәтижелері	Результаты классов	Class results
 Сыныпты және тест түрін таңдаңыз. Кестеде әр оқушының әр тесттегі нәтижесі (пайызбен) көрсетіледі; өзіндік жаттығулар үшін — ең жақсы нәтиже.	Выберите класс и тип теста. В таблице показан результат каждого ученика по каждому тесту (в процентах); для самостоятельной практики — лучший результат.	Choose a class and test type. The table shows each student's result in each test (as a percentage); for self-practice, the best result.
 Сыныпты таңдап, оқушыларды PISA, ББЖМ немесе ҰБТ тестіне қосыңыз. Қосылған әр оқушыға сайтта хабарлама барады, ал нәтижесі осы бетте көрінеді.	Выберите класс и добавьте учеников в тест PISA, МОДО или ЕНТ. Каждому добавленному ученику придёт уведомление на сайте, а результат будет виден на этой странице.	Choose a class and add students to a PISA, MODO or UNT test. Each added student is notified on the site, and the results appear on this page.
@@ -1903,3 +1903,27 @@ PDF-ті ашу	Открыть PDF	Open PDF
 Күннің тапсырмасын орында	Выполни задание дня	Complete the daily challenge
 Апта бойы	Всю неделю	All week
 Соңғы {#} күннің {#} күнінде ойна	Играй {1} дней из последних {0}	Play on {1} of the last {0} days
+# --- ЖИ: презентация ---
+Сабаққа арналған презентация (PowerPoint)	Презентация к уроку (PowerPoint)	Lesson presentation (PowerPoint)
+Слайд саны	Число слайдов	Number of slides
+Түсі	Цвет	Colour
+Көк	Синий	Blue
+Жасыл	Зелёный	Green
+Қызғылт сары	Оранжевый	Orange
+Күлгін	Фиолетовый	Purple
+ЖИ слайдтарды жасап жатыр…	ИИ готовит слайды…	The AI is preparing the slides…
+Слайдтағы кез келген мәтінді басып, түзете аласыз. «PowerPoint» батырмасы түзетілген нұсқаны .pptx файлы етіп жүктейді.	Любой текст на слайде можно исправить, нажав на него. Кнопка «PowerPoint» скачивает исправленный вариант в формате .pptx.	Click any text on a slide to edit it. The “PowerPoint” button downloads the edited version as a .pptx file.
+ЖИ слайдтардың құрылымын бере алмады. Қайталап көріңіз.	ИИ не смог выдать структуру слайдов. Попробуйте ещё раз.	The AI couldn't produce the slide structure. Please try again.
+Жауап тым ұзақ болып, соңы қиылды. Слайд санын азайтып, қайталап көріңіз.	Ответ оказался слишком длинным и обрезан. Уменьшите число слайдов и повторите.	The answer was too long and got cut off. Reduce the number of slides and try again.
+Мұғалімнің жазбасы	Заметки учителя	Teacher's notes
+МАҚСАТ	ЦЕЛЬ	GOAL
+ОЙЛАН	ПОДУМАЙ	THINK
+ТЕОРИЯ	ТЕОРИЯ	THEORY
+ФОРМУЛА	ФОРМУЛА	FORMULA
+ЕСЕП ШЫҒАРУ	РЕШЕНИЕ ЗАДАЧИ	WORKED EXAMPLE
+САЛЫСТЫР	СРАВНИ	COMPARE
+ТӘЖІРИБЕ	ОПЫТ	EXPERIMENT
+ӨЗІҢДІ ТЕКСЕР	ПРОВЕРЬ СЕБЯ	CHECK YOURSELF
+ҚОРЫТЫНДЫ	ИТОГ	SUMMARY
+РЕФЛЕКСИЯ	РЕФЛЕКСИЯ	REFLECTION
+ҚМЖ, презентация және тапсырма генераторы	Генератор КСП, презентаций и заданий	Lesson plan, presentation and task generator

@@ -221,10 +221,52 @@
     return '<div class="kmj">' + head + '<p class="kmj-cap">' + esc(TR('Сабақтың барысы')) + '</p><div class="tblwrap">' + flow + '</div></div>';
   }
   // Ағын кезінде JSON-ды көрсетпей, тек жылжуын көрсетеміз
-  function progress(el) {
+  function progress(el, what) {
     return function (text) {
-      el.innerHTML = '<p class="muted">' + esc(TR('ЖИ ҚМЖ-ны жасап жатыр…')) + ' ' + Math.round((text || '').length / 100) / 10 + ' k</p>';
+      el.innerHTML = '<p class="muted">' + esc(TR(what || 'ЖИ ҚМЖ-ны жасап жатыр…')) + ' ' + Math.round((text || '').length / 100) / 10 + ' k</p>';
     };
+  }
+  // ---------- Презентация: слайдтардың алдын ала көрінісі (мәтіндері түзетіледі) ----------
+  var KIND = { goals: 'МАҚСАТ', hook: 'ОЙЛАН', content: 'ТЕОРИЯ', formula: 'ФОРМУЛА', example: 'ЕСЕП ШЫҒАРУ', table: 'САЛЫСТЫР', experiment: 'ТӘЖІРИБЕ', quiz: 'ӨЗІҢДІ ТЕКСЕР', summary: 'ҚОРЫТЫНДЫ', reflection: 'РЕФЛЕКСИЯ' };
+  function ed(path, text, tag, cls) { return '<' + (tag || 'div') + ' class="' + (cls || '') + '" contenteditable="true" data-p="' + path + '">' + esc(text == null ? '' : text) + '</' + (tag || 'div') + '>'; }
+  function list(path, items, ordered) {
+    return '<' + (ordered ? 'ol' : 'ul') + ' class="pv-list">' + (items || []).map(function (b, i) { return ed(path + '.' + i, b, 'li'); }).join('') + '</' + (ordered ? 'ol' : 'ul') + '>';
+  }
+  var PV = { blue: '#1F5FD1', green: '#1D8A5B', orange: '#D9622B', purple: '#6A3FC8' };
+  function presHtml(d) {
+    var h = '<div class="pv-deck" style="--pv:' + (PV[d.theme] || PV.blue) + '">';
+    h += '<section class="pv-slide pv-title"><div>' + ed('title', d.title, 'h2') + ed('subtitle', d.subtitle, 'p') + '</div><span class="pv-no">1</span></section>';
+    (d.slides || []).forEach(function (s, i) {
+      var P = 'slides.' + i + '.';
+      h += '<section class="pv-slide"><header><small>' + esc(TR(KIND[s.type] || 'ТЕОРИЯ')) + '</small>' + ed(P + 'title', s.title, 'h3') + '</header><div class="pv-body">';
+      if (s.text) h += ed(P + 'text', s.text, 'p', s.type === 'hook' ? 'pv-hook' : 'pv-lead');
+      if (s.type === 'formula') {
+        h += '<div class="pv-formula">' + (s.latex ? tex(s.latex, true) : '') + '</div>' + ed(P + 'plain', s.plain, 'p', 'pv-plain');
+        if (s.legend && s.legend.length) h += '<table class="pv-tbl"><tbody>' + s.legend.map(function (r, j) { return '<tr>' + r.map(function (c, k) { return ed(P + 'legend.' + j + '.' + k, c, 'td'); }).join('') + '</tr>'; }).join('') + '</tbody></table>';
+      }
+      if (s.type === 'example') h += ed(P + 'problem', s.problem, 'p', 'pv-problem') + list(P + 'steps', s.steps, true) + (s.answer ? '<p class="pv-answer">' + esc(TR('Жауабы')) + ': ' + ed(P + 'answer', s.answer, 'span') + '</p>' : '');
+      if (s.type === 'table' && s.headers) h += '<table class="pv-tbl"><thead><tr>' + s.headers.map(function (c, k) { return ed(P + 'headers.' + k, c, 'th'); }).join('') + '</tr></thead><tbody>' + (s.rows || []).map(function (r, j) { return '<tr>' + r.map(function (c, k) { return ed(P + 'rows.' + j + '.' + k, c, 'td'); }).join('') + '</tr>'; }).join('') + '</tbody></table>';
+      if (s.type === 'quiz') h += (s.questions || []).map(function (q, j) { return '<div class="pv-q">' + ed(P + 'questions.' + j + '.q', q.q, 'p', 'pv-qq') + '<ol type="A">' + (q.options || []).map(function (o, k) { return ed(P + 'questions.' + j + '.options.' + k, o, 'li', k === q.answer ? 'ok' : ''); }).join('') + '</ol></div>'; }).join('');
+      if (s.bullets && s.bullets.length) h += list(P + 'bullets', s.bullets);
+      h += '</div>' + (s.notes ? '<details class="pv-notes"><summary>' + esc(TR('Мұғалімнің жазбасы')) + '</summary>' + ed(P + 'notes', s.notes, 'p') + '</details>' : '') + '<span class="pv-no">' + (i + 2) + '</span></section>';
+    });
+    return h + '</div>';
+  }
+  // Файл атауы — латынша (кейбір браузерлер кириллица атауын «download» деп ауыстырады)
+  var LAT = { а: 'a', ә: 'a', б: 'b', в: 'v', г: 'g', ғ: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i', й: 'i', к: 'k', қ: 'q', л: 'l', м: 'm', н: 'n', ң: 'ng', о: 'o', ө: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ұ: 'u', ү: 'u', ф: 'f', х: 'h', һ: 'h', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'sh', ъ: '', ы: 'y', і: 'i', ь: '', э: 'e', ю: 'yu', я: 'ya' };
+  function latinName(s) {
+    var out = String(s).split('').map(function (ch) { var lo = ch.toLowerCase(), t = LAT[lo]; if (t === undefined) return ch; return ch !== lo && t ? t.charAt(0).toUpperCase() + t.slice(1) : t; }).join('');
+    return out.replace(/[^A-Za-z0-9 ._-]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80) || 'prezentatsiya';
+  }
+  // Түзетілген мәтіндерді құрылымға қайта жазу
+  function collectDeck(root, deck) {
+    var d = JSON.parse(JSON.stringify(deck));
+    root.querySelectorAll('[data-p]').forEach(function (el) {
+      var ks = el.getAttribute('data-p').split('.'), o = d;
+      for (var i = 0; i < ks.length - 1; i++) { if (o[ks[i]] == null) return; o = o[ks[i]]; }
+      o[ks[ks.length - 1]] = el.innerText.replace(/\s+/g, ' ').trim();
+    });
+    return d;
   }
   var gf = $('aiGenForm');
   if (gf) {
@@ -234,8 +276,8 @@
     gsel.addEventListener('change', fill); fill();
     var out = $('aiOut'), body = $('aiOutBody'), title = $('aiOutTitle'), last = '', kmj = false;
     // ҚМЖ таңдалса ғана: педагогтің аты-жөні, күні, сынып өрістері
-    var kmjOnly = gf.querySelector('[data-kmj-only]');
-    var syncType = function () { if (kmjOnly) kmjOnly.hidden = gf.type.value !== 'kmj'; };
+    var kmjOnly = gf.querySelector('[data-kmj-only]'), presOnly = gf.querySelector('[data-pres-only]'), deck = null, pptxBtn = $('aiPptx');
+    var syncType = function () { if (kmjOnly) kmjOnly.hidden = gf.type.value !== 'kmj' && gf.type.value !== 'pres'; if (presOnly) presOnly.hidden = gf.type.value !== 'pres'; };
     gf.type.addEventListener('change', syncType); syncType();
     // Word / көшіру үшін — мұғалім түзеткен нұсқа (кеңес жолынсыз)
     var docClone = function () {
@@ -264,10 +306,21 @@
       body.innerHTML = '<p class="muted">ЖИ материалды жасап жатыр, бұл 1–2 минут алуы мүмкін…</p>';
       out.scrollIntoView({ behavior: 'smooth', block: 'start' });
       kmj = q.type === 'kmj';
+      var pres = q.type === 'pres';
+      deck = null; if (pptxBtn) pptxBtn.hidden = true;
       body.removeAttribute('contenteditable');
-      var onText = kmj ? progress(body) : painter(body);
+      var onText = kmj ? progress(body) : pres ? progress(body, 'ЖИ слайдтарды жасап жатыр…') : painter(body);
       var r = await stream('/api/ai/generate', gf.dataset.csrf, q, onText);
-      if (r.error) { if (!r.text || kmj) body.innerHTML = ''; note(body, '', r.error); }
+      if (r.error) { if (!r.text || kmj || pres) body.innerHTML = ''; note(body, '', r.error); }
+      else if (pres) {
+        var dk = null; try { dk = parseJsonLoose(r.text); } catch (err) { /* төменде */ }
+        if (dk && Array.isArray(dk.slides) && dk.slides.length) {
+          deck = dk; last = r.text; deck.theme = q.theme;
+          body.innerHTML = '<p class="muted small kmj-tip">' + esc(TR('Слайдтағы кез келген мәтінді басып, түзете аласыз. «PowerPoint» батырмасы түзетілген нұсқаны .pptx файлы етіп жүктейді.')) + '</p>' + presHtml(deck);
+          if (pptxBtn) pptxBtn.hidden = false;
+        } else { last = r.text; body.innerHTML = md(r.text); note(body, '', 'ЖИ слайдтардың құрылымын бере алмады. Қайталап көріңіз.'); }
+        if (r.truncated) note(body, '', 'Жауап тым ұзақ болып, соңы қиылды. Слайд санын азайтып, қайталап көріңіз.');
+      }
       else if (kmj) {
         var plan = null; try { plan = parseJsonLoose(r.text); } catch (err) { /* төменде */ }
         if (plan && Array.isArray(plan.stages)) {
@@ -286,20 +339,32 @@
     });
     $('aiCopy').addEventListener('click', function () {
       if (!last) return;
-      navigator.clipboard.writeText(kmj ? docText() : last).then(function () { $('aiCopy').lastChild.textContent = ' Көшірілді'; setTimeout(function () { $('aiCopy').lastChild.textContent = ' Көшіру'; }, 1500); });
+      navigator.clipboard.writeText(kmj || deck ? docText() : last).then(function () { $('aiCopy').lastChild.textContent = ' Көшірілді'; setTimeout(function () { $('aiCopy').lastChild.textContent = ' Көшіру'; }, 1500); });
     });
     $('aiWord').addEventListener('click', function () {
       if (!last) return;
       var saved = window.katex; window.katex = null; // Word-та формулалар LaTeX мәтіні түрінде қалады
-      var content = kmj ? docHtml() : '<h1>' + esc(title.textContent) + '</h1>' + md(last);
+      var content = kmj || deck ? docHtml() : '<h1>' + esc(title.textContent) + '</h1>' + md(last);
       var htmlDoc = '<html><head><meta charset="utf-8"><title>' + esc(title.textContent) + '</title><style>body{font-family:"Times New Roman",serif;font-size:12pt}table{border-collapse:collapse;width:100%}td,th{border:1px solid #444;padding:4px 6px;vertical-align:top}'
         + '.kmj-head td.l{text-align:center}.kmj-flow th{text-align:center;font-weight:normal}.kmj-cap{margin:14pt 0 6pt}</style></head><body>' + content + '</body></html>';
       window.katex = saved;
       var a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob(['﻿' + htmlDoc], { type: 'application/msword' }));
-      a.download = kmj ? 'kmzh.doc' : 'zhi-material.doc'; document.body.appendChild(a); a.click();
+      a.download = kmj ? 'kmzh.doc' : deck ? 'prezentatsiya.doc' : 'zhi-material.doc'; document.body.appendChild(a); a.click();
       setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
     });
     $('aiPrint').addEventListener('click', function () { if (last) window.print(); });
+    if (pptxBtn) pptxBtn.addEventListener('click', async function () {
+      if (!deck) return;
+      pptxBtn.disabled = true; var lbl = pptxBtn.lastChild.textContent; pptxBtn.lastChild.textContent = ' ' + TR('Жасап жатыр…');
+      try {
+        var d = collectDeck(body, deck), byline = [gf.teacher && gf.teacher.value ? TR('Мұғалім') + ': ' + gf.teacher.value : '', gf.klass && gf.klass.value ? gf.klass.value : ''].filter(Boolean).join(' · ');
+        var res = await post('/api/ai/pptx', gf.dataset.csrf, { deck: d, theme: deck.theme, byline: byline });
+        if (!res.ok) { note(body, '', await failText(res)); return; }
+        var blob = await res.blob(), a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = latinName(d.title || 'prezentatsiya') + '.pptx';
+        document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      } finally { pptxBtn.disabled = false; pptxBtn.lastChild.textContent = lbl; }
+    });
   }
 })();
