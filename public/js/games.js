@@ -7,8 +7,6 @@
   var DATA = JSON.parse(dataEl.textContent);
   var GAME = root.dataset.game;
   var SECTION = root.dataset.section || '';
-  var AUTH = !!root.dataset.auth;
-  var CSRF = root.dataset.csrf;
 
   // ---------- көмекші функциялар ----------
   function K(tex, display) {
@@ -32,19 +30,6 @@
     if (POOL.length < min) { POOL = ALL; poolNote = 'Бұл бөлімде формула аз болғандықтан, ойын барлық бөлімнің формулаларымен жүреді.'; }
   }
 
-  function saveScore(score) {
-    if (!AUTH) return Promise.resolve(null);
-    return fetch('/api/games/score', {
-      method: 'POST', credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF },
-      body: JSON.stringify({ game: GAME, score: score, section: SECTION }),
-    }).then(function (r) { return r.json(); }).then(function (d) {
-      var b = document.getElementById('myBest');
-      if (d && d.best != null && b) b.textContent = d.best;
-      return d;
-    }).catch(function () { return null; });
-  }
-
   function header(parts) {
     var h = el('div', 'g-head');
     parts.forEach(function (p) { var s = el('span', 'g-stat', '<i>' + esc(p[0]) + '</i><b id="' + p[1] + '">' + esc(p[2]) + '</b>'); h.appendChild(s); });
@@ -52,22 +37,13 @@
   }
   function setText(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
 
+  // Соңғы экран — ортақ қабық (жұлдыз, конфетти, XP, белгішелер). Жұлдыз: ұпайдың ең жоғары ұпайға қатынасы.
+  var MAX = { pairs: 1000, quiz: 5000, symbol: 1000, units: 1000, convert: 1000, scientist: 1000 };
   function endScreen(title, score, lines, extra) {
-    root.innerHTML = '';
-    var box = el('div', 'g-end');
-    box.appendChild(el('h2', '', esc(title)));
-    if (score != null) box.appendChild(el('div', 'g-score', '<b>' + score + '</b><span>ұпай</span>'));
-    var save = el('p', 'muted small', AUTH ? 'Нәтиже сақталуда…' : 'Ұпайды сақтау үшін платформаға кір.');
-    if (score != null) box.appendChild(save);
-    (lines || []).forEach(function (l) { box.appendChild(el('p', '', l)); });
-    if (extra) box.appendChild(extra);
-    var again = el('button', 'btn lg', 'Қайта ойнау');
-    again.type = 'button';
-    again.addEventListener('click', start);
-    box.appendChild(again);
-    root.appendChild(box);
-    if (score != null && AUTH) saveScore(score).then(function (d) { save.textContent = d && d.saved ? 'Нәтиже сақталды. Ең жақсы ұпайың: ' + d.best : 'Нәтижені сақтау мүмкін болмады.'; });
-    again.focus();
+    var S = window.GameShell;
+    var k = score == null ? null : score / (MAX[GAME] || 1000);
+    var stars = k == null ? 3 : k >= (GAME === 'quiz' ? 0.5 : 0.85) ? 3 : k >= (GAME === 'quiz' ? 0.3 : 0.6) ? 2 : k >= (GAME === 'quiz' ? 0.15 : 0.3) ? 1 : 0;
+    S.end({ title: title, score: score, stars: stars, lines: lines, review: extra, onAgain: start });
   }
 
   function reviewList(items) {
@@ -406,21 +382,19 @@
     POOL = SECTION ? ALL.filter(function (f) { return f.s === SECTION; }) : ALL;
     poolNote = '';
     root.innerHTML = '';
-    if (GAME === 'quiz') {
-      var intro = el('div', 'g-end');
-      intro.appendChild(el('h2', '', 'Дайынсың ба?'));
-      intro.appendChild(el('p', 'muted', '60 секунд ішінде мүмкіндігінше көп формуланы тап. Қатарынан дұрыс жауаптар бонус береді.'));
-      var b = el('button', 'btn lg', 'Бастау');
-      b.type = 'button';
-      b.addEventListener('click', gameQuiz);
-      intro.appendChild(b);
-      root.appendChild(intro);
-      b.focus();
-      return;
-    }
     (GAMES[GAME] || gameCards)();
   }
+  var LEADS = {
+    quiz: '60 секунд ішінде мүмкіндігінше көп формуланы тап. Қатарынан дұрыс жауаптар бонус береді.',
+    cards: 'Формуланы алдымен өзің есіңе түсір, сосын карточканы аударып тексер.',
+    pairs: 'Алты формула мен олардың атауын тез әрі қатесіз жұптастыр.',
+    symbol: 'Формуладағы әріп қандай шаманы білдіреді? 10 сұрақ.',
+    units: 'Шаманың ХБЖ-дағы өлшем бірлігін тап. 10 сұрақ.',
+    convert: 'Шамаларды ХБЖ бірліктеріне аудар. 10 сұрақ.',
+    scientist: 'Жаңалығы бойынша ғалымды тап. 10 сұрақ.',
+  };
+  function boot() { window.GameShell.intro({ title: 'Дайынсың ба?', lead: LEADS[GAME] || '', onStart: start }); }
 
-  if (window.katex) start();
-  else window.addEventListener('load', start);
+  if (window.katex && window.GameShell) boot();
+  else window.addEventListener('load', boot);
 })();

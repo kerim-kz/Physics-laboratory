@@ -1074,6 +1074,76 @@ describe('тіркелу, рөлдер және сыныптар', () => {
   });
 });
 
+describe('ойындар: хаб, аркада/сайыс/жұмбақ ойындары, XP және белгішелер', () => {
+  test('хабта барлық ойын санаттармен, әр ойын беті өз скриптімен ашылады', async () => {
+    const { GAMES, CATS } = await import('../src/data/games.js');
+    assert.ok(GAMES.length >= 15, 'кемінде 15 ойын');
+    const c = new Client();
+    const hub = await c.get('/games');
+    assert.equal(hub.status, 200);
+    for (const cat of CATS) assert.match(hub.text, new RegExp(`id="cat-${cat.k}"`));
+    for (const g of GAMES) {
+      assert.match(hub.text, new RegExp(`href="/games/${g.k}"`), g.k);
+      const r = await c.get(`/games/${g.k}`);
+      assert.equal(r.status, 200, g.k);
+      assert.match(r.text, /\/js\/games\/shell\.js/);
+      assert.match(r.text, g.engine === 'classic' ? /\/js\/games\.js/ : new RegExp(`/js/games/${g.k}\\.js`), g.k);
+      if (g.engine === 'own') assert.ok(fs.existsSync(new URL(`../public/js/games/${g.k}.js`, import.meta.url)), g.k);
+    }
+    assert.match(hub.text, /Күннің тапсырмасы/);
+    assert.match((await c.get('/games?lang=ru')).text, /Игры по физике/);
+    assert.equal((await c.get('/games/nope')).status, 404);
+  });
+
+  test('XP: жорық ойындарында тек нәтиже жақсарғанда, белгішелер, күннің тапсырмасы, ұпай шегі', async () => {
+    const { dailyGame } = await import('../src/lib/gamestats.js');
+    const u = new Client();
+    await u.login(OWNER.login, OWNER.password);
+    const a = await u.api('/api/games/score', { game: 'cannon', score: 600 });
+    assert.equal(a.body.saved, true);
+    assert.equal(a.body.gained, 2 + 20, 'алғашқы нәтиже: 2 + 600/3000·100');
+    const b = await u.api('/api/games/score', { game: 'cannon', score: 600 });
+    assert.equal(b.body.gained, 2, 'қайталанған нәтиже XP бермейді (тек 2 XP)');
+    const m = await u.api('/api/games/score', { game: 'millionaire', score: 5_000_000 });
+    assert.equal(m.body.best, 1_000_000, 'ұпай ойынның шегімен шектеледі');
+    assert.ok(m.body.badges.some((x) => x.k === 'millionaire'));
+    const d = dailyGame().game;
+    const dd = await u.api('/api/games/score', { game: d.k, score: 10, daily: true });
+    assert.ok(dd.body.badges.some((x) => x.k === 'daily'), 'күннің тапсырмасы — «Күнделікті» белгішесі');
+    assert.equal((await u.api('/api/games/score', { game: 'teams', score: 10 })).status, 400, 'командалық сайыс ұпайсыз');
+    const hub = await u.get('/games');
+    assert.match(hub.text, /class="gbadge got"[^>]*title="Миллионер/);
+    assert.match(hub.text, /Бүгінгі тапсырма орындалды/);
+  });
+
+  test('«Шамды жақ» деңгейлері шешіледі, мазмұн банкі толық', async () => {
+    const vm = await import('node:vm');
+    const ctx = { window: {} };
+    vm.createContext(ctx);
+    vm.runInContext(fs.readFileSync(new URL('../public/js/games/lamp.js', import.meta.url), 'utf8'), ctx);
+    const L = ctx.window.LampLogic;
+    L.SPECS.forEach((spec, i) => {
+      const lv = L.gen(spec, 1000 + i * 7919);
+      assert.ok(lv, `${i + 1}-деңгей жасалмады`);
+      const solved = lv.tiles.map((r) => r.map((t) => ({ ...t, m: t.sol !== undefined ? t.sol : t.m })));
+      const e = L.evaluate(solved, lv.W, lv.H);
+      assert.equal(Object.keys(e.lit).length, spec.lamps, `${i + 1}-деңгей: шешімде барлық шам жануы керек`);
+      assert.equal(e.short, false);
+      assert.ok(Object.keys(L.evaluate(lv.tiles, lv.W, lv.H).lit).length < spec.lamps, `${i + 1}-деңгей басында шешілмеген`);
+    });
+    // қысқа тұйықталу: батарея ұштары тікелей жалғанса, шам жанбайды
+    const T = (k, m) => ({ k, m });
+    const short = [[T('w', 6), T('w', 10), T('w', 12)], [T('w', 3), T('B', 10), T('w', 9)]];
+    assert.equal(L.evaluate(short, 3, 2).short, true);
+    const { QUESTIONS, TERMS, ODD, BUILD } = await import('../src/data/game-bank.js');
+    for (let g = 7; g <= 11; g++) for (let d = 1; d <= 3; d++) assert.ok(QUESTIONS.filter((q) => q[0] === g && q[1] === d).length >= 4, `${g}-сынып, ${d}-қиындық`);
+    for (const q of QUESTIONS) { assert.equal(new Set(q[3]).size, 4, q[2]); assert.ok(q[4] && q[5], q[2]); }
+    for (const t of TERMS) assert.match(t[1], /^[А-ЯӘҒҚҢӨҰҮҺІЁ]{3,}$/, t[1]);
+    for (const o of ODD) { assert.equal(o[1].length, 4); assert.ok(o[2] >= 0 && o[2] < 4); }
+    for (let g = 7; g <= 11; g++) { assert.ok(TERMS.filter((t) => t[0] === g).length >= 12, `${g}: терминдер`); assert.ok(BUILD.filter((b) => b[0] <= g && b[0] >= g - 2).length >= 10, `${g}: формулалар`); }
+  });
+});
+
 describe('оқушы өзі құрастыратын симуляциялар: тізбек конструкторы, ядро, ыдырау теңдеуі', () => {
   // Браузерге арналған IIFE файлын Node-та window нысанымен орындау
   async function loadNuc() {

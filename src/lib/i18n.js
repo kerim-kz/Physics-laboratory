@@ -178,7 +178,7 @@ function wholeInner(c, toks, i, name) {
     if (t[0] !== '<') { if (HAS_KZ.test(t)) pieces++; continue; }
     const n = tagName(t);
     if (!n) continue;
-    if (n === name && !VOID.has(n)) { if (t[1] === '/') { if (--depth === 0) break; } else depth++; continue; }
+    if (n === name && !VOID.has(n)) { if (t[1] === '/') { if (--depth === 0) break; } else { if (/\s(class|style|id)=/.test(t)) return null; depth++; } continue; }
     if (!INLINE.has(n) || /\s(class|style|id)=/.test(t)) return null; // құрылымдық элементтер — сөйлем емес
   }
   if (depth !== 0 || j - i < 3) return null;
