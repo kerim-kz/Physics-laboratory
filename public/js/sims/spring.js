@@ -14,6 +14,7 @@
   }
 
   Sim.create({
+    hint: 'Жүк массасын не қатаңдықты өзгерт: тербеліс периоды қалай өзгереді? Кедергіні қосып, өшуді байқа.',
     grid: false,
     tools: ['ruler', 'stopwatch'],
     scale: function (api) { return api._sc || null; },

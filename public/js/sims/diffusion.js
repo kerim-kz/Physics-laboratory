@@ -23,6 +23,7 @@
     init: function (api) { var S = api.S; S.t = 0; S.a = mk(1); S.b = mk(2); },
     step: function (api, dt) {
       var S = api.S, P = api.P;
+      dt = Math.min(isFinite(dt) ? dt : 0, 0.05);
       S.t += dt * 30;
       [[S.a, P.t1], [S.b, P.t2]].forEach(function (pair) {
         var D = 0.0006 * Math.sqrt((pair[1] + 273) / 283) * Math.exp((pair[1] - 10) / 30); // диффузия коэффициенті (салыстырмалы)
@@ -31,13 +32,18 @@
           m.x += (Math.random() - 0.5) * 2.4 * s; m.y += (Math.random() - 0.5) * 2.4 * s + 0.0004 * dt * 30;
           if (m.x < 0.02) m.x = 0.04 - m.x; if (m.x > 0.98) m.x = 1.96 - m.x;
           if (m.y < 0.1) m.y = 0.2 - m.y; if (m.y > 0.98) m.y = 1.96 - m.y;
+          // үлкен қадамнан (вкладка қайта ашылғанда) кейін де бөлшек ыдыстан шықпасын
+          if (!isFinite(m.x) || !isFinite(m.y)) { m.x = 0.5; m.y = 0.5; }
+          m.x = Math.min(0.98, Math.max(0.02, m.x)); m.y = Math.min(0.98, Math.max(0.1, m.y));
         });
       });
       if (S.t > 1800) return false;
     },
     read: function (api) {
       var S = api.S;
-      function mix(a) { var sx = 0, sy = 0; a.forEach(function (m) { sx += Math.abs(m.x - 0.5); sy += Math.abs(m.y - 0.54); }); return Math.min(100, (sx / a.length / 0.24 + sy / a.length / 0.22) * 50); }
+      // Араласу дәрежесі: бөлшектердің шашырауы (стандарт ауытқу) толық біркелкі таралудағы мәнмен салыстырылады
+      function sd(a, k) { var m = 0, v = 0; a.forEach(function (p) { m += p[k]; }); m /= a.length; a.forEach(function (p) { v += (p[k] - m) * (p[k] - m); }); return Math.sqrt(v / a.length); }
+      function mix(a) { return Math.min(100, 100 * Math.sqrt((sd(a, 'x') / 0.277) * (sd(a, 'y') / 0.254))); }
       return { t: S.t, m1: mix(S.a), m2: mix(S.b) };
     },
     draw: function (api, ctx, W, H) {

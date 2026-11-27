@@ -22,35 +22,59 @@
     hint: 'Температура артқанда сәулеленудің шыңы қалай жылжиды?',
     controls: [
       { type: 'range', key: 'T', label: 'Беттің температурасы T', min: 2500, max: 30000, step: 100, value: 5800, unit: 'К', digits: 0 },
-      { type: 'range', key: 'R', label: 'Радиусы (Күн радиусымен)', min: 0.1, max: 20, step: 0.1, value: 1, digits: 1 },
-      { type: 'select', key: 'preset', label: 'Белгілі жұлдыз', value: 'none', options: [['none', '—'], ['sun', 'Күн (5772 К)'], ['betel', 'Бетельгейзе (≈3600 К)'], ['sirius', 'Сириус A (≈9900 К)'], ['rigel', 'Ригель (≈12 000 К)']] },
+      { type: 'range', key: 'R', label: 'Радиусы R/R☉ (логарифмдік шкала)', min: 0.1, max: 1000, step: 0.01, value: 1, log: true, format: function (v) { return v < 10 ? v.toFixed(2).replace('.', ',') : String(Math.round(v)); } },
+      { type: 'select', key: 'preset', label: 'Белгілі жұлдыз', value: 'none', options: [['none', '—'], ['sun', 'Күн (5772 К)'], ['proxima', 'Проксима Центавра (≈3040 К)'], ['betel', 'Бетельгейзе (≈3600 К)'], ['sirius', 'Сириус A (≈9940 К)'], ['vega', 'Вега (≈9600 К)'], ['rigel', 'Ригель (≈12 100 К)']] },
     ],
     readouts: [
       { key: 'lm', label: 'λmax = b/T', unit: 'нм', digits: 0 },
       { key: 'cls', label: 'Спектрлік класы' },
-      { key: 'L', label: 'Жарқырауы L/L☉', digits: 2 },
+      { key: 'L', label: 'Жарқырауы L/L☉ = (R/R☉)²(T/T☉)⁴' },
       { key: 'band', label: 'Шыңы қай аймақта' },
     ],
     init: function () {},
     onLive: function (api, key) {
       if (key !== 'preset') return;
-      var p = { sun: [5772, 1], betel: [3600, 20], sirius: [9900, 1.7], rigel: [12000, 20] }[api.P.preset];
+      // беттің температурасы (К) және радиусы (R☉) — анықтамалық мәндер (жуықтап)
+      var p = { sun: [5772, 1], proxima: [3040, 0.154], betel: [3600, 760], sirius: [9940, 1.71], vega: [9600, 2.36], rigel: [12100, 79] }[api.P.preset];
       if (p) { api.set('T', p[0]); api.set('R', p[1]); }
     },
     step: function () {},
     read: function (api) {
       var P = api.P, lm = B / P.T * 1e9;
-      return { lm: lm, cls: cls(P.T), L: P.R * P.R * Math.pow(P.T / TSUN, 4), band: lm < 380 ? 'ультракүлгін' : lm > 750 ? 'инфрақызыл' : 'көрінетін жарық' };
+      var L = P.R * P.R * Math.pow(P.T / TSUN, 4);
+      return { lm: lm, cls: cls(P.T), L: L >= 1000 ? Math.round(L).toLocaleString('ru-RU') : L >= 0.01 ? api.fmt(L, L < 10 ? 2 : 0) : L.toExponential(1).replace('.', ','), band: lm < 380 ? 'ультракүлгін' : lm > 750 ? 'инфрақызыл' : 'көрінетін жарық' };
     },
     draw: function (api, ctx, W, H) {
       var P = api.P, C = api.C, D = api.D;
-      ctx.fillStyle = '#070d18'; ctx.fillRect(0, 0, W, H);
-      // жұлдыз
-      var sx = W * 0.17, sy = H * 0.42, r = Math.max(10, Math.min(W * 0.12, 22 * Math.sqrt(P.R) + 8)), col = starColor(P.T);
-      var g = ctx.createRadialGradient(sx, sy, r * 0.2, sx, sy, r * 2.4);
-      g.addColorStop(0, col); g.addColorStop(0.42, col); g.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, r * 2.4, 0, Math.PI * 2); ctx.fill();
-      D.text(ctx, api.fmt(P.T, 0) + ' К', sx, sy + r * 2.4 + 14, { size: 13, align: 'center', color: '#e9f1f8', weight: '600', mono: true });
+      var R = window.Real;
+      R.scene(ctx, W, H, 'space', { seed: 9, count: 160 });
+      // жұлдыз: өлшемі логарифмдік масштабпен, жиегі күңгірттенген (лимб), бетінде грануляция
+      var sx = W * 0.19, sy = H * 0.44, lg = Math.log(P.R) / Math.LN10;
+      var scale = function (rad) { return Math.max(5, Math.min(W * 0.15, 9 + 15 * (Math.log(rad) / Math.LN10 + 1))); };
+      var r = scale(P.R), col = starColor(P.T), rgbv = col.match(/\d+/g).map(Number);
+      var halo = ctx.createRadialGradient(sx, sy, r * 0.8, sx, sy, r * 2.6);
+      halo.addColorStop(0, 'rgba(' + rgbv.join(',') + ',.55)'); halo.addColorStop(1, 'rgba(' + rgbv.join(',') + ',0)');
+      ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(sx, sy, r * 2.6, 0, 7); ctx.fill();
+      var body = ctx.createRadialGradient(sx - r * 0.15, sy - r * 0.15, r * 0.05, sx, sy, r);
+      body.addColorStop(0, 'rgb(' + rgbv.map(function (v) { return Math.min(255, v + 60); }).join(',') + ')');
+      body.addColorStop(0.7, col);
+      body.addColorStop(1, 'rgb(' + rgbv.map(function (v) { return Math.round(v * 0.55); }).join(',') + ')');
+      ctx.fillStyle = body; ctx.beginPath(); ctx.arc(sx, sy, r, 0, 7); ctx.fill();
+      if (r > 14) {
+        ctx.save(); ctx.beginPath(); ctx.arc(sx, sy, r, 0, 7); ctx.clip();
+        var rnd = R.rng(7);
+        for (var i = 0; i < 160; i++) { var a = rnd() * 7, d = Math.sqrt(rnd()) * r * 0.95, gs = 1 + rnd() * r * 0.05; ctx.fillStyle = i % 5 ? 'rgba(255,255,255,.07)' : 'rgba(0,0,0,.06)'; ctx.beginPath(); ctx.arc(sx + Math.cos(a) * d, sy + Math.sin(a) * d, gs, 0, 7); ctx.fill(); }
+        ctx.restore();
+      }
+      // салыстыру үшін Күннің өлшемі (сол масштабта)
+      if (Math.abs(lg) > 0.05) {
+        var rs = scale(1);
+        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(255,214,94,.8)'; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(sx, sy, rs, 0, 7); ctx.stroke(); ctx.restore();
+        D.text(ctx, 'Күн', sx + rs * 0.72 + 3, sy - rs * 0.72 - 3, { size: 10, color: '#ffd25e' });
+      }
+      R.tag(ctx, api.fmt(P.T, 0) + ' К · ' + cls(P.T).split(' ')[0] + ' класы', sx, Math.min(H - 40, sy + Math.max(r, scale(1)) + 26), { size: 12, mono: true });
+      D.text(ctx, 'Өлшемдер логарифмдік масштабта', 10, H - 10, { size: 10, color: '#9fb3c8' });
       // Планк қисығы
       var lmax = B / P.T * 1e9, peak = planck(lmax, P.T), pts = [];
       for (var nm = 100; nm <= 2000; nm += 10) pts.push([nm, planck(nm, P.T) / peak]);

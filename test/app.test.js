@@ -1259,6 +1259,36 @@ describe('оқушы өзі құрастыратын симуляциялар: �
   });
 });
 
+describe('симуляция сапасы: «болжа → тексер», тапсырма тізімі, логарифмдік шкала', () => {
+  test('әр симуляцияда болжам сұрағы бар: 3 нұсқа, түсіндірме, бет қазақша нұсқада көрсетеді', async () => {
+    const { PREDICT } = await import('../src/data/sim-predict.js');
+    const { SIMS } = await import('../src/data/sims.js');
+    for (const s of SIMS) {
+      const p = PREDICT[s.k];
+      assert.ok(p, 'болжам жоқ: ' + s.k);
+      const [q, opts, why] = p;
+      assert.ok(q.length > 10 && why.length > 10, s.k);
+      assert.equal(opts.length, 3, s.k);
+      assert.equal(new Set(opts).size, 3, 'қайталанған нұсқа: ' + s.k);
+    }
+    assert.equal(Object.keys(PREDICT).length, SIMS.length);
+    const c = new Client();
+    const page = (await c.get('/sims/pendulum')).text;
+    assert.match(page, /id="simPredict"/);
+    assert.equal((page.match(/class="pr-opt"/g) || []).length, 3);
+    assert.equal((page.match(/data-ok="1"/g) || []).length, 1);
+    assert.match(page, /id="simTasks" data-sim="pendulum"/);
+    assert.match(page, /\/js\/simguide\.js/);
+    // орыс/ағылшын нұсқасында (мазмұны әзірге қазақша болғандықтан) панель шықпайды
+    assert.doesNotMatch((await c.get('/sims/pendulum?lang=ru')).text, /id="simPredict"/);
+  });
+  test('kit: log шкаласы бар сырғытпа 0…1000 позициясын шын мәнге айналдырады', () => {
+    const src = fs.readFileSync(new URL('../public/js/sims/kit.js', import.meta.url), 'utf8');
+    assert.match(src, /c\.log/);
+    assert.match(fs.readFileSync(new URL('../public/js/sims/starcolor.js', import.meta.url), 'utf8'), /log: true/);
+  });
+});
+
 describe('олимпиаданың теориялық туры (9–11-сынып): сан/формула жауап, бірден тексеру, талдау', () => {
   const RIGHT = {
     v2: ['14.14', '10*(3*cos(pi/4)-sin(pi/4))'], h2: ['(m1(l1-l2)-m2(l1+l2))/(m1-m2)'], t: ['sqrt(4l2/g)+2(m1+m2)/(m1-m2)*sqrt(l2/g)', 'pi*sqrt(eps*e0*S*L/d)', 'π√(LC)'],
