@@ -707,6 +707,35 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.doesNotMatch(km.system, /Пішімі — Markdown/);
     assert.match(km.messages[0].content, /"stages"[\s\S]*Бөлім \(оқулық тарауы\): II\. Заттың агрегаттық күйлерінің өзгеруі/);
 
+    // 7б) Презентация: JSON құрылымы сұралады (LaTeX тек formula слайдында), слайд саны беріледі; .pptx құрастырылады
+    assert.match(gp.text, /value="pres"/);
+    assert.match(gp.text, /data-pres-only/);
+    const rpz = await nd(teacher, '/api/ai/generate', { type: 'pres', grade: '7', topic: '§30. Архимед заңы', minutes: '40', level: 'mid', slides: '12', theme: 'green' });
+    assert.equal(rpz.last.done, true);
+    const pz = seen[seen.length - 1];
+    assert.match(pz.system, /Unicode/);
+    assert.match(pz.messages[0].content, /"slides"[\s\S]*Слайд саны \(титулдан басқа\): 12/);
+    const deck = { title: 'Архимед заңы', subtitle: '7-сынып', slides: [
+      { type: 'goals', title: 'Мақсат', bullets: ['Архимед күшін түсіндіру'] },
+      { type: 'formula', title: 'Формула', latex: 'F_A=\\rho g V', plain: 'Fₐ = ρ·g·V', legend: [['ρ', 'тығыздық', 'кг/м³']] },
+      { type: 'quiz', title: 'Тест', questions: [{ q: 'Fₐ неге тәуелді?', options: ['V', 'm', 't', 'c'], answer: 0 }] },
+      { type: 'bogus', title: '<script>x</script>', bullets: ['a'.repeat(5000)] },
+    ] };
+    const tok = await teacher.csrf('/ai/teacher');
+    const px = await fetch(base + '/api/ai/pptx', { method: 'POST', headers: { cookie: teacher.cookieHeader(), 'content-type': 'application/json', 'x-csrf-token': tok }, body: JSON.stringify({ deck, theme: 'purple' }) });
+    assert.equal(px.status, 200);
+    assert.match(px.headers.get('content-type'), /presentationml/);
+    assert.match(px.headers.get('content-disposition'), /filename\*=UTF-8''/);
+    const buf = Buffer.from(await px.arrayBuffer());
+    assert.equal(buf.subarray(0, 2).toString(), 'PK', '.pptx — zip архиві');
+    const emptyDeck = await fetch(base + '/api/ai/pptx', { method: 'POST', headers: { cookie: teacher.cookieHeader(), 'content-type': 'application/json', 'x-csrf-token': tok }, body: JSON.stringify({ deck: { slides: [] } }) });
+    assert.equal(emptyDeck.status, 400);
+    assert.equal((await student.json('POST', '/api/ai/pptx', { deck })).status, 403);
+    const { cleanDeck } = await import('../src/lib/pptx.js');
+    const cd = cleanDeck(deck);
+    assert.equal(cd.slides[3].type, 'content', 'белгісіз түр — content');
+    assert.ok(cd.slides[3].bullets[0].length <= 260);
+
     // 8) Модель бас тартса — түсінікті хабар; есеп әкімші бетінде
     ai.setAiRunner(async (p) => ({ text: '', stop: 'refusal', usage: {}, model: p.model }));
     assert.match((await nd(teacher, '/api/ai/generate', { type: 'kmj', topic: 'x' })).last.error, /жауап бере алмады/);
