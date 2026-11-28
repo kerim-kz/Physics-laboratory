@@ -1101,6 +1101,15 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal((await student.json('GET', `/api/labs/om/subs/${cfg.uid}`)).body.exists, false);
     assert.doesNotMatch((await teacher.get('/teacher/labs')).text, /pill ok">платформа/);
   });
+  test('7-сынып «Онлайн зертхана» жұмыстары: бұрынғы зертханалармен бірге, нөмір ретімен', async () => {
+    const list = (await new Client().get('/labs?grade=7')).text;
+    const order = ['olshem7', 'shamalar7', 'tygyzdyq', 'deform7', 'uikelis7', 'arhimed', 'juzu', 'centr7', 'rychag7', 'pak7'].map((k) => list.indexOf(`href="/labs/${k}"`));
+    assert.ok(order.every((i) => i > 0), 'барлық жұмыс тізімде');
+    assert.deepEqual([...order].sort((a, b) => a - b), order, 'нөмір ретімен');
+    assert.match((await new Client().get('/labs/pak7/app')).text, /\/js\/lab-bridge\.js/);
+    assert.doesNotMatch((await new Client().get('/labs/arhimed/app')).text, /lab-bridge/);
+    assert.match((await new Client().get('/sims?book=7')).text, /href="\/labs\/rychag7"/);
+  });
   test('10-сынып «Онлайн зертхана» жұмыстары: тізімде, көпір қосылады, оқулықтан сілтеме', async () => {
     const list = await new Client().get('/labs?grade=10');
     for (const k of ['naua10', 'ushu10', 'inertsiya10', 'kushter10', 'tutqyr10', 'aralas10', 'eqk10', 'vas10', 'elektroliz10']) {
