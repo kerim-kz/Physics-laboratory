@@ -1101,6 +1101,15 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal((await student.json('GET', `/api/labs/om/subs/${cfg.uid}`)).body.exists, false);
     assert.doesNotMatch((await teacher.get('/teacher/labs')).text, /pill ok">платформа/);
   });
+  test('10-сынып «Онлайн зертхана» жұмыстары: тізімде, көпір қосылады, оқулықтан сілтеме', async () => {
+    const list = await new Client().get('/labs?grade=10');
+    for (const k of ['naua10', 'ushu10', 'inertsiya10', 'kushter10', 'tutqyr10']) {
+      assert.match(list.text, new RegExp(`href="/labs/${k}"`), k);
+      assert.match((await new Client().get(`/labs/${k}/app`)).text, /\/js\/lab-bridge\.js/, k);
+    }
+    assert.doesNotMatch(list.text, /href="\/labs\/transformator"/, 'сынып сүзгісі');
+    assert.match((await new Client().get('/sims?book=10')).text, /href="\/labs\/tutqyr10"/);
+  });
   test('11-сынып «Онлайн зертхана» жұмыстары: тізімде, көпір қосылады, баға журналға түседі', async () => {
     const list = await new Client().get('/labs?grade=11');
     for (const k of ['transformator', 'dybys', 'difraktsiya', 'interferentsiya', 'synu11', 'spektr', 'trekter']) {
