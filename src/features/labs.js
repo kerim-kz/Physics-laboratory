@@ -42,7 +42,7 @@ router.get('/labs', asyncH(async (req, res) => {
         </div>
         <div class="notice"><div><b>Платформаға кіріп орындасаң</b>, нәтижең мұғаліміңнің журналына өзі түседі. Кірмей орындасаң, 7–9-сынып жұмыстарының соңында шыққан <b>нәтиже кодын</b> толық көшіріп, мұғаліміңе жібер — мұғалім оны «Нәтиже кодын тексеру» бетінде журналға жазады (кодты қолмен өзгертуге болмайды). 11-сынып жұмыстарында код жоқ: кірмеген оқушы соңында <b>есеп парағын</b> жүктеп жібереді.</div></div>
         ${grades.filter((x) => !g || x === g).map((x) => {
-          const list = labs.filter((L) => L.g === x);
+          const list = labs.filter((L) => L.g === x).sort((a, b) => a.no - b.no);
           return html`<section class="shelf"><div class="shelf-h"><h2>${x}-сынып</h2><span class="cnt">${list.length} жұмыс</span></div><div class="rule"></div><div class="grid">${list.map(labCard)}</div></section>`;
         })}
         <section class="shelf">
