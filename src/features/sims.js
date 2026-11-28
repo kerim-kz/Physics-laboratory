@@ -64,7 +64,7 @@ router.get('/sims', asyncH(async (req, res) => {
         <div class="rule"></div>
         <div class="bk-list">
           ${ch.p.map(([n, t, keys]) => html`<div class="bk-row"><span class="bk-no">§${n}</span><span class="bk-t">${t}</span>${simRow(keys)}</div>`)}
-          ${(ch.labs || []).map(([n, t, keys]) => html`<div class="bk-row bk-lab"><span class="bk-no">№${n}</span><span class="bk-t">Зертханалық жұмыс. ${t}</span>${simRow(keys)}</div>`)}
+          ${(ch.labs || []).map(([n, t, keys]) => { const lab = LABS.find((L) => L.g === grade && L.no === n); return html`<div class="bk-row bk-lab"><span class="bk-no">№${n}</span><span class="bk-t">Зертханалық жұмыс. ${lab ? html`<a href="/labs/${lab.k}">${t}</a>` : t}</span>${simRow(keys)}</div>`; })}
         </div>
       </section>`);
   } else {

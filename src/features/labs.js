@@ -25,7 +25,8 @@ function labCard(L) {
 }
 
 router.get('/labs', asyncH(async (req, res) => {
-  const g = [7, 8, 9].includes(toInt(req.query.grade)) ? toInt(req.query.grade) : 0;
+  const grades = [...new Set(LABS.map((L) => L.g))].sort((a, b) => a - b);
+  const g = grades.includes(toInt(req.query.grade)) ? toInt(req.query.grade) : 0;
   const labs = LABS.filter((L) => !g || L.g === g);
   const uploaded = await many(`SELECT * FROM materials WHERE status = 'published' AND type = 'lab' ${g ? 'AND (grade = $1 OR grade = 0)' : ''} ORDER BY created_at DESC LIMIT 12`, g ? [g] : []);
   const sims = SIMS.filter((s) => !g || s.g <= g + 1);
@@ -34,13 +35,13 @@ router.get('/labs', asyncH(async (req, res) => {
     title: 'Зертханалар', active: 'labs',
     body: html`
       <div class="view">
-        ${vhead('Зертханалық жұмыстар', 'Әр жұмыс — толық виртуалды зертхана: қауіпсіздік тесті, құралдармен өлшеу, кесте мен есептеу, қорытынды сұрақтары және 10 критерий бойынша автоматты баға. Жұмыс соңында оқушы нәтиже кодын алады да, мұғаліміне береді.',
+        ${vhead('Зертханалық жұмыстар', 'Әр жұмыс — толық виртуалды зертхана: қауіпсіздік тесті, құралдармен өлшеу, кесте мен есептеу, қорытынды сұрақтары және 10 критерий бойынша автоматты баға. Платформаға кіріп орындаған оқушының бағасы мұғалімнің журналына өзі түседі.',
           teacher ? html`<a class="btn" href="/teacher/labs">${icon('check', 16)} Нәтиже кодын тексеру</a>` : '')}
         <div class="seg" role="tablist" aria-label="Сынып">
-          ${[0, 7, 8, 9].map((x) => html`<a href="/labs${x ? `?grade=${x}` : ''}" class="${g === x ? 'on' : ''}">${x ? `${x}-сынып` : 'Барлығы'}</a>`)}
+          ${[0, ...grades].map((x) => html`<a href="/labs${x ? `?grade=${x}` : ''}" class="${g === x ? 'on' : ''}">${x ? `${x}-сынып` : 'Барлығы'}</a>`)}
         </div>
-        <div class="notice"><div><b>Платформаға кіріп орындасаң</b>, нәтижең мұғаліміңнің журналына өзі түседі. Кірмей орындасаң, жұмыстың соңында шыққан <b>нәтиже кодын</b> толық көшіріп, мұғаліміңе жібер — мұғалім оны «Нәтиже кодын тексеру» бетінде журналға жазады. Кодты қолмен өзгертуге болмайды: бір таңба ауысса, код қабылданбайды.</div></div>
-        ${[7, 8, 9].filter((x) => !g || x === g).map((x) => {
+        <div class="notice"><div><b>Платформаға кіріп орындасаң</b>, нәтижең мұғаліміңнің журналына өзі түседі. Кірмей орындасаң, 7–9-сынып жұмыстарының соңында шыққан <b>нәтиже кодын</b> толық көшіріп, мұғаліміңе жібер — мұғалім оны «Нәтиже кодын тексеру» бетінде журналға жазады (кодты қолмен өзгертуге болмайды). 11-сынып жұмыстарында код жоқ: кірмеген оқушы соңында <b>есеп парағын</b> жүктеп жібереді.</div></div>
+        ${grades.filter((x) => !g || x === g).map((x) => {
           const list = labs.filter((L) => L.g === x);
           return html`<section class="shelf"><div class="shelf-h"><h2>${x}-сынып</h2><span class="cnt">${list.length} жұмыс</span></div><div class="rule"></div><div class="grid">${list.map(labCard)}</div></section>`;
         })}

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1-зертханалық жұмыс</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: calm school-lab workbook, precise and friendly.
+IDEA: a lab bench with a workbook beside it — apparatus you pick up and wire, a notebook you fill.
+PICTURE: the live bench (SVG) takes the first screen of the Experiment tab.
+COLOUR and TYPE: deep sea-blue #0b4f6c + teal #0f8b8d + green accent #2bb673; Montserrat titles, Noto Sans body.
+LAYOUT: band header, tab strip, two-column bench + instrument panel, tables under it; stacks below 900px.
+*/
+:root{color-scheme:light dark;
+--bg:light-dark(#eaf5f4,#0b1d24);--panel:light-dark(#ffffff,#10262f);--panel2:light-dark(#f3faf9,#14303a);
+--ink:light-dark(#10303a,#e3f1f1);--mute:light-dark(#4d6b72,#9bb8bd);--line:light-dark(#cfe3e2,#24434d);
+--blue:#0b4f6c;--teal:#0f8b8d;--green:#2bb673;--accent:light-dark(#0f8b8d,#3cc6c3);
+--ok:#1f9d55;--bad:#d64545;--warn:#e0a106;--bench:light-dark(#dfeceb,#173540)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans",system-ui,"Segoe UI",Arial,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Montserrat,"Noto Sans",system-ui,sans-serif;line-height:1.15;text-wrap:balance;margin:0 0 .5em}
+h2{font-size:24px}h3{font-size:18px}
+a{color:var(--accent)}
+.top{background:linear-gradient(120deg,#0b4f6c 0%,#0f8b8d 65%,#2bb673 130%);color:#fff;padding:18px max(4vw,14px) 0}
+.top .row{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.top .kicker{font-size:14px;opacity:.85}
+.top h1{font-size:clamp(22px,3.2vw,34px);margin:2px 0 6px;color:#fff}
+.top .who{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);white-space:nowrap}
+.chip b{font-size:16px}
+.tabs{display:flex;gap:4px;overflow-x:auto;margin-top:14px;scrollbar-width:thin}
+.tabs button{flex:none;border:0;background:rgba(255,255,255,.14);color:#fff;font:600 15px/1 Montserrat,"Noto Sans",sans-serif;padding:13px 16px;border-radius:12px 12px 0 0;cursor:pointer;min-height:44px}
+.tabs button:hover{background:rgba(255,255,255,.26)}
+.tabs button.on{background:var(--bg);color:var(--ink)}
+.tabs button.lock{opacity:.55}
+.tabs button .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.25);margin-right:6px;font-size:12px}
+.tabs button.on .n{background:var(--teal);color:#fff}
+.tabs button.done .n{background:var(--green);color:#fff}
+main{padding:20px max(4vw,14px) 60px;max-width:1360px;margin:0 auto}
+.page{display:none}.page.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.page.on{animation:none}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:16px}
+.card.soft{background:var(--panel2)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px}
+@media(max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.prose{max-width:75ch}.prose p{margin:.4em 0 .8em}
+.formula{display:block;text-align:center;font:19px/1.4 "Cambria Math","Times New Roman",serif;background:var(--panel2);border:1px dashed var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px}
+.fr>span:first-child{border-bottom:1.5px solid currentColor;padding:0 4px}
+.fr>span{line-height:1.3}
+.var{font-style:italic}
+.muted{color:var(--mute)}.small{font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;background:var(--teal);color:#fff;font:600 15px/1.2 Montserrat,"Noto Sans",sans-serif;padding:12px 18px;min-height:44px;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #7fd8d2;outline-offset:2px}
+.btn.alt{background:var(--blue)}.btn.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.btn.green{background:var(--green)}.btn.red{background:var(--bad)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:8px 12px;min-height:36px;font-size:14px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+input[type=text],input[type=number],select,textarea{font:16px/1.3 "Noto Sans",system-ui,sans-serif;color:var(--ink);background:var(--panel);border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;min-height:40px;width:100%}
+textarea{min-height:140px;resize:vertical}
+label.f{display:block;font-weight:600;margin:10px 0 4px}
+.quiz .q{padding:12px 0;border-bottom:1px solid var(--line)}
+.quiz .q:last-child{border:0}
+.quiz .q p{margin:0 0 8px;font-weight:600}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:10px;cursor:pointer;margin:3px 0;border:1.5px solid transparent}
+.opt:hover{background:var(--panel2)}
+.opt input{margin-top:4px;width:18px;height:18px;flex:none;accent-color:var(--teal)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.rules{counter-reset:r;list-style:none;padding:0;margin:0}
+.rules li{counter-increment:r;position:relative;padding:10px 12px 10px 52px;border-radius:12px;background:var(--panel2);margin-bottom:8px}
+.rules li::before{content:counter(r);position:absolute;left:12px;top:10px;width:28px;height:28px;border-radius:50%;background:var(--warn);color:#fff;display:grid;place-items:center;font-weight:700;font-size:14px}
+.note{border-left:4px solid var(--teal);background:var(--panel2);padding:10px 14px;border-radius:0 12px 12px 0;margin:10px 0}
+.note.warn{border-color:var(--warn)}.note.bad{border-color:var(--bad)}.note.ok{border-color:var(--ok)}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}
+@media(max-width:1050px){.lab{grid-template-columns:minmax(0,1fr)}}
+.benchwrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.benchbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.benchbar .st{font-weight:600;font-size:15px}
+.benchbody{display:grid;grid-template-columns:104px minmax(0,1fr)}
+@media(max-width:600px){.benchbody{grid-template-columns:minmax(0,1fr)}.palette .pi{min-width:96px!important;width:auto!important}.palette .ph{display:none}.palette{flex-direction:row!important;overflow-x:auto;min-height:0!important;border-right:0!important;border-bottom:1px solid var(--line)}}
+.palette{display:flex;flex-direction:column;gap:6px;padding:8px;border-right:1px solid var(--line);background:var(--panel2);min-height:200px}
+.palette .pi{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border-radius:10px;background:var(--panel);border:1.5px solid var(--line);cursor:grab;touch-action:none;user-select:none;font-size:12px;line-height:1.15;text-align:center;width:100%}
+.palette .pi:hover{border-color:var(--teal)}
+.palette .pi svg{width:64px;height:40px;pointer-events:none}
+.palette .pi.used{opacity:.35;pointer-events:none}
+.palette .ph{font-size:12px;color:var(--mute);text-align:center;padding:2px}
+.stage{position:relative;background:var(--bench)}
+.stage svg.bench{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+svg.bench .part{cursor:grab}svg.bench .part.drag{cursor:grabbing}
+svg.bench .term{cursor:crosshair}
+svg.bench .term:hover circle.t{stroke:#ff9f1c;stroke-width:3}
+svg.bench .wire{cursor:pointer}svg.bench .wire:hover path.w{stroke-dasharray:6 4}
+svg.bench [data-ctl]{cursor:pointer}
+svg.bench text{font-family:"Noto Sans",system-ui,sans-serif}
+.side .card{padding:14px 16px}.benchwrap{margin-bottom:6px}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+.steps li:last-child{border:0}
+.steps li i{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:700;margin-top:1px}
+.steps li.now i{border-color:var(--teal);color:var(--teal)}
+.steps li.ok i{background:var(--ok);border-color:var(--ok);color:#fff}
+.steps li.ok{color:var(--mute)}
+.ctrl{display:grid;gap:8px;margin:8px 0}
+.ctrl .rowc{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ctrl input[type=range]{flex:1;accent-color:var(--teal);min-height:32px}
+.readout{font:700 22px/1.2 Montserrat,"Noto Sans",sans-serif;color:var(--accent);white-space:nowrap}
+.segs{display:flex;flex-wrap:wrap;gap:4px}
+.segs button{border:1.5px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 9px;font-size:14px;cursor:pointer;min-height:36px}
+.segs button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.tablewrap{overflow-x:auto}
+table.dt{border-collapse:collapse;width:100%;font-size:14.5px}
+table.dt th,table.dt td{border:1px solid var(--line);padding:6px 7px;text-align:center;vertical-align:middle}
+table.dt th{background:#0f8b8d;color:#fff;font-weight:600;font-size:13.5px;line-height:1.25}
+table.dt th.c{background:#0b4f6c}
+table.dt td.rl{font-weight:600;text-align:left;white-space:nowrap;background:var(--panel2)}
+table.dt td input{min-width:78px;text-align:center;padding:6px;min-height:36px}
+table.dt td select{min-width:220px;font-size:14px}
+table.dt td.cc{background:color-mix(in srgb,#0b4f6c 6%,transparent)}
+table.dt td.fixed{font-weight:600}
+.calcs{display:grid;gap:12px}
+.ci{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(120px,.7fr);gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--panel2)}
+.ci .lbl{font-weight:600}.ci .hint{font-size:14px;color:var(--mute)}
+.ci .inp{display:flex;align-items:center;gap:6px}.ci .inp span{white-space:nowrap;color:var(--mute)}
+@media(max-width:600px){.ci{grid-template-columns:minmax(0,1fr)}}
+.stmts .opt{background:var(--panel2)}
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}
+.score div{background:var(--panel2);border-radius:14px;padding:12px 14px;border:1px solid var(--line)}
+.score b{display:block;font:700 26px/1.1 Montserrat,"Noto Sans",sans-serif;color:var(--accent)}
+.big{font:800 clamp(44px,7vw,72px)/1 Montserrat,"Noto Sans",sans-serif;color:var(--accent)}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),var(--green))}
+.chk{list-style:none;padding:0;margin:0}.chk li{padding:5px 0 5px 28px;position:relative;font-size:14.5px;border-bottom:1px dashed var(--line)}
+.chk li::before{content:"";position:absolute;left:4px;top:10px;width:14px;height:14px;border-radius:50%;background:var(--bad)}
+.chk li.ok::before{background:var(--ok)}.chk li.half::before{background:var(--warn)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#10303a;color:#fff;padding:12px 18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:50;max-width:min(560px,92vw);font-size:15px;display:none}
+.toast.on{display:block;animation:fade .2s}
+.toast.bad{background:#a12c2c}.toast.ok{background:#16794a}.toast.warn{background:#8a6400}
+.modal{position:fixed;inset:0;background:rgba(5,20,25,.55);display:none;place-items:center;z-index:60;padding:16px}
+.modal.on{display:grid}
+.modal .card{max-width:520px;width:100%;margin:0}
+.reg{max-width:560px;margin:10px auto}
+.lockmsg{padding:40px 20px;text-align:center}
+.flex{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:13px;background:var(--panel2);border:1px solid var(--line);white-space:nowrap}
+.view{background:#0d1418;border-radius:12px;overflow:hidden}
+.view svg,.view canvas{display:block;width:100%;height:auto}
+kbd{font:13px monospace;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+@media(max-width:600px){table{font-size:13px}main{padding-top:14px}}
+@media print{.top .tabs,.btns,.toast,.noprint{display:none!important}body{background:#fff;color:#000}.page{display:none!important}.page.print{display:block!important}.card{border:1px solid #999;break-inside:avoid}}
+
+</style></head><body>
+<noscript>Бұл зертхананы ашу үшін JavaScript қосулы болуы керек.</noscript>
+<script>
+{
+'use strict';
+/* ================= Utilities ================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+/** number -> string with decimal comma */
+function fx(x, d = 2) { if (!isFinite(x)) return '—'; return x.toFixed(d).replace('.', ','); }
+function sig(x, n = 3) {
+  if (!isFinite(x)) return '—'; if (x === 0) return '0';
+  const a = Math.abs(x);
+  if (a >= 1e5 || a < 1e-3) { const e = Math.floor(Math.log10(a)); const m = x / 10 ** e; return m.toFixed(n - 1).replace('.', ',') + '·10<sup>' + e + '</sup>'; }
+  const d = Math.max(0, n - 1 - Math.floor(Math.log10(a))); return x.toFixed(d).replace('.', ',');
+}
+function sigTxt(x, n = 3) { return sig(x, n).replace(/<sup>(.*?)<\/sup>/, '^$1'); }
+/** parse student number: 1,5  1.5  1,5·10^8  1.5e8  1,5*10^-3  −2 */
+function num(s) {
+  if (s == null) return NaN; s = String(s).trim().replace(/\s/g, '').replace(/−|–/g, '-').replace(/,/g, '.');
+  if (!s) return NaN;
+  const m = s.match(/^([-+]?\d*\.?\d+)(?:[·*×xх]10\^?\(?([-+]?\d+)\)?)?$/i);
+  if (m) return parseFloat(m[1]) * (m[2] != null ? 10 ** parseInt(m[2]) : 1);
+  const n = Number(s); return isFinite(n) ? n : NaN;
+}
+function near(got, exp, rel = 0.02, abs = 0) { if (!isFinite(got) || !isFinite(exp)) return false; return Math.abs(got - exp) <= Math.max(Math.abs(exp) * rel, abs); }
+const mean = a => a.reduce((s, x) => s + x, 0) / a.length;
+const fr = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+const V = s => `<span class="var">${s}</span>`;
+
+/* ================= Analog meter drawing ================= */
+/** returns SVG markup of an analog dial meter placed at (x,y) with size w×h */
+function meterSVG(o) {
+  const { x = 0, y = 0, w = 120, h = 90, val = 0, max = 1, divs = 30, unit = 'V', label = '', cls = '', face = '#fbfaf3', body = '#1d3b45', zero = 'left' } = o;
+  const cx = x + w / 2, cy = y + h * 0.84, R = Math.min(w * 0.4, h * 0.6);
+  const A0 = -50, A1 = 50, span = A1 - A0, fs = Math.max(6, w * 0.056);
+  let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.min(10, w * .08)}" fill="${body}"/>`;
+  s += `<rect x="${x + w * .05}" y="${y + h * .06}" width="${w * .9}" height="${h * .86}" rx="${w * .05}" fill="${face}"/>`;
+  const lab = v => { const a = Math.abs(v); if (a === 0) return '0'; return String(+v.toFixed(a >= 10 ? 1 : a >= 1 ? 2 : 3)).replace('.', ','); };
+  s += `<path d="M${cx + R * Math.sin(rad(A0))} ${cy - R * Math.cos(rad(A0))} A${R} ${R} 0 0 1 ${cx + R * Math.sin(rad(A1))} ${cy - R * Math.cos(rad(A1))}" fill="none" stroke="#222" stroke-width="1"/>`;
+  for (let i = 0; i <= divs; i++) {
+    const frac = i / divs, a = rad(A0 + span * frac), major = i % (divs / 6) === 0, half = !major && i % (divs / 12) === 0;
+    const r2 = R + (major ? R * .13 : half ? R * .09 : R * .055);
+    s += `<line x1="${cx + R * Math.sin(a)}" y1="${cy - R * Math.cos(a)}" x2="${cx + r2 * Math.sin(a)}" y2="${cy - r2 * Math.cos(a)}" stroke="#222" stroke-width="${major ? 1.3 : .6}"/>`;
+    if (major) { const v = zero === 'center' ? max * (2 * frac - 1) : max * frac; const r3 = R + R * .13 + fs * .75; s += `<text x="${cx + r3 * Math.sin(a)}" y="${cy - r3 * Math.cos(a) + fs * .35}" font-size="${fs}" text-anchor="middle" fill="#222">${lab(v)}</text>`; }
+  }
+  let f = zero === 'center' ? (val / max + 1) / 2 : val / max;
+  f = clamp(f, -0.04, 1.06);
+  const na = rad(A0 + span * f), L = R * 1.1;
+  s += `<text x="${cx}" y="${cy - R * .3}" font-size="${fs * 1.6}" text-anchor="middle" font-weight="700" fill="#0b4f6c" opacity=".85">${esc(label)}</text>`;
+  s += `<text x="${x + w * .09}" y="${y + h * .87}" font-size="${fs * .9}" fill="#555">${esc(unit)}</text>`;
+  if (cls) s += `<text x="${x + w * .91}" y="${y + h * .87}" font-size="${fs * .85}" fill="#555" text-anchor="end">${esc(cls)}</text>`;
+  s += `<line x1="${cx}" y1="${cy}" x2="${cx + L * Math.sin(na)}" y2="${cy - L * Math.cos(na)}" stroke="#c0262d" stroke-width="${Math.max(1, w * .009)}" stroke-linecap="round"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${w * .03}" fill="#333"/>`;
+  return s;
+}
+function knobSVG(cx, cy, r, frac, label, ctl) {
+  const a = rad(-135 + 270 * clamp(frac, 0, 1));
+  let s = `<g data-ctl="${ctl}"><circle cx="${cx}" cy="${cy}" r="${r + 5}" fill="transparent"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="#26343a" stroke="#0b1418" stroke-width="2"/>`;
+  s += `<circle cx="${cx}" cy="${cy}" r="${r * .72}" fill="#3d4f56"/><line x1="${cx}" y1="${cy}" x2="${cx + r * .85 * Math.sin(a)}" y2="${cy - r * .85 * Math.cos(a)}" stroke="#7fe3d9" stroke-width="3" stroke-linecap="round"/></g>`;
+  if (label) s += `<text x="${cx}" y="${cy + r + 14}" font-size="11" text-anchor="middle" fill="#cfe">${esc(label)}</text>`;
+  return s;
+}
+
+/* ================= Bench: drag parts + connect wires ================= */
+const WIRE_COLORS = ['#d62828', '#1d3557', '#2a9d8f', '#e9c46a', '#6a4c93', '#f77f00'];
+class Bench {
+  constructor(host, o = {}) {
+    this.W = o.W || 1000; this.H = o.H || 560; this.defs = new Map(); this.parts = new Map(); this.wires = [];
+    this.onChange = o.onChange || (() => { }); this.wireOK = o.wires !== false; this.ci = 0;
+    host.innerHTML = `<div class="benchbody"><div class="palette"><div class="ph">${esc(o.paletteTitle || 'Құралдар: үстелге сүйреңіз')}</div></div><div class="stage"><svg class="bench" viewBox="0 0 ${this.W} ${this.H}" style="overflow:visible"><g class="bg"></g><g class="parts"></g><g class="wires"></g><g class="top"></g><g class="tmp"></g></svg></div></div>`;
+    this.pal = $('.palette', host); this.svg = $('svg', host); this.gBg = $('.bg', this.svg); this.gParts = $('.parts', this.svg); this.gWires = $('.wires', this.svg); this.gTop = $('.top', this.svg); this.gTmp = $('.tmp', this.svg);
+    this.svg.addEventListener('pointerdown', e => this.down(e));
+    this.extraLinks = o.extraLinks || (() => []);
+  }
+  pt(e) { const p = this.svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; const q = p.matrixTransform(this.svg.getScreenCTM().inverse()); return { x: q.x, y: q.y }; }
+  def(d) {
+    d.terms = d.terms || []; this.defs.set(d.id, d);
+    if (d.palette !== false) {
+      const it = document.createElement('div'); it.className = 'pi'; it.dataset.id = d.id;
+      it.innerHTML = `<svg viewBox="0 0 ${d.w} ${d.h}" preserveAspectRatio="xMidYMid meet">${d.icon ? d.icon() : d.draw({ s: d.init ? d.init({}) || {} : {}, id: d.id, x: 0, y: 0, icon: true })}</svg><span>${esc(d.name)}</span>`;
+      it.addEventListener('pointerdown', e => { e.preventDefault(); const q = this.pt(e); this.place(d.id, q.x - d.w / 2, q.y - d.h / 2, true); this.startDrag(e, this.parts.get(d.id), q); });
+      this.pal.appendChild(it); d.pi = it;
+    }
+    return d;
+  }
+  place(id, x, y, noClamp) {
+    const d = this.defs.get(id); let p = this.parts.get(id);
+    if (!p) { p = { id, def: d, x, y, s: {} }; if (d.init) p.s = d.init(p) || p.s; p.g = document.createElementNS('http://www.w3.org/2000/svg', 'g'); p.g.setAttribute('class', 'part'); p.g.dataset.id = id; (d.layer === 'bg' ? this.gBg : this.gParts).appendChild(p.g); this.parts.set(id, p); if (d.pi) d.pi.classList.add('used'); }
+    p.x = x; p.y = y; if (!noClamp) this.fix(p); this.redraw(id); this.drawWires(); return p;
+  }
+  fix(p) { const d = p.def; if (d.snap) { const r = d.snap(p.x, p.y, p); p.x = r.x; p.y = r.y; } p.x = clamp(p.x, 0, this.W - d.w); p.y = clamp(p.y, 0, this.H - d.h); }
+  remove(id) { const p = this.parts.get(id); if (!p) return; if (p.def.fixed) return; p.g.remove(); this.parts.delete(id); if (p.def.pi) p.def.pi.classList.remove('used'); this.wires = this.wires.filter(w => !w.a.startsWith(id + '.') && !w.b.startsWith(id + '.')); this.drawWires(); }
+  has(id) { return this.parts.has(id); }
+  get(id) { return this.parts.get(id); }
+  tpos(t) { const [id, tid] = t.split('.'); const p = this.parts.get(id); if (!p) return null; const tt = p.def.terms.find(z => z.id === tid); if (!tt) return null; return { x: p.x + tt.x, y: p.y + tt.y }; }
+  redraw(id) {
+    if (id == null) { for (const k of this.parts.keys()) this.redraw(k); this.drawWires(); return; }
+    const p = this.parts.get(id); if (!p) return; const d = p.def;
+    let s = d.draw(p);
+    for (const t of d.terms) { if (t.hide && t.hide(p)) continue; s += `<g class="term" data-t="${id}.${t.id}"><circle class="t" cx="${t.x}" cy="${t.y}" r="7" fill="${t.c || '#d4a72c'}" stroke="#5c4500" stroke-width="2"/><circle cx="${t.x}" cy="${t.y}" r="2.4" fill="#5c4500"/>${t.l ? `<text x="${t.x + (t.lx || 0)}" y="${t.y + (t.ly ?? -11)}" font-size="11" text-anchor="middle" fill="${t.lc || '#123'}" font-weight="700">${esc(t.l)}</text>` : ''}</g>`; }
+    p.g.innerHTML = s; p.g.setAttribute('transform', `translate(${p.x},${p.y})`);
+  }
+  drawWires() {
+    let s = '';
+    this.wires.forEach((w, i) => {
+      const a = this.tpos(w.a), b = this.tpos(w.b); if (!a || !b) return;
+      const sag = 30 + Math.abs(a.x - b.x) * .12;
+      const d = `M${a.x} ${a.y} C${a.x} ${a.y + sag} ${b.x} ${b.y + sag} ${b.x} ${b.y}`;
+      s += `<g class="wire" data-w="${i}"><path d="${d}" stroke="transparent" stroke-width="14" fill="none"/><path class="w" d="${d}" stroke="${w.c}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="${a.x}" cy="${a.y}" r="4" fill="${w.c}"/><circle cx="${b.x}" cy="${b.y}" r="4" fill="${w.c}"/></g>`;
+    });
+    this.gWires.innerHTML = s;
+  }
+  nearTerm(q, r = 14) { let best = null, bd = r; for (const p of this.parts.values()) for (const t of p.def.terms) { if (t.hide && t.hide(p)) continue; const d = Math.hypot(p.x + t.x - q.x, p.y + t.y - q.y); if (d < bd) { bd = d; best = p.id + '.' + t.id; } } return best; }
+  addWire(a, b) { if (a === b || this.wires.some(w => (w.a === a && w.b === b) || (w.a === b && w.b === a))) return false; this.wires.push({ a, b, c: WIRE_COLORS[this.ci++ % WIRE_COLORS.length] }); this.drawWires(); return true; }
+  down(e) {
+    const q = this.pt(e);
+    if (this.wireOK) { const t = this.nearTerm(q); if (t) { e.preventDefault(); return this.startWire(e, t); } }
+    const wg = e.target.closest('.wire'); if (wg) { e.preventDefault(); this.wires.splice(+wg.dataset.w, 1); this.drawWires(); this.onChange('wire'); return; }
+    const pg = e.target.closest('.part'); if (!pg) return; const p = this.parts.get(pg.dataset.id); if (!p) return;
+    const c = e.target.closest('[data-ctl]');
+    if (c && p.def.ctl) { e.preventDefault(); return this.startCtl(e, p, c.dataset.ctl, q); }
+    if (p.def.fixed || p.def.nodrag) return;
+    e.preventDefault(); this.startDrag(e, p, q);
+  }
+  track(e, move, up) {
+    const mv = ev => { ev.preventDefault(); move(ev); }; const u = ev => { window.removeEventListener('pointermove', mv); window.removeEventListener('pointerup', u); window.removeEventListener('pointercancel', u); up(ev); };
+    window.addEventListener('pointermove', mv, { passive: false }); window.addEventListener('pointerup', u); window.addEventListener('pointercancel', u);
+  }
+  startDrag(e, p, q0) {
+    const ox = q0.x - p.x, oy = q0.y - p.y; p.g.classList.add('drag');
+    this.track(e, ev => { const q = this.pt(ev); p.x = q.x - ox; p.y = q.y - oy; if (p.def.snap) { const r = p.def.snap(p.x, p.y, p); p.x = r.x; p.y = r.y; } p.g.setAttribute('transform', `translate(${p.x},${p.y})`); this.drawWires(); if (p.def.live) this.onChange('move', p); },
+      ev => { p.g.classList.remove('drag'); const q = this.pt(ev); const palR = this.pal.getBoundingClientRect(); const overPal = ev.clientX >= palR.left && ev.clientX <= palR.right && ev.clientY >= palR.top && ev.clientY <= palR.bottom; if ((overPal || q.x < 0) && !p.def.fixed) { this.remove(p.id); } else { this.fix(p); this.redraw(p.id); this.drawWires(); } this.onChange('place', p); });
+  }
+  startWire(e, t) {
+    const a = this.tpos(t); let b = a;
+    const draw = () => { this.gTmp.innerHTML = `<path d="M${a.x} ${a.y} L${b.x} ${b.y}" stroke="#ff9f1c" stroke-width="3" stroke-dasharray="6 4" fill="none"/><circle cx="${b.x}" cy="${b.y}" r="5" fill="#ff9f1c"/>`; };
+    draw();
+    this.track(e, ev => { b = this.pt(ev); draw(); }, ev => { this.gTmp.innerHTML = ''; const q = this.pt(ev); const t2 = this.nearTerm(q, 18); if (t2 && t2 !== t) { if (this.addWire(t, t2)) this.onChange('wire'); } });
+  }
+  startCtl(e, p, name, q0) {
+    let moved = 0, last = q0; p.def.ctl(p, name, 'down', { x: q0.x - p.x, y: q0.y - p.y }); this.redraw(p.id); this.onChange('ctl', p);
+    this.track(e, ev => { const q = this.pt(ev); const dx = q.x - last.x, dy = q.y - last.y; moved += Math.abs(dx) + Math.abs(dy); last = q; p.def.ctl(p, name, 'drag', { dx, dy, x: q.x - p.x, y: q.y - p.y }); this.redraw(p.id); this.drawWires(); this.onChange('ctl', p); },
+      () => { p.def.ctl(p, name, moved < 5 ? 'click' : 'up', {}); this.redraw(p.id); this.drawWires(); this.onChange('ctl', p); });
+  }
+  /** union-find of terminals */
+  nets() {
+    const par = {}; const f = x => (par[x] ??= x, par[x] === x ? x : (par[x] = f(par[x]))); const u = (a, b) => { par[f(a)] = f(b); };
+    for (const w of this.wires) u(w.a, w.b);
+    for (const [a, b] of this.extraLinks()) if (a && b) u(a, b);
+    return { same: (a, b) => f(a) === f(b), root: f };
+  }
+  connected(a, b) { return this.nets().same(a, b); }
+  /** count wires touching a terminal */
+  deg(t) { return this.wires.filter(w => w.a === t || w.b === t).length; }
+  serialize() { return { parts: [...this.parts.values()].map(p => ({ id: p.id, x: p.x, y: p.y, s: p.s })), wires: this.wires.map(w => ({ ...w })) }; }
+  restore(o) { if (!o) return; for (const p of o.parts || []) { if (!this.defs.has(p.id)) continue; const q = this.place(p.id, p.x, p.y); Object.assign(q.s, p.s || {}); } this.wires = (o.wires || []).filter(w => this.tpos(w.a) && this.tpos(w.b)); this.ci = this.wires.length; this.redraw(); }
+}
+
+/* ================= App shell ================= */
+const SECTION = [
+  { k: 'quiz', t: 'Қауіпсіздік және теория тесті', max: 1 },
+  { k: 'asm', t: 'Қондырғыны құрастыру', max: 2 },
+  { k: 'meas', t: 'Өлшеу және кесте', max: 2 },
+  { k: 'calc', t: 'Есептеу және қателік', max: 3 },
+  { k: 'concl', t: 'Қорытынды', max: 2 }];
+const App = window.App = {
+  L: null, S: null, tabs: [['theory', 'Теория'], ['safety', 'Қауіпсіздік'], ['exp', 'Тәжірибе'], ['calc', 'Есептеу'], ['concl', 'Қорытынды'], ['result', 'Нәтиже']],
+  key() { return 'physlab_v1_' + this.L.id; },
+  fresh() { return { name: '', cls: '', seed: 0, code: '', started: Date.now(), quiz: { first: null, ans: {}, passed: false, tries: 0 }, asm: { fails: 0, done: false, viol: [] }, tables: {}, calc: {}, concl: { sel: [], text: '' }, ex: {}, submitted: false, res: null, teacher: null, attempt: 1 }; },
+  save() { try { localStorage.setItem(this.key(), JSON.stringify(this.S)); } catch (e) { } },
+  load() { try { const s = JSON.parse(localStorage.getItem(this.key()) || 'null'); if (s && s.name) return Object.assign(this.fresh(), s); } catch (e) { } return null; },
+  init(L) {
+    this.L = L; this.S = this.load() || this.fresh();
+    document.title = `${L.num}-зертханалық жұмыс`;
+    document.body.innerHTML = `<header class="top"><div class="row"><div><div class="kicker">${L.num}-зертханалық жұмыс · Онлайн зертхана · Физика</div><h1>${L.title}</h1></div><div class="who" id="who"></div></div><nav class="tabs" id="tabs"></nav></header><main id="main"></main><div class="toast" id="toast"></div><div class="modal" id="modal"><div class="card"><div id="mtext"></div><div class="btns"><button class="btn" id="myes">Иә</button><button class="btn ghost" id="mno">Болдырмау</button></div></div></div>`;
+    if (!this.S.name) return this.renderReg();
+    this.start();
+  },
+  renderReg() {
+    const L = this.L;
+    $('#tabs').innerHTML = ''; $('#who').innerHTML = '';
+    $('#main').innerHTML = `<div class="card reg"><h2>Жұмысты бастау</h2><p class="muted">Аты-жөніңіз бен сыныбыңызды енгізіңіз. Әр оқушы өзінің жеке нұсқасын (өлшеу деректерін) алады, сондықтан аты-жөніңізді дұрыс жазыңыз.</p>
+    <form id="regf"><label class="f" for="rn">Аты-жөні</label><input type="text" id="rn" autocomplete="name" required placeholder="Мысалы: Әлібек Сапарұлы">
+    <label class="f" for="rc">Сыныбы</label><input type="text" id="rc" required placeholder="Мысалы: 11 «Ә»">
+    <div class="btns"><button class="btn" type="submit">Бастау</button></div></form>
+    <div class="note small"><b>Жұмыс мақсаты:</b> ${L.goal}</div></div>`;
+    $('#regf').addEventListener('submit', e => { e.preventDefault(); const n = $('#rn').value.trim(), c = $('#rc').value.trim(); if (n.length < 3 || !c) return this.toast('Аты-жөніңіз бен сыныбыңызды толық жазыңыз', 'warn'); this.S.name = n; this.S.cls = c; this.S.started = Date.now(); this.save(); this.start(); });
+  },
+  start() {
+    const S = this.S, L = this.L;
+    S.seed = hashStr(S.name.toLowerCase().replace(/\s+/g, ' ') + '|' + S.cls.toLowerCase().replace(/\s+/g, '') + '|' + L.id);
+    S.code = String(1000 + S.seed % 9000);
+    this.rand = mulberry32(S.seed); this.T = L.setup(this.rand, this);
+    $('#tabs').innerHTML = this.tabs.map(([k, t], i) => `<button data-k="${k}"><span class="n">${i + 1}</span>${t}</button>`).join('');
+    $('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) this.go(b.dataset.k); });
+    $('#main').innerHTML = this.tabs.map(([k]) => `<section class="page" id="pg-${k}"></section>`).join('');
+    this.renderWho(); this.renderTheory(); this.renderSafety(); this.renderExp(); this.renderCalc(); this.renderConcl(); this.renderResult();
+    let k = 'theory'; try { k = sessionStorage.getItem(this.key() + '_tab') || 'theory'; } catch (e) { }
+    if (location.hash && this.tabs.some(t => t[0] === location.hash.slice(1))) k = location.hash.slice(1);
+    this.go(k, true);
+    window.addEventListener('beforeunload', () => this.save());
+  },
+  renderWho() {
+    const S = this.S;
+    const sc = S.submitted ? `<span class="chip">Баға: <b>${fx(S.res.total, 1)}</b>/10</span>` : '';
+    $('#who').innerHTML = `<span class="chip">${esc(S.name)} · ${esc(S.cls)}</span><span class="chip">Нұсқа: <b>${S.code}</b></span>${sc}`;
+  },
+  locked(k) {
+    const S = this.S;
+    if (k === 'exp' && !S.quiz.passed) return 'Алдымен «Қауіпсіздік» бетіндегі рұқсат тестінен өтіңіз.';
+    if ((k === 'calc' || k === 'concl') && !S.asm.done) return 'Алдымен «Тәжірибе» бетінде қондырғыны дұрыс құрастырыңыз.';
+    return '';
+  },
+  go(k, first) {
+    const why = this.locked(k);
+    if (why) { if (!first) this.toast(why, 'warn'); k = this.S.quiz.passed ? 'exp' : 'safety'; if (first) k = 'theory'; }
+    this.cur = k;
+    $$('#tabs button').forEach(b => { b.classList.toggle('on', b.dataset.k === k); b.classList.toggle('lock', !!this.locked(b.dataset.k)); b.classList.toggle('done', this.doneTab(b.dataset.k)); });
+    $$('.page').forEach(p => p.classList.toggle('on', p.id === 'pg-' + k));
+    try { sessionStorage.setItem(this.key() + '_tab', k); } catch (e) { }
+    if (k === 'calc' || k === 'exp') this.renderTables();
+    if (k === 'result') this.renderResult();
+    if (k === 'exp' && this.L.onShow) this.L.onShow(this);
+    if (!first) window.scrollTo({ top: 0 });
+  },
+  doneTab(k) { const S = this.S; return k === 'safety' ? S.quiz.passed : k === 'exp' ? S.asm.done : k === 'result' ? S.submitted : false; },
+  refreshTabs() { $$('#tabs button').forEach(b => { b.classList.toggle('lock', !!this.locked(b.dataset.k)); b.classList.toggle('done', this.doneTab(b.dataset.k)); }); },
+  toast(msg, kind = '') { const t = $('#toast'); t.className = 'toast on ' + kind; t.innerHTML = msg; clearTimeout(this._tt); this._tt = setTimeout(() => t.className = 'toast', 3800); },
+  confirm(html) { return new Promise(res => { $('#mtext').innerHTML = html; $('#modal').classList.add('on'); const done = v => { $('#modal').classList.remove('on'); $('#myes').onclick = $('#mno').onclick = null; res(v); }; $('#myes').onclick = () => done(true); $('#mno').onclick = () => done(false); }); },
+
+  /* ---------- Theory ---------- */
+  renderTheory() {
+    const L = this.L;
+    $('#pg-theory').innerHTML = `<div class="grid2"><div class="card prose"><h2>Қысқаша теория</h2>${L.theory}</div><div><div class="card"><h3>Жұмыстың мақсаты</h3><p>${L.goal}</p><h3>Құрал-жабдықтар</h3><ul>${L.equipment.map(x => `<li>${x}</li>`).join('')}</ul></div>
+    <div class="card soft"><h3>Жұмыс қалай бағаланады (10 балл)</h3><ul class="chk">${SECTION.map(s => `<li class="ok">${s.t} — <b>${s.max}</b> балл</li>`).join('')}</ul><p class="small muted">Есептеулер сіздің өз кестеңіздегі мәндер бойынша тексеріледі. Өлшеу нәтижелері аспап көрсеткішімен салыстырылады. Құрастыру кезіндегі әр қате тексеру және қауіпсіздік ережесін бұзу баллды азайтады.</p></div>
+    <div class="btns"><button class="btn" onclick="App.go('safety')">Қауіпсіздік ережелеріне өту</button></div></div></div>`;
+  },
+  /* ---------- Safety + quiz ---------- */
+  renderSafety() {
+    const L = this.L, S = this.S;
+    const qs = L.quiz.map((q, i) => `<div class="q" data-i="${i}"><p>${i + 1}. ${q.q}</p>${q.o.map((o, j) => `<label class="opt"><input type="radio" name="q${i}" value="${j}" ${S.quiz.ans[i] == j ? 'checked' : ''} ${S.quiz.passed ? 'disabled' : ''}><span>${o}</span></label>`).join('')}</div>`).join('');
+    $('#pg-safety').innerHTML = `<div class="grid2"><div class="card"><h2>Қауіпсіздік техникасы</h2><ol class="rules">${L.safety.map(r => `<li>${r}</li>`).join('')}</ol></div>
+    <div class="card quiz"><h2>Жұмысқа рұқсат тесті</h2><p class="muted small">Бірінші әрекеттің нәтижесі бағаланады (1 балл). Барлық сұраққа дұрыс жауап бергенде тәжірибеге рұқсат беріледі.</p><div id="qbox">${qs}</div>
+    <div id="qmsg"></div><div class="btns"><button class="btn" id="qchk" ${S.quiz.passed ? 'disabled' : ''}>Тексеру</button>${S.quiz.passed ? `<button class="btn green" onclick="App.go('exp')">Тәжірибеге өту</button>` : ''}</div></div></div>`;
+    $('#qbox').addEventListener('change', e => { if (e.target.name) { S.quiz.ans[e.target.name.slice(1)] = +e.target.value; this.save(); } });
+    $('#qchk').onclick = () => this.checkQuiz();
+    if (S.quiz.passed) this.markQuiz();
+  },
+  markQuiz() { this.L.quiz.forEach((q, i) => { $$(`#qbox .q[data-i="${i}"] .opt`).forEach((o, j) => { o.classList.remove('ok', 'bad'); if (this.S.quiz.ans[i] === j) o.classList.add(j === q.a ? 'ok' : 'bad'); }); }); },
+  checkQuiz() {
+    const L = this.L, S = this.S;
+    if (L.quiz.some((q, i) => S.quiz.ans[i] == null)) return this.toast('Барлық сұраққа жауап беріңіз', 'warn');
+    const c = L.quiz.filter((q, i) => S.quiz.ans[i] === q.a).length;
+    S.quiz.tries++; if (S.quiz.first == null) S.quiz.first = c / L.quiz.length;
+    this.markQuiz();
+    if (c === L.quiz.length) { S.quiz.passed = true; this.save(); this.toast('Рұқсат алынды! Тәжірибеге өтіңіз.', 'ok'); this.renderSafety(); this.refreshTabs(); }
+    else { $('#qmsg').innerHTML = `<div class="note warn">Дұрыс жауап: ${c}/${L.quiz.length}. Қызыл белгіленген жауаптарды қайта қарап, түзетіңіз. (Бағаға бірінші әрекет есептеледі: ${fx(S.quiz.first * 100, 0)}%)</div>`; this.save(); }
+  },
+  /* ---------- Experiment ---------- */
+  renderExp() {
+    const L = this.L;
+    $('#pg-exp').innerHTML = `<div class="lab"><div><div class="benchwrap"><div class="benchbar"><span class="st" id="benchSt">Қондырғыны құрастырыңыз</span><span class="flex"><button class="btn sm" id="asmChk">Қондырғыны тексеру</button></span></div><div id="bench"></div></div>
+    <div class="small muted" style="margin:6px 4px 14px">${L.benchHint || 'Құралды сол жақтағы тізімнен үстелге сүйреңіз. Сым жалғау: бір қысқыштан (сары дөңгелек) екіншісіне сүйреңіз. Сымды алып тастау: сымды басыңыз. Құралды қайтару: оны тізімге сүйреп апарыңыз.'}</div>
+    <div id="expExtra"></div>
+    <div class="card"><h2>Өлшеу нәтижелері</h2><p class="small muted">Аспап көрсеткіштерін өзіңіз оқып, кестеге енгізіңіз. Ондық бөлшекті үтірмен немесе нүктемен жазуға болады.</p><div id="tblExp"></div></div></div><aside class="side" id="side"></aside></div>`;
+    L.mount(this, $('#bench'), $('#side'), $('#expExtra'));
+    $('#asmChk').onclick = () => {
+      const r = L.checkAssembly(this);
+      if (r.ok) { if (!this.S.asm.done) { this.S.asm.done = true; this.save(); this.refreshTabs(); } this.toast(r.msg || 'Қондырғы дұрыс құрастырылды! Енді өлшеулер жүргізіңіз.', 'ok'); this.status('Қондырғы дайын — өлшеу жүргізіңіз', 'ok'); }
+      else { if (!this.S.asm.done) this.S.asm.fails++; this.save(); this.toast(r.msg, 'bad'); }
+    };
+    if (this.S.asm.done) this.status('Қондырғы дайын — өлшеу жүргізіңіз', 'ok');
+  },
+  status(t, k) { const e = $('#benchSt'); if (e) { e.textContent = t; e.style.color = k === 'ok' ? 'var(--ok)' : k === 'bad' ? 'var(--bad)' : ''; } },
+  violation(msg) { const v = this.S.asm.viol; if (!v.includes(msg)) { v.push(msg); this.save(); } this.toast('Қауіпсіздік ережесі бұзылды: ' + msg, 'bad'); },
+  /* ---------- Tables ---------- */
+  tv(id, r, k) { const c = this.L.tables.find(t => t.id === id).cols.find(c => c.k === k); if (c && c.fixed) return c.fixed(r, this); return (this.S.tables[id]?.[r]?.[k]) ?? ''; },
+  cell(id, r, k) { const v = this.tv(id, r, k); return typeof v === 'number' ? v : num(v); },
+  renderTables() {
+    const html = this.L.tables.map(t => {
+      const rows = t.rows || t.rowLabels.length;
+      const head = `<tr>${t.rowLabels ? `<th>${t.rowHead || ''}</th>` : '<th>№</th>'}${t.cols.map(c => `<th class="${c.kind === 'c' ? 'c' : ''}">${c.l}${c.kind === 'c' ? '<br><small>(есептелді)</small>' : ''}</th>`).join('')}</tr>`;
+      let body = '';
+      for (let r = 0; r < rows; r++) {
+        body += `<tr><td class="rl">${t.rowLabels ? t.rowLabels[r] : r + 1}</td>${t.cols.map(c => { if (c.fixed) { const v = c.fixed(r, this); return `<td class="fixed">${typeof v === 'number' ? fx(v, c.d ?? 2).replace(/,0+$/, '') : esc(v)}</td>`; } const v = this.S.tables[t.id]?.[r]?.[c.k] ?? ''; if (c.sel) return `<td class="${c.kind === 'c' ? 'cc' : ''}" style="text-align:left"><select data-t="${t.id}" data-r="${r}" data-k="${c.k}" ${this.S.submitted ? 'disabled' : ''}><option value="">— таңдаңыз —</option>${(typeof c.sel === 'function' ? c.sel(r) : c.sel).map(o => `<option ${o === v ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></td>`; return `<td class="${c.kind === 'c' ? 'cc' : ''}"><input type="text" inputmode="decimal" aria-label="${esc(c.l.replace(/<[^>]+>/g, ''))}, ${r + 1}-жол" data-t="${t.id}" data-r="${r}" data-k="${c.k}" value="${esc(v)}" ${this.S.submitted ? 'disabled' : ''}></td>`; }).join('')}</tr>`;
+      }
+      return `<h3 style="margin-top:14px">${t.title}</h3>${t.note ? `<p class="small muted">${t.note}</p>` : ''}<div class="tablewrap"><table class="dt">${head}${body}</table></div>`;
+    }).join('');
+    for (const id of ['#tblExp', '#tblCalc']) { const e = $(id); if (e) e.innerHTML = html; }
+  },
+  bindTables() {
+    document.addEventListener('input', e => { const t = e.target; if (t.dataset && t.dataset.t && t.dataset.k) { const T = this.S.tables; (T[t.dataset.t] ??= {}); (T[t.dataset.t][t.dataset.r] ??= {}); T[t.dataset.t][t.dataset.r][t.dataset.k] = t.value; this.save(); if (this.L.onTable) this.L.onTable(this); } });
+    document.addEventListener('change', e => { const t = e.target; if (t.tagName === 'SELECT' && t.dataset.t) { const T = this.S.tables; (T[t.dataset.t] ??= {}); (T[t.dataset.t][t.dataset.r] ??= {}); T[t.dataset.t][t.dataset.r][t.dataset.k] = t.value; this.save(); } });
+  },
+  /* ---------- Calc ---------- */
+  renderCalc() {
+    const L = this.L, S = this.S;
+    $('#pg-calc').innerHTML = `<div class="card"><h2>Кестелер</h2><p class="small muted">Қою көк бағандар — есептелетін шамалар. Оларды өз өлшеулеріңіз бойынша есептеп толтырыңыз.</p><div id="tblCalc"></div></div>
+    <div class="card"><h2>Есептеу және қателіктер</h2>${L.calcIntro || ''}<div class="calcs">${L.calc.map(c => `<div class="ci"><div><div class="lbl">${c.l}</div>${c.h ? `<div class="hint">${c.h}</div>` : ''}</div><div class="inp"><input type="text" inputmode="decimal" data-c="${c.k}" value="${esc(S.calc[c.k] ?? '')}" ${S.submitted ? 'disabled' : ''} aria-label="${esc(c.l.replace(/<[^>]+>/g, ''))}"><span>${c.u || ''}</span></div></div>`).join('')}</div>
+    <p class="small muted" style="margin-top:12px">Үлкен және кіші сандарды былай жазуға болады: <kbd>1,5·10^8</kbd> немесе <kbd>1.5e8</kbd>. Пайыздарды тек сан түрінде жазыңыз (мысалы, <kbd>3,2</kbd>).</p>
+    <div class="btns"><button class="btn" onclick="App.go('concl')">Қорытындыға өту</button></div></div>`;
+    $('#pg-calc').addEventListener('input', e => { if (e.target.dataset.c) { S.calc[e.target.dataset.c] = e.target.value; this.save(); } });
+  },
+  /* ---------- Conclusion ---------- */
+  renderConcl() {
+    const C = this.L.concl, S = this.S;
+    $('#pg-concl').innerHTML = `<div class="grid2"><div class="card"><h2>Қорытынды тұжырымдар</h2><p class="small muted">Тәжірибе нәтижесіне сәйкес келетін <b>барлық дұрыс</b> тұжырымдарды белгілеңіз. Қате тұжырым үшін балл шегеріледі.</p><div class="stmts" id="stm">${C.stmts.map((s, i) => `<label class="opt"><input type="checkbox" value="${i}" ${S.concl.sel.includes(i) ? 'checked' : ''} ${S.submitted ? 'disabled' : ''}><span>${s.t}</span></label>`).join('')}</div></div>
+    <div class="card"><h2>Өз қорытындыңыз</h2><div class="note small">${C.prompt}</div><textarea id="ctext" placeholder="Қорытындыны осында жазыңыз…" ${S.submitted ? 'disabled' : ''}>${esc(S.concl.text)}</textarea><p class="small muted" id="cwc"></p>
+    <div class="btns"><button class="btn green" onclick="App.go('result')">Жұмысты тапсыруға өту</button></div></div></div>`;
+    const wc = () => { const n = (S.concl.text.match(/[\p{L}\d]+/gu) || []).length; $('#cwc').textContent = `Сөз саны: ${n} (кемінде 30 сөз ұсынылады)`; };
+    $('#stm').addEventListener('change', () => { S.concl.sel = $$('#stm input:checked').map(i => +i.value); this.save(); });
+    $('#ctext').addEventListener('input', e => { S.concl.text = e.target.value; wc(); this.save(); }); wc();
+  },
+  /* ---------- Grading ---------- */
+  item(t, s, w = 1, extra = {}) { return { t, s: clamp(s, 0, 1), w, ...extra }; },
+  chk(t, got, exp, rel = 0.02, abs = 0, w = 1) { const g = typeof got === 'number' ? got : num(got); const ok = near(g, exp, rel, abs); return { t, s: ok ? 1 : 0, w, got: isFinite(g) ? g : null, exp }; },
+  grade() {
+    const L = this.L, S = this.S, out = {};
+    out.quiz = { s: S.quiz.first ?? 0, items: [this.item(`Бірінші әрекет: ${fx((S.quiz.first ?? 0) * L.quiz.length, 0)}/${L.quiz.length} дұрыс`, S.quiz.first ?? 0)] };
+    const asmS = S.asm.done ? clamp(1 - 0.25 * S.asm.fails - 0.125 * S.asm.viol.length, 0.25, 1) : 0;
+    out.asm = { s: asmS, items: [this.item(S.asm.done ? 'Қондырғы құрастырылды' : 'Қондырғы құрастырылмады', S.asm.done ? 1 : 0), this.item(`Қате тексеру саны: ${S.asm.fails} (әрқайсысы −0,5 балл)`, S.asm.fails ? 0 : 1), ...S.asm.viol.map(v => this.item('Қауіпсіздік бұзылды: ' + v + ' (−0,25 балл)', 0))] };
+    const agg = items => { const W = items.reduce((a, b) => a + b.w, 0); return W ? items.reduce((a, b) => a + b.w * b.s, 0) / W : 0; };
+    const mi = S.asm.done ? L.gradeMeasure(this) : [this.item('Тәжірибе жүргізілмеді', 0)]; out.meas = { s: agg(mi), items: mi };
+    const ci = L.gradeCalc(this); out.calc = { s: agg(ci), items: ci };
+    // conclusion
+    const C = L.concl; const nOk = C.stmts.filter(s => s.ok).length;
+    const good = S.concl.sel.filter(i => C.stmts[i]?.ok).length, bad = S.concl.sel.filter(i => !C.stmts[i]?.ok).length;
+    const stS = clamp((good - bad) / nOk, 0, 1);
+    const txt = S.concl.text.toLowerCase(); const words = (txt.match(/[\p{L}\d]+/gu) || []).length;
+    const gHit = C.groups.map(g => g.any.some(k => txt.includes(k)));
+    let numOK = false; const mv = C.value ? C.value(this) : NaN;
+    if (isFinite(mv)) { for (const m of txt.matchAll(/[-+]?\d+(?:[.,]\d+)?(?:\s*[·*×x]\s*10\^?\s*[-+−]?\d+)?/g)) { const v = num(m[0]); if (near(v, mv, 0.05)) numOK = true; } } else numOK = words > 0;
+    const textS = (words >= 30 ? .25 : words >= 15 ? .12 : 0) + (numOK ? .25 : 0) + .5 * gHit.filter(Boolean).length / C.groups.length;
+    const autoText = Math.round(textS * 100) / 100;
+    const tS = S.teacher != null ? clamp(S.teacher, 0, 1) : autoText;
+    out.concl = { s: (stS + tS) / 2, auto: autoText, items: [this.item(`Тұжырымдар: дұрыс таңдалғаны ${good}/${nOk}, қате таңдалғаны ${bad}`, stS), this.item(`Еркін мәтін: ${words} сөз${S.teacher != null ? ' (мұғалім бағасы)' : ' (алдын ала авто-баға)'}`, tS), ...C.groups.map((g, i) => this.item('Мәтінде: ' + g.t, gHit[i] ? 1 : 0, 0)), this.item('Мәтінде сандық нәтиже келтірілген', numOK ? 1 : 0, 0)] };
+    let total = 0; for (const s of SECTION) { out[s.k].pts = Math.round(out[s.k].s * s.max * 100) / 100; total += out[s.k].pts; }
+    out.total = Math.round(total * 10) / 10; out.mark = Math.round(out.total);
+    return out;
+  },
+  /* ---------- Result ---------- */
+  progress() {
+    const S = this.S, L = this.L; let need = 0, have = 0;
+    for (const t of L.tables) { const rows = t.rows || t.rowLabels.length; for (let r = 0; r < rows; r++) for (const c of t.cols) { if (c.fixed || c.opt) continue; need++; if (String(this.tv(t.id, r, c.k)).trim()) have++; } }
+    const cn = L.calc.length, ch = L.calc.filter(c => String(S.calc[c.k] ?? '').trim()).length;
+    return { need, have, cn, ch };
+  },
+  renderResult() {
+    const S = this.S, L = this.L, el = $('#pg-result'); if (!el) return;
+    if (!S.submitted) {
+      const p = this.progress(); const w = (S.concl.text.match(/[\p{L}\d]+/gu) || []).length;
+      el.innerHTML = `<div class="grid2"><div class="card"><h2>Тапсыру алдындағы тексеру</h2><ul class="chk">
+      <li class="${S.quiz.passed ? 'ok' : ''}">Рұқсат тесті ${S.quiz.passed ? 'тапсырылды' : 'тапсырылмады'}</li>
+      <li class="${S.asm.done ? 'ok' : ''}">Қондырғы ${S.asm.done ? 'құрастырылды' : 'құрастырылмады'}</li>
+      <li class="${p.have === p.need ? 'ok' : p.have ? 'half' : ''}">Кесте ұяшықтары: ${p.have}/${p.need}</li>
+      <li class="${p.ch === p.cn ? 'ok' : p.ch ? 'half' : ''}">Есептеу жолдары: ${p.ch}/${p.cn}</li>
+      <li class="${S.concl.sel.length ? 'ok' : ''}">Қорытынды тұжырымдар таңдалды: ${S.concl.sel.length}</li>
+      <li class="${w >= 30 ? 'ok' : w ? 'half' : ''}">Өз қорытындыңыз: ${w} сөз</li></ul>
+      <p class="small muted">Тапсырғаннан кейін жауаптарды өзгертуге болмайды.</p><div class="btns"><button class="btn green" id="subm">Жұмысты тапсыру</button></div></div>
+      <div class="card soft"><h3>Бағалау критерийлері</h3><div class="score">${SECTION.map(s => `<div><span class="small">${s.t}</span><b>${s.max}</b></div>`).join('')}</div><button class="btn ghost sm" id="rst">Жұмысты басынан бастау</button></div></div>`;
+      $('#subm').onclick = async () => { if (!(await this.confirm('<h3>Жұмысты тапсырасыз ба?</h3><p>Тапсырғаннан кейін жауаптар құлыпталады және баға шығарылады.</p>'))) return; S.res = this.grade(); S.submitted = true; S.finished = Date.now(); this.save(); this.renderWho(); this.refreshTabs(); this.renderCalc(); this.renderConcl(); this.renderResult(); this.toast('Жұмыс тапсырылды', 'ok'); };
+      $('#rst').onclick = () => this.restart();
+      return;
+    }
+    const R = S.res;
+    el.innerHTML = `<div class="card"><div class="flex"><div><div class="muted">Жалпы баға</div><div class="big">${fx(R.total, 1)}<span style="font-size:.4em">/10</span></div></div><div class="sp"></div><div class="btns noprint"><button class="btn" id="dl">Есеп парағын жүктеу (PDF үшін)</button><button class="btn alt" id="pr">Басып шығару / PDF</button><button class="btn ghost" id="cp">Мәтінін көшіру</button></div></div>
+    <div class="score">${SECTION.map(s => `<div><span class="small">${s.t}</span><b>${fx(R[s.k].pts, 2)} / ${s.max}</b><div class="bar"><i style="width:${R[s.k].s * 100}%"></i></div></div>`).join('')}</div>
+    <div class="note small">Есеп парағын жүктеп алып, оны браузерде ашып, <b>«Басып шығару → PDF ретінде сақтау»</b> арқылы PDF жасаңыз да, мұғаліміңізге жіберіңіз.</div></div>
+    <div class="grid2">${SECTION.map(s => `<div class="card"><h3>${s.t}: ${fx(R[s.k].pts, 2)}/${s.max}</h3><ul class="chk">${R[s.k].items.map(it => `<li class="${it.s >= 1 ? 'ok' : it.s > 0 ? 'half' : ''}">${it.t}${it.exp != null ? ` <span class="muted small">— сіздікі: ${it.got == null ? 'жоқ' : sig(it.got, 4)}</span>` : ''}</li>`).join('')}</ul></div>`).join('')}
+</div>
+    <div class="card"><button class="btn ghost sm" id="rst">Жаңа әрекет (басынан бастау)</button></div>`;
+    $('#dl').onclick = () => this.download();
+    $('#pr').onclick = () => this.printReport();
+    $('#cp').onclick = () => { const t = this.reportText(); navigator.clipboard?.writeText(t).then(() => this.toast('Көшірілді', 'ok'), () => this.toast('Көшіру мүмкін болмады', 'bad')); };
+    $('#rst').onclick = () => this.restart();
+  },
+  async restart() {
+    if (!(await this.confirm('<h3>Басынан бастау</h3><p>Барлық енгізілген деректер өшеді. Есеп парағын бұрын жүктеп алдыңыз ба?</p>'))) return;
+    const a = (this.S.attempt || 1) + 1, n = this.S.name, c = this.S.cls; this.S = this.fresh(); this.S.name = n; this.S.cls = c; this.S.attempt = a; this.save(); try { sessionStorage.removeItem(this.key() + '_tab'); } catch (e) { } location.reload();
+  },
+  reportHTML() {
+    const S = this.S, L = this.L, R = S.res;
+    const dt = new Date(S.finished || Date.now()); const mins = Math.round(((S.finished || Date.now()) - S.started) / 60000);
+    const tbl = L.tables.map(t => { const rows = t.rows || t.rowLabels.length; let h = `<h3>${t.title}</h3><table><tr><th>${t.rowLabels ? (t.rowHead || '') : '№'}</th>${t.cols.map(c => `<th>${c.l}</th>`).join('')}</tr>`; for (let r = 0; r < rows; r++) h += `<tr><td>${t.rowLabels ? t.rowLabels[r] : r + 1}</td>${t.cols.map(c => { const v = this.tv(t.id, r, c.k); return `<td>${typeof v === 'number' ? fx(v, c.d ?? 2).replace(/,0+$/, '') : esc(v)}</td>`; }).join('')}</tr>`; return h + '</table>'; }).join('');
+    const sec = SECTION.map(s => `<h3>${s.t}: ${fx(R[s.k].pts, 2)} / ${s.max}</h3><ul>${R[s.k].items.map(it => `<li>${it.s >= 1 ? '✔' : it.s > 0 ? '◐' : '✘'} ${it.t}${it.exp != null ? ` — енгізілген мән: ${it.got == null ? 'жоқ' : sig(it.got, 4)}` : ''}</li>`).join('')}</ul>`).join('');
+    const calc = L.calc.map(c => `<tr><td>${c.l}</td><td>${esc(S.calc[c.k] ?? '')} ${c.u || ''}</td></tr>`).join('');
+    const st = L.concl.stmts.map((s, i) => S.concl.sel.includes(i) ? `<li>${s.t}</li>` : '').join('');
+    return `<!DOCTYPE html><html lang="kk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Есеп — ${esc(S.name)} — ${L.num}-зертханалық жұмыс</title><style>body{font:14px/1.5 "Noto Sans",Arial,sans-serif;color:#111;max-width:820px;margin:20px auto;padding:0 16px}h1{font-size:20px;margin:0 0 4px;color:#0b4f6c}h2{font-size:17px;color:#0b4f6c;border-bottom:2px solid #0f8b8d;padding-bottom:3px;margin-top:22px}h3{font-size:15px;margin:14px 0 6px}table{border-collapse:collapse;width:100%;margin:6px 0}td,th{border:1px solid #888;padding:4px 6px;text-align:center;font-size:13px}th{background:#e3f2f1}.hd td{text-align:left;border:0;padding:2px 6px}.tot{font-size:28px;font-weight:800;color:#0f8b8d}.pr{background:#0f8b8d;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer;margin:10px 0}@media print{.pr{display:none}}ul{margin:4px 0;padding-left:20px}.txt{white-space:pre-wrap;border:1px solid #bbb;padding:8px;border-radius:6px}</style></head><body>
+<button class="pr" onclick="print()">Басып шығару / PDF ретінде сақтау</button>
+<h1>${L.num}-зертханалық жұмыс. ${L.title}</h1>
+<table class="hd"><tr><td><b>Оқушы:</b> ${esc(S.name)}</td><td><b>Сынып:</b> ${esc(S.cls)}</td></tr><tr><td><b>Күні:</b> ${dt.toLocaleDateString('kk-KZ')} ${dt.toLocaleTimeString('kk-KZ', { hour: '2-digit', minute: '2-digit' })}</td><td><b>Нұсқа коды:</b> ${S.code} · <b>Әрекет:</b> №${S.attempt || 1} · <b>Уақыт:</b> ${mins} мин</td></tr></table>
+<p>Жалпы баға: <span class="tot">${fx(R.total, 1)} / 10</span></p>
+<table><tr>${SECTION.map(s => `<th>${s.t}</th>`).join('')}<th>Барлығы</th></tr><tr>${SECTION.map(s => `<td>${fx(R[s.k].pts, 2)} / ${s.max}</td>`).join('')}<td><b>${fx(R.total, 1)}</b></td></tr></table>
+<h2>Өлшеу кестелері</h2>${tbl}
+<h2>Есептеулер</h2><table>${calc}</table>
+<h2>Қорытынды</h2><p><b>Таңдалған тұжырымдар:</b></p><ul>${st || '<li>—</li>'}</ul><p><b>Оқушының қорытындысы:</b></p><div class="txt">${esc(S.concl.text) || '—'}</div>
+<h2>Бағалау толығырақ</h2>${sec}
+<p style="margin-top:24px"><b>Мұғалімге:</b> қорытындының еркін мәтіні компьютермен алдын ала бағаланды (${fx(R.concl.auto, 2)} / 1 → ${fx(R.concl.auto, 2)} балл). Қажет болса, түзетіңіз: ________ балл.</p><p style="margin-top:24px">Мұғалімнің қолы: ____________________ &nbsp;&nbsp; Қорытынды баға: ________</p></body></html>`;
+  },
+  reportText() { const d = document.createElement('div'); d.innerHTML = this.reportHTML().replace(/^[\s\S]*<body>/, '').replace(/<button[\s\S]*?<\/button>/, ''); d.querySelectorAll('td,th').forEach(c => c.append(' | ')); d.querySelectorAll('tr,li,h1,h2,h3,p').forEach(c => c.append('\n')); return d.textContent.replace(/\n{3,}/g, '\n\n'); },
+  fname() { return `${this.L.num}-зертхана_${this.S.name.replace(/[^\p{L}\d]+/gu, '_')}.html`; },
+  async download() {
+    const html = this.reportHTML();
+    try { if (window.claude && claude.use) { const d = await claude.use('downloads'); if (d) { await d.save({ filename: this.fname(), data: html }); this.toast('Есеп парағы сақталды. Оны ашып, PDF ретінде басып шығарыңыз.', 'ok'); return; } } } catch (e) { if (e && e.code === 'declined') return; }
+    try { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); a.download = this.fname(); document.body.appendChild(a); a.click(); a.remove(); this.toast('Есеп парағы жүктелді', 'ok'); } catch (e) { this.toast('Жүктеу мүмкін болмады — «Мәтінін көшіру» батырмасын қолданыңыз', 'bad'); }
+  },
+  printReport() {
+    try { const w = window.open('', '_blank'); if (w) { w.document.write(this.reportHTML()); w.document.close(); setTimeout(() => { try { w.print(); } catch (e) { } }, 400); return; } } catch (e) { }
+    this.toast('Бұл терезеде басып шығару жабық. «Есеп парағын жүктеу» батырмасын басып, файлды ашыңыз.', 'warn');
+  },
+  /* animation loop helper */
+  loop(fn) { const f = t => { if (document.visibilityState !== 'hidden') fn(t); requestAnimationFrame(f); }; requestAnimationFrame(f); }
+};
+App.bindTables();
+/* side panel helpers */
+function stepsHTML(list, cur) { return `<ol class="steps">${list.map((s, i) => `<li class="${i < cur ? 'ok' : i === cur ? 'now' : ''}"><i>${i < cur ? '✓' : i + 1}</i><span>${s}</span></li>`).join('')}</ol>`; }
+function segs(id, opts, on) { return `<div class="segs" id="${id}">${opts.map(o => `<button data-v="${esc(o[0])}" class="${String(o[0]) === String(on) ? 'on' : ''}">${o[1]}</button>`).join('')}</div>`; }
+function noise(rand, s) { return (rand() + rand() + rand() - 1.5) * s * 1.1547; }
+
+/* ===== 1-зертханалық жұмыс: Трансформатор орамаларының санын анықтау ===== */
+const RANGES = [0.3, 0.75, 1.5, 3, 7.5, 15, 30, 75, 150];
+const G1 = 0.3, G2 = 0.2, UNOM = 220;
+const LAB = {
+  id: 'lab1', num: 1, title: 'Трансформатор орамаларының санын анықтау',
+  goal: 'Екі вольтметр әдісімен трансформатордың орамаларындағы орам санын анықтау.',
+  equipment: ['Реттелетін айнымалы ток көзі (0–60 В)', 'Трансформатор (номиналды кернеуі 220 В)', 'Қимасы 0,75 мм²–1 мм² оқшауланған сым (уақытша орама үшін)', 'Екі айнымалы ток вольтметрі: V₁ (дәлдік класы 0,3) және V₂ (дәлдік класы 0,2), өлшеу шектері 0,3–150 В', 'Жалғағыш сымдар', 'Амперметр (бұл жұмыста қажет емес — оны дұрыс таңдай білу де тапсырманың бөлігі)'],
+  theory: `<p>Бос жүрістегі трансформаторда (екінші реттік орама жүктелмеген) бірінші реттік ораманың тогы номиналды токтың бірнеше пайызына ғана тең. Сондықтан орамалардағы кернеу шығыны өте аз және орама ұштарындағы кернеулер олардың ЭҚК-не тең деп есептеуге болады.</p>
+  <p>Барлық орамаларды бір магнит ағыны тесіп өтетіндіктен, әр орамның ЭҚК-і бірдей. Демек ЭҚК-тер (кернеулер) қатынасы орам сандарының қатынасына тең:</p>
+  <div class="formula">${fr('ε<sub>1</sub>', 'ε<sub>2</sub>')} = ${fr('U<sub>1</sub>', 'U<sub>2</sub>')} = ${fr('N<sub>1</sub>', 'N<sub>2</sub>')}</div>
+  <p><b>Әдіс идеясы.</b> Бірінші реттік ораманың N₁ орам санын білмейміз. Трансформатордың өзегіне орам саны белгілі уақытша орама (мысалы, N<sub>уақ</sub> = 10 орам) ораймыз. Екі вольтметрмен U₁ және U<sub>уақ</sub> өлшеп, табамыз:</p>
+  <div class="formula">N<sub>1</sub> = N<sub>уақ</sub> · ${fr('U<sub>1</sub>', 'U<sub>уақ</sub>')}</div>
+  <p>Содан кейін V₂ вольтметрін екінші реттік орамаға ауыстырып, оның орам санын есептейміз:</p>
+  <div class="formula">N<sub>2</sub> = N<sub>1</sub> · ${fr('U<sub>2</sub>', 'U<sub>1</sub>')}</div>
+  <p><b>Аспаптың қателігі.</b> Аналогты вольтметрдің абсолют қателігі аспаптық және санақ қателіктерінің қосындысы:</p>
+  <div class="formula">ΔU = ${fr('U<sub>шек</sub> · γ', '100')} + ${fr('c', '2')}, &nbsp; c = ${fr('U<sub>шек</sub>', '30')}</div>
+  <p>мұндағы U<sub>шек</sub> — өлшеу шегі, γ — дәлдік класы, c — бөлік құны (шкалада 30 бөлік). Шкаланың шеткі мәндерін пайдаланбаңыз: көрсеткіш шкаланың ортаңғы немесе соңғы бөлігінде болғаны жөн.</p>
+  <p>N₁ анықтаудың салыстырмалы қатесі: ε<sub>N1</sub> = ΔU₁/U₁ + ΔU<sub>уақ</sub>/U<sub>уақ</sub>; абсолют қатесі ΔN₁ = N₁·ε<sub>N1</sub>. N₂ мәні N₁ арқылы есептелетіндіктен, оның қатесі үлкенірек: ε<sub>N2</sub> = ε<sub>N1</sub> + ΔU₁/U₁ + ΔU₂/U₂.</p>`,
+  safety: ['Сымдарды жалғауды, ажыратуды және вольтметрлерді ауыстыруды тек ток көзі <b>сөндірулі</b> кезде орындаңыз.', 'Бірінші реттік орамаға номиналды кернеудің тек 10–20 %-ын (22–44 В) беріңіз. Одан жоғары кернеу қауіпті және өзекті қыздырады.', 'Вольтметрді әрқашан ең үлкен өлшеу шегінен бастап қосыңыз, содан кейін ғана шекті азайтыңыз — әйтпесе аспап бүлінеді.', 'Амперметрді ток көзіне немесе орамаға параллель қоспаңыз: бұл қысқа тұйықталу тудырады.', 'Оқшаулағышы зақымдалған сымдарды қолданбаңыз, қысқыштардың жалаңаш бөліктерін ұстамаңыз.', 'Жұмыс аяқталған соң алдымен ток көзін сөндіріп, содан кейін тізбекті бөлшектеңіз.'],
+  quiz: [
+    { q: 'Тізбектегі сымды ауыстыру қажет болды. Не істеу керек?', o: ['Ток көзі қосулы болса да тез ауыстыру', 'Алдымен ток көзін сөндіріп, содан кейін ауыстыру', 'Тек кернеуді азайту жеткілікті'], a: 1 },
+    { q: 'Номиналды кернеуі 220 В трансформаторға бұл жұмыста қандай кернеу беріледі?', o: ['220 В', '22–44 В', '100–150 В', '2–4 В'], a: 1 },
+    { q: 'Вольтметрді тізбекке қосқанда өлшеу шегін қалай таңдайды?', o: ['Ең кіші шектен бастайды', 'Ең үлкен шектен бастап, кейін азайтады', 'Шектің маңызы жоқ'], a: 1 },
+    { q: 'Бос жүрістегі трансформатор үшін қай теңдік дұрыс?', o: ['U₁/U₂ = N₂/N₁', 'U₁/U₂ = N₁/N₂', 'U₁·U₂ = N₁·N₂'], a: 1 },
+    { q: 'Уақытша орама 10 орамнан тұрады, U₁ = 33 В, U<sub>уақ</sub> = 0,22 В. N₁ неге тең?', o: ['150', '1500', '15000', '66'], a: 1 }],
+  setup(r) {
+    const N1 = Math.round(1250 + r() * 900);
+    const N2 = Math.round(N1 * (8 + r() * 30) / UNOM);
+    return { N1, N2, b1: 1 + (r() - .5) * .004, b2: 1 + (r() - .5) * .004 };
+  },
+  tables: [
+    { id: 't1', title: '1-кесте. Бірінші реттік орамадағы орам санын анықтау', rows: 3, cols: [{ k: 'Nt', l: 'Уақытша орамадағы орам саны N<sub>уақ</sub>' }, { k: 'Ut', l: 'Уақытша орамадағы кернеу U<sub>уақ</sub>, В' }, { k: 'U1', l: 'Бірінші реттік орамадағы кернеу U₁, В' }, { k: 'N1', l: 'Бірінші реттік орамадағы орам саны N₁', kind: 'c' }] },
+    { id: 't2', title: '2-кесте. Екінші реттік орамадағы орам санын анықтау', rows: 3, cols: [{ k: 'U1', l: 'Бірінші реттік орамадағы кернеу U₁, В' }, { k: 'U2', l: 'Екінші реттік орамадағы кернеу U₂, В' }, { k: 'N2', l: 'Екінші реттік орамадағы орам саны N₂ (N₁ орташа мәнімен)', kind: 'c' }] }],
+  calcIntro: `<div class="formula">ΔU = ${fr('U<sub>шек</sub>·γ', '100')} + ${fr('c', '2')}, &nbsp; c = ${fr('U<sub>шек</sub>', '30')}; &nbsp; γ<sub>V1</sub> = 0,3; γ<sub>V2</sub> = 0,2</div><p class="small muted">Қателіктерді 1-кестедегі U₁ және U<sub>уақ</sub> орташа мәндері бойынша, ал N₂ қатесін 2-кестедегі орташа мәндер бойынша есептеңіз.</p>`,
+  calc: [
+    { k: 'N1m', l: 'N₁ орташа мәні', h: 'N₁ = (N₁₁ + N₁₂ + N₁₃)/3' },
+    { k: 'N2m', l: 'N₂ орташа мәні', h: '2-кестенің соңғы бағанының орташасы' },
+    { k: 'L1', l: 'V₁ өлшеу шегі (1-тапсырма)', u: 'В', h: 'Қай шекте өлшедіңіз?' },
+    { k: 'L2', l: 'V₂ өлшеу шегі (1-тапсырма, уақытша орама)', u: 'В' },
+    { k: 'L3', l: 'V₂ өлшеу шегі (2-тапсырма, екінші реттік орама)', u: 'В' },
+    { k: 'dU1', l: 'ΔU₁ — V₁ абсолют қатесі', u: 'В', h: 'ΔU₁ = U<sub>шек</sub>·0,3/100 + c/2' },
+    { k: 'dUt', l: 'ΔU<sub>уақ</sub> — V₂ абсолют қатесі (1-тапсырма)', u: 'В', h: 'ΔU = U<sub>шек</sub>·0,2/100 + c/2' },
+    { k: 'e1', l: 'ε<sub>N1</sub> — N₁ салыстырмалы қатесі', u: '%', h: 'ε = (ΔU₁/U₁ + ΔU<sub>уақ</sub>/U<sub>уақ</sub>)·100 %' },
+    { k: 'dN1', l: 'ΔN₁ — N₁ абсолют қатесі', h: 'ΔN₁ = N₁·ε<sub>N1</sub>' },
+    { k: 'dU2', l: 'ΔU₂ — V₂ абсолют қатесі (2-тапсырма)', u: 'В' },
+    { k: 'e2', l: 'ε<sub>N2</sub> — N₂ салыстырмалы қатесі', u: '%', h: 'ε<sub>N2</sub> = ε<sub>N1</sub> + ΔU₁/U₁ + ΔU₂/U₂ (2-кесте орташалары)' },
+    { k: 'dN2', l: 'ΔN₂ — N₂ абсолют қатесі', h: 'ΔN₂ = N₂·ε<sub>N2</sub>' }],
+  concl: {
+    prompt: 'Қорытындыда: N₁ және N₂ мәндерін қателігімен (N = N<sub>орт</sub> ± ΔN) жазыңыз, трансформатордың түрін (жоғарылатқыш/төмендеткіш) және трансформация коэффициентін атаңыз, қателіктің негізгі көздерін және өлшеуді қалай жақсартуға болатынын түсіндіріңіз.',
+    stmts: [
+      { t: 'Бос жүрістегі трансформатор үшін орамалардағы кернеулер қатынасы орам сандарының қатынасына тең: U₁/U₂ = N₁/N₂.', ok: true },
+      { t: 'Уақытша орамадағы орам саны көбейсе, V₂ көрсеткіші азаяды.', ok: false },
+      { t: 'Бұл трансформатор төмендеткіш, себебі N₂ < N₁ және трансформация коэффициенті k = N₁/N₂ > 1.', ok: true },
+      { t: 'Өлшеу дәлдігін арттыру үшін аспап көрсеткіші шкаланың соңғы бөлігінде болатындай өлшеу шегін таңдау керек.', ok: true },
+      { t: 'Бірінші реттік орамаға берілген кернеуді өзгерткенде есептелген N₁ мәні де айтарлықтай өзгереді.', ok: false },
+      { t: 'N₂ мәнінің салыстырмалы қатесі N₁ қатесінен үлкен, себебі N₂ мәні N₁ арқылы есептеледі.', ok: true },
+      { t: 'Кернеуді номиналдан жоғары беру өлшеуді әрі дәл, әрі қауіпсіз етеді.', ok: false },
+      { t: 'Уақытша ораманың орам санын көбейтсек (мысалы, 20 орам), U<sub>уақ</sub> өсіп, салыстырмалы қате азаяды.', ok: true }],
+    groups: [{ t: 'N₁ мәні аталды', any: ['n1', 'n₁', 'бірінші реттік'] }, { t: 'N₂ мәні аталды', any: ['n2', 'n₂', 'екінші реттік'] }, { t: 'қателік талқыланды', any: ['қател', 'дәлдік', '±', '%'] }, { t: 'трансформатор түрі / коэффициенті', any: ['төмендет', 'жоғарылат', 'коэффиц', 'қатынас'] }],
+    value: A => { const v = num(A.S.calc.N1m); return isFinite(v) ? v : LAB._n1(A); }
+  },
+  /* ---------- simulation ---------- */
+  sim: { on: false, U: 0, U1: 0, v1: 0, v2: 0, amm: 0, mode: '', short: false },
+  disp: { v1: 0, v2: 0, amm: 0 },
+  mount(A, host, side, extra) {
+    const T = A.T, S = A.S; S.ex.rng ??= { v1: 150, v2: 150 }; S.ex.log ??= [];
+    const me = this;
+    const B = this.B = new Bench(host, { W: 1000, H: 560, onChange: (why, p) => this.change(why, p), extraLinks: () => B.has('amm') ? [['amm.a', 'amm.b']] : [] });
+    B.def({ id: 'src', name: 'Ток көзі ~', w: 190, h: 140, init: () => ({ on: false, U: 0 }), terms: [{ id: 'a', x: 130, y: 126, l: '~' }, { id: 'b', x: 168, y: 126, l: '~' }],
+      draw: p => { const s = p.s; let k = ''; for (let i = 0; i <= 6; i++) { const a = rad(-135 + 270 * i / 6); k += `<text x="${62 + 40 * Math.sin(a)}" y="${74 - 40 * Math.cos(a) + 4}" font-size="10" text-anchor="middle" fill="#dff">${i * 10}</text>`; }
+        return `<rect x="0" y="0" width="190" height="140" rx="14" fill="#1f5f66" stroke="#0d3a3f" stroke-width="3"/><text x="12" y="20" font-size="13" font-weight="700" fill="#fff">Ток көзі ~ 0–60 В</text>${k}${knobSVG(62, 74, 24, s.U / 60, 'Кернеу', 'knob')}
+        <g data-ctl="sw"><rect x="122" y="34" width="56" height="58" rx="8" fill="#123" /><rect x="${s.on ? 150 : 128}" y="42" width="22" height="42" rx="5" fill="${s.on ? '#2bb673' : '#8a9ba1'}"/><text x="150" y="104" font-size="11" text-anchor="middle" fill="#fff">${s.on ? 'ҚОСУЛЫ' : 'СӨНДІРУЛІ'}</text></g>
+        <circle cx="105" cy="122" r="6" fill="${s.on ? '#7CFC00' : '#334'}" stroke="#000"/>`; },
+      ctl: (p, n, t, d) => { if (n === 'knob' && t === 'drag') p.s.U = clamp(p.s.U - d.dy * .2 + d.dx * .2, 0, 60); if (n === 'sw' && t === 'click') { p.s.on = !p.s.on; } } });
+    B.def({ id: 'tr', name: 'Трансформатор', w: 250, h: 200, init: () => ({ nt: 0 }),
+      terms: [{ id: 'P1', x: 10, y: 70, l: 'I', lx: -2 }, { id: 'P2', x: 10, y: 150 }, { id: 'S1', x: 240, y: 70, l: 'II' }, { id: 'S2', x: 240, y: 150 }, { id: 'T1', x: 92, y: 12, l: 'Т', hide: p => !p.s.nt, ly: 4, lx: -14 }, { id: 'T2', x: 158, y: 12, hide: p => !p.s.nt }],
+      draw: p => { const nt = p.s.nt; let c = '';
+        for (let i = 0; i < 14; i++) c += `<rect x="24" y="${48 + i * 8}" width="52" height="6" rx="3" fill="#c46a1b" stroke="#7a3d08" stroke-width=".8"/>`;
+        for (let i = 0; i < 9; i++) c += `<rect x="174" y="${60 + i * 9}" width="52" height="7" rx="3" fill="#b8860b" stroke="#6b4e00" stroke-width=".8"/>`;
+        let w = ''; const n = Math.min(nt, 30); for (let i = 0; i < n; i++) { const x = 100 + i * (52 / Math.max(n, 1)); w += `<ellipse cx="${x}" cy="44" rx="3" ry="15" fill="none" stroke="#d62828" stroke-width="2"/>`; }
+        return `<rect x="30" y="30" width="190" height="150" fill="#6b7b82" stroke="#3b474c" stroke-width="2"/><rect x="80" y="62" width="90" height="86" fill="#f5faf9" stroke="#3b474c"/>
+        <line x1="10" y1="70" x2="26" y2="70" stroke="#7a3d08" stroke-width="2"/><line x1="10" y1="150" x2="26" y2="150" stroke="#7a3d08" stroke-width="2"/>${c}
+        <line x1="226" y1="70" x2="240" y2="70" stroke="#6b4e00" stroke-width="2"/><line x1="226" y1="150" x2="240" y2="150" stroke="#6b4e00" stroke-width="2"/>${w}
+        ${nt ? `<path d="M92 12 Q96 30 100 32 M158 12 Q154 30 152 32" stroke="#d62828" stroke-width="2" fill="none"/>` : ''}
+        <text x="50" y="196" font-size="12" text-anchor="middle" fill="#123" font-weight="700">N₁ = ?</text><text x="200" y="196" font-size="12" text-anchor="middle" fill="#123" font-weight="700">N₂ = ?</text>
+        <text x="125" y="102" font-size="12" text-anchor="middle" fill="#123">Уақытша</text><text x="125" y="118" font-size="12" text-anchor="middle" fill="#123">орама: <tspan font-weight="700">${nt}</tspan></text>
+        <g data-ctl="wm"><rect x="88" y="124" width="30" height="20" rx="5" fill="#0b4f6c"/><text x="103" y="139" fill="#fff" font-size="15" text-anchor="middle">−</text></g><g data-ctl="wp"><rect x="132" y="124" width="30" height="20" rx="5" fill="#0f8b8d"/><text x="147" y="139" fill="#fff" font-size="15" text-anchor="middle">+</text></g>`; },
+      ctl: (p, n, t) => { if (t !== 'click' && t !== 'down') return; if (t === 'down') return; if (n === 'wp') p.s.nt = Math.min(40, p.s.nt + 1); if (n === 'wm') p.s.nt = Math.max(0, p.s.nt - 1); if (B.get('src')?.s.on) A.violation('орамды ток көзі қосулы кезде ораған'); } });
+    const meterDef = (id, name, g) => B.def({ id, name, w: 130, h: 125, terms: [{ id: 'a', x: 38, y: 114, l: '*' }, { id: 'b', x: 92, y: 114, l: 'V' }],
+      draw: p => meterSVG({ x: 0, y: 0, w: 130, h: 98, val: p.icon ? 0 : this.disp[id], max: S.ex.rng[id], label: id === 'v1' ? 'V₁' : 'V₂', unit: '~ ' + String(S.ex.rng[id]).replace('.', ',') + ' В', cls: String(g).replace('.', ',') }) + `<rect x="10" y="100" width="110" height="24" rx="6" fill="#1d3b45"/>` });
+    meterDef('v1', 'Вольтметр V₁', G1); meterDef('v2', 'Вольтметр V₂', G2);
+    B.def({ id: 'amm', name: 'Амперметр', w: 120, h: 120, terms: [{ id: 'a', x: 35, y: 110, l: '+' }, { id: 'b', x: 85, y: 110, l: 'A' }],
+      draw: p => meterSVG({ x: 0, y: 0, w: 120, h: 94, val: p.icon ? 0 : this.disp.amm, max: 1, label: 'A', unit: '~ 1 А', cls: '1,0', body: '#4a3b2b' }) + `<rect x="8" y="96" width="104" height="24" rx="6" fill="#4a3b2b"/>` });
+    B.restore(S.ex.bench);
+    // side panel
+    side.innerHTML = `<div class="card"><h3>Жұмыс қадамдары</h3><div id="stp"></div></div>
+    <div class="card"><h3>Аспаптар (үлкейтілген)</h3><div class="view" style="background:#163640"><svg id="bigV1" viewBox="0 0 300 200"></svg></div>${segs('r1', RANGES.map(r => [r, String(r).replace('.', ',')]), S.ex.rng.v1)}
+    <div class="view" style="background:#163640;margin-top:10px"><svg id="bigV2" viewBox="0 0 300 200"></svg></div>${segs('r2', RANGES.map(r => [r, String(r).replace('.', ',')]), S.ex.rng.v2)}<p class="small muted">Батырмалар — өлшеу шегі, В. Шкалада 30 бөлік бар.</p></div>
+    <div class="card"><h3>Ток көзі</h3><div class="ctrl"><div class="rowc"><input type="range" id="uS" min="0" max="60" step="0.5" aria-label="Кернеу реттегіші"><span class="readout" id="uR"></span></div><div class="rowc"><button class="btn sm" id="onB"></button><span class="small muted">Тұтқаны бағыттау шкаласы ғана — нақты U₁ мәнін V₁ бойынша оқыңыз.</span></div></div><div id="msg"></div></div>`;
+    const setR = (id, el) => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const v = +b.dataset.v; S.ex.rng[id] = v; $$('button', el).forEach(x => x.classList.toggle('on', x === b)); A.save(); B.redraw(id); this.change('rng'); });
+    setR('v1', $('#r1')); setR('v2', $('#r2'));
+    $('#uS').addEventListener('input', e => { const s = B.get('src'); if (!s) return A.toast('Алдымен ток көзін үстелге қойыңыз', 'warn'); s.s.U = +e.target.value; B.redraw('src'); this.change('ctl'); });
+    $('#onB').onclick = () => { const s = B.get('src'); if (!s) return A.toast('Алдымен ток көзін үстелге қойыңыз', 'warn'); s.s.on = !s.s.on; B.redraw('src'); this.change('ctl'); };
+    this.change('init');
+    A.loop(() => { let ch = false; for (const k of ['v1', 'v2', 'amm']) { const t = this.sim[k]; const d = this.disp[k]; if (Math.abs(t - d) > 1e-6 * Math.max(1, Math.abs(t))) { this.disp[k] = Math.abs(t - d) < 1e-5 ? t : d + (t - d) * .18; ch = true; } } if (ch) this.drawMeters(); });
+  },
+  drawMeters() {
+    const S = App.S, B = this.B;
+    for (const k of ['v1', 'v2', 'amm']) if (B.has(k)) B.redraw(k);
+    $('#bigV1').innerHTML = meterSVG({ x: 4, y: 4, w: 292, h: 192, val: this.disp.v1, max: S.ex.rng.v1, label: 'V₁', unit: '~ В, шек ' + String(S.ex.rng.v1).replace('.', ','), cls: 'класс 0,3', body: '#163640' });
+    $('#bigV2').innerHTML = meterSVG({ x: 4, y: 4, w: 292, h: 192, val: this.disp.v2, max: S.ex.rng.v2, label: 'V₂', unit: '~ В, шек ' + String(S.ex.rng.v2).replace('.', ','), cls: 'класс 0,2', body: '#163640' });
+  },
+  /** which winding (if any) a pair of terminals sits across */
+  across(n, a, b) {
+    const W = [['src.a', 'src.b', 'P'], ['tr.P1', 'tr.P2', 'P'], ['tr.S1', 'tr.S2', 'S'], ['tr.T1', 'tr.T2', 'T']];
+    for (const [x, y, k] of W) if ((n.same(a, x) && n.same(b, y)) || (n.same(a, y) && n.same(b, x))) return k;
+    return '';
+  },
+  change(why, p) {
+    const A = App, S = A.S, T = A.T, B = this.B, sim = this.sim;
+    const src = B.get('src'), tr = B.get('tr'); const n = B.nets();
+    if (why === 'wire' && src?.s.on) A.violation('тізбекті ток көзі қосулы кезде жалғаған/ажыратқан');
+    sim.on = !!src?.s.on; sim.U = src?.s.U || 0;
+    // short circuit
+    if (sim.on && n.same('src.a', 'src.b')) { src.s.on = false; sim.on = false; B.redraw('src'); A.violation('қысқа тұйықталу (ток көзінің қысқыштары тікелей немесе амперметр арқылы жалғанды)'); }
+    const primary = !!(src && tr && this.across(n, 'src.a', 'src.b') === 'P' && (n.same('src.a', 'tr.P1') || n.same('src.a', 'tr.P2')));
+    sim.U1 = sim.on && primary ? sim.U : 0;
+    const nt = tr?.s.nt || 0;
+    const volt = { P: sim.on ? sim.U : 0, S: sim.U1 * T.N2 / T.N1, T: sim.U1 * nt / T.N1 * 0.999 };
+    if (!primary) volt.P = sim.on && src ? sim.U : 0;
+    const read = (id) => { if (!B.has(id)) return [0, '']; const k = this.across(n, id + '.a', id + '.b'); if (!k) return [0, '']; if (k === 'P' && !n.same(id + '.a', 'src.a') && !n.same(id + '.a', 'src.b') && !primary) return [0, '']; return [volt[k], k]; };
+    let [r1, k1] = read('v1'), [r2, k2] = read('v2');
+    sim.v1 = r1 * T.b1; sim.v2 = r2 * T.b2; sim.mode = k2;
+    sim.amm = B.has('amm') && sim.on && primary ? (n.same('amm.a', 'src.a') || n.same('amm.a', 'src.b') ? sim.U1 / 1800 : 0) : 0;
+    for (const [id, v] of [['v1', sim.v1], ['v2', sim.v2]]) if (v > 2 * S.ex.rng[id]) { A.violation(`вольтметр ${id === 'v1' ? 'V₁' : 'V₂'} тым кіші өлшеу шегінде қосылды (асқын жүктеме)`); }
+    if (sim.U1 > 44.5) A.violation('бірінші реттік орамаға номиналдың 20 %-нан (44 В) жоғары кернеу берілді');
+    // log state for grading
+    if (sim.on && sim.U1 > 0 && k1 === 'P' && (k2 === 'T' || k2 === 'S')) { const L = S.ex.log; const e = { u1: +sim.v1.toFixed(4), u2: +sim.v2.toFixed(5), nt, m: k2 }; const last = L[L.length - 1]; if (!last || last.u1 !== e.u1 || last.u2 !== e.u2 || last.m !== e.m) { L.push(e); if (L.length > 600) L.splice(0, L.length - 600); } }
+    S.ex.bench = B.serialize(); A.save();
+    // UI
+    const st = [!!(src && tr && B.has('v1') && B.has('v2')), nt > 0, primary, k1 === 'P' && k2 === 'T', S.asm.done, S.asm.done && (S.tables.t1?.[0]?.U1 ?? '') !== '', k2 === 'S'];
+    let cur = st.findIndex(x => !x); if (cur < 0) cur = 7;
+    $('#stp').innerHTML = stepsHTML(['Ток көзін, трансформаторды, V₁ және V₂ вольтметрлерін үстелге қойыңыз', 'Трансформатордағы «+» батырмасымен уақытша ораманы 10 орам етіп ораңыз', 'Ток көзін (~) бірінші реттік орамаға (I) жалғаңыз', 'V₁-ді бірінші реттік орамаға, V₂-ні уақытша орамаға (Т) параллель жалғаңыз', '«Қондырғыны тексеру» батырмасын басыңыз', 'Ток көзін қосып, 22–44 В аралығында үш түрлі кернеуде өлшеп, 1-кестені толтырыңыз', 'Ток көзін сөндіріп, V₂-ні екінші реттік орамаға (II) ауыстырыңыз да, 2-кестені толтырыңыз'], cur);
+    $('#uS').value = sim.U; $('#uR').textContent = fx(sim.U, 1) + ' В'; $('#onB').textContent = sim.on ? 'Сөндіру' : 'Қосу'; $('#onB').className = 'btn sm ' + (sim.on ? 'red' : 'green');
+    let m = '';
+    if (sim.on && sim.U1 > 0 && sim.U1 < 22) m = '<div class="note warn small">Кернеу номиналдың 10 %-ынан (22 В) аз — өлшеу дәлдігі төмен болады.</div>';
+    for (const id of ['v1', 'v2']) if (this.sim[id] > S.ex.rng[id] * 1.02) m += `<div class="note bad small">${id === 'v1' ? 'V₁' : 'V₂'}: тілше шкаладан шығып кетті — өлшеу шегін үлкейтіңіз!</div>`;
+    if (sim.on && sim.U1 === 0 && src) m += '<div class="note small">Ток көзі қосулы, бірақ бірінші реттік орамаға жалғанбаған.</div>';
+    $('#msg').innerHTML = m;
+    this.drawMeters();
+  },
+  checkAssembly(A) {
+    const B = this.B, n = B.nets();
+    for (const [id, nm] of [['src', 'Ток көзі'], ['tr', 'Трансформатор'], ['v1', 'V₁ вольтметрі'], ['v2', 'V₂ вольтметрі']]) if (!B.has(id)) return { ok: false, msg: nm + ' үстелге қойылмаған.' };
+    if (B.get('src').s.on) return { ok: false, msg: 'Құрастыруды тексеру кезінде ток көзі сөндірулі болуы тиіс!' };
+    if (!B.get('tr').s.nt) return { ok: false, msg: 'Уақытша орама оралмаған («+» батырмасы).' };
+    if (B.has('amm') && B.wires.some(w => w.a.startsWith('amm') || w.b.startsWith('amm'))) return { ok: false, msg: 'Бұл жұмыста амперметр қажет емес. Оны тізбектен алып тастаңыз.' };
+    if (n.same('src.a', 'src.b')) return { ok: false, msg: 'Қысқа тұйықталу: ток көзінің екі қысқышы бір-бірімен жалғанған.' };
+    if (this.across(n, 'src.a', 'src.b') !== 'P') return { ok: false, msg: 'Ток көзі бірінші реттік орамаға (I) дұрыс жалғанбаған.' };
+    if (this.across(n, 'v1.a', 'v1.b') !== 'P') return { ok: false, msg: 'V₁ вольтметрі бірінші реттік орамаға параллель жалғанбаған.' };
+    if (this.across(n, 'v2.a', 'v2.b') !== 'T') return { ok: false, msg: 'V₂ вольтметрі уақытша орамаға (Т) параллель жалғанбаған.' };
+    for (const x of ['tr.S1', 'tr.S2', 'tr.T1', 'tr.T2']) for (const y of ['src.a', 'src.b']) if (n.same(x, y)) return { ok: false, msg: 'Екінші реттік немесе уақытша орама ток көзімен қате жалғанған.' };
+    return { ok: true, msg: `Дұрыс! Уақытша орама ${B.get('tr').s.nt} орам. Енді ток көзін қосып, өлшеулер жүргізіңіз.` };
+  },
+  /* ---------- grading ---------- */
+  _n1(A) { const v = [0, 1, 2].map(r => A.cell('t1', r, 'Nt') * A.cell('t1', r, 'U1') / A.cell('t1', r, 'Ut')).filter(isFinite); return v.length ? mean(v) : NaN; },
+  gradeMeasure(A) {
+    const L = A.S.ex.log || [], out = [];
+    const match = (u1, u2, nt, m) => L.some(e => e.m === m && near(u1, e.u1, .03, .3) && near(u2, e.u2, .045, m === 'T' ? .006 : .03) && (nt == null || e.nt === nt));
+    const u1s = [];
+    for (let r = 0; r < 3; r++) { const nt = A.cell('t1', r, 'Nt'), u = A.cell('t1', r, 'Ut'), u1 = A.cell('t1', r, 'U1'); u1s.push(u1); out.push(A.item(`1-кесте, ${r + 1}-жол: аспап көрсеткіштері дұрыс оқылған`, match(u1, u, nt, 'T') ? 1 : 0)); }
+    const u1b = [];
+    for (let r = 0; r < 3; r++) { const u1 = A.cell('t2', r, 'U1'), u2 = A.cell('t2', r, 'U2'); u1b.push(u1); out.push(A.item(`2-кесте, ${r + 1}-жол: аспап көрсеткіштері дұрыс оқылған`, match(u1, u2, null, 'S') ? 1 : 0)); }
+    const all = [...u1s, ...u1b].filter(isFinite);
+    out.push(A.item('Кернеу номиналдың 10–20 % аралығында (22–44 В)', all.length && all.every(u => u >= 21 && u <= 45) ? 1 : 0));
+    const distinct = new Set(u1s.filter(isFinite).map(u => Math.round(u))).size;
+    out.push(A.item('1-кестеде өлшеулер әртүрлі кернеуде жүргізілген', distinct >= 3 ? 1 : distinct === 2 ? .5 : 0));
+    return out;
+  },
+  gradeCalc(A) {
+    const S = A.S, T = A.T, out = [];
+    const n1r = [0, 1, 2].map(r => A.cell('t1', r, 'Nt') * A.cell('t1', r, 'U1') / A.cell('t1', r, 'Ut'));
+    n1r.forEach((v, r) => out.push(A.chk(`1-кесте, ${r + 1}-жол: N₁`, A.tv('t1', r, 'N1'), v, .015, .6, .5)));
+    const n1m = mean(n1r.filter(isFinite));
+    const n2r = [0, 1, 2].map(r => n1m * A.cell('t2', r, 'U2') / A.cell('t2', r, 'U1'));
+    n2r.forEach((v, r) => out.push(A.chk(`2-кесте, ${r + 1}-жол: N₂`, A.tv('t2', r, 'N2'), v, .02, .6, .5)));
+    out.push(A.chk('N₁ орташа мәні', S.calc.N1m, n1m, .01, .6));
+    const n2m = mean(n2r.filter(isFinite)); out.push(A.chk('N₂ орташа мәні', S.calc.N2m, n2m, .015, .6));
+    const L1 = num(S.calc.L1), L2 = num(S.calc.L2), L3 = num(S.calc.L3);
+    const mx = (t, k) => Math.max(...[0, 1, 2].map(r => A.cell(t, r, k)).filter(isFinite));
+    const okL = (L, m) => RANGES.includes(L) && L >= m * 0.99 && L < m * 4.5;
+    out.push(A.item('Өлшеу шектері дұрыс таңдалған (көрсеткіш шкаланың соңғы бөлігінде)', [okL(L1, mx('t1', 'U1')), okL(L2, mx('t1', 'Ut')), okL(L3, mx('t2', 'U2'))].filter(Boolean).length / 3));
+    const dU = (L, g) => L * g / 100 + L / 30 / 2;
+    const mU1 = mean([0, 1, 2].map(r => A.cell('t1', r, 'U1')).filter(isFinite)), mUt = mean([0, 1, 2].map(r => A.cell('t1', r, 'Ut')).filter(isFinite));
+    const mU1b = mean([0, 1, 2].map(r => A.cell('t2', r, 'U1')).filter(isFinite)), mU2 = mean([0, 1, 2].map(r => A.cell('t2', r, 'U2')).filter(isFinite));
+    const d1 = dU(L1, G1), dt = dU(L2, G2), d2 = dU(L3, G2);
+    out.push(A.chk('ΔU₁', S.calc.dU1, d1, .03)); out.push(A.chk('ΔU<sub>уақ</sub>', S.calc.dUt, dt, .03)); out.push(A.chk('ΔU₂', S.calc.dU2, d2, .03));
+    const e1 = d1 / mU1 + dt / mUt; out.push(A.chk('ε<sub>N1</sub>, %', S.calc.e1, e1 * 100, .05));
+    out.push(A.chk('ΔN₁', S.calc.dN1, n1m * e1, .06, 1));
+    const e2 = e1 + d1 / mU1b + d2 / mU2; out.push(A.chk('ε<sub>N2</sub>, %', S.calc.e2, e2 * 100, .05));
+    out.push(A.chk('ΔN₂', S.calc.dN2, n2m * e2, .06, .5));
+    out.push(A.chk('Нәтиже: N₁ шын мәніне жақын (±4 %)', S.calc.N1m, T.N1, .04, 0, 1.5));
+    out.push(A.chk('Нәтиже: N₂ шын мәніне жақын (±5 %)', S.calc.N2m, T.N2, .05, 0, 1.5));
+    return out;
+  }
+};
+App.init(LAB);
+
+
+}
+</script>
+</body></html>

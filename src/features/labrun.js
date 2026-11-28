@@ -65,19 +65,24 @@ router.get('/labs/:key', asyncH(async (req, res) => {
   const L = requireLab(req);
   const u = req.user;
   const teacherView = u && (isActiveTeacher(u) || isAdmin(u));
-  const panel = teacherView && req.query.panel === '1';
+  const v2 = L.v === 2; // «Онлайн зертхана» үлгісі: ішінде мұғалім панелі мен нәтиже коды жоқ
+  const panel = teacherView && !v2 && req.query.panel === '1';
   let teacherName = null;
   if (u && u.role === 'student' && u.class_id) {
     const t = await one('SELECT t.full_name FROM classes c JOIN users t ON t.id = c.teacher_id WHERE c.id = $1', [u.class_id]);
     teacherName = t ? t.full_name : null;
   }
   const notice = !u
-    ? html`<div class="notice"><div><b>Платформаға кірмегенсің.</b> Жұмысты орындай бересің, бірақ соңында <b>нәтиже кодын</b> мұғаліміңе өзің жіберуің керек. <a href="/login?next=/labs/${L.k}">Кірсең</a>, нәтижең мұғаліміңнің журналына өзі түседі.</div></div>`
+    ? (v2
+      ? html`<div class="notice"><div><b>Платформаға кірмегенсің.</b> Жұмысты орындай бересің, бірақ баға тек осы компьютерде қалады: соңында «Нәтиже» бөлімінен <b>есеп парағын</b> жүктеп, мұғаліміңе өзің жібер. <a href="/login?next=/labs/${L.k}">Кірсең</a>, нәтижең мұғаліміңнің журналына өзі түседі.</div></div>`
+      : html`<div class="notice"><div><b>Платформаға кірмегенсің.</b> Жұмысты орындай бересің, бірақ соңында <b>нәтиже кодын</b> мұғаліміңе өзің жіберуің керек. <a href="/login?next=/labs/${L.k}">Кірсең</a>, нәтижең мұғаліміңнің журналына өзі түседі.</div></div>`)
     : u.role === 'student' && teacherName
       ? html`<div class="notice"><div>Нәтижең мұғаліміңнің — <b>${teacherName}</b> — журналына автоматты түрде түседі. Код жіберудің қажеті жоқ.</div></div>`
       : u.role === 'student'
         ? html`<div class="notice warn"><div>Сен әлі ешбір сыныпқа қосылмағансың, сондықтан нәтиже мұғалімге жетпейді. <a href="/cabinet">Кабинетте</a> мұғалімің берген сынып кодын енгіз.</div></div>`
-        : html`<div class="notice"><div>Сіз мұғалім ретінде кірдіңіз. Зертхананың ішіндегі <b>«Мұғалім панелі»</b> өз сыныптарыңыздағы оқушылардың осы жұмыс бойынша нәтижелерін көрсетеді; барлық жұмыстың жиынтығы — <a href="/teacher/labs">журналда</a>.</div></div>`;
+        : v2
+          ? html`<div class="notice"><div>Сіз мұғалім ретінде кірдіңіз. Оқушы жұмысты «Тапсыру» батырмасымен аяқтағанда оның 10 балдық бағасы (тест, құрастыру, өлшеу, есептеу, қорытынды) <a href="/teacher/labs">зертхана журналына</a> өзі түседі.</div></div>`
+          : html`<div class="notice"><div>Сіз мұғалім ретінде кірдіңіз. Зертхананың ішіндегі <b>«Мұғалім панелі»</b> өз сыныптарыңыздағы оқушылардың осы жұмыс бойынша нәтижелерін көрсетеді; барлық жұмыстың жиынтығы — <a href="/teacher/labs">журналда</a>.</div></div>`;
   const sec = SECTION[L.s];
   await page(req, res, {
     title: L.t, active: 'labs',
@@ -87,7 +92,7 @@ router.get('/labs/:key', asyncH(async (req, res) => {
         <div class="vhead">
           <div><p class="eyebrow">${sec ? sec.name : ''} · ${L.g}-сынып · №${L.no} зертханалық жұмыс</p><h1>${L.t}</h1></div>
           <div class="vhead-act">
-            ${teacherView ? html`<a class="btn${panel ? '' : ' ghost'}" href="/labs/${L.k}?panel=1">${icon('user', 15)} Мұғалім панелі</a>${panel ? html`<a class="btn ghost" href="/labs/${L.k}">Зертхана</a>` : ''}` : ''}
+            ${teacherView && !v2 ? html`<a class="btn${panel ? '' : ' ghost'}" href="/labs/${L.k}?panel=1">${icon('user', 15)} Мұғалім панелі</a>${panel ? html`<a class="btn ghost" href="/labs/${L.k}">Зертхана</a>` : ''}` : ''}
             <a class="btn ghost" href="/labs/${L.k}/app" target="_blank" rel="noopener">${icon('ext', 15)} Толық экран</a>
           </div>
         </div>
@@ -110,7 +115,7 @@ router.get('/labs/:key/app', asyncH(async (req, res) => {
     cls: u && u.role === 'student' ? classLabel(u.class_grade, u.class_letter) : '',
     csrf: req.csrfToken,
   };
-  const inject = `<script type="application/json" id="labRuntimeConfig">${JSON.stringify(cfg).replace(/</g, '\\u003c')}</script><script src="${asset('/js/lab-runtime.js')}"></script>`;
+  const inject = `<script type="application/json" id="labRuntimeConfig">${JSON.stringify(cfg).replace(/</g, '\\u003c')}</script><script src="${asset('/js/lab-runtime.js')}"></script>${L.v === 2 ? `<script src="${asset('/js/lab-bridge.js')}"></script>` : ''}`;
   const body = lab.src.slice(0, lab.insertAt) + inject + lab.src.slice(lab.insertAt);
   res.setHeader('Content-Security-Policy', [
     "default-src 'self'",

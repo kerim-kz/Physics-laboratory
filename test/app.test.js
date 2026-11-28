@@ -1101,6 +1101,28 @@ describe('тіркелу, рөлдер және сыныптар', () => {
     assert.equal((await student.json('GET', `/api/labs/om/subs/${cfg.uid}`)).body.exists, false);
     assert.doesNotMatch((await teacher.get('/teacher/labs')).text, /pill ok">платформа/);
   });
+  test('11-сынып «Онлайн зертхана» жұмыстары: тізімде, көпір қосылады, баға журналға түседі', async () => {
+    const list = await new Client().get('/labs?grade=11');
+    for (const k of ['transformator', 'dybys', 'difraktsiya', 'interferentsiya', 'synu11']) {
+      assert.match(list.text, new RegExp(`href="/labs/${k}"`), k);
+      assert.ok(fs.existsSync(new URL(`../labs/${k}.html`, import.meta.url)), k);
+    }
+    assert.match(list.text, /href="\/labs\?grade=11"/);
+    const guest = await new Client().get('/labs/synu11/app');
+    assert.match(guest.text, /\/js\/lab-bridge\.js\?v=[0-9a-f]{10}/);
+    assert.doesNotMatch((await new Client().get('/labs/om/app')).text, /lab-bridge/, 'бұрынғы зертханаларға көпір қажет емес');
+    const page = await teacher.get('/labs/synu11');
+    assert.doesNotMatch(page.text, /panel=1/, 'v2 зертханада мұғалім панелі жоқ');
+    assert.match((await new Client().get('/sims?book=11')).text, /href="\/labs\/transformator"/);
+    const app = await student.get('/labs/transformator/app');
+    const cfg = JSON.parse(app.text.match(/id="labRuntimeConfig">([^<]+)</)[1]);
+    const put = await student.json('POST', `/api/labs/transformator/subs/${cfg.uid}`, { score: 7.5, crit: [1, 1, 1, 0, 1], parts: { quiz: 1 }, variant: '4321', at: '28.11.2026, 10:00' });
+    assert.equal(put.status, 200);
+    assert.equal(put.body.grade, 4);
+    const journal = await teacher.get('/teacher/labs');
+    assert.match(journal.text, /11-сынып №1\. Трансформатор/);
+    assert.equal((await teacher.json('DELETE', `/api/labs/transformator/subs/${cfg.uid}`)).status, 204);
+  });
 });
 
 describe('ойындар: хаб, аркада/сайыс/жұмбақ ойындары, XP және белгішелер', () => {
