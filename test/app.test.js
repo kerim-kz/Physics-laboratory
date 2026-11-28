@@ -1103,7 +1103,7 @@ describe('тіркелу, рөлдер және сыныптар', () => {
   });
   test('10-сынып «Онлайн зертхана» жұмыстары: тізімде, көпір қосылады, оқулықтан сілтеме', async () => {
     const list = await new Client().get('/labs?grade=10');
-    for (const k of ['naua10', 'ushu10', 'inertsiya10', 'kushter10', 'tutqyr10']) {
+    for (const k of ['naua10', 'ushu10', 'inertsiya10', 'kushter10', 'tutqyr10', 'aralas10', 'eqk10', 'vas10', 'elektroliz10']) {
       assert.match(list.text, new RegExp(`href="/labs/${k}"`), k);
       assert.match((await new Client().get(`/labs/${k}/app`)).text, /\/js\/lab-bridge\.js/, k);
     }
